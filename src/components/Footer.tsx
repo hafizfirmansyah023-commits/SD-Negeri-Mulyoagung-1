@@ -129,19 +129,19 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
             <li className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-teal-400 shrink-0 mt-1" />
               <span>
-                Jl. Raya Mulyoagung No. 1, Kecamatan Dau, Kabupaten Malang, Jawa Timur 65151
+               JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur
               </span>
             </li>
             <li className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-teal-400 shrink-0" />
-              <a href="mailto:info@sdnmulyoagung1.sch.id" className="hover:text-white transition-colors">
-                info@sdnmulyoagung1.sch.id
+              <a href="mailto:sdnmulyoagung01@gmail.com" className="hover:text-white transition-colors">
+                sdnmulyoagung01@gmail.com
               </a>
             </li>
             <li className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-teal-400 shrink-0" />
               <a href="tel:08123456789" className="hover:text-white transition-colors">
-                (0341) 465-7890 / 08123456789
+                (0341) 466-730 / Belum
               </a>
             </li>
           </ul>
