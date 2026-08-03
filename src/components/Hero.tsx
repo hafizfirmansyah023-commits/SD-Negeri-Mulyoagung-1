@@ -12,13 +12,15 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPpdb, setActiveTab }) => {
     <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#1E3A8A] dark:bg-slate-950">
       {/* Background Image & Overlay */}
       <div className="absolute inset-0 z-0">
+        {/* GANTI FOTO SEKOLAH */}
         <div
           className="bg-cover bg-center w-full h-full opacity-25 dark:opacity-15 scale-105 transition-transform duration-1000"
           style={{
             backgroundImage: `url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1600')`,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1E3A8A]/95 via-[#1E3A8A]/85 to-[#028C84]/80 dark:from-slate-950/95 dark:via-slate-900/90 dark:to-teal-950/80" />
+        {/* Mengubah warna background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D4A46]/0 to-[#156B63]/100" />
       </div>
 
       {/* Decorative Glow Elements */}

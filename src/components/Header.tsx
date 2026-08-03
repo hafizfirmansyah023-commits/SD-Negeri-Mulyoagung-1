@@ -37,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
       {/* Top Banner Contact Strip (Desktop/Tablet) */}
-      <div className="bg-[#1E3A8A] dark:bg-slate-900 text-slate-200 text-xs py-1.5 px-4 sm:px-8 border-b border-blue-900/40">
+      <div className="bg-gradient-to-r from-[#0D4A46]/20 to-[#156B63]/10">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
           <div className="flex items-center gap-4 text-slate-300">
             <span className="flex items-center gap-1">
@@ -61,7 +61,7 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Top Header */}
-      <header className="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-colors duration-300">
+      <header className="bg-gradient-to-r from-[#0D4A46]/50 to-[#156B63]/50">
         <div className="flex justify-between items-center px-4 sm:px-8 lg:px-12 w-full h-20 max-w-7xl mx-auto">
           {/* Logo */}
           <div
@@ -103,19 +103,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              aria-label="Toggle Mode Gelap/Terang"
-              title={darkMode ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap'}
-              className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500"
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5 text-amber-400 animate-spin-slow" />
-              ) : (
-                <Moon className="w-5 h-5 text-slate-600" />
-              )}
-            </button>
 
             {/* PPDB Button */}
             <button
