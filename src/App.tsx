@@ -23,7 +23,6 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [ppdbOpen, setPpdbOpen] = useState(false);
 
-  // Ensure dark mode class is removed from <html> element
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('dark');
