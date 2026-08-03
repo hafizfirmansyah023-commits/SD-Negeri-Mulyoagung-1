@@ -4,59 +4,75 @@ import { Quote } from 'lucide-react';
 
 export const PrincipalGreeting: React.FC = () => {
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-8 sm:py-12 mb-16 relative">
-      <div className="gray-liquid-glass rounded-[2.5rem] p-6 sm:p-10 lg:p-12 relative overflow-hidden transition-all duration-300">
-        {/* Specular Gloss Reflection */}
-        <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/70 to-transparent pointer-events-none rounded-t-[2.5rem]" />
+    <section className="relative bg-[#FAFAFA] py-12 overflow-hidden">
+  
+  {/* --- Background Orbs (Kunci agar efek kaca terlihat) --- */}
+  {/* Bulatan ini akan di-blur oleh card kaca di depannya */}
+  <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-100/60 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+  <div className="absolute top-10 right-1/4 w-96 h-96 bg-teal-100/40 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
+  <div className="absolute -bottom-10 left-1/3 w-96 h-96 bg-slate-200/60 rounded-full mix-blend-multiply filter blur-3xl opacity-70"></div>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center relative z-10">
-          {/* Principal Image */}
-          <div className="lg:w-1/3 flex flex-col items-center justify-center shrink-0">
-            <div className="relative w-44 h-44 sm:w-56 sm:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden border-8 border-white/90 p-2 bg-white/80 backdrop-blur-md shadow-lg">
-              <img
-                src={PRINCIPAL_INFO.photo}
-                alt={PRINCIPAL_INFO.name}
-                className="w-full h-full object-cover rounded-full"
-              />
-            </div>
-            <div className="mt-4 text-center">
-              <p className="font-extrabold text-lg sm:text-xl text-[#1E3A8A]">
-                {PRINCIPAL_INFO.name}
-              </p>
-              <p className="text-xs sm:text-sm font-bold text-[#028C84]">
-                {PRINCIPAL_INFO.title}
-              </p>
-            </div>
+  <div className="relative max-w-6xl mx-auto px-4">
+    {/* --- CARD LIQUID GLASS APPLE --- */}
+    <div className="bg-white/40 backdrop-blur-2xl backdrop-saturate-150 border border-white/90 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1),inset_0_1px_2px_rgba(255,255,255,1),inset_0_-1px_1px_rgba(0,0,0,0.05)] rounded-[2.5rem] p-6 sm:p-10 lg:p-12 relative overflow-hidden transition-all duration-300">
+      
+      {/* Specular Gloss Reflection (Cahaya pantulan di ujung atas kaca) */}
+      <div className="absolute top-0 left-0 right-0 h-28 bg-gradient-to-b from-white/70 via-white/10 to-transparent pointer-events-none rounded-t-[2.5rem]" />
+
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center relative z-10">
+        
+        {/* Principal Image */}
+        <div className="lg:w-1/3 flex flex-col items-center justify-center shrink-0">
+          {/* Frame foto juga dibuat bertekstur kaca */}
+          <div className="relative w-44 h-44 sm:w-56 sm:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 border-white/80 p-2 bg-white/50 backdrop-blur-md shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-transform hover:scale-105 duration-300">
+            <img
+              src={PRINCIPAL_INFO.photo}
+              alt={PRINCIPAL_INFO.name}
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
-
-          {/* Principal Message */}
-          <div className="lg:w-2/3 space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-white/90 border border-slate-200/80 text-[#028C84] shadow-sm">
-                <Quote className="w-6 h-6" />
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1E3A8A]">
-                Sambutan Kepala Sekolah
-              </h2>
-            </div>
-
-            <div className="border-l-4 border-[#F9A825] pl-5 bg-white/75 backdrop-blur-md p-5 sm:p-6 rounded-2xl border-y border-r border-white/90 shadow-sm">
-              <p className="text-slate-800 text-base sm:text-lg leading-relaxed whitespace-pre-line italic">
-                {PRINCIPAL_INFO.greeting}
-              </p>
-            </div>
-
-            <div className="pt-2 flex items-center justify-between">
-              <span className="text-xs text-slate-600 font-medium">
-                SD Negeri Mulyoagung 1 - Kecamatan Dau, Kab. Malang
-              </span>
-              <span className="text-xs font-bold text-[#028C84] bg-white/90 px-3.5 py-1.5 rounded-full border border-teal-200/80 shadow-sm">
-                Pendidikan Karakter
-              </span>
-            </div>
+          <div className="mt-5 text-center">
+            <p className="font-extrabold text-lg sm:text-xl text-slate-800 tracking-tight drop-shadow-sm">
+              {PRINCIPAL_INFO.name}
+            </p>
+            <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1">
+              {PRINCIPAL_INFO.title}
+            </p>
           </div>
         </div>
+
+        {/* Principal Message */}
+        <div className="lg:w-2/3 space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-white/80 backdrop-blur-sm border border-white shadow-sm text-slate-700">
+              <Quote className="w-6 h-6" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">
+              Sambutan Kepala Sekolah
+            </h2>
+          </div>
+
+          {/* Kotak Pesan dengan Efek Kaca Kedalaman */}
+          <div className="relative pl-6 p-5 sm:p-6 rounded-2xl bg-white/40 backdrop-blur-md border border-white/70 shadow-[inset_0_2px_10px_rgba(255,255,255,0.5),0_4px_15px_-5px_rgba(0,0,0,0.05)]">
+            <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-slate-400 to-slate-200 rounded-l-2xl opacity-80"></div>
+            <p className="text-slate-700 text-base sm:text-lg leading-relaxed whitespace-pre-line font-medium">
+              {PRINCIPAL_INFO.greeting}
+            </p>
+          </div>
+
+          <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <span className="text-xs text-slate-500 font-medium">
+              SD Negeri Mulyoagung 1 - Kecamatan Dau, Kab. Malang
+            </span>
+            <span className="text-xs font-semibold text-slate-700 bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white shadow-sm">
+              Pendidikan Karakter
+            </span>
+          </div>
+        </div>
+        
       </div>
-    </section>
+    </div>
+  </div>
+</section>
   );
 };
