@@ -57,7 +57,7 @@ export const ContactSection: React.FC = () => {
                       Alamat Sekolah:
                     </span>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                      Jl. Raya Mulyoagung No. 1, Kecamatan Dau, Kabupaten Malang, Jawa Timur 65151
+                      JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur
                     </p>
                   </div>
                 </div>
@@ -71,10 +71,10 @@ export const ContactSection: React.FC = () => {
                       Email Resmi:
                     </span>
                     <a
-                      href="mailto:info@sdnmulyoagung1.sch.id"
+                      href="mailto:sdnmulyoagung01@gmail.com"
                       className="text-xs sm:text-sm text-teal-600 dark:text-teal-400 hover:underline"
                     >
-                      info@sdnmulyoagung1.sch.id
+                      sdnmulyoagung01@gmail.com
                     </a>
                   </div>
                 </div>
@@ -88,7 +88,7 @@ export const ContactSection: React.FC = () => {
                       Telepon / WhatsApp:
                     </span>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                      (0341) 465-7890 / 08123456789
+                      (0341) 466-730 / Belum
                     </p>
                   </div>
                 </div>
