@@ -1,0 +1,6 @@
+{
+  "name": "SD Negeri Mulyoagung 1",
+  "description": "Website Resmi SD Negeri Mulyoagung 1 - Berita, Profil Sekolah, Direktori Guru & Staff, Galeri, dan PPDB Online.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
