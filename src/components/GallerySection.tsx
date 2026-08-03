@@ -27,7 +27,7 @@ export const GallerySection: React.FC = () => {
             Galeri Kegiatan & Fasilitas
           </h2>
           <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
-            Potret momen kebersamaan, ragam aktivitas siswa, dan suasana lingkungan di SDN Mulyoagung 1
+            Potret momen kebersamaan, ragam aktivitas siswa, dan suasana lingkungan di SD Negeri Mulyoagung 1
           </p>
         </div>
 

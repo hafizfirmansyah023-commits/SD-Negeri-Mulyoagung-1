@@ -21,36 +21,22 @@ import { BackToTop } from './components/BackToTop';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
-  const [darkMode, setDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem('theme');
-    if (saved) return saved === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
-
   const [ppdbOpen, setPpdbOpen] = useState(false);
 
-  // Sync dark mode class on <html> element
+  // Ensure dark mode class is removed from <html> element
   useEffect(() => {
     const root = document.documentElement;
-    if (darkMode) {
-      root.classList.add('dark');
-      root.classList.remove('light');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      root.classList.remove('dark');
-      root.classList.add('light');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [darkMode]);
+    root.classList.remove('dark');
+    root.classList.add('light');
+    localStorage.removeItem('theme');
+  }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f9fa] dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white">
       {/* Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
         onOpenPpdb={() => setPpdbOpen(true)}
       />
 

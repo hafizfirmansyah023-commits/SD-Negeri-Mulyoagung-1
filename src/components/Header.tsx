@@ -1,20 +1,17 @@
 import React, { useState } from 'react';
-import { GraduationCap, Menu, X, Sun, Moon, Sparkles, Phone, Mail } from 'lucide-react';
+import { Menu, X, Sparkles, Phone, Mail } from 'lucide-react';
 import { NavTab } from '../types';
+import logoImg from '../assets/logo.png';
 
 interface HeaderProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
-  darkMode: boolean;
-  setDarkMode: (val: boolean) => void;
   onOpenPpdb: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   setActiveTab,
-  darkMode,
-  setDarkMode,
   onOpenPpdb,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -37,12 +34,12 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <>
       {/* Top Banner Contact Strip (Desktop/Tablet) */}
-      <div className="bg-gradient-to-r from-[#0D4A46]/20 to-[#156B63]/10">
+      <div className="bg-gradient-to-r from-[#0D4A46]/100 to-[#156B63]/100">
         <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
           <div className="flex items-center gap-4 text-slate-300">
             <span className="flex items-center gap-1">
               <Mail className="w-3.5 h-3.5 text-teal-400" />
-              info@sdnmulyoagung1.sch.id
+              info@SD Negerimulyoagung1.sch.id
             </span>
             <span className="hidden sm:flex items-center gap-1">
               <Phone className="w-3.5 h-3.5 text-teal-400" />
@@ -61,21 +58,21 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Main Top Header */}
-      <header className="bg-gradient-to-r from-[#0D4A46]/50 to-[#156B63]/50">
+      <header className="bg-gradient-to-r from-[#073632]/100 to-[#103632]/100">
         <div className="flex justify-between items-center px-4 sm:px-8 lg:px-12 w-full h-20 max-w-7xl mx-auto">
           {/* Logo */}
           <div
             onClick={() => handleNavClick('home')}
-            className="flex items-center gap-2.5 cursor-pointer group"
+            className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-10 h-10 rounded-xl bg-teal-600/10 dark:bg-teal-500/20 flex items-center justify-center text-[#028C84] dark:text-teal-400 group-hover:scale-105 transition-transform">
-              <GraduationCap className="w-6 h-6" />
+            <div className="w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+              <img src={logoImg} className="w-full h-full object-contain drop-shadow-md" alt="Logo SD Negeri 1 Mulyoagung" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-xl sm:text-2xl text-[#1E3A8A] dark:text-blue-300 tracking-tight leading-none">
-                SDN Mulyoagung 1
+              <span className="font-bold text-xl sm:text-2xl text-white tracking-tight leading-none">
+                SD Negeri 1 Mulyoagung
               </span>
-              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium tracking-wide">
+              <span className="text-[11px] text-teal-200/80 font-medium tracking-wide">
                 Kabupaten Malang
               </span>
             </div>
@@ -116,19 +113,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Mobile Right Controls */}
           <div className="flex md:hidden items-center gap-2">
-            {/* Dark Mode Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? (
-                <Sun className="w-5 h-5 text-amber-400" />
-              ) : (
-                <Moon className="w-5 h-5 text-slate-600" />
-              )}
-            </button>
-
             {/* Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

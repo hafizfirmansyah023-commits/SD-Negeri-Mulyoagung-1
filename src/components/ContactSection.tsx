@@ -23,85 +23,89 @@ export const ContactSection: React.FC = () => {
   };
 
   return (
-    <section id="contact-section" className="w-full py-16 sm:py-20 bg-slate-50 dark:bg-slate-900/60 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-12">
+    <section id="contact-section" className="w-full py-16 sm:py-20 bg-gradient-to-br from-[#0D4A46] via-[#105e58] to-[#028C84] transition-colors relative overflow-hidden">
+      {/* Decorative ambient glows */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-300/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-12 relative z-10">
         {/* Title */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 text-[#028C84] dark:text-teal-400 font-bold text-xs uppercase tracking-wider bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800">
+          <div className="inline-flex items-center gap-2 text-teal-100 font-bold text-xs uppercase tracking-wider bg-white/15 px-3 py-1 rounded-full border border-white/25 backdrop-blur-md">
             <Mail className="w-4 h-4" />
             Layanan & Layanan Informasi
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1E3A8A] dark:text-blue-300">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
             Hubungi Kami
           </h2>
-          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
-            Silakan kirimkan pertanyaan, saran, atau informasi seputar SDN Mulyoagung 1
+          <p className="text-teal-50/90 text-sm sm:text-base">
+            Silakan kirimkan pertanyaan, saran, atau informasi seputar SD Negeri Mulyoagung 1
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left: Contact Info Cards */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 dark:border-slate-700/80 space-y-6">
-              <h3 className="text-xl font-bold text-[#1E3A8A] dark:text-blue-200">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-white/60 space-y-6">
+              <h3 className="text-xl font-bold text-[#1E3A8A]">
                 Informasi Sekretariat
               </h3>
 
-              <div className="space-y-4 text-sm text-slate-700 dark:text-slate-300">
+              <div className="space-y-4 text-sm text-slate-700">
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-[#028C84] dark:text-teal-400 shrink-0">
+                  <div className="p-2.5 rounded-xl bg-teal-50 text-[#028C84] shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 dark:text-slate-100 block">
+                    <span className="font-bold text-slate-900 block">
                       Alamat Sekolah:
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                       Jl. Raya Mulyoagung No. 1, Kecamatan Dau, Kabupaten Malang, Jawa Timur 65151
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-[#028C84] dark:text-teal-400 shrink-0">
+                  <div className="p-2.5 rounded-xl bg-teal-50 text-[#028C84] shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 dark:text-slate-100 block">
+                    <span className="font-bold text-slate-900 block">
                       Email Resmi:
                     </span>
                     <a
-                      href="mailto:info@sdnmulyoagung1.sch.id"
-                      className="text-xs sm:text-sm text-teal-600 dark:text-teal-400 hover:underline"
+                      href="mailto:info@SD Negerimulyoagung1.sch.id"
+                      className="text-xs sm:text-sm text-teal-600 hover:underline"
                     >
-                      info@sdnmulyoagung1.sch.id
+                      info@SD Negerimulyoagung1.sch.id
                     </a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-[#028C84] dark:text-teal-400 shrink-0">
+                  <div className="p-2.5 rounded-xl bg-teal-50 text-[#028C84] shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 dark:text-slate-100 block">
+                    <span className="font-bold text-slate-900 block">
                       Telepon / WhatsApp:
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-xs sm:text-sm text-slate-600">
                       (0341) 465-7890 / 08123456789
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/60 text-[#028C84] dark:text-teal-400 shrink-0">
+                  <div className="p-2.5 rounded-xl bg-teal-50 text-[#028C84] shrink-0">
                     <Clock className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 dark:text-slate-100 block">
+                    <span className="font-bold text-slate-900 block">
                       Jam Pelayanan Sekretariat:
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-xs sm:text-sm text-slate-600">
                       Senin - Sabtu: 07.00 - 13.00 WIB
                     </p>
                   </div>
@@ -110,14 +114,14 @@ export const ContactSection: React.FC = () => {
             </div>
 
             {/* Map Preview */}
-            <div className="bg-white dark:bg-slate-800 rounded-3xl p-4 shadow-sm border border-slate-200/80 dark:border-slate-700/80 overflow-hidden">
-              <span className="text-xs font-bold text-slate-600 dark:text-slate-400 px-2 block mb-2">
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-xl border border-white/60 overflow-hidden">
+              <span className="text-xs font-bold text-slate-600 px-2 block mb-2">
                 Peta Lokasi Google Maps:
               </span>
-              <div className="w-full h-48 rounded-2xl overflow-hidden bg-slate-200 dark:bg-slate-700 relative">
+              <div className="w-full h-48 rounded-2xl overflow-hidden bg-slate-200 relative">
                 <iframe
                   title="Lokasi SD Negeri Mulyoagung 1"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4984189392686!2d112.5768295!3d-7.9473007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788220f18bdc6d%3A0x67390a8a614d95b5!2sSDN%20Mulyoagung%201!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4984189392686!2d112.5768295!3d-7.9473007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788220f18bdc6d%3A0x67390a8a614d95b5!2sSD Negeri%20Mulyoagung%201!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
                   className="w-full h-full border-0"
                   allowFullScreen
                   loading="lazy"
@@ -127,8 +131,8 @@ export const ContactSection: React.FC = () => {
           </div>
 
           {/* Right: Interactive Contact Form */}
-          <div className="lg:col-span-7 bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 dark:border-slate-700/80">
-            <h3 className="text-xl font-bold text-[#1E3A8A] dark:text-blue-200 mb-6">
+          <div className="lg:col-span-7 bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-white/60">
+            <h3 className="text-xl font-bold text-[#1E3A8A] mb-6">
               Kirim Pesan / Pertanyaan Mandiri
             </h3>
 

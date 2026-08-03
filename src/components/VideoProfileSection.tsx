@@ -23,7 +23,7 @@ export const VideoProfileSection: React.FC = () => {
           </h2>
 
           <p className="text-slate-200 dark:text-slate-300 text-base sm:text-lg leading-relaxed opacity-90 max-w-md">
-            Mengenal lebih dekat lingkungan, fasilitas, dan kegiatan akademik di SD Negeri Mulyoagung 1 melalui tayangan video singkat kami.
+            Mengenal lebih dekat lingkungan, fasilitas, dan kegiatan akademik di SD Negeri 1 Mulyoagung melalui tayangan video singkat kami.
           </p>
 
           <div className="pt-2 flex flex-wrap gap-3">
@@ -36,7 +36,7 @@ export const VideoProfileSection: React.FC = () => {
             </button>
 
             <a
-              href="https://www.youtube.com"
+              href="https://www.youtube.com/watch?v=-HU-Kg20g-M"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white/10 hover:bg-white/20 text-white font-semibold text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 border border-white/20 transition-colors"
@@ -46,22 +46,12 @@ export const VideoProfileSection: React.FC = () => {
             </a>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-blue-800/60 text-xs text-slate-200">
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5 text-teal-400" />
-              Durasi: 4 Menit 20 Detik
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle className="w-3.5 h-3.5 text-teal-400" />
-              Kualitas KHD 1080p
-            </span>
-          </div>
         </div>
 
         {/* Thumbnail & Interactive Play Trigger */}
         <div className="lg:w-1/2 relative min-h-[300px] sm:min-h-[380px] lg:min-h-[420px]">
           <img
-            src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200"
+            src="https://img.youtube.com/vi/-HU-Kg20g-M/maxresdefault.jpg"
             alt="Video Profil Thumbnail SD Negeri Mulyoagung 1"
             className="w-full h-full object-cover"
           />
@@ -101,7 +91,7 @@ export const VideoProfileSection: React.FC = () => {
             {/* Video Player Frame */}
             <div className="relative w-full aspect-video bg-black flex items-center justify-center">
               <iframe
-                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1"
+                src="https://www.youtube.com/embed/-HU-Kg20g-M"
                 title="Video Profil SD Negeri Mulyoagung 1"
                 className="w-full h-full border-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -111,7 +101,7 @@ export const VideoProfileSection: React.FC = () => {
 
             <div className="p-4 sm:p-6 bg-slate-900 text-slate-300 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-center gap-3">
               <p>
-                Menampilkan sekilas suasana pembelajaran, kebersihan kampus, dan semangat siswa SDN Mulyoagung 1.
+                Menampilkan sekilas suasana pembelajaran, kebersihan kampus, dan semangat siswa SD Negeri Mulyoagung 1.
               </p>
               <button
                 onClick={() => setIsPlaying(false)}

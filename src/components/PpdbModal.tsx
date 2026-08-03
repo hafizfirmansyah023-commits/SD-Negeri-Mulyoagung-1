@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Sparkles, CheckCircle2, Download, Printer, FileText, ArrowRight } from 'lucide-react';
 import { PpdbApplication } from '../types';
+import logoImg from '../assets/logo.png';
 
 interface PpdbModalProps {
   isOpen: boolean;
@@ -30,7 +31,7 @@ export const PpdbModal: React.FC<PpdbModalProps> = ({ isOpen, onClose }) => {
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     const newRecord: PpdbApplication = {
       id: `ppdb-${Date.now()}`,
-      regNumber: `PPDB-2025-SDN1-${randomNum}`,
+      regNumber: `PPDB-2025-SD Negeri1-${randomNum}`,
       studentName: formData.studentName,
       nik: formData.nik,
       birthPlaceDate: formData.birthPlaceDate,
@@ -76,17 +77,22 @@ export const PpdbModal: React.FC<PpdbModalProps> = ({ isOpen, onClose }) => {
       <div className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
         {/* Header */}
         <div className="bg-[#1E3A8A] dark:bg-slate-950 text-white p-6 sm:p-8 flex justify-between items-start relative border-b border-blue-900/50">
-          <div>
-            <div className="inline-flex items-center gap-1.5 bg-[#F9A825] text-blue-950 text-[11px] font-bold px-3 py-0.5 rounded-full mb-2">
-              <Sparkles className="w-3.5 h-3.5" />
-              Tahun Ajaran 2025/2026
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 flex items-center justify-center shrink-0">
+              <img src={logoImg} className="w-full h-full object-contain drop-shadow-md" alt="Logo SD Negeri 1 Mulyoagung" />
             </div>
-            <h2 className="text-xl sm:text-2xl font-extrabold">
-              Formulir PPDB Online
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-200 mt-1 opacity-90">
-              Penerimaan Peserta Didik Baru SD Negeri Mulyoagung 1
-            </p>
+            <div>
+              <div className="inline-flex items-center gap-1.5 bg-[#F9A825] text-blue-950 text-[11px] font-bold px-3 py-0.5 rounded-full mb-1">
+                <Sparkles className="w-3.5 h-3.5" />
+                Tahun Ajaran 2025/2026
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold">
+                Formulir PPDB Online
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-200 opacity-90">
+                Penerimaan Peserta Didik Baru SD Negeri 1 Mulyoagung
+              </p>
+            </div>
           </div>
 
           <button

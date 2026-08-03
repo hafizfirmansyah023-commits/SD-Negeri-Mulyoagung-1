@@ -1,6 +1,7 @@
 import React from 'react';
-import { GraduationCap, MapPin, Mail, Phone, ChevronRight, QrCode, Camera, Play, Sparkles } from 'lucide-react';
+import { MapPin, Mail, Phone, ChevronRight, QrCode, Camera, Play, Sparkles } from 'lucide-react';
 import { NavTab } from '../types';
+import logoImg from '../assets/logo.png';
 
 interface FooterProps {
   setActiveTab: (tab: NavTab) => void;
@@ -22,16 +23,17 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
             onClick={() => handleNavClick('home')}
             className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="p-2 rounded-xl bg-amber-400 text-blue-950 group-hover:scale-105 transition-transform">
-              <GraduationCap className="w-7 h-7" />
+            <div className="w-12 h-12 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+              <img src={logoImg} className="w-full h-full object-contain drop-shadow-md" alt="Logo SD Negeri 1 Mulyoagung" />
             </div>
             <span className="text-2xl font-bold text-white tracking-tight">
-              SDN Mulyoagung 1
+              SD Negeri 1 Mulyoagung
             </span>
           </div>
 
           <p className="text-sm text-slate-200 dark:text-slate-400 max-w-md leading-relaxed">
-            Beriman, Kreatif, Berprestasi, Berkarakter, dan Berbudaya. Mengabdi untuk negeri mendidik anak bangsa dengan sepenuh hati.
+            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui fugiat quo aut, voluptate molestias modi quam, ad iure ullam commodi mollitia necessitatibus eum autem quisquam tempora doloremque? Doloribus, illo nihil?
+            Eum quibusdam dignissimos repellat nesciunt id ducimus quos, nemo temporibus obcaecati ipsam blanditiis, enim dolorem velit veritatis pariatur quidem a error, maiores suscipit necessitatibus deleniti. Culpa at vero fugiat molestiae!
           </p>
 
           <div className="flex gap-3 pt-2">
@@ -39,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
               href="#qr"
               onClick={(e) => {
                 e.preventDefault();
-                alert('QR Code Digital Card SDN Mulyoagung 1');
+                alert('QR Code Digital Card SD Negeri Mulyoagung 1');
               }}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#028C84] flex items-center justify-center text-white transition-colors"
               title="QR Digital"
@@ -50,7 +52,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
               href="#instagram"
               onClick={(e) => {
                 e.preventDefault();
-                alert('Instagram: @sdnmulyoagung1_malang');
+                alert('Instagram: @SD Negerimulyoagung1_malang');
               }}
               className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#028C84] flex items-center justify-center text-white transition-colors"
               title="Instagram Sekolah"
@@ -134,8 +136,8 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
             </li>
             <li className="flex items-center gap-3">
               <Mail className="w-4 h-4 text-teal-400 shrink-0" />
-              <a href="mailto:info@sdnmulyoagung1.sch.id" className="hover:text-white transition-colors">
-                info@sdnmulyoagung1.sch.id
+              <a href="mailto:info@SD Negerimulyoagung1.sch.id" className="hover:text-white transition-colors">
+                info@SD Negerimulyoagung1.sch.id
               </a>
             </li>
             <li className="flex items-center gap-3">
@@ -167,7 +169,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
             Syarat & Ketentuan
           </button>
           <button
-            onClick={() => alert('Peta Situs SDN Mulyoagung 1')}
+            onClick={() => alert('Peta Situs SD Negeri Mulyoagung 1')}
             className="hover:text-white hover:underline transition-all"
           >
             Peta Situs

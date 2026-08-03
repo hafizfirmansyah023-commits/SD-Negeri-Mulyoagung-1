@@ -20,7 +20,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPpdb, setActiveTab }) => {
           }}
         />
         {/* Mengubah warna background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D4A46]/0 to-[#156B63]/100" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D4A46]/0 to-[#156B63]/50" />
       </div>
 
       {/* Decorative Glow Elements */}
@@ -39,12 +39,13 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPpdb, setActiveTab }) => {
           <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-extrabold leading-tight tracking-tight">
             Selamat Datang di <br />
             <span className="text-[#8cf4ea] dark:text-teal-300 drop-shadow-sm">
-              SD Negeri Mulyoagung 1
+              SD Negeri 1 Mulyoagung
             </span>
           </h1>
 
           <p className="text-base sm:text-lg lg:text-xl text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95">
-            Beriman, Kreatif, Berprestasi, Berkarakter, dan Berbudaya. Kami berkomitmen mencetak generasi unggul untuk masa depan bangsa.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum tenetur, quia voluptates ullam quidem odio et aut vel, ipsa odit, officiis non atque possimus commodi aperiam voluptatem eveniet. Sint, assumenda.
+            Ipsam atque nam natus saepe fugiat ut nostrum, ex consectetur quos possimus, eaque aut soluta recusandae officia est perferendis quo dolor asperiores reprehenderit et laborum. Voluptatem nesciunt ut ex nihil.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
@@ -82,7 +83,7 @@ export const Hero: React.FC<HeroProps> = ({ onOpenPpdb, setActiveTab }) => {
               />
               <div className="absolute -bottom-4 -left-4 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-3 px-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-bold">Pendidikan Karakter & Digital</span>
+                <span className="text-xs font-bold">Lorem, ipsum.</span>
               </div>
             </div>
           </div>
