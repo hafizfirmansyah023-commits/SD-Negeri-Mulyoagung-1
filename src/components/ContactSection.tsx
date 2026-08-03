@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapPin, Mail, Phone, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { div } from 'motion/react-client';
 
 export const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -60,8 +61,8 @@ export const ContactSection: React.FC = () => {
                     <span className="font-bold text-slate-900 block">
                       Alamat Sekolah:
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                      Jl. Raya Mulyoagung No. 1, Kecamatan Dau, Kabupaten Malang, Jawa Timur 65151
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                      JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur
                     </p>
                   </div>
                 </div>
@@ -75,10 +76,10 @@ export const ContactSection: React.FC = () => {
                       Email Resmi:
                     </span>
                     <a
-                      href="mailto:info@SD Negerimulyoagung1.sch.id"
-                      className="text-xs sm:text-sm text-teal-600 hover:underline"
+                      href="mailto:sdnmulyoagung01@gmail.com"
+                      className="text-xs sm:text-sm text-teal-600 dark:text-teal-400 hover:underline"
                     >
-                      info@SD Negerimulyoagung1.sch.id
+                      sdnmulyoagung01@gmail.com
                     </a>
                   </div>
                 </div>
@@ -91,8 +92,8 @@ export const ContactSection: React.FC = () => {
                     <span className="font-bold text-slate-900 block">
                       Telepon / WhatsApp:
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-600">
-                      (0341) 465-7890 / 08123456789
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                      (0341) 466-730 / Belum
                     </p>
                   </div>
                 </div>
