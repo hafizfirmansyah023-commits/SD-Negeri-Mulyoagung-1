@@ -4,6 +4,9 @@
  */
 
 import { useState, useEffect } from 'react';
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // Mengimpor CSS AOS
+
 import { NavTab } from './types';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -23,15 +26,29 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [ppdbOpen, setPpdbOpen] = useState(false);
 
+  // Inisialisasi AOS dan pengaturan mode terang
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('dark');
     root.classList.add('light');
     localStorage.removeItem('theme');
+
+    // Inisialisasi konfigurasi dasar AOS
+    AOS.init({
+      duration: 800, // Durasi animasi (ms)
+      easing: 'ease-in-out', // Efek transisi
+      once: true, // Animasi hanya berjalan satu kali
+      offset: 50, // Jarak scroll sebelum animasi dimulai (px)
+    });
   }, []);
 
+  // Me-refresh AOS setiap kali tab berganti agar animasi berfungsi di komponen dinamis
+  useEffect(() => {
+    AOS.refresh();
+  }, [activeTab]);
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white">
+    <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white overflow-hidden">
       {/* Header */}
       <Header
         activeTab={activeTab}
@@ -43,56 +60,76 @@ export default function App() {
       <main className="flex-grow">
         {activeTab === 'home' && (
           <>
-            <Hero
-              onOpenPpdb={() => setPpdbOpen(true)}
-              setActiveTab={setActiveTab}
-            />
-            <Stats />
-            <PrincipalGreeting />
-            <NewsSection onViewAllClick={() => setActiveTab('news')} />
-            <VideoProfileSection />
-            <SchoolProfileSection />
-            <ContactSection />
+            <div data-aos="fade-down">
+              <Hero
+                onOpenPpdb={() => setPpdbOpen(true)}
+                setActiveTab={setActiveTab}
+              />
+            </div>
+            <div data-aos="fade-up" data-aos-delay="100">
+              <Stats />
+            </div>
+            <div data-aos="fade-up" data-aos-delay="200">
+              <PrincipalGreeting />
+            </div>
+            <div data-aos="fade-right" data-aos-delay="100">
+              <NewsSection onViewAllClick={() => setActiveTab('news')} />
+            </div>
+            <div data-aos="zoom-in" data-aos-delay="100">
+              <VideoProfileSection />
+            </div>
+            <div data-aos="fade-left" data-aos-delay="100">
+              <SchoolProfileSection />
+            </div>
+            <div data-aos="fade-up" data-aos-delay="100">
+              <ContactSection />
+            </div>
           </>
         )}
 
         {activeTab === 'profile' && (
-          <div className="pt-4 animate-fade-in">
-            <SchoolProfileSection />
-            <VideoProfileSection />
+          <div className="pt-4" data-aos="fade-in">
+            <div data-aos="fade-right">
+              <SchoolProfileSection />
+            </div>
+            <div data-aos="zoom-in" data-aos-delay="200">
+              <VideoProfileSection />
+            </div>
           </div>
         )}
 
         {activeTab === 'directory' && (
-          <div className="pt-4 animate-fade-in">
+          <div className="pt-4" data-aos="fade-up">
             <DirectorySection />
           </div>
         )}
 
         {activeTab === 'gallery' && (
-          <div className="pt-4 animate-fade-in">
+          <div className="pt-4" data-aos="zoom-in">
             <GallerySection />
           </div>
         )}
 
         {activeTab === 'news' && (
-          <div className="pt-4 animate-fade-in">
+          <div className="pt-4" data-aos="fade-right">
             <NewsSection />
           </div>
         )}
 
         {activeTab === 'contact' && (
-          <div className="pt-4 animate-fade-in">
+          <div className="pt-4" data-aos="fade-up">
             <ContactSection />
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <Footer
-        setActiveTab={setActiveTab}
-        onOpenPpdb={() => setPpdbOpen(true)}
-      />
+      <div data-aos="fade-up" data-aos-anchor-placement="top-bottom">
+        <Footer
+          setActiveTab={setActiveTab}
+          onOpenPpdb={() => setPpdbOpen(true)}
+        />
+      </div>
 
       {/* PPDB Registration Modal */}
       <PpdbModal isOpen={ppdbOpen} onClose={() => setPpdbOpen(false)} />
