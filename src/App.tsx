@@ -42,8 +42,9 @@ export default function App() {
     });
   }, []);
 
-  // Me-refresh AOS setiap kali tab berganti agar animasi berfungsi di komponen dinamis
+  // Me-refresh AOS dan scroll ke paling atas setiap kali tab berganti
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     AOS.refresh();
   }, [activeTab]);
 
@@ -73,7 +74,10 @@ export default function App() {
               <PrincipalGreeting />
             </div>
             <div data-aos="fade-right" data-aos-delay="100">
-              <NewsSection onViewAllClick={() => setActiveTab('news')} />
+              <NewsSection onViewAllClick={() => {
+                setActiveTab('news');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }} />
             </div>
             <div data-aos="zoom-in" data-aos-delay="100">
               <VideoProfileSection />
