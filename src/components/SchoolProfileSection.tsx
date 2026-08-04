@@ -38,7 +38,7 @@ export const SchoolProfileSection: React.FC = () => {
             <Compass className="w-4 h-4 text-[#028C84]" />
             Mengenal Sekolah Kami
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1E3A8A] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[black] tracking-tight">
             Profil SD Negeri 1 Mulyoagung
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { TEACHERS_DIRECTORY } from '../data/schoolData';
-import { Search, Mail, GraduationCap, Award, Briefcase, BookOpen } from 'lucide-react';
+import { Search, Mail, GraduationCap, Briefcase, BookOpen } from 'lucide-react';
 import { Teacher } from '../types';
 
 export const DirectorySection: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('Semua');
-  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   const roles = ['Semua', 'Kepala Sekolah', 'Guru Kelas', 'Guru Mata Pelajaran'];
 
@@ -22,24 +21,29 @@ export const DirectorySection: React.FC = () => {
   });
 
   return (
-    <section className="w-full py-16 sm:py-20 bg-slate-50 dark:bg-slate-900/50 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-10">
+    <section className="relative w-full py-16 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
+      {/* Decorative ambient glows matching SchoolProfileSection */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 right-10 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-12 relative z-10">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 text-[#028C84] dark:text-teal-400 font-bold text-xs uppercase tracking-wider bg-teal-50 dark:bg-teal-950/60 px-3 py-1 rounded-full border border-teal-200 dark:border-teal-800">
-            <GraduationCap className="w-4 h-4" />
+          <div className="inline-flex items-center gap-2 text-[#028C84] font-bold text-xs uppercase tracking-wider bg-teal-50/80 border border-teal-200/80 px-4 py-1.5 rounded-full shadow-sm backdrop-blur-md">
+            <GraduationCap className="w-4 h-4 text-[#028C84]" />
             Tenaga Pendidik & Kependidikan
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1E3A8A] dark:text-blue-300">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-[black] tracking-tight">
             Direktori Guru & Tendik
           </h2>
-          <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
-            Mengenal para pendidik profesional dan berdedikasi tinggi di SD Negeri Mulyoagung 1
+          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Mengenal para pendidik profesional dan berdedikasi tinggi di SD Negeri 1 Mulyoagung
           </p>
         </div>
 
-        {/* Filter & Search Bar */}
-        <div className="bg-white dark:bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 justify-between items-center">
+        {/* Filter & Search Bar Liquid Glass */}
+        <div className="bg-white/70 backdrop-blur-xl p-4 sm:p-6 rounded-3xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col sm:flex-row gap-4 justify-between items-center">
           {/* Search Input */}
           <div className="relative w-full sm:w-80">
             <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -48,21 +52,20 @@ export const DirectorySection: React.FC = () => {
               placeholder="Cari nama guru / NIP / mata pelajaran..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className="w-full pl-10 pr-4 py-2.5 bg-white/90 border border-teal-100/90 rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#028C84] shadow-inner"
             />
           </div>
 
-          {/* Role Filters */}
-          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          {/* Role Filters Pill Switcher */}
+          <div className="flex flex-wrap gap-1.5 p-1.5 rounded-2xl bg-teal-50/60 border border-teal-100/80 w-full sm:w-auto justify-center">
             {roles.map((r) => (
               <button
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
-                  roleFilter === r
-                    ? 'bg-[#1E3A8A] text-white shadow-sm'
-                    : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600'
-                }`}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 cursor-pointer ${roleFilter === r
+                    ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                    : 'text-slate-600 hover:text-[#028C84] hover:bg-white/60'
+                  }`}
               >
                 {r}
               </button>
@@ -70,16 +73,19 @@ export const DirectorySection: React.FC = () => {
           </div>
         </div>
 
-        {/* Grid Cards */}
+        {/* Grid Liquid Glass Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTeachers.map((teacher) => (
             <div
               key={teacher.id}
-              className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm hover-lift border border-slate-200/80 dark:border-slate-700/80 flex flex-col justify-between"
+              className="group relative bg-white/75 backdrop-blur-xl rounded-3xl p-6 border border-white/80 shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.14)] hover:border-teal-200/80 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 overflow-hidden"
             >
+              {/* Subtle top corner gradient shine */}
+              <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-teal-100/40 to-transparent rounded-tr-3xl pointer-events-none" />
+
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border-2 border-teal-500/30">
+                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border-2 border-teal-500/30 shadow-md group-hover:scale-105 transition-transform duration-300">
                     <img
                       src={teacher.image}
                       alt={teacher.name}
@@ -87,50 +93,48 @@ export const DirectorySection: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <span className="inline-block bg-teal-50 dark:bg-teal-950/60 text-[#028C84] dark:text-teal-300 text-[11px] font-bold px-2.5 py-0.5 rounded-full mb-1">
+                    <span className="inline-block bg-teal-50/90 border border-teal-200/80 text-[#028C84] text-[11px] font-bold px-3 py-0.5 rounded-full mb-1 shadow-xs">
                       {teacher.role}
                     </span>
-                    <h3 className="font-bold text-base text-[#1E3A8A] dark:text-blue-200 leading-snug">
+                    <h3 className="font-extrabold text-base text-[#1E3A8A] group-hover:text-[#028C84] transition-colors leading-snug">
                       {teacher.name}
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    <p className="text-xs font-mono text-slate-500 mt-0.5">
                       NIP. {teacher.nip}
                     </p>
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300">
+                <div className="space-y-2 pt-3 border-t border-slate-100 text-xs text-slate-600">
                   <div className="flex items-center gap-2">
-                    <BookOpen className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
-                    <span className="font-semibold text-slate-700 dark:text-slate-200">
-                      Tugas:
-                    </span>
-                    <span className="truncate">{teacher.subject}</span>
+                    <BookOpen className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                    <span className="font-semibold text-slate-700">Tugas:</span>
+                    <span className="truncate text-slate-600">{teacher.subject}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <GraduationCap className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
-                    <span className="truncate">{teacher.education}</span>
+                    <GraduationCap className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                    <span className="truncate text-slate-600">{teacher.education}</span>
                   </div>
                   {teacher.experienceYears && (
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
-                      <span>Pengabdian: {teacher.experienceYears} Tahun</span>
+                      <Briefcase className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                      <span className="text-slate-600">Pengabdian: {teacher.experienceYears} Tahun</span>
                     </div>
                   )}
                 </div>
 
                 {teacher.quote && (
-                  <p className="text-xs italic text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <p className="text-xs italic text-slate-600 bg-teal-50/50 p-3 rounded-2xl border border-teal-100/60 leading-relaxed">
                     "{teacher.quote}"
                   </p>
                 )}
               </div>
 
               {teacher.email && (
-                <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-700/80">
+                <div className="pt-4 mt-4 border-t border-slate-100">
                   <a
                     href={`mailto:${teacher.email}`}
-                    className="w-full py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-700/60 hover:bg-teal-50 dark:hover:bg-teal-950/60 text-slate-700 dark:text-slate-200 hover:text-[#028C84] dark:hover:text-teal-300 transition-colors text-xs font-semibold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 px-4 rounded-2xl bg-teal-50/80 hover:bg-[#028C84] text-[#028C84] hover:text-white border border-teal-200/80 transition-all duration-300 text-xs font-bold flex items-center justify-center gap-2 shadow-sm"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span>Kirim Pesan Email</span>
@@ -142,8 +146,8 @@ export const DirectorySection: React.FC = () => {
         </div>
 
         {filteredTeachers.length === 0 && (
-          <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 p-8">
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
+          <div className="text-center py-12 bg-white/80 backdrop-blur-xl rounded-3xl border border-white/80 p-8 shadow-sm">
+            <p className="text-slate-500 text-sm font-semibold">
               Tidak ada data guru yang cocok dengan pencarian "{searchTerm}".
             </p>
           </div>
