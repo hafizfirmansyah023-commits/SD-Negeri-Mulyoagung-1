@@ -3,10 +3,10 @@ import { MapPin, Mail, Phone, Clock, ExternalLink } from 'lucide-react';
 
 export const ContactSection: React.FC = () => {
   return (
-    <section id="contact-section" className="w-full py-16 sm:py-20 bg-gradient-to-br from-[#0D4A46] via-[#105e58] to-[#028C84] transition-colors relative overflow-hidden">
+    <section id="contact-section" className="w-full py-16 sm:py-24 bg-[#0D4A46] transition-colors relative overflow-hidden">
       {/* Decorative ambient glows */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-300/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-[#20C997]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#79EEDE]/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-12 relative z-10">
         {/* Title */}

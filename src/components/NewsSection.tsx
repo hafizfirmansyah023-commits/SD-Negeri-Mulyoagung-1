@@ -29,7 +29,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
               <Tag className="w-3.5 h-3.5" />
               Kabar & Pengumuman Sekolah
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#1E3A8A]">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[black]">
               Berita & Informasi Terkini
             </h2>
             <p className="text-slate-600 text-sm sm:text-base mt-2">

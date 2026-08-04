@@ -117,7 +117,7 @@ export default function App() {
         )}
 
         {activeTab === 'contact' && (
-          <div className="pt-4" data-aos="fade-up">
+          <div data-aos="fade-up">
             <ContactSection />
           </div>
         )}
