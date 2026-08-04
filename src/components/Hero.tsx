@@ -34,7 +34,7 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="absolute bottom-0 right-0 w-[420px] h-[420px] bg-[#79EEDE]/10 rounded-full blur-3xl"></div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10 py-16 flex flex-col lg:flex-row items-center gap-12">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-10 pt-16 sm:pt-20 pb-24 sm:pb-28 lg:pb-32 flex flex-col lg:flex-row items-center gap-12">
 
         {/* LEFT */}
         <div className="lg:w-3/5 text-center lg:text-left">

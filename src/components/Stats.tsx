@@ -19,7 +19,7 @@ export const Stats: React.FC = () => {
   };
 
   return (
-    <section className="relative z-20 -mt-12 sm:-mt-16 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 mb-16 sm:mb-20">
+    <section className="relative z-20 -mt-6 sm:-mt-8 lg:-mt-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 mb-16 sm:mb-20">
       {/* Colorful Mesh Gradient Glow behind glass for real refraction */}
       <div className="absolute inset-0 max-w-6xl mx-auto -z-10 flex justify-between items-center opacity-70 pointer-events-none blur-3xl">
         <div className="w-48 h-32 bg-blue-400/40 rounded-full" />
