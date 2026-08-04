@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, PlayCircle, X, CheckCircle, ExternalLink } from 'lucide-react';
+import { Play, PlayCircle, X, ExternalLink } from 'lucide-react';
 
 export const VideoProfileSection: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -32,7 +32,7 @@ export const VideoProfileSection: React.FC = () => {
               className="bg-[#F9A825] hover:bg-amber-500 text-[#1E3A8A] font-bold text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2.5 shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current" />
-              <span>Putar Video Sekarang</span>
+              <span>{isPlaying ? 'Sedang Memutar Video' : 'Putar Video Sekarang'}</span>
             </button>
 
             <a
@@ -45,74 +45,46 @@ export const VideoProfileSection: React.FC = () => {
               <span>Tonton di YouTube</span>
             </a>
           </div>
-
         </div>
 
-        {/* Thumbnail & Interactive Play Trigger */}
-        <div className="lg:w-1/2 relative min-h-[300px] sm:min-h-[380px] lg:min-h-[420px]">
-          <img
-            src="https://img.youtube.com/vi/-HU-Kg20g-M/maxresdefault.jpg"
-            alt="Video Profil Thumbnail SD Negeri Mulyoagung 1"
-            className="w-full h-full object-cover"
-          />
-          <div
-            onClick={() => setIsPlaying(true)}
-            className="absolute inset-0 bg-slate-950/40 hover:bg-slate-950/20 transition-colors flex items-center justify-center group cursor-pointer"
-          >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/25 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl border border-white/40">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white text-[#1E3A8A] rounded-full flex items-center justify-center shadow-lg pl-1">
-                <Play className="w-8 h-8 fill-current" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Video Modal Player */}
-      {isPlaying && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-fade-in">
-          <div className="relative w-full max-w-4xl bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800">
-            <div className="flex justify-between items-center p-4 sm:p-6 border-b border-slate-800 bg-slate-950 text-white">
-              <div className="flex items-center gap-2">
-                <PlayCircle className="w-5 h-5 text-teal-400" />
-                <h3 className="font-bold text-base sm:text-lg">
-                  Profil Resmi SD Negeri Mulyoagung 1
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsPlaying(false)}
-                className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-                aria-label="Tutup Video"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Video Player Frame */}
-            <div className="relative w-full aspect-video bg-black flex items-center justify-center">
+        {/* Video Player / Thumbnail Area */}
+        <div className="lg:w-1/2 relative min-h-[300px] sm:min-h-[380px] lg:min-h-[420px] bg-slate-950 overflow-hidden">
+          {isPlaying ? (
+            <div className="w-full h-full min-h-[300px] sm:min-h-[380px] lg:min-h-[420px] relative">
               <iframe
-                src="https://www.youtube.com/embed/-HU-Kg20g-M"
-                title="Video Profil SD Negeri Mulyoagung 1"
-                className="w-full h-full border-0"
+                src="https://www.youtube.com/embed/-HU-Kg20g-M?autoplay=1"
+                title="Video Profil SD Negeri 1 Mulyoagung"
+                className="w-full h-full border-0 absolute inset-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
-            </div>
-
-            <div className="p-4 sm:p-6 bg-slate-900 text-slate-300 text-xs sm:text-sm flex flex-col sm:flex-row justify-between items-center gap-3">
-              <p>
-                Menampilkan sekilas suasana pembelajaran, kebersihan kampus, dan semangat siswa SD Negeri Mulyoagung 1.
-              </p>
               <button
                 onClick={() => setIsPlaying(false)}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-semibold px-4 py-2 rounded-lg text-xs"
+                className="absolute top-3 right-3 bg-slate-900/80 hover:bg-slate-900 text-white p-2 rounded-full backdrop-blur-md z-20 border border-white/20 transition-all flex items-center gap-1.5 px-3 text-xs font-bold shadow-lg cursor-pointer"
+                title="Tutup Pemutar Video"
               >
-                Tutup Pemutar
+                <span>Tutup</span>
+                <X className="w-4 h-4" />
               </button>
             </div>
-          </div>
+          ) : (
+            <div className="w-full h-full relative group cursor-pointer" onClick={() => setIsPlaying(true)}>
+              <img
+                src="https://img.youtube.com/vi/-HU-Kg20g-M/maxresdefault.jpg"
+                alt="Video Profil Thumbnail SD Negeri Mulyoagung 1"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-colors flex items-center justify-center">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-white/25 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl border border-white/40">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-white text-[#1E3A8A] rounded-full flex items-center justify-center shadow-lg pl-1">
+                    <Play className="w-8 h-8 fill-current" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </section>
   );
 };
