@@ -1,7 +1,8 @@
 import React from 'react';
-import { MapPin, Mail, Phone, ChevronRight, QrCode, Camera, Play, Sparkles } from 'lucide-react';
+import { MapPin, Mail, Phone, ChevronRight, Sparkles, Youtube, Instagram, Facebook } from 'lucide-react';
 import { NavTab } from '../types';
 import logoImg from '../assets/logo.png';
+import tiktokLogo from '../assets/logotiktok.png';
 
 interface FooterProps {
   setActiveTab: (tab: NavTab) => void;
@@ -32,44 +33,52 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
           </div>
 
           <p className="text-sm text-slate-200 dark:text-slate-400 max-w-md leading-relaxed">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Qui fugiat quo aut, voluptate molestias modi quam, ad iure ullam commodi mollitia necessitatibus eum autem quisquam tempora doloremque? Doloribus, illo nihil?
-            Eum quibusdam dignissimos repellat nesciunt id ducimus quos, nemo temporibus obcaecati ipsam blanditiis, enim dolorem velit veritatis pariatur quidem a error, maiores suscipit necessitatibus deleniti. Culpa at vero fugiat molestiae!
+            Selamat datang di SD Negeri 1 Mulyoagung, sekolah yang berkomitmen menciptakan lingkungan belajar yang aman, nyaman, dan inspiratif.
+            Kami menghadirkan pendidikan berkualitas untuk membentuk peserta didik yang beriman, berakhlak mulia, berprestasi, kreatif, serta siap menghadapi perkembangan ilmu pengetahuan dan teknologi di masa depan.
           </p>
 
-          <div className="flex gap-3 pt-2">
-            <a
-              href="#qr"
-              onClick={(e) => {
-                e.preventDefault();
-                alert('QR Code Digital Card SD Negeri Mulyoagung 1');
-              }}
-              className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#028C84] flex items-center justify-center text-white transition-colors"
-              title="QR Digital"
-            >
-              <QrCode className="w-4 h-4" />
-            </a>
-            <a
-              href="#instagram"
-              onClick={(e) => {
-                e.preventDefault();
-                alert('Instagram: @SD Negerimulyoagung1_malang');
-              }}
-              className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#028C84] flex items-center justify-center text-white transition-colors"
-              title="Instagram Sekolah"
-            >
-              <Camera className="w-4 h-4" />
-            </a>
-            <a
-              href="#youtube"
-              onClick={(e) => {
-                e.preventDefault();
-                alert('YouTube Channel: SD Negeri Mulyoagung 1 Official');
-              }}
-              className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#028C84] flex items-center justify-center text-white transition-colors"
-              title="YouTube Official"
-            >
-              <Play className="w-4 h-4 fill-current" />
-            </a>
+          <div className="space-y-2 pt-2">
+            <span className="text-xs font-bold text-slate-300 uppercase tracking-wider block">
+              Media Sosial Resmi:
+            </span>
+            <div className="flex items-center gap-3 flex-wrap">
+              <a
+                href="https://www.youtube.com/@mulyoagungsatu3851"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#FF0000] flex items-center justify-center text-white transition-all duration-300 hover:scale-110 shadow-md"
+                title="YouTube Official"
+              >
+                <Youtube className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.instagram.com/mulyoagung1_dau?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-gradient-to-tr hover:from-amber-500 hover:via-rose-500 hover:to-purple-600 flex items-center justify-center text-white transition-all duration-300 hover:scale-110 shadow-md"
+                title="Instagram Official"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://l.instagram.com/?u=https%3A%2F%2Fwww.facebook.com%2Fprofile.php%3Fid%3D100085140035121%26utm_source%3Dig%26utm_medium%3Dsocial%26utm_content%3Dlink_in_bio&e=AUB8EPIOJOhfq3yW70pCmCuVzI5DHSUTdtzFNnDCEzQwRrZPwb4cQBLmZB4v5Z38Aw-CJX3tfVFMQ6I9Mw3KDSLL55YJizdPKU6amlqkRIe1o2-hRz-WODVrCaNVsJjv_n9NZxE"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#1877F2] flex items-center justify-center text-white transition-all duration-300 hover:scale-110 shadow-md"
+                title="Facebook Official"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@mulyoagung.1?is_from_webapp=1&sender_device=pc"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/10 hover:bg-black flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-md p-2 overflow-hidden"
+                title="TikTok Official"
+              >
+                <img src={tiktokLogo} alt="TikTok Official" className="w-full h-full object-contain" />
+              </a>
+            </div>
           </div>
         </div>
 
