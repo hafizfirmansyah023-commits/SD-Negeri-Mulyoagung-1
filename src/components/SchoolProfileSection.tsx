@@ -39,7 +39,7 @@ export const SchoolProfileSection: React.FC = () => {
             Mengenal Sekolah Kami
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1E3A8A] tracking-tight">
-            Profil SD Negeri Mulyoagung 1
+            Profil SD Negeri 1 Mulyoagung
           </h2>
           <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
             Landasan visi pendidik, kilasan sejarah pengabdian, serta fasilitas sarana pendukung pembelajaran
