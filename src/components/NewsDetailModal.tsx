@@ -50,10 +50,6 @@ export const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ article, onClo
             <User className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
             {article.author}
           </span>
-          <span className="flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-            Estimasi Baca: {article.readTime}
-          </span>
         </div>
 
         {/* Modal Content Body */}
