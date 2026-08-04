@@ -90,10 +90,10 @@ export const ContactSection: React.FC = () => {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">
-                      Telepon / WhatsApp:
+                      Telepon:
                     </span>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                      (0341) 466-730 / Belum
+                      (0341) 466-730
                     </p>
                   </div>
                 </div>

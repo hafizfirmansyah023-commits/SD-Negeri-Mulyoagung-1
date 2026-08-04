@@ -39,11 +39,11 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-4 text-slate-300">
             <span className="flex items-center gap-1">
               <Mail className="w-3.5 h-3.5 text-teal-400" />
-              info@SD Negerimulyoagung1.sch.id
+              sdnmulyoagung01@gmail.com
             </span>
             <span className="hidden sm:flex items-center gap-1">
               <Phone className="w-3.5 h-3.5 text-teal-400" />
-              (0341) 465-7890 / 08123456789
+              (0341) 466-730
             </span>
           </div>
           <div className="flex items-center gap-3">

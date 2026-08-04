@@ -143,7 +143,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
             <li className="flex items-center gap-3">
               <Phone className="w-4 h-4 text-teal-400 shrink-0" />
               <a href="tel:08123456789" className="hover:text-white transition-colors">
-                (0341) 466-730 / Belum
+                (0341) 466-730
               </a>
             </li>
           </ul>
