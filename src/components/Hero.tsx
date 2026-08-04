@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { NavTab } from '../types';
+import heroImg from '../assets/images/img1.webp';
 
 interface HeroProps {
   onOpenPpdb: () => void;
@@ -57,8 +58,8 @@ export const Hero: React.FC<HeroProps> = ({
           </h1>
 
           <p className="text-base sm:text-lg lg:text-xl text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum tenetur, quia voluptates ullam quidem odio et aut vel, ipsa odit, officiis non atque possimus commodi aperiam voluptatem eveniet. Sint, assumenda.
-            Ipsam atque nam natus saepe fugiat ut nostrum, ex consectetur quos possimus, eaque aut soluta recusandae officia est perferendis quo dolor asperiores reprehenderit et laborum. Voluptatem nesciunt ut ex nihil.
+           Selamat datang di SD Negeri 1 Mulyoagung, sekolah yang berkomitmen menciptakan lingkungan belajar yang aman, nyaman, dan inspiratif. Kami menghadirkan pendidikan berkualitas untuk membentuk peserta didik yang beriman, 
+           berakhlak mulia, berprestasi, kreatif, serta siap menghadapi perkembangan ilmu pengetahuan dan teknologi di masa depan.
           </p>
 
           {/* Buttons */}
@@ -112,13 +113,13 @@ export const Hero: React.FC<HeroProps> = ({
             <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-3 shadow-2xl rotate-2 hover:rotate-0 transition-all duration-500">
 
               <img
-                src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=800"
+                src={heroImg}
                 alt="SD Negeri Mulyoagung 1"
                 className="rounded-2xl object-cover w-full h-[480px]"
               />
               <div className="absolute -bottom-4 -left-4 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-3 px-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-bold">Lorem, ipsum.</span>
+                <span className="text-xs font-bold">"lorem ipsum dolor sit amet, consectetur adipisicing elit. Est, doloremque rerum explicabo commodi, hic tenetur totam, vel saepe perspiciatis quia cumque nihil aspernatur at quaerat cum odit eaque autem quas!(MOTTO)"</span>
               </div>
 
             </div>
