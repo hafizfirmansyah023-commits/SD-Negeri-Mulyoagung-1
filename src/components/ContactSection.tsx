@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MapPin, Mail, Phone, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { MapPin, Mail, Phone, Clock, Send, CheckCircle2, ExternalLink } from 'lucide-react';
 import { div } from 'motion/react-client';
 
 export const ContactSection: React.FC = () => {
@@ -116,16 +116,28 @@ export const ContactSection: React.FC = () => {
 
             {/* Map Preview */}
             <div className="bg-white/95 backdrop-blur-md rounded-3xl p-4 shadow-xl border border-white/60 overflow-hidden">
-              <span className="text-xs font-bold text-slate-600 px-2 block mb-2">
-                Peta Lokasi Google Maps:
-              </span>
-              <div className="w-full h-48 rounded-2xl overflow-hidden bg-slate-200 relative">
+              <div className="flex items-center justify-between px-2 mb-2">
+                <span className="text-xs font-bold text-slate-600">
+                  Peta Lokasi Google Maps:
+                </span>
+                <a
+                  href="https://maps.app.goo.gl/4ekhNxNWhTuH1VEV6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-teal-600 hover:text-teal-700 font-semibold underline flex items-center gap-1 transition-colors"
+                >
+                  <span>Buka di Google Maps</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+              <div className="w-full h-64 rounded-2xl overflow-hidden bg-slate-200 relative">
                 <iframe
                   title="Lokasi SD Negeri Mulyoagung 1"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.4984189392686!2d112.5768295!3d-7.9473007!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788220f18bdc6d%3A0x67390a8a614d95b5!2sSD Negeri%20Mulyoagung%201!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.527376383637!2d112.58555027588324!3d-7.917209398863617!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e78818ec3f74a4f%3A0x5b041b813175a4e6!2sSDN%20Mulyoagung%2001!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid"
                   className="w-full h-full border-0"
                   allowFullScreen
                   loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
             </div>
