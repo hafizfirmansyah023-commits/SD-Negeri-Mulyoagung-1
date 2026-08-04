@@ -62,10 +62,10 @@ export const PrincipalGreeting: React.FC = () => {
 
           <div className="pt-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <span className="text-xs text-slate-500 font-medium">
-              SD Negeri Mulyoagung 1 - Kecamatan Dau, Kab. Malang
+              SD Negeri 1 Mulyoagung - Kecamatan Dau, Kab. Malang
             </span>
             <span className="text-xs font-semibold text-slate-700 bg-white/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white shadow-sm">
-              Pendidikan Karakter
+              MA ONE Bergelora!
             </span>
           </div>
         </div>

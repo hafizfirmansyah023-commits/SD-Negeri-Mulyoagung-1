@@ -11,7 +11,7 @@ export const SCHOOL_STATS: StatItem[] = [
   },
   {
     id: 'stat-guru',
-    number: '15',
+    number: '16',
     label: 'Guru & Tendik',
     icon: 'GraduationCap',
     colorClass: 'text-teal-600',
@@ -36,8 +36,8 @@ export const SCHOOL_STATS: StatItem[] = [
 ];
 
 export const PRINCIPAL_INFO = {
-  name: 'Aris Wibowo, S.Pd.',
-  title: 'Kepala SD Negeri Mulyoagung 1',
+  name: 'Amalia Dyah Erviana, S.Pd.SD',
+  title: 'Kepala SD Negeri 1 Mulyoagung',
   photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600',
   greeting: `"Assalamu'alaikum Wr. Wb.
 
