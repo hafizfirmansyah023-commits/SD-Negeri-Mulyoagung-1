@@ -89,7 +89,7 @@ export const ContactSection: React.FC = () => {
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block">
+                    <span className="font-bold text-slate-900 dark:text-slate-100 block">
                       Telepon:
                     </span>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
@@ -106,8 +106,8 @@ export const ContactSection: React.FC = () => {
                     <span className="font-bold text-slate-900 block">
                       Jam Pelayanan Sekretariat:
                     </span>
-                    <p className="text-xs sm:text-sm text-slate-600">
-                      Senin - Sabtu: 07.00 - 13.00 WIB
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                      Senin - Jumat: 07.00 - 14.15 WIB
                     </p>
                   </div>
                 </div>
