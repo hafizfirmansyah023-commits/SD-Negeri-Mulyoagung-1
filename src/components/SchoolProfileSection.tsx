@@ -101,7 +101,8 @@ export const SchoolProfileSection: React.FC = () => {
               </div>
               <div className="relative overflow-hidden rounded-2xl p-5 bg-gradient-to-r from-teal-50/90 via-white/80 to-teal-50/40 border border-teal-100/80 shadow-inner">
                 <p className="text-base sm:text-lg text-slate-800 font-bold leading-relaxed border-l-4 border-[#028C84] pl-4">
-                  "Terwujudnya Peserta Didik yang Beriman, Budi Pekerti Luhur, Berprestasi Akademik & Non-Akademik, Berwawasan Teknologi, dan Berbudaya Lingkungan."
+                  "Terwujudnya murid yang beriman dan bertakwa, bernalar kritis, berkarakter mulia,
+                   sehat jasmani, dan unggul dalam digitalisasi."
                 </p>
               </div>
             </div>
@@ -123,23 +124,23 @@ export const SchoolProfileSection: React.FC = () => {
               <ul className="space-y-3.5 text-sm sm:text-base text-slate-700">
                 <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
                   <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menanamkan nilai-nilai keagamaan, kejujuran, dan sopan santun melalui kegiatan keagamaan harian.</span>
+                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.</span>
                 </li>
                 <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
                   <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Diselenggarakannya pembelajaran P5 (Profil Pelajar Pancasila) berbasis projek kearifan lokal.</span>
+                  <span>Menyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah, proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis, berpikir reflektif, serta memecahkan masalah.</span>
                 </li>
                 <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
                   <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mengoptimalkan integrasi literasi digital dan pemanfaatan media TIK dalam pembelajaran harian.</span>
+                  <span>Menumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin, tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati sesuai nilai-nilai Profil Lulusan.</span>
                 </li>
                 <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
                   <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mengembangkan bakat seni, budaya, serta cabang olahraga secara intensif melalui ekstrakurikuler.</span>
+                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar untuk meningkatkan kesehatan jasmani.</span>
                 </li>
                 <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
                   <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mewujudkan lingkungan sekolah yang bersih, hijau, sehat, dan berwawasan lingkungan adiwiyata.</span>
+                  <span>Mengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.</span>
                 </li>
               </ul>
             </div>
