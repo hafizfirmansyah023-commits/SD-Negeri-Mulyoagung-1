@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { NavTab } from '../types';
 import heroImg from '../assets/images/img1.webp';
+import heroImg1 from '../assets/images/img2.webp';
 
 interface HeroProps {
   onOpenPpdb: () => void;
@@ -19,10 +20,9 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="absolute inset-0 z-0">
         {/* GANTI FOTO SEKOLAH */}
         <div
-          className="bg-cover bg-center w-full h-full opacity-15 scale-105"
+          className="bg-cover bg-center w-full h-full opacity-30 scale-105"
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1600')",
+            backgroundImage: `url(${heroImg1})`,
           }}
         />
         {/* Mengubah warna background */}
@@ -119,7 +119,7 @@ export const Hero: React.FC<HeroProps> = ({
               />
               <div className="absolute -bottom-4 -left-4 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-3 px-4 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-bold">"lorem ipsum dolor sit amet, consectetur adipisicing elit. Est, doloremque rerum explicabo commodi, hic tenetur totam, vel saepe perspiciatis quia cumque nihil aspernatur at quaerat cum odit eaque autem quas!(MOTTO)"</span>
+                <span className="text-xs font-bold">"MA ONE Bergelora!"</span>
               </div>
 
             </div>
