@@ -243,21 +243,22 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
                 </div>
               </div>
 
-              <div className="p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                {/* TIM can edit their own or if not verified yet, but let's allow edits and deletions */}
-                <button
-                  onClick={() => handleOpenEdit(item)}
-                  className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  <Edit2 size={14} /> Ubah
-                </button>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  <Trash2 size={14} /> Hapus
-                </button>
-              </div>
+              {currentUser.role === 'ADMIN' && (
+                <div className="p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                  <button
+                    onClick={() => handleOpenEdit(item)}
+                    className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    <Edit2 size={14} /> Ubah
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    <Trash2 size={14} /> Hapus
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 

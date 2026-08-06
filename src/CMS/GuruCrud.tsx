@@ -11,6 +11,7 @@ interface Teacher {
   riwayat_pendidikan: string;
   jenis_kelamin: 'Laki-laki' | 'Perempuan';
   status: string;
+  motto: string;
 }
 
 const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
@@ -31,6 +32,7 @@ export default function GuruCrud() {
   const [riwayatPendidikan, setRiwayatPendidikan] = useState('');
   const [jenisKelamin, setJenisKelamin] = useState<'Laki-laki' | 'Perempuan'>('Laki-laki');
   const [status, setStatus] = useState('PNS');
+  const [motto, setMotto] = useState('');
   const [fotoFile, setFotoFile] = useState<File | null>(null);
 
   const fetchTeachers = async () => {
@@ -62,6 +64,7 @@ export default function GuruCrud() {
     setRiwayatPendidikan('');
     setJenisKelamin('Laki-laki');
     setStatus('PNS');
+    setMotto('');
     setFotoFile(null);
     setEditId(null);
     setError('');
@@ -82,6 +85,7 @@ export default function GuruCrud() {
     setRiwayatPendidikan(t.riwayat_pendidikan);
     setJenisKelamin(t.jenis_kelamin);
     setStatus(t.status);
+    setMotto(t.motto || '');
     setFotoFile(null);
     setShowModal(true);
   };
@@ -103,6 +107,7 @@ export default function GuruCrud() {
     formData.append('riwayat_pendidikan', riwayatPendidikan);
     formData.append('jenis_kelamin', jenisKelamin);
     formData.append('status', status);
+    formData.append('motto', motto);
     if (fotoFile) {
       formData.append('foto', fotoFile);
     }
@@ -221,6 +226,11 @@ export default function GuruCrud() {
                       <span>JK: {t.jenis_kelamin}</span>
                       <span>Status: {t.status}</span>
                     </div>
+                    {t.motto && (
+                      <p className="text-xs italic text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100 mt-1">
+                        "{t.motto}"
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -357,6 +367,17 @@ export default function GuruCrud() {
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Motto / Kutipan Pribadi</label>
+                <textarea
+                  rows={2}
+                  value={motto}
+                  onChange={(e) => setMotto(e.target.value)}
+                  placeholder="Contoh: Mendidik dengan hati, membentuk karakter mulia."
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 resize-none"
+                />
               </div>
 
               <div>

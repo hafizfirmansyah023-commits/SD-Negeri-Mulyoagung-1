@@ -241,20 +241,22 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button
-                  onClick={() => handleOpenEdit(art)}
-                  className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  <Edit2 size={14} /> Ubah
-                </button>
-                <button
-                  onClick={() => handleDelete(art.id)}
-                  className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  <Trash2 size={14} /> Hapus
-                </button>
-              </div>
+              {currentUser.role === 'ADMIN' && (
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                  <button
+                    onClick={() => handleOpenEdit(art)}
+                    className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    <Edit2 size={14} /> Ubah
+                  </button>
+                  <button
+                    onClick={() => handleDelete(art.id)}
+                    className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3.5 py-2 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
+                  >
+                    <Trash2 size={14} /> Hapus
+                  </button>
+                </div>
+              )}
             </div>
           ))}
 

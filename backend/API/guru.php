@@ -33,6 +33,7 @@ elseif ($method === 'POST') {
         $riwayat_pendidikan = isset($_POST['riwayat_pendidikan']) ? trim($_POST['riwayat_pendidikan']) : '';
         $jenis_kelamin = isset($_POST['jenis_kelamin']) ? trim($_POST['jenis_kelamin']) : '';
         $status = isset($_POST['status']) ? trim($_POST['status']) : '';
+        $motto = isset($_POST['motto']) ? trim($_POST['motto']) : '';
 
         if (empty($nama) || empty($nip) || empty($jabatan) || empty($tugas) || empty($riwayat_pendidikan) || empty($jenis_kelamin) || empty($status)) {
             http_response_code(400);
@@ -52,8 +53,8 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("INSERT INTO guru_tendik (nama, nip, jabatan, tugas, foto, riwayat_pendidikan, jenis_kelamin, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $riwayat_pendidikan, $jenis_kelamin, $status]);
+            $stmt = $conn->prepare("INSERT INTO guru_tendik (nama, nip, jabatan, tugas, foto, riwayat_pendidikan, jenis_kelamin, status, motto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $riwayat_pendidikan, $jenis_kelamin, $status, $motto]);
             echo json_encode(["status" => "success", "message" => "Guru/Staff berhasil ditambahkan."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -69,6 +70,7 @@ elseif ($method === 'POST') {
         $riwayat_pendidikan = isset($_POST['riwayat_pendidikan']) ? trim($_POST['riwayat_pendidikan']) : '';
         $jenis_kelamin = isset($_POST['jenis_kelamin']) ? trim($_POST['jenis_kelamin']) : '';
         $status = isset($_POST['status']) ? trim($_POST['status']) : '';
+        $motto = isset($_POST['motto']) ? trim($_POST['motto']) : '';
 
         if ($id === 0 || empty($nama) || empty($nip) || empty($jabatan) || empty($tugas) || empty($riwayat_pendidikan) || empty($jenis_kelamin) || empty($status)) {
             http_response_code(400);
@@ -101,8 +103,8 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("UPDATE guru_tendik SET nama = ?, nip = ?, jabatan = ?, tugas = ?, foto = ?, riwayat_pendidikan = ?, jenis_kelamin = ?, status = ? WHERE id = ?");
-            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $riwayat_pendidikan, $jenis_kelamin, $status, $id]);
+            $stmt = $conn->prepare("UPDATE guru_tendik SET nama = ?, nip = ?, jabatan = ?, tugas = ?, foto = ?, riwayat_pendidikan = ?, jenis_kelamin = ?, status = ?, motto = ? WHERE id = ?");
+            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $riwayat_pendidikan, $jenis_kelamin, $status, $motto, $id]);
             echo json_encode(["status" => "success", "message" => "Data Guru/Staff berhasil diperbarui."]);
         } catch (PDOException $e) {
             http_response_code(500);
