@@ -100,11 +100,19 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Right Actions */}
           <div className="hidden md:flex items-center gap-3">
+            <button
+              onClick={() => handleNavClick('cms')}
+              className={`text-sm font-semibold py-2 px-4 rounded-full transition-all border border-teal-500/30 cursor-pointer ${
+                activeTab === 'cms' ? 'bg-[#028C84] text-white' : 'text-slate-300 hover:text-white'
+              }`}
+            >
+              CMS Portal
+            </button>
 
             {/* PPDB Button */}
             <button
               onClick={onOpenPpdb}
-              className="bg-[#028C84] hover:bg-[#006a64] text-white font-semibold text-sm py-2.5 px-6 rounded-full transition-all shadow-sm hover:shadow-md hover:scale-[1.02] flex items-center gap-2"
+              className="bg-[#028C84] hover:bg-[#006a64] text-white font-semibold text-sm py-2.5 px-6 rounded-full transition-all shadow-sm hover:shadow-md hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
             >
               <Sparkles className="w-4 h-4" />
               Daftar Sekarang
@@ -116,13 +124,13 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Hamburger Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-[#1E3A8A] dark:text-blue-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
+              className="p-2 text-[#1E3A8A] dark:text-blue-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               aria-label="Open navigation menu"
             >
               {mobileMenuOpen ? (
-                <X className="w-7 h-7" />
+                <X className="w-7 h-7 text-white" />
               ) : (
-                <Menu className="w-7 h-7" />
+                <Menu className="w-7 h-7 text-white" />
               )}
             </button>
           </div>
@@ -130,7 +138,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-6 py-5 shadow-xl transition-all">
+          <div className="md:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-xl transition-all">
             <div className="flex flex-col gap-2">
               {navItems.map((item) => {
                 const isActive = activeTab === item.id;
@@ -138,10 +146,10 @@ export const Header: React.FC<HeaderProps> = ({
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    className={`text-left py-3 px-4 rounded-xl text-base font-semibold transition-colors flex items-center justify-between ${
+                    className={`text-left py-3 px-4 rounded-xl text-base font-semibold transition-colors flex items-center justify-between cursor-pointer ${
                       isActive
-                        ? 'bg-teal-50 dark:bg-teal-950/50 text-[#028C84] dark:text-teal-300'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        ? 'bg-teal-950/50 text-[#028C84] dark:text-teal-300'
+                        : 'text-slate-300 hover:bg-slate-800'
                     }`}
                   >
                     <span>{item.label}</span>
@@ -151,6 +159,20 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                 );
               })}
+
+              <button
+                onClick={() => handleNavClick('cms')}
+                className={`text-left py-3 px-4 rounded-xl text-base font-semibold transition-colors flex items-center justify-between cursor-pointer ${
+                  activeTab === 'cms'
+                    ? 'bg-teal-950/50 text-[#028C84] dark:text-teal-300'
+                    : 'text-slate-300 hover:bg-slate-800'
+                }`}
+              >
+                <span>CMS Portal</span>
+                {activeTab === 'cms' && (
+                  <span className="w-2 h-2 rounded-full bg-[#028C84] dark:bg-teal-400"></span>
+                )}
+              </button>
 
               <div className="pt-3 mt-2 border-t border-slate-200 dark:border-slate-800">
                 <button
