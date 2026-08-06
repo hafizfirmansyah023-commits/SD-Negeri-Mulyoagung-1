@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, Tag } from 'lucide-react';
 import { NEWS_ARTICLES } from '../data/schoolData';
 import { Article } from '../types';
 import { NewsDetailModal } from './NewsDetailModal';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface NewsSectionProps {
   onViewAllClick?: () => void;
@@ -16,7 +17,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
   useEffect(() => {
     const loadNews = async () => {
       try {
-        const response = await fetch('http://localhost/sd-negeri-mulyoagung-1/backend/API/newsAPI.php');
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/newsAPI.php`);
         const result = await response.json();
         if (result.status === 'success' && result.data && result.data.length > 0) {
           const mapped: Article[] = result.data.map((art: any) => ({
@@ -26,7 +27,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
             date: art.tanggal,
             summary: art.isi.length > 120 ? art.isi.substring(0, 120) + '...' : art.isi,
             content: art.isi,
-            image: art.foto ? `http://localhost/sd-negeri-mulyoagung-1/${art.foto}` : 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
+            image: art.foto ? getImageUrl(art.foto) : 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
             imageAlt: art.judul,
             author: art.uploader || 'Admin Sekolah',
             readTime: '3 menit',

@@ -6,4 +6,4 @@ coverage/
 *.log
 .env*
 !.env.example
-cms.md
+src/CMS/cms.md

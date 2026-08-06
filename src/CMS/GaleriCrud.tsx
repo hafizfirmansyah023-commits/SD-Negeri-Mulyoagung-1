@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Image, Calendar, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface GalleryItem {
   id: number;
@@ -25,7 +26,7 @@ interface GaleriCrudProps {
   currentUser: UserSession;
 }
 
-const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
+const API_BASE = getApiBaseUrl();
 
 export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
   const [items, setItems] = useState<GalleryItem[]>([]);
@@ -219,7 +220,7 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
               <div>
                 <div className="relative h-48 bg-slate-100">
                   <img
-                    src={`${API_BASE}/${item.foto}`}
+                    src={getImageUrl(item.foto)}
                     alt={item.judul}
                     className="w-full h-full object-cover"
                   />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Plus, Trash2, Key, Shield, FileText } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface UserSession {
   id: number;
@@ -22,7 +23,7 @@ interface UserCrudProps {
   onUpdateCurrentUser: (user: UserSession) => void;
 }
 
-const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
+const API_BASE = getApiBaseUrl();
 
 export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudProps) {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -214,7 +215,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
               <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-teal-500/20 bg-slate-100 flex items-center justify-center">
                 {currentUser.foto ? (
                   <img
-                    src={`${API_BASE}/${currentUser.foto}`}
+                    src={getImageUrl(currentUser.foto)}
                     alt="Foto Profil"
                     className="w-full h-full object-cover"
                   />
@@ -304,7 +305,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
                           <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center shrink-0 border border-slate-200">
                             {u.foto ? (
                               <img
-                                src={`${API_BASE}/${u.foto}`}
+                                src={getImageUrl(u.foto)}
                                 alt={u.nama_penanggung_jawab}
                                 className="w-full h-full object-cover"
                               />

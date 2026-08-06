@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, User, BookOpen, GraduationCap, Users } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface Teacher {
   id: number;
@@ -14,7 +15,7 @@ interface Teacher {
   motto: string;
 }
 
-const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
+const API_BASE = getApiBaseUrl();
 
 export default function GuruCrud() {
   const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -198,7 +199,7 @@ export default function GuruCrud() {
                 <div className="relative h-48 bg-slate-100 flex items-center justify-center">
                   {t.foto ? (
                     <img
-                      src={`${API_BASE}/${t.foto}`}
+                      src={getImageUrl(t.foto)}
                       alt={t.nama}
                       className="w-full h-full object-cover"
                     />

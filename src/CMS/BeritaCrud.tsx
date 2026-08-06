@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, FileText, Calendar, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface NewsArticle {
   id: number;
@@ -25,7 +26,7 @@ interface BeritaCrudProps {
   currentUser: UserSession;
 }
 
-const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
+const API_BASE = getApiBaseUrl();
 
 export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -217,7 +218,7 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
               <div>
                 <div className="relative h-56 bg-slate-100">
                   <img
-                    src={`${API_BASE}/${art.foto}`}
+                    src={getImageUrl(art.foto)}
                     alt={art.judul}
                     className="w-full h-full object-cover"
                   />
