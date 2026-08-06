@@ -115,15 +115,23 @@ export const Footer: React.FC<FooterProps> = ({ setActiveTab, onOpenPpdb }) => {
             <li>
               <button
                 onClick={() => handleNavClick('news')}
-                className="text-slate-200 dark:text-slate-400 hover:text-teal-300 flex items-center gap-1.5 transition-all text-xs sm:text-sm"
+                className="text-slate-200 dark:text-slate-400 hover:text-teal-300 flex items-center gap-1.5 transition-all text-xs sm:text-sm cursor-pointer"
               >
                 <ChevronRight className="w-3.5 h-3.5 text-teal-400" /> Berita & Artikel
               </button>
             </li>
             <li>
               <button
+                onClick={() => handleNavClick('cms')}
+                className="text-slate-300 dark:text-slate-500 hover:text-teal-300 flex items-center gap-1.5 transition-all text-xs sm:text-sm cursor-pointer"
+              >
+                <ChevronRight className="w-3.5 h-3.5 text-teal-400" /> CMS Portal Admin
+              </button>
+            </li>
+            <li>
+              <button
                 onClick={onOpenPpdb}
-                className="text-amber-300 hover:text-amber-200 font-bold flex items-center gap-1.5 transition-all text-xs sm:text-sm"
+                className="text-amber-300 hover:text-amber-200 font-bold flex items-center gap-1.5 transition-all text-xs sm:text-sm cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" /> Penerimaan Siswa Baru (PPDB)
               </button>

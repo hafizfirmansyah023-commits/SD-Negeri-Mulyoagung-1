@@ -1,15 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TEACHERS_DIRECTORY } from '../data/schoolData';
-import { Search, Mail, GraduationCap, Briefcase, BookOpen } from 'lucide-react';
+import { Search, GraduationCap, BookOpen, VenusAndMars, BadgeCheck } from 'lucide-react';
 import { Teacher } from '../types';
 
 export const DirectorySection: React.FC = () => {
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('Semua');
 
+  useEffect(() => {
+    const loadTeachers = async () => {
+      try {
+        const response = await fetch('http://localhost/sd-negeri-mulyoagung-1/backend/API/guru.php');
+        const result = await response.json();
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+          const mapped: Teacher[] = result.data.map((t: any) => ({
+            id: t.id.toString(),
+            name: t.nama,
+            title: t.jabatan,
+            role: t.jabatan === 'Kepala Sekolah' ? 'Kepala Sekolah' : (t.jabatan === 'Guru Wali Kelas' ? 'Guru Kelas' : 'Guru Mata Pelajaran'),
+            nip: t.nip,
+            subject: t.tugas,
+            image: t.foto ? `http://localhost/sd-negeri-mulyoagung-1/${t.foto}` : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+            education: t.riwayat_pendidikan,
+            gender: t.jenis_kelamin,
+            status: t.status,
+            quote: t.motto
+          }));
+          setTeachers(mapped);
+        } else {
+          setTeachers(TEACHERS_DIRECTORY);
+        }
+      } catch (e) {
+        setTeachers(TEACHERS_DIRECTORY);
+      }
+    };
+    loadTeachers();
+  }, []);
+
   const roles = ['Semua', 'Kepala Sekolah', 'Guru Kelas', 'Guru Mata Pelajaran'];
 
-  const filteredTeachers = TEACHERS_DIRECTORY.filter((teacher) => {
+  const filteredTeachers = teachers.filter((teacher) => {
     const matchesSearch =
       teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -78,14 +109,14 @@ export const DirectorySection: React.FC = () => {
           {filteredTeachers.map((teacher) => (
             <div
               key={teacher.id}
-              className="group relative bg-white/75 backdrop-blur-xl rounded-3xl p-6 border border-white/80 shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.14)] hover:border-teal-200/80 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 overflow-hidden"
+              className="group relative bg-white/75 backdrop-blur-xl rounded-3xl p-6 border border-white/80 shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.14)] hover:border-teal-200/80 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 overflow-hidden animate-fade-in"
             >
               {/* Subtle top corner gradient shine */}
               <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-bl from-teal-100/40 to-transparent rounded-tr-3xl pointer-events-none" />
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="relative w-20 h-20 rounded-2xl overflow-hidden shrink-0 border-2 border-teal-500/30 shadow-md group-hover:scale-105 transition-transform duration-300">
+                <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center">
+                  <div className="relative w-32 h-32 rounded-2xl overflow-hidden shrink-0 border-2 border-teal-500/30 shadow-md group-hover:scale-105 transition-transform duration-300">
                     <img
                       src={teacher.image}
                       alt={teacher.name}
@@ -100,7 +131,7 @@ export const DirectorySection: React.FC = () => {
                       {teacher.name}
                     </h3>
                     <p className="text-xs font-mono text-slate-500 mt-0.5">
-                      NIP. {teacher.nip}
+                       NIP. {teacher.nip}
                     </p>
                   </div>
                 </div>
@@ -115,10 +146,18 @@ export const DirectorySection: React.FC = () => {
                     <GraduationCap className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
                     <span className="truncate text-slate-600">{teacher.education}</span>
                   </div>
-                  {teacher.experienceYears && (
+                  {teacher.gender && (
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
-                      <span className="text-slate-600">Pengabdian: {teacher.experienceYears} Tahun</span>
+                      <VenusAndMars className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                      <span className="text-slate-600">Jenis Kelamin:</span>
+                      <span className="truncate text-slate-600">{teacher.gender}</span>
+                    </div>
+                  )}
+                  {teacher.status && (
+                    <div className="flex items-center gap-2">
+                      <BadgeCheck className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                      <span className="text-slate-600">Status:</span>
+                      <span className="truncate text-slate-600">{teacher.status}</span>
                     </div>
                   )}
                 </div>
@@ -129,18 +168,6 @@ export const DirectorySection: React.FC = () => {
                   </p>
                 )}
               </div>
-
-              {teacher.email && (
-                <div className="pt-4 mt-4 border-t border-slate-100">
-                  <a
-                    href={`mailto:${teacher.email}`}
-                    className="w-full py-2.5 px-4 rounded-2xl bg-teal-50/80 hover:bg-[#028C84] text-[#028C84] hover:text-white border border-teal-200/80 transition-all duration-300 text-xs font-bold flex items-center justify-center gap-2 shadow-sm"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>Kirim Pesan Email</span>
-                  </a>
-                </div>
-              )}
             </div>
           ))}
         </div>

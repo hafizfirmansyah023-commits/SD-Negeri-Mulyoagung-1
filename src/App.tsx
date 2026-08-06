@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // Mengimpor CSS AOS
 
@@ -22,9 +23,26 @@ import { PpdbModal } from './components/PpdbModal';
 import { Footer } from './components/Footer';
 import { BackToTop } from './components/BackToTop';
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState<NavTab>('home');
+import Dashboard from './CMS/Dashboard';
+
+// Komponen utama yang dibungkus oleh Router agar bisa menggunakan useLocation dan useNavigate
+function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [ppdbOpen, setPpdbOpen] = useState(false);
+
+  // Mengambil current path untuk menentukan tab mana yang aktif (untuk Header/Footer)
+  const path = location.pathname.replace('/', '');
+  const activeTab = (path === '' ? 'home' : path) as NavTab;
+
+  // Adaptasi setActiveTab agar merubah URL alih-alih merubah state secara langsung
+  const setActiveTab = (tab: NavTab) => {
+    if (tab === 'home') {
+      navigate('/');
+    } else {
+      navigate(`/${tab}`);
+    }
+  };
 
   // Inisialisasi AOS dan pengaturan mode terang
   useEffect(() => {
@@ -33,20 +51,26 @@ export default function App() {
     root.classList.add('light');
     localStorage.removeItem('theme');
 
-    // Inisialisasi konfigurasi dasar AOS
     AOS.init({
-      duration: 800, // Durasi animasi (ms)
-      easing: 'ease-in-out', // Efek transisi
-      once: true, // Animasi hanya berjalan satu kali
-      offset: 50, // Jarak scroll sebelum animasi dimulai (px)
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true,
+      offset: 50,
     });
   }, []);
 
-  // Me-refresh AOS dan scroll ke paling atas setiap kali tab berganti
+  // Scroll ke paling atas dan refresh AOS setiap kali URL (halaman) berganti
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    AOS.refresh();
-  }, [activeTab]);
+    setTimeout(() => {
+      AOS.refresh();
+    }, 100); // Sedikit delay agar DOM render selesai sebelum AOS kalkulasi ulang
+  }, [location.pathname]);
+
+  // Handle tampilan CMS terpisah (jika ada halaman khusus tanpa header/footer)
+  if (activeTab === 'cms') {
+    return <Dashboard onBackToHome={() => navigate('/')} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white overflow-hidden">
@@ -59,72 +83,77 @@ export default function App() {
 
       {/* Main Page Content */}
       <main className="flex-grow">
-        {activeTab === 'home' && (
-          <>
-            <div data-aos="fade-down">
-              <Hero
-                onOpenPpdb={() => setPpdbOpen(true)}
-                setActiveTab={setActiveTab}
-              />
+        <Routes>
+          {/* Halaman Home */}
+          <Route path="/" element={
+            <>
+              <div data-aos="fade-down">
+                <Hero onOpenPpdb={() => setPpdbOpen(true)} setActiveTab={setActiveTab} />
+              </div>
+              <div data-aos="fade-up" data-aos-delay="100">
+                <Stats />
+              </div>
+              <div data-aos="fade-up" data-aos-delay="200">
+                <PrincipalGreeting />
+              </div>
+              <div data-aos="fade-right" data-aos-delay="100">
+                <NewsSection onViewAllClick={() => setActiveTab('news')} />
+              </div>
+              <div data-aos="zoom-in" data-aos-delay="100">
+                <VideoProfileSection />
+              </div>
+              <div data-aos="fade-left" data-aos-delay="100">
+                <SchoolProfileSection />
+              </div>
+              <div data-aos="fade-up" data-aos-delay="100">
+                <ContactSection />
+              </div>
+            </>
+          } />
+
+          {/* Halaman Profile */}
+          <Route path="/profile" element={
+            <div className="pt-4" data-aos="fade-in">
+              <div data-aos="fade-right">
+                <SchoolProfileSection />
+              </div>
+              <div data-aos="zoom-in" data-aos-delay="200">
+                <VideoProfileSection />
+              </div>
             </div>
-            <div data-aos="fade-up" data-aos-delay="100">
-              <Stats />
+          } />
+
+          {/* Halaman Directory */}
+          <Route path="/directory" element={
+            <div className="pt-4" data-aos="fade-up">
+              <DirectorySection />
             </div>
-            <div data-aos="fade-up" data-aos-delay="200">
-              <PrincipalGreeting />
+          } />
+
+          {/* Halaman Gallery */}
+          <Route path="/gallery" element={
+            <div className="pt-4" data-aos="zoom-in">
+              <GallerySection />
             </div>
-            <div data-aos="fade-right" data-aos-delay="100">
-              <NewsSection onViewAllClick={() => {
-                setActiveTab('news');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }} />
+          } />
+
+          {/* Halaman News */}
+          <Route path="/news" element={
+            <div className="pt-4" data-aos="fade-right">
+              <NewsSection />
             </div>
-            <div data-aos="zoom-in" data-aos-delay="100">
-              <VideoProfileSection />
-            </div>
-            <div data-aos="fade-left" data-aos-delay="100">
-              <SchoolProfileSection />
-            </div>
-            <div data-aos="fade-up" data-aos-delay="100">
+          } />
+
+          {/* Halaman Contact */}
+          <Route path="/contact" element={
+            <div data-aos="fade-up">
               <ContactSection />
             </div>
-          </>
-        )}
+          } />
 
-        {activeTab === 'profile' && (
-          <div className="pt-4" data-aos="fade-in">
-            <div data-aos="fade-right">
-              <SchoolProfileSection />
-            </div>
-            <div data-aos="zoom-in" data-aos-delay="200">
-              <VideoProfileSection />
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'directory' && (
-          <div className="pt-4" data-aos="fade-up">
-            <DirectorySection />
-          </div>
-        )}
-
-        {activeTab === 'gallery' && (
-          <div className="pt-4" data-aos="zoom-in">
-            <GallerySection />
-          </div>
-        )}
-
-        {activeTab === 'news' && (
-          <div className="pt-4" data-aos="fade-right">
-            <NewsSection />
-          </div>
-        )}
-
-        {activeTab === 'contact' && (
-          <div data-aos="fade-up">
-            <ContactSection />
-          </div>
-        )}
+          {/* Fallback route: Jika URL tidak dikenali, arahkan ke Home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
       {/* Footer */}
@@ -141,5 +170,14 @@ export default function App() {
       {/* Floating Back to Top Button */}
       <BackToTop />
     </div>
+  );
+}
+
+// Ekspor komponen utama yang membungkus AppContent dengan Router
+export default function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }

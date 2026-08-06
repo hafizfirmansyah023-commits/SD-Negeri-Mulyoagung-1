@@ -1,18 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GALLERY_ITEMS } from '../data/schoolData';
 import { Image, X, Calendar, Maximize2 } from 'lucide-react';
 import { GalleryItem } from '../types';
 
 export const GallerySection: React.FC = () => {
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [activePhoto, setActivePhoto] = useState<GalleryItem | null>(null);
+
+  useEffect(() => {
+    const loadGallery = async () => {
+      try {
+        const response = await fetch('http://localhost/sd-negeri-mulyoagung-1/backend/API/galeri.php');
+        const result = await response.json();
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+          const mapped: GalleryItem[] = result.data.map((item: any) => ({
+            id: item.id.toString(),
+            title: item.judul,
+            category: item.kategori === 'Kegiatan Sekolah' ? 'Kegiatan' : (item.kategori === 'Ekstrakurikuler' ? 'Pembelajaran' : (item.kategori as any)),
+            date: item.tanggal,
+            image: item.foto ? `http://localhost/sd-negeri-mulyoagung-1/${item.foto}` : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800',
+            description: item.deskripsi
+          }));
+          setGalleryItems(mapped);
+        } else {
+          setGalleryItems(GALLERY_ITEMS);
+        }
+      } catch (e) {
+        setGalleryItems(GALLERY_ITEMS);
+      }
+    };
+    loadGallery();
+  }, []);
 
   const categories = ['Semua', 'Kegiatan', 'Pembelajaran', 'Prestasi', 'Fasilitas'];
 
   const filteredGallery =
     selectedCategory === 'Semua'
-      ? GALLERY_ITEMS
-      : GALLERY_ITEMS.filter((item) => item.category === selectedCategory);
+      ? galleryItems
+      : galleryItems.filter((item) => item.category === selectedCategory);
 
   return (
     <section className="relative w-full py-16 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
