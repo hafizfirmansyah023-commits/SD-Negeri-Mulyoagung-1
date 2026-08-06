@@ -23,7 +23,8 @@ export interface Teacher {
   education: string;
   quote?: string;
   email?: string;
-  experienceYears?: number;
+  gender?: string;   // ⬅️ tambahkan ini
+  status?: string;
 }
 
 export interface GalleryItem {

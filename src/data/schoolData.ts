@@ -36,7 +36,7 @@ export const SCHOOL_STATS: StatItem[] = [
 ];
 
 export const PRINCIPAL_INFO = {
-  name: 'Amalia Dyah Erviana, S.Pd.SD',
+  name: 'Amalia Dyah Erviana, S.Pd.',
   title: 'Kepala SD Negeri 1 Mulyoagung',
   photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600',
   greeting: `"Assalamu'alaikum Wr. Wb.
@@ -72,7 +72,7 @@ Orang tua wali murid menyambut positif kegiatan ini karena anak-anak tidak hanya
     summary: 'SD Negeri Mulyoagung 1 kembali menerima dukungan sarana pembelajaran digital dari pemerintah daerah.',
     content: `Pemerintah Kabupaten Malang melalui Dinas Pendidikan secara resmi menyerahkan bantuan berupa Interactive Flat Panel (Layar Interaktif Digital) dan perangkat Chromebook terbaru untuk menunjang kegiatan Pembelajaran Berbasis TIK di SD Negeri Mulyoagung 1.
 
-Kepala Sekolah, Bapak Aris Wibowo, S.Pd., menyampaikan rasa syukur dan terima kasih mendalam atas perhatian pemerintah daerah. Penambahan sarana ini diharapkan dapat mempercepat akselerasi digitalisasi sekolah, memudahkan guru menghadirkan metode belajar multimedia interaktif, serta melatih literasi digital siswa sejak usia dini.
+Kepala Sekolah, Ibu Amalia Dyah Erviana, S.Pd.SD, S.Pd., menyampaikan rasa syukur dan terima kasih mendalam atas perhatian pemerintah daerah. Penambahan sarana ini diharapkan dapat mempercepat akselerasi digitalisasi sekolah, memudahkan guru menghadirkan metode belajar multimedia interaktif, serta melatih literasi digital siswa sejak usia dini.
 
 Fasilitas baru ini akan langsung ditempatkan di ruang laboratorium multimedia dan kelas-kelas utama untuk mendukung Kurikulum Merdeka secara optimal.`,
     image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
@@ -145,7 +145,7 @@ Pendaftaran dapat dilakukan secara mandiri melalui website resmi ini dengan meng
 export const TEACHERS_DIRECTORY: Teacher[] = [
   {
     id: 't-1',
-    name: 'Aris Wibowo, S.Pd.',
+    name: 'Amalia Dyah Erviana, S.Pd.',
     title: 'Kepala Sekolah',
     role: 'Kepala Sekolah',
     nip: '19740512 199803 1 004',
@@ -154,7 +154,8 @@ export const TEACHERS_DIRECTORY: Teacher[] = [
     education: 'S1 Pendidikan Universitas Negeri Malang',
     quote: 'Mendidik anak bukan sekadar mengisi wadah, tetapi menyalakan api karakter dan pengetahuan.',
     email: 'aris.wibowo@sdnmulyoagung1.sch.id',
-    experienceYears: 24,
+    gender: "Perempuan",
+    status: "Aktif",
   },
   {
     id: 't-2',
@@ -167,7 +168,8 @@ export const TEACHERS_DIRECTORY: Teacher[] = [
     education: 'S1 PGSD Universitas Brawijaya',
     quote: 'Setiap anak belajar dengan kecepatannya masing-masing. Tugas kita adalah membimbing dengan sabar.',
     email: 'endang.rahayu@sdnmulyoagung1.sch.id',
-    experienceYears: 18,
+    gender: "Perempuan",
+    status: "Aktif",
   },
   {
     id: 't-3',
@@ -180,7 +182,8 @@ export const TEACHERS_DIRECTORY: Teacher[] = [
     education: 'S2 Pendidikan Olahraga Universitas Negeri Malang',
     quote: 'Tubuh yang sehat melahirkan jiwa dan pikiran yang tangguh.',
     email: 'budi.santoso@sdnmulyoagung1.sch.id',
-    experienceYears: 13,
+    gender: "Laki-laki",
+    status: "Aktif",
   },
   {
     id: 't-4',
@@ -193,7 +196,8 @@ export const TEACHERS_DIRECTORY: Teacher[] = [
     education: 'S1 Pendidikan Agama Islam UIN Maulana Malik Ibrahim',
     quote: 'Akhlakul karimah adalah pondasi utama dalam membina generasi rabbani.',
     email: 'siti.nurhaliza@sdnmulyoagung1.sch.id',
-    experienceYears: 10,
+    gender: "Perempuan",
+    status: "Aktif",
   },
   {
     id: 't-5',
@@ -206,7 +210,8 @@ export const TEACHERS_DIRECTORY: Teacher[] = [
     education: 'S1 PGSD Universitas Negeri Malang',
     quote: 'Mengintegrasikan teknologi ke dalam pembelajaran agar anak-anak siap menghadapi era digital.',
     email: 'agus.setiawan@sdnmulyoagung1.sch.id',
-    experienceYears: 15,
+    gender: "Laki-laki",
+    status: "Aktif",
   },
   {
     id: 't-6',
@@ -219,7 +224,8 @@ export const TEACHERS_DIRECTORY: Teacher[] = [
     education: 'S1 Pendidikan Bahasa Inggris Universitas Muhammadiyah Malang',
     quote: 'Learning language is learning to connect with the world through art and empathy.',
     email: 'dewi.lestari@sdnmulyoagung1.sch.id',
-    experienceYears: 7,
+    gender: "Perempuan",
+    status: "Aktif",
   },
 ];
 

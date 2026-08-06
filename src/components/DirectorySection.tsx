@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { TEACHERS_DIRECTORY } from '../data/schoolData';
-import { Search, Mail, GraduationCap, Briefcase, BookOpen } from 'lucide-react';
-import { Teacher } from '../types';
+import { Search, Mail, GraduationCap, BookOpen, VenusAndMars, BadgeCheck } from 'lucide-react';
 
 export const DirectorySection: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -115,10 +114,18 @@ export const DirectorySection: React.FC = () => {
                     <GraduationCap className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
                     <span className="truncate text-slate-600">{teacher.education}</span>
                   </div>
-                  {teacher.experienceYears && (
+                  {teacher.gender && (
                     <div className="flex items-center gap-2">
-                      <Briefcase className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
-                      <span className="text-slate-600">Pengabdian: {teacher.experienceYears} Tahun</span>
+                      <VenusAndMars className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                      <span className="text-slate-600">Jenis Kelamin:</span>
+                      <span className="truncate text-slate-600">{teacher.gender}</span>
+                    </div>
+                  )}
+                  {teacher.status && (
+                    <div className="flex items-center gap-2">
+                      <BadgeCheck className="w-3.5 h-3.5 text-[#028C84] shrink-0" />
+                      <span className="text-slate-600">Status:</span>
+                      <span className="truncate text-slate-600">{teacher.status}</span>
                     </div>
                   )}
                 </div>
