@@ -50,7 +50,7 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
     return (
         <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
             <button
-                onClick={onBackToHome}
+                onClick={() => window.open('/', '_blank')}
                 className="absolute top-6 left-6 flex items-center gap-2 text-slate-600 hover:text-teal-600 transition-colors font-medium bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 cursor-pointer"
             >
                 <ArrowLeft size={16} /> Kembali ke Halaman Utama
