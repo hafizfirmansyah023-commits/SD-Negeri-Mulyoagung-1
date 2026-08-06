@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2026 at 06:02 AM
+-- Generation Time: Aug 06, 2026 at 06:33 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -37,6 +37,30 @@ CREATE TABLE `berita` (
   `status_verifikasi` enum('Pending','Verified','Rejected') NOT NULL DEFAULT 'Pending',
   `uploaded_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fasilitas`
+--
+
+CREATE TABLE `fasilitas` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL,
+  `foto` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `fasilitas`
+--
+
+INSERT INTO `fasilitas` (`id`, `judul`, `deskripsi`, `foto`) VALUES
+(1, 'Laboratorium Komputer & TIK Interaktif', 'Dilengkapi 30 unit komputer terkini, jaringan Wi-Fi sekolah, dan Smart Display untuk pembelajaran coding dasar & literasi digital.', 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600'),
+(2, 'Perpustakaan \"Taman Ilmu\"', 'Koleksi ribuan buku cerita, modul pembelajaran, koleksi literasi digital e-book, dan sudut baca ramah anak yang nyaman.', 'https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&q=80&w=600'),
+(3, 'Lapangan Olahraga & Upacara', 'Areal seluas 800m² dilapisi plester berkualitas untuk upacara bendera, senam bersama, bulutangkis, basket, dan futsal.', 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=600'),
+(4, 'Ruang UKS & Poliklinik Sekolah', 'Fasilitas pertolongan pertama kesehatan dengan tempat tidur bersih, pengukuran TB/BB rutin, dan kerja sama Puskesmas Dau.', 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=600'),
+(5, 'Kantin Sehat Bergizi', 'Menyediakan makanan dan minuman sehat yang higienis, bebas bahan pengawet berbahaya, dan diawasi oleh tim gizi sekolah.', 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=600');
 
 -- --------------------------------------------------------
 
@@ -77,24 +101,6 @@ CREATE TABLE `guru_tendik` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `fasilitas`
---
-
-CREATE TABLE `fasilitas` (
-  `id` int(11) NOT NULL,
-  `judul` varchar(255) NOT NULL,
-  `deskripsi` text NOT NULL,
-  `foto` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `fasilitas`
---
-
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `users`
 --
 
@@ -112,7 +118,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawab`, `foto`) VALUES
-(2, 'admin1', '$2y$10$xMjWgEM8P/SySrAtWfpr8eC0PCOcqaz7Z1nnFJhvD5x1DP7NdDgAS', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1785983881_20260417041002_1.jpg')
+(2, 'admin1', '$2y$10$xMjWgEM8P/SySrAtWfpr8eC0PCOcqaz7Z1nnFJhvD5x1DP7NdDgAS', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1785983881_20260417041002_1.jpg'),
+(3, 'voli123', '$2y$10$GkRRznDjplBrZwG8ayLH/ugSRLJC2S94qxYJai8Hmnkc1G3Oqpm1i', 'TIM', 'hafiz', '');
 
 --
 -- Indexes for dumped tables
