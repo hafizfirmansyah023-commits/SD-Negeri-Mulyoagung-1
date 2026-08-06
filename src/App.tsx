@@ -173,7 +173,6 @@ function AppContent() {
   );
 }
 
-// Ekspor komponen utama yang membungkus AppContent dengan Router
 export default function App() {
   return (
     <Router>
