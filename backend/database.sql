@@ -59,8 +59,7 @@ CREATE TABLE `galeri` (
 -- Dumping data for table `galeri`
 --
 
-INSERT INTO `galeri` (`id`, `judul`, `deskripsi`, `foto`, `kategori`, `tanggal`, `status_verifikasi`, `uploaded_by`) VALUES
-(1, 'Big nyahu', 'sosok inspiratif batak', 'backend/uploads/galeri/1785982302_big yahu.jpg', 'Prestasi', '2026-08-06', 'Verified', 2);
+
 
 -- --------------------------------------------------------
 
