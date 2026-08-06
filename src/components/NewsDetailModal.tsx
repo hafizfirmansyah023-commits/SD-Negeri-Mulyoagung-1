@@ -65,10 +65,6 @@ export const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ article, onClo
             <Calendar className="w-3.5 h-3.5 text-[#028C84]" />
             {article.date}
           </span>
-          <span className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-[#028C84]" />
-            {article.author}
-          </span>
         </div>
 
         {/* Modal Content Body */}

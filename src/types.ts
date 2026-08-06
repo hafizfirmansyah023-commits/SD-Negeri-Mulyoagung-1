@@ -23,7 +23,7 @@ export interface Teacher {
   education: string;
   quote?: string;
   email?: string;
-  gender?: string;   // ⬅️ tambahkan ini
+  gender?: string;
   status?: string;
 }
 
@@ -69,4 +69,4 @@ export interface PpdbApplication {
   status: 'Menunggu Verifikasi' | 'Diterima' | 'Berkas Kurang';
 }
 
-export type NavTab = 'home' | 'profile' | 'directory' | 'gallery' | 'news' | 'contact' | 'ppdb';
+export type NavTab = 'home' | 'profile' | 'directory' | 'gallery' | 'news' | 'contact' | 'ppdb' | 'cms';
