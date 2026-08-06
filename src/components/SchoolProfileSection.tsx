@@ -165,10 +165,10 @@ export const SchoolProfileSection: React.FC = () => {
 
             <div className="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4 pt-2">
               <p className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100/60">
-                SD Negeri Mulyoagung 1 didirikan sejak tahun 1978 sebagai wujud perhatian pemerintah daerah terhadap akses pendidikan dasar bermutu di wilayah Kecamatan Dau, Kabupaten Malang.
+                SD Negeri 1 Mulyoagung didirikan sejak tahun 1978 sebagai wujud perhatian pemerintah daerah terhadap akses pendidikan dasar bermutu di wilayah Kecamatan Dau, Kabupaten Malang.
               </p>
               <p>
-                Berdiri di atas tanah seluas lebih dari 2.500 m², sekolah ini terus bertransformasi mengiringi perkembangan jaman. Dari yang semula berawal dari bangunan sederhana dengan 6 ruang kelas, kini SD Negeri Mulyoagung 1 telah menjelma menjadi sekolah rujukan berakreditasi A yang dilengkapi sarana multimedia, laboratorium komputer, perpustakaan digital, serta berbagai sarana pendukung modern.
+                Berdiri di atas tanah seluas lebih dari 3.465 m², sekolah ini terus bertransformasi mengiringi perkembangan jaman. Dari yang semula berawal dari bangunan sederhana dengan 6 ruang kelas, kini SD Negeri 1 Mulyoagung telah menjelma menjadi sekolah rujukan berakreditasi A yang dilengkapi sarana ruang seni, lab ipa, laboratorium komputer, perpustakaan, serta berbagai sarana pendukung modern.
               </p>
               <p>
                 Ribuan lulusan alumni terbaik telah lahir dan melanjutkan pendidikan ke jenjang terbaik di Kabupaten Malang hingga luar daerah. Komitmen kami tetap konsisten: mendidik dengan hati, mengutamakan akhlak mulia, dan mencetak generasi unggul yang siap menjawab tantangan masa depan.
