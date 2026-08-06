@@ -77,6 +77,24 @@ CREATE TABLE `guru_tendik` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `fasilitas`
+--
+
+CREATE TABLE `fasilitas` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `deskripsi` text NOT NULL,
+  `foto` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `fasilitas`
+--
+
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -94,8 +112,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawab`, `foto`) VALUES
-(2, 'admin1', '$2y$10$xMjWgEM8P/SySrAtWfpr8eC0PCOcqaz7Z1nnFJhvD5x1DP7NdDgAS', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1785983881_20260417041002_1.jpg'),
-(3, 'voli123', '$2y$10$GkRRznDjplBrZwG8ayLH/ugSRLJC2S94qxYJai8Hmnkc1G3Oqpm1i', 'TIM', 'hafiz', '');
+(2, 'admin1', '$2y$10$xMjWgEM8P/SySrAtWfpr8eC0PCOcqaz7Z1nnFJhvD5x1DP7NdDgAS', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1785983881_20260417041002_1.jpg')
 
 --
 -- Indexes for dumped tables
@@ -107,6 +124,12 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawa
 ALTER TABLE `berita`
   ADD PRIMARY KEY (`id`),
   ADD KEY `uploaded_by` (`uploaded_by`);
+
+--
+-- Indexes for table `fasilitas`
+--
+ALTER TABLE `fasilitas`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `galeri`
@@ -137,6 +160,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `berita`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `fasilitas`
+--
+ALTER TABLE `fasilitas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `galeri`

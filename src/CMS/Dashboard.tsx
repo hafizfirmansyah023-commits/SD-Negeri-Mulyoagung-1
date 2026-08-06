@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Users, Image, FileText, User, ShieldAlert, LogOut,
-    Lock, ArrowLeft, School, GraduationCap, LayoutDashboard
+    Lock, ArrowLeft, School, GraduationCap, LayoutDashboard, Building
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import GuruCrud from './GuruCrud';
@@ -9,6 +9,7 @@ import GaleriCrud from './GaleriCrud';
 import BeritaCrud from './BeritaCrud';
 import UserCrud from './UserCrud';
 import Verifikasi from './Verifikasi';
+import FasilitasCrud from './FasilitasCrud';
 
 interface UserSession {
     id: number;
@@ -26,7 +27,7 @@ const API_BASE = getApiBaseUrl();
 
 export default function Dashboard({ onBackToHome }: DashboardProps) {
     const [user, setUser] = useState<UserSession | null>(null);
-    const [activeTab, setActiveTab] = useState<'guru' | 'galeri' | 'berita' | 'user' | 'verifikasi'>('guru');
+    const [activeTab, setActiveTab] = useState<'guru' | 'fasilitas' | 'galeri' | 'berita' | 'user' | 'verifikasi'>('guru');
 
     // Auth form states
     const [isLoginView, setIsLoginView] = useState(true);
@@ -238,6 +239,13 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                             <Users size={18} /> Direktori Guru
                         </button>
                         <button
+                            onClick={() => setActiveTab('fasilitas')}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'fasilitas' ? 'bg-teal-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                                }`}
+                        >
+                            <Building size={18} /> Fasilitas Pembelajaran
+                        </button>
+                        <button
                             onClick={() => setActiveTab('galeri')}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri' ? 'bg-teal-600 text-white' : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                                 }`}
@@ -292,6 +300,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
             {/* Main Content Area */}
             <main className="flex-grow p-6 md:p-10 max-w-7xl">
                 {activeTab === 'guru' && <GuruCrud />}
+                {activeTab === 'fasilitas' && <FasilitasCrud currentUser={user} />}
                 {activeTab === 'galeri' && <GaleriCrud currentUser={user} />}
                 {activeTab === 'berita' && <BeritaCrud currentUser={user} />}
                 {activeTab === 'verifikasi' && user.role === 'ADMIN' && <Verifikasi />}

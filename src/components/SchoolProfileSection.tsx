@@ -1,27 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SCHOOL_FACILITIES } from '../data/schoolData';
-import { Target, Compass, History, Monitor, BookOpen, Activity, HeartPulse, Coffee, Trees, CheckCircle2, Sparkles } from 'lucide-react';
+import { Target, Compass, History, Monitor, BookOpen, Activity, HeartPulse, Coffee, Trees, CheckCircle2, Sparkles, Building } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
+
+interface DynamicFacility {
+  id: string | number;
+  judul: string;
+  deskripsi: string;
+  foto?: string;
+  image?: string;
+}
+
+const API_BASE = getApiBaseUrl();
 
 export const SchoolProfileSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visi-misi' | 'sejarah' | 'fasilitas'>('visi-misi');
+  const [facilities, setFacilities] = useState<DynamicFacility[]>(
+    SCHOOL_FACILITIES.map((f) => ({
+      id: f.id,
+      judul: f.name,
+      deskripsi: f.description,
+      image: f.image,
+    }))
+  );
 
-  const getFacilityIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'Monitor':
-        return <Monitor className="w-5 h-5 text-[#028C84]" />;
-      case 'BookOpen':
-        return <BookOpen className="w-5 h-5 text-[#028C84]" />;
-      case 'Activity':
-        return <Activity className="w-5 h-5 text-[#028C84]" />;
-      case 'HeartPulse':
-        return <HeartPulse className="w-5 h-5 text-[#028C84]" />;
-      case 'Coffee':
-        return <Coffee className="w-5 h-5 text-[#028C84]" />;
-      case 'Trees':
-        return <Trees className="w-5 h-5 text-[#028C84]" />;
-      default:
-        return <BookOpen className="w-5 h-5 text-[#028C84]" />;
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        const response = await fetch(`${API_BASE}/backend/API/fasilitas.php`);
+        const result = await response.json();
+        if (result.status === 'success' && Array.isArray(result.data) && result.data.length > 0) {
+          setFacilities(result.data);
+        }
+      } catch (err) {
+        // Fallback remains SCHOOL_FACILITIES
+      }
+    };
+    fetchFacilities();
+  }, []);
+
+  const getFacilityIconByTitle = (title: string) => {
+    const t = title.toLowerCase();
+    if (t.includes('lab') || t.includes('komputer') || t.includes('tik') || t.includes('coding') || t.includes('multimedia')) {
+      return <Monitor className="w-5 h-5 text-[#028C84]" />;
     }
+    if (t.includes('pustaka') || t.includes('buku') || t.includes('baca') || t.includes('literasi')) {
+      return <BookOpen className="w-5 h-5 text-[#028C84]" />;
+    }
+    if (t.includes('lapangan') || t.includes('olahraga') || t.includes('futsal') || t.includes('basket') || t.includes('senam') || t.includes('fisik')) {
+      return <Activity className="w-5 h-5 text-[#028C84]" />;
+    }
+    if (t.includes('uks') || t.includes('sehat') || t.includes('kesehatan') || t.includes('poliklinik') || t.includes('medis')) {
+      return <HeartPulse className="w-5 h-5 text-[#028C84]" />;
+    }
+    if (t.includes('kantin') || t.includes('makan') || t.includes('gizi') || t.includes('kuliner') || t.includes('minum')) {
+      return <Coffee className="w-5 h-5 text-[#028C84]" />;
+    }
+    if (t.includes('taman') || t.includes('green') || t.includes('kebun') || t.includes('adiwiyata') || t.includes('pohon') || t.includes('hidroponik')) {
+      return <Trees className="w-5 h-5 text-[#028C84]" />;
+    }
+    if (t.includes('musa') || t.includes('masjid') || t.includes('agama') || t.includes('ibadah')) {
+      return <Sparkles className="w-5 h-5 text-[#028C84]" />;
+    }
+    return <Building className="w-5 h-5 text-[#028C84]" />;
   };
 
   return (
@@ -177,34 +218,37 @@ export const SchoolProfileSection: React.FC = () => {
         {/* Tab 3: Fasilitas */}
         {activeTab === 'fasilitas' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
-            {SCHOOL_FACILITIES.map((fac) => (
-              <div
-                key={fac.id}
-                className="group relative bg-white/75 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/80 shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_35px_rgba(2,140,132,0.14)] hover:border-teal-200/80 transition-all duration-300 flex flex-col hover:-translate-y-1"
-              >
-                <div className="h-48 w-full overflow-hidden relative">
-                  <img
-                    src={fac.image}
-                    alt={fac.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-3 left-3 bg-white/85 backdrop-blur-md p-2.5 rounded-2xl shadow-md border border-white/60">
-                    {getFacilityIcon(fac.iconName)}
+            {facilities.map((fac) => {
+              const imageSrc = fac.foto ? getImageUrl(fac.foto) : (fac.image || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=600');
+              return (
+                <div
+                  key={fac.id}
+                  className="group relative bg-white/75 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/80 shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_35px_rgba(2,140,132,0.14)] hover:border-teal-200/80 transition-all duration-300 flex flex-col hover:-translate-y-1"
+                >
+                  <div className="h-48 w-full overflow-hidden relative">
+                    <img
+                      src={imageSrc}
+                      alt={fac.judul}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-3 left-3 bg-white/85 backdrop-blur-md p-2.5 rounded-2xl shadow-md border border-white/60">
+                      {getFacilityIconByTitle(fac.judul)}
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-6 space-y-2 flex-grow flex flex-col justify-between">
-                  <div>
-                    <h4 className="font-bold text-lg text-[#1E3A8A] group-hover:text-[#028C84] transition-colors">
-                      {fac.name}
-                    </h4>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">
-                      {fac.description}
-                    </p>
+                  <div className="p-6 space-y-2 flex-grow flex flex-col justify-between">
+                    <div>
+                      <h4 className="font-bold text-lg text-[#1E3A8A] group-hover:text-[#028C84] transition-colors">
+                        {fac.judul}
+                      </h4>
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">
+                        {fac.deskripsi}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
