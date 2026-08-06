@@ -68,4 +68,4 @@ export interface PpdbApplication {
   status: 'Menunggu Verifikasi' | 'Diterima' | 'Berkas Kurang';
 }
 
-export type NavTab = 'home' | 'profile' | 'directory' | 'gallery' | 'news' | 'contact' | 'ppdb';
+export type NavTab = 'home' | 'profile' | 'directory' | 'gallery' | 'news' | 'contact' | 'ppdb' | 'cms';

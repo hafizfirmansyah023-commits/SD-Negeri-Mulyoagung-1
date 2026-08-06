@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Calendar, Tag } from 'lucide-react';
 import { NEWS_ARTICLES } from '../data/schoolData';
 import { Article } from '../types';
@@ -9,15 +9,46 @@ interface NewsSectionProps {
 }
 
 export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
+  const [articles, setArticles] = useState<Article[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
+
+  useEffect(() => {
+    const loadNews = async () => {
+      try {
+        const response = await fetch('http://localhost/sd-negeri-mulyoagung-1/backend/API/newsAPI.php');
+        const result = await response.json();
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+          const mapped: Article[] = result.data.map((art: any) => ({
+            id: art.id.toString(),
+            title: art.judul,
+            category: art.kategori as 'Kegiatan' | 'Prestasi' | 'Edukasi' | 'Pengumuman',
+            date: art.tanggal,
+            summary: art.isi.length > 120 ? art.isi.substring(0, 120) + '...' : art.isi,
+            content: art.isi,
+            image: art.foto ? `http://localhost/sd-negeri-mulyoagung-1/${art.foto}` : 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
+            imageAlt: art.judul,
+            author: art.uploader || 'Admin Sekolah',
+            readTime: '3 menit',
+            featured: true
+          }));
+          setArticles(mapped);
+        } else {
+          setArticles(NEWS_ARTICLES);
+        }
+      } catch (e) {
+        setArticles(NEWS_ARTICLES);
+      }
+    };
+    loadNews();
+  }, []);
 
   const categories = ['Semua', 'Kegiatan', 'Prestasi', 'Edukasi', 'Pengumuman'];
 
   const filteredArticles =
     selectedCategory === 'Semua'
-      ? NEWS_ARTICLES
-      : NEWS_ARTICLES.filter((a) => a.category === selectedCategory);
+      ? articles
+      : articles.filter((a) => a.category === selectedCategory);
 
   return (
     <section id="news-section" className="w-full bg-white py-16 sm:py-20 transition-colors">

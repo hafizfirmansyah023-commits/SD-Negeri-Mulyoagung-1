@@ -22,6 +22,8 @@ import { PpdbModal } from './components/PpdbModal';
 import { Footer } from './components/Footer';
 import { BackToTop } from './components/BackToTop';
 
+import Dashboard from './CMS/Dashboard';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<NavTab>('home');
   const [ppdbOpen, setPpdbOpen] = useState(false);
@@ -47,6 +49,10 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     AOS.refresh();
   }, [activeTab]);
+
+  if (activeTab === 'cms') {
+    return <Dashboard onBackToHome={() => setActiveTab('home')} />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white overflow-hidden">

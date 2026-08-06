@@ -1,15 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TEACHERS_DIRECTORY } from '../data/schoolData';
 import { Search, Mail, GraduationCap, Briefcase, BookOpen } from 'lucide-react';
 import { Teacher } from '../types';
 
 export const DirectorySection: React.FC = () => {
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('Semua');
 
+  useEffect(() => {
+    const loadTeachers = async () => {
+      try {
+        const response = await fetch('http://localhost/sd-negeri-mulyoagung-1/backend/API/guru.php');
+        const result = await response.json();
+        if (result.status === 'success' && result.data && result.data.length > 0) {
+          const mapped: Teacher[] = result.data.map((t: any) => ({
+            id: t.id.toString(),
+            name: t.nama,
+            title: t.jabatan,
+            role: t.jabatan === 'Kepala Sekolah' ? 'Kepala Sekolah' : (t.jabatan === 'Guru Wali Kelas' ? 'Guru Kelas' : 'Guru Mata Pelajaran'),
+            nip: t.nip,
+            subject: t.tugas,
+            image: t.foto ? `http://localhost/sd-negeri-mulyoagung-1/${t.foto}` : 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
+            education: t.riwayat_pendidikan,
+            email: t.email || '',
+            experienceYears: t.experienceYears || 0
+          }));
+          setTeachers(mapped);
+        } else {
+          setTeachers(TEACHERS_DIRECTORY);
+        }
+      } catch (e) {
+        setTeachers(TEACHERS_DIRECTORY);
+      }
+    };
+    loadTeachers();
+  }, []);
+
   const roles = ['Semua', 'Kepala Sekolah', 'Guru Kelas', 'Guru Mata Pelajaran'];
 
-  const filteredTeachers = TEACHERS_DIRECTORY.filter((teacher) => {
+  const filteredTeachers = teachers.filter((teacher) => {
     const matchesSearch =
       teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       teacher.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||

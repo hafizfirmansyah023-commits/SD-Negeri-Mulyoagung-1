@@ -3,7 +3,7 @@ require_once '../config/koneksi.php';
 
 header("Content-Type: application/json");
 
-$upload_dir = '../uploads/berita/';
+$upload_dir = '../uploads/galeri/';
 if (!file_exists($upload_dir)) {
     mkdir($upload_dir, 0777, true);
 }
@@ -17,12 +17,12 @@ if ($method === 'GET') {
 
     try {
         if ($status_filter === 'all') {
-            $stmt = $conn->query("SELECT b.*, u.nama_penanggung_jawab as uploader FROM berita b LEFT JOIN users u ON b.uploaded_by = u.id ORDER BY b.tanggal DESC, b.id DESC");
+            $stmt = $conn->query("SELECT g.*, u.nama_penanggung_jawab as uploader FROM galeri g LEFT JOIN users u ON g.uploaded_by = u.id ORDER BY g.tanggal DESC, g.id DESC");
         } else {
-            $stmt = $conn->query("SELECT b.*, u.nama_penanggung_jawab as uploader FROM berita b LEFT JOIN users u ON b.uploaded_by = u.id WHERE b.status_verifikasi = 'Verified' ORDER BY b.tanggal DESC, b.id DESC");
+            $stmt = $conn->query("SELECT g.*, u.nama_penanggung_jawab as uploader FROM galeri g LEFT JOIN users u ON g.uploaded_by = u.id WHERE g.status_verifikasi = 'Verified' ORDER BY g.tanggal DESC, g.id DESC");
         }
-        $articles = $stmt->fetchAll();
-        echo json_encode(["status" => "success", "data" => $articles]);
+        $items = $stmt->fetchAll();
+        echo json_encode(["status" => "success", "data" => $items]);
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
@@ -33,15 +33,15 @@ elseif ($method === 'POST') {
 
     if ($action === 'create') {
         $judul = isset($_POST['judul']) ? trim($_POST['judul']) : '';
-        $isi = isset($_POST['isi']) ? trim($_POST['isi']) : '';
+        $deskripsi = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
         $uploaded_by = isset($_POST['uploaded_by']) ? intval($_POST['uploaded_by']) : null;
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
-        if (empty($judul) || empty($isi) || empty($kategori) || empty($tanggal)) {
+        if (empty($judul) || empty($deskripsi) || empty($kategori) || empty($tanggal)) {
             http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Kolom judul, isi, kategori, dan tanggal wajib diisi."]);
+            echo json_encode(["status" => "error", "message" => "Kolom judul, deskripsi, kategori, dan tanggal wajib diisi."]);
             exit();
         }
 
@@ -58,7 +58,7 @@ elseif ($method === 'POST') {
         $foto_path = '';
 
         if (move_uploaded_file($file_tmp, $target_file)) {
-            $foto_path = 'backend/uploads/berita/' . $file_name;
+            $foto_path = 'backend/uploads/galeri/' . $file_name;
         } else {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => "Gagal mengunggah foto."]);
@@ -69,9 +69,9 @@ elseif ($method === 'POST') {
         $status_verifikasi = ($role === 'ADMIN') ? 'Verified' : 'Pending';
 
         try {
-            $stmt = $conn->prepare("INSERT INTO berita (judul, isi, foto, kategori, tanggal, status_verifikasi, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$judul, $isi, $foto_path, $kategori, $tanggal, $status_verifikasi, $uploaded_by]);
-            echo json_encode(["status" => "success", "message" => "Berita berhasil ditambahkan" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
+            $stmt = $conn->prepare("INSERT INTO galeri (judul, deskripsi, foto, kategori, tanggal, status_verifikasi, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$judul, $deskripsi, $foto_path, $kategori, $tanggal, $status_verifikasi, $uploaded_by]);
+            echo json_encode(["status" => "success", "message" => "Item galeri berhasil ditambahkan" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
@@ -80,27 +80,27 @@ elseif ($method === 'POST') {
     elseif ($action === 'update') {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
         $judul = isset($_POST['judul']) ? trim($_POST['judul']) : '';
-        $isi = isset($_POST['isi']) ? trim($_POST['isi']) : '';
+        $deskripsi = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
-        if ($id === 0 || empty($judul) || empty($isi) || empty($kategori) || empty($tanggal)) {
+        if ($id === 0 || empty($judul) || empty($deskripsi) || empty($kategori) || empty($tanggal)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Data tidak lengkap untuk pembaruan."]);
             exit();
         }
 
-        $stmt = $conn->prepare("SELECT foto, status_verifikasi FROM berita WHERE id = ?");
+        $stmt = $conn->prepare("SELECT foto, status_verifikasi FROM galeri WHERE id = ?");
         $stmt->execute([$id]);
-        $article = $stmt->fetch();
-        if (!$article) {
+        $item = $stmt->fetch();
+        if (!$item) {
             http_response_code(404);
-            echo json_encode(["status" => "error", "message" => "Berita tidak ditemukan."]);
+            echo json_encode(["status" => "error", "message" => "Item galeri tidak ditemukan."]);
             exit();
         }
 
-        $foto_path = $article['foto'];
+        $foto_path = $item['foto'];
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
             // Delete old photo
             if (!empty($foto_path) && file_exists('../' . str_replace('backend/', '', $foto_path))) {
@@ -110,17 +110,17 @@ elseif ($method === 'POST') {
             $file_name = time() . '_' . basename($_FILES['foto']['name']);
             $target_file = $upload_dir . $file_name;
             if (move_uploaded_file($file_tmp, $target_file)) {
-                $foto_path = 'backend/uploads/berita/' . $file_name;
+                $foto_path = 'backend/uploads/galeri/' . $file_name;
             }
         }
 
         // If updated by TIM, revert back to Pending verification
-        $status_verifikasi = ($role === 'ADMIN') ? $article['status_verifikasi'] : 'Pending';
+        $status_verifikasi = ($role === 'ADMIN') ? $item['status_verifikasi'] : 'Pending';
 
         try {
-            $stmt = $conn->prepare("UPDATE berita SET judul = ?, isi = ?, foto = ?, kategori = ?, tanggal = ?, status_verifikasi = ? WHERE id = ?");
-            $stmt->execute([$judul, $isi, $foto_path, $kategori, $tanggal, $status_verifikasi, $id]);
-            echo json_encode(["status" => "success", "message" => "Berita berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
+            $stmt = $conn->prepare("UPDATE galeri SET judul = ?, deskripsi = ?, foto = ?, kategori = ?, tanggal = ?, status_verifikasi = ? WHERE id = ?");
+            $stmt->execute([$judul, $deskripsi, $foto_path, $kategori, $tanggal, $status_verifikasi, $id]);
+            echo json_encode(["status" => "success", "message" => "Item galeri berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
@@ -136,19 +136,19 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("SELECT foto FROM berita WHERE id = ?");
+            $stmt = $conn->prepare("SELECT foto FROM galeri WHERE id = ?");
             $stmt->execute([$id]);
-            $article = $stmt->fetch();
-            if ($article && !empty($article['foto'])) {
-                $relative_photo = '../' . str_replace('backend/', '', $article['foto']);
+            $item = $stmt->fetch();
+            if ($item && !empty($item['foto'])) {
+                $relative_photo = '../' . str_replace('backend/', '', $item['foto']);
                 if (file_exists($relative_photo)) {
                     @unlink($relative_photo);
                 }
             }
 
-            $stmt = $conn->prepare("DELETE FROM berita WHERE id = ?");
+            $stmt = $conn->prepare("DELETE FROM galeri WHERE id = ?");
             $stmt->execute([$id]);
-            echo json_encode(["status" => "success", "message" => "Berita berhasil dihapus."]);
+            echo json_encode(["status" => "success", "message" => "Item galeri berhasil dihapus."]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
@@ -165,9 +165,9 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("UPDATE berita SET status_verifikasi = ? WHERE id = ?");
+            $stmt = $conn->prepare("UPDATE galeri SET status_verifikasi = ? WHERE id = ?");
             $stmt->execute([$status_verifikasi, $id]);
-            echo json_encode(["status" => "success", "message" => "Status verifikasi berita berhasil diperbarui menjadi $status_verifikasi."]);
+            echo json_encode(["status" => "success", "message" => "Status verifikasi berhasil diperbarui menjadi $status_verifikasi."]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
