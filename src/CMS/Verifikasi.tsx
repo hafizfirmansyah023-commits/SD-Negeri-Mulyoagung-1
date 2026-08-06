@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Check, X, ShieldAlert, Image, FileText, CheckCircle2, XCircle } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface GalleryItem {
   id: number;
@@ -23,7 +24,7 @@ interface NewsArticle {
   uploader: string;
 }
 
-const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
+const API_BASE = getApiBaseUrl();
 
 export default function Verifikasi() {
   const [pendingGallery, setPendingGallery] = useState<GalleryItem[]>([]);
@@ -172,7 +173,7 @@ export default function Verifikasi() {
                 <div key={art.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col md:flex-row gap-6 items-start justify-between">
                   <div className="flex flex-col md:flex-row gap-4 items-start flex-grow">
                     <div className="w-full md:w-44 h-28 bg-slate-100 rounded-xl overflow-hidden shrink-0">
-                      <img src={`${API_BASE}/${art.foto}`} alt={art.judul} className="w-full h-full object-cover" />
+                      <img src={getImageUrl(art.foto)} alt={art.judul} className="w-full h-full object-cover" />
                     </div>
                     <div className="space-y-2">
                       <div className="flex gap-2 items-center">
@@ -220,7 +221,7 @@ export default function Verifikasi() {
                 <div key={item.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col md:flex-row gap-6 items-start justify-between">
                   <div className="flex flex-col md:flex-row gap-4 items-start flex-grow">
                     <div className="w-full md:w-44 h-28 bg-slate-100 rounded-xl overflow-hidden shrink-0">
-                      <img src={`${API_BASE}/${item.foto}`} alt={item.judul} className="w-full h-full object-cover" />
+                      <img src={getImageUrl(item.foto)} alt={item.judul} className="w-full h-full object-cover" />
                     </div>
                     <div className="space-y-2">
                       <div className="flex gap-2 items-center">

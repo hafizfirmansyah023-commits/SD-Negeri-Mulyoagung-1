@@ -3,6 +3,7 @@ import {
   Users, Image, FileText, User, ShieldAlert, LogOut, 
   Lock, ArrowLeft, School, GraduationCap, LayoutDashboard 
 } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 import GuruCrud from './GuruCrud';
 import GaleriCrud from './GaleriCrud';
 import BeritaCrud from './BeritaCrud';
@@ -21,7 +22,7 @@ interface DashboardProps {
   onBackToHome: () => void;
 }
 
-const API_BASE = 'http://localhost/sd-negeri-mulyoagung-1';
+const API_BASE = getApiBaseUrl();
 
 export default function Dashboard({ onBackToHome }: DashboardProps) {
   const [user, setUser] = useState<UserSession | null>(null);
@@ -210,7 +211,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
             <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700">
               {user.foto ? (
                 <img
-                  src={`${API_BASE}/${user.foto}`}
+                  src={getImageUrl(user.foto)}
                   alt={user.nama_penanggung_jawab}
                   className="w-full h-full object-cover"
                 />

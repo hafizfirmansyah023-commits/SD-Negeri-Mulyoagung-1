@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GALLERY_ITEMS } from '../data/schoolData';
 import { Image, X, Calendar, Maximize2 } from 'lucide-react';
 import { GalleryItem } from '../types';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 export const GallerySection: React.FC = () => {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
@@ -11,7 +12,7 @@ export const GallerySection: React.FC = () => {
   useEffect(() => {
     const loadGallery = async () => {
       try {
-        const response = await fetch('http://localhost/sd-negeri-mulyoagung-1/backend/API/galeri.php');
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/galeri.php`);
         const result = await response.json();
         if (result.status === 'success' && result.data && result.data.length > 0) {
           const mapped: GalleryItem[] = result.data.map((item: any) => ({
@@ -19,7 +20,7 @@ export const GallerySection: React.FC = () => {
             title: item.judul,
             category: item.kategori === 'Kegiatan Sekolah' ? 'Kegiatan' : (item.kategori === 'Ekstrakurikuler' ? 'Pembelajaran' : (item.kategori as any)),
             date: item.tanggal,
-            image: item.foto ? `http://localhost/sd-negeri-mulyoagung-1/${item.foto}` : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800',
+            image: item.foto ? getImageUrl(item.foto) : 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=800',
             description: item.deskripsi
           }));
           setGalleryItems(mapped);

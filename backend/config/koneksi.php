@@ -1,5 +1,5 @@
 <?php
-// CORS Headers to allow React Dev server to access the APIs
+// CORS Headers to allow React Dev server and production domain
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -10,10 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
-$host = "localhost";
-$username = "root";
-$password = "";
-$database = "db_sdn1mulyoagung";
+$host = getenv('DB_HOST') ?: "localhost";
+$username = getenv('DB_USER') ?: "root";
+$password = getenv('DB_PASS') !== false ? getenv('DB_PASS') : "";
+$database = getenv('DB_NAME') ?: "db_sdn1mulyoagung";
 
 try {
     $conn = new PDO("mysql:host=$host;dbname=$database;charset=utf8mb4", $username, $password);
