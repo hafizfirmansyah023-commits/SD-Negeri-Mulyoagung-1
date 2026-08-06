@@ -51,31 +51,28 @@ export const SchoolProfileSection: React.FC = () => {
           <div className="inline-flex p-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-teal-100 shadow-[0_4px_20px_0_rgba(2,140,132,0.08)] space-x-1">
             <button
               onClick={() => setActiveTab('visi-misi')}
-              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${
-                activeTab === 'visi-misi'
+              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'visi-misi'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
                   : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
-              }`}
+                }`}
             >
               Visi & Misi
             </button>
             <button
               onClick={() => setActiveTab('sejarah')}
-              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${
-                activeTab === 'sejarah'
+              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'sejarah'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
                   : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
-              }`}
+                }`}
             >
               Sejarah Sekolah
             </button>
             <button
               onClick={() => setActiveTab('fasilitas')}
-              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${
-                activeTab === 'fasilitas'
+              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'fasilitas'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
                   : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
-              }`}
+                }`}
             >
               Fasilitas Pembelajaran
             </button>
@@ -102,7 +99,7 @@ export const SchoolProfileSection: React.FC = () => {
               <div className="relative overflow-hidden rounded-2xl p-5 bg-gradient-to-r from-teal-50/90 via-white/80 to-teal-50/40 border border-teal-100/80 shadow-inner">
                 <p className="text-base sm:text-lg text-slate-800 font-bold leading-relaxed border-l-4 border-[#028C84] pl-4">
                   "Terwujudnya murid yang beriman dan bertakwa, bernalar kritis, berkarakter mulia,
-                   sehat jasmani, dan unggul dalam digitalisasi."
+                  sehat jasmani, dan unggul dalam digitalisasi."
                 </p>
               </div>
             </div>

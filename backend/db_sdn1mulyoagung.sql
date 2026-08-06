@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2026 at 04:16 AM
+-- Generation Time: Aug 06, 2026 at 06:02 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,12 +55,6 @@ CREATE TABLE `galeri` (
   `uploaded_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `galeri`
---
-
-
-
 -- --------------------------------------------------------
 
 --
@@ -100,6 +94,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawab`, `foto`) VALUES
+(2, 'admin1', '$2y$10$xMjWgEM8P/SySrAtWfpr8eC0PCOcqaz7Z1nnFJhvD5x1DP7NdDgAS', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1785983881_20260417041002_1.jpg'),
+(3, 'voli123', '$2y$10$GkRRznDjplBrZwG8ayLH/ugSRLJC2S94qxYJai8Hmnkc1G3Oqpm1i', 'TIM', 'hafiz', '');
 
 --
 -- Indexes for dumped tables
@@ -140,7 +136,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `galeri`
@@ -152,7 +148,7 @@ ALTER TABLE `galeri`
 -- AUTO_INCREMENT for table `guru_tendik`
 --
 ALTER TABLE `guru_tendik`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
