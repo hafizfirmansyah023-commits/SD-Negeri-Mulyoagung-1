@@ -153,107 +153,36 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
               </div>
             )}
 
-            {isLoginView ? (
-              // Login View
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1">Username</label>
-                  <input
-                    type="text"
-                    required
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                    placeholder="Masukkan username"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1">Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                    placeholder="••••••••"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-3 rounded-xl shadow-md transition-all transform hover:translate-y-[-1px] cursor-pointer"
-                >
-                  Masuk ke Dashboard
-                </button>
-              </form>
-            ) : (
-              // Register View
-              <form onSubmit={handleRegisterSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1">Nama Penanggung Jawab</label>
-                  <input
-                    type="text"
-                    required
-                    value={namaInput}
-                    onChange={(e) => setNamaInput(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                    placeholder="Contoh: Budi Santoso (Guru)"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1">Username</label>
-                  <input
-                    type="text"
-                    required
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                    placeholder="Username baru"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1">Password</label>
-                  <input
-                    type="password"
-                    required
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                    placeholder="Min. 6 karakter"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1">Peran Akun</label>
-                  <select
-                    value={roleInput}
-                    onChange={(e) => setRoleInput(e.target.value as 'ADMIN' | 'TIM')}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                  >
-                    <option value="TIM">TIM (Upload berita & galeri perlu verifikasi)</option>
-                    <option value="ADMIN">ADMIN (Akses penuh & verifikasi)</option>
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-3 rounded-xl shadow-md transition-all cursor-pointer"
-                >
-                  Daftar Sekarang
-                </button>
-              </form>
-            )}
-
-            <div className="text-center pt-2">
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1">Username</label>
+                <input
+                  type="text"
+                  required
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  placeholder="Masukkan username"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1">Password</label>
+                <input
+                  type="password"
+                  required
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  placeholder="••••••••"
+                />
+              </div>
               <button
-                type="button"
-                onClick={() => {
-                  setIsLoginView(!isLoginView);
-                  setAuthError('');
-                  setAuthSuccess('');
-                }}
-                className="text-teal-600 hover:text-teal-700 font-semibold text-sm cursor-pointer"
+                type="submit"
+                className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-3 rounded-xl shadow-md transition-all transform hover:translate-y-[-1px] cursor-pointer"
               >
-                {isLoginView ? 'Belum punya akun? Daftar di sini' : 'Sudah punya akun? Login di sini'}
+                Masuk ke Dashboard
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
