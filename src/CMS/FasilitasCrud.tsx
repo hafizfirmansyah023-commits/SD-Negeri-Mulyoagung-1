@@ -4,6 +4,7 @@ import {
     HeartPulse, Coffee, Trees, Building, Sparkles, AlertCircle, X
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { UserSession } from './types';
 
 export interface FasilitasItem {
     id: number;
@@ -12,13 +13,7 @@ export interface FasilitasItem {
     foto: string;
 }
 
-interface UserSession {
-    id: number;
-    username: string;
-    role: 'ADMIN' | 'TIM';
-    nama_penanggung_jawab: string;
-    foto: string;
-}
+
 
 interface FasilitasCrudProps {
     currentUser: UserSession;
