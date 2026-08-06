@@ -57,8 +57,8 @@ export const ContactSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Left: Contact Info Cards */}
           <div className="lg:col-span-5 flex flex-col">
-            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-white/60 space-y-6 flex flex-col justify-between h-full">
-              <div>
+            <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-white/60 flex flex-col justify-between h-full">
+              <div className="space-y-6">
                 <h3 className="text-xl font-bold text-[#1E3A8A] mb-6 flex items-center gap-2">
                   <span>Informasi Sekretariat</span>
                 </h3>
@@ -144,16 +144,16 @@ export const ContactSection: React.FC = () => {
                 </div>
               </div>
 
-              <div className="pt-6 border-t border-slate-100 mt-6">
+              <div className="pt-6 border-t border-slate-100 mt-8">
                 <a
                   href="https://maps.app.goo.gl/4ekhNxNWhTuH1VEV6"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#028C84] hover:bg-[#006a64] text-white font-bold py-3 px-6 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+                  className="w-full bg-[#028C84] hover:bg-[#006a64] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"
                 >
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-4 h-4 shrink-0" />
                   <span>Petunjuk Arah (Google Maps)</span>
-                  <ExternalLink className="w-4 h-4 ml-1" />
+                  <ExternalLink className="w-4 h-4 shrink-0 ml-1" />
                 </a>
               </div>
             </div>
@@ -162,22 +162,22 @@ export const ContactSection: React.FC = () => {
           {/* Right: Form Pengaduan Card */}
           <div className="lg:col-span-7 flex flex-col">
             <div className="bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-xl border border-white/60 flex flex-col justify-between h-full">
-              <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="p-3 rounded-2xl bg-emerald-500 text-white shadow-md">
-                    <MessageCircle className="w-6 h-6" />
+              <form onSubmit={handleSubmit} className="flex flex-col justify-between h-full space-y-6">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-3 rounded-2xl bg-emerald-500 text-white shadow-md shrink-0">
+                      <MessageCircle className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-900">
+                        Form Pengaduan Masyarakat
+                      </h3>
+                      <p className="text-xs sm:text-sm text-slate-500">
+                        Tulis laporan/masukan Anda di bawah ini untuk dikirim langsung ke WhatsApp pengaduan.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-slate-900">
-                      Form Pengaduan Masyarakat
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500">
-                      Tulis laporan/masukan Anda di bawah ini untuk dikirim langsung ke WhatsApp pengaduan.
-                    </p>
-                  </div>
-                </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -256,16 +256,18 @@ export const ContactSection: React.FC = () => {
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all text-slate-800 resize-none"
                     />
                   </div>
+                </div>
 
+                <div className="pt-6 border-t border-slate-100 mt-auto">
                   <button
                     type="submit"
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-lg hover:shadow-emerald-600/25 flex items-center justify-center gap-2 group cursor-pointer"
+                    className="w-full bg-[#028C84] hover:bg-[#006a64] text-white font-bold py-3.5 px-6 rounded-xl transition-all shadow-md hover:shadow-teal-700/20 flex items-center justify-center gap-2 group cursor-pointer text-sm sm:text-base"
                   >
-                    <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    <Send className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-1" />
                     <span>Kirim Pengaduan via WhatsApp (089513301256)</span>
                   </button>
-                </form>
-              </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
