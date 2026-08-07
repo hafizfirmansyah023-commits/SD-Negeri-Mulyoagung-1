@@ -19,7 +19,7 @@ export default function CmsSidebar({
     onLogout,
 }: CmsSidebarProps) {
     return (
-        <aside className="w-full md:w-64 bg-slate-900 text-white flex flex-col justify-between shrink-0">
+        <aside className="w-full md:w-64 bg-slate-900 text-white flex flex-col h-screen sticky top-0 shrink-0">
             <div>
                 {/* Logo Section */}
                 <div className="p-6 border-b border-slate-800 flex items-center gap-3">
