@@ -22,6 +22,8 @@ import { ContactSection } from './components/ContactSection';
 import { PpdbModal } from './components/PpdbModal';
 import { Footer } from './components/Footer';
 import { BackToTop } from './components/BackToTop';
+import { AnnouncementBar } from './components/AnnouncementBar';
+import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
 
@@ -74,6 +76,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white overflow-hidden">
+      {/* Running Text Info Penting */}
+      <AnnouncementBar />
+
       {/* Header */}
       <Header
         activeTab={activeTab}
@@ -169,6 +174,9 @@ function AppContent() {
 
       {/* Floating Back to Top Button */}
       <BackToTop />
+
+      {/* Announcement Pop-up */}
+      <AnnouncementPopup />
     </div>
   );
 }

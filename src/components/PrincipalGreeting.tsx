@@ -1,8 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PRINCIPAL_INFO } from '../data/schoolData';
 import { Quote } from 'lucide-react';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 export const PrincipalGreeting: React.FC = () => {
+  const [data, setData] = useState({
+    name: PRINCIPAL_INFO.name,
+    greeting: PRINCIPAL_INFO.greeting,
+    photo: PRINCIPAL_INFO.photo
+  });
+
+  useEffect(() => {
+    const fetchGreeting = async () => {
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/sambutan.php`);
+        const result = await response.json();
+        if (result.status === 'success' && result.data) {
+          setData({
+            name: result.data.nama || PRINCIPAL_INFO.name,
+            greeting: result.data.sambutan || PRINCIPAL_INFO.greeting,
+            photo: result.data.foto ? getImageUrl(result.data.foto) : PRINCIPAL_INFO.photo
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch principal greeting:', err);
+      }
+    };
+    fetchGreeting();
+  }, []);
+
   return (
     <section className="relative bg-[#FAFAFA] py-12 overflow-hidden">
   
@@ -26,17 +52,17 @@ export const PrincipalGreeting: React.FC = () => {
           {/* Frame foto juga dibuat bertekstur kaca */}
           <div className="relative w-44 h-44 sm:w-56 sm:h-56 lg:w-64 lg:h-64 rounded-full overflow-hidden border-4 border-white/80 p-2 bg-white/50 backdrop-blur-md shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition-transform hover:scale-105 duration-300">
             <img
-              src={PRINCIPAL_INFO.photo}
-              alt={PRINCIPAL_INFO.name}
+              src={data.photo}
+              alt={data.name}
               className="w-full h-full object-cover rounded-full"
             />
           </div>
           <div className="mt-5 text-center">
             <p className="font-extrabold text-lg sm:text-xl text-slate-800 tracking-tight drop-shadow-sm">
-              {PRINCIPAL_INFO.name}
+              {data.name}
             </p>
             <p className="text-xs sm:text-sm font-semibold text-slate-500 mt-1">
-              {PRINCIPAL_INFO.title}
+              Kepala SD Negeri 1 Mulyoagung
             </p>
           </div>
         </div>
@@ -56,7 +82,7 @@ export const PrincipalGreeting: React.FC = () => {
           <div className="relative pl-6 p-5 sm:p-6 rounded-2xl bg-white/40 backdrop-blur-md border border-white/70 shadow-[inset_0_2px_10px_rgba(255,255,255,0.5),0_4px_15px_-5px_rgba(0,0,0,0.05)]">
             <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-slate-400 to-slate-200 rounded-l-2xl opacity-80"></div>
             <p className="text-slate-700 text-base sm:text-lg leading-relaxed whitespace-pre-line font-medium">
-              {PRINCIPAL_INFO.greeting}
+              {data.greeting}
             </p>
           </div>
 

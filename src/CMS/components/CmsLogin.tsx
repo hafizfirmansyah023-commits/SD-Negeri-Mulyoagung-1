@@ -11,7 +11,7 @@ interface CmsLoginProps {
 
 const API_BASE = getApiBaseUrl();
 
-export default function CmsLogin({ onLoginSuccess }: CmsLoginProps) {
+export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps) {
     const [usernameInput, setUsernameInput] = useState('');
     const [passwordInput, setPasswordInput] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -196,10 +196,9 @@ export default function CmsLogin({ onLoginSuccess }: CmsLoginProps) {
                             Masuk ke Dashboard
                         </button>
 
-                        {/* Button Kembali ke Halaman Utama (Ditempatkan di bawah button login) */}
                         <button
                             type="button"
-                            onClick={() => window.open('/', '_blank')}
+                            onClick={onBackToHome}
                             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:text-teal-800 bg-slate-100 hover:bg-slate-200/80 transition-colors border border-slate-200 cursor-pointer"
                         >
                             <ArrowLeft size={16} /> Kembali ke Halaman Utama
