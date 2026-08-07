@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { NavTab } from '../types';
 import heroImg from '../assets/images/img1.webp';
 import heroImg1 from '../assets/images/img2.webp';
+import { getApiBaseUrl } from '../config/api';
 
 interface HeroProps {
   onOpenPpdb: () => void;
@@ -13,6 +14,23 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenPpdb,
   setActiveTab,
 }) => {
+  const [tahunAjaran, setTahunAjaran] = useState('2025/2026');
+
+  useEffect(() => {
+    const fetchTahunAjaran = async () => {
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/pengaturan.php`);
+        const data = await response.json();
+        if (data.status === 'success' && data.tahun_ajaran) {
+          setTahunAjaran(data.tahun_ajaran);
+        }
+      } catch (err) {
+        // Keep default fallback
+      }
+    };
+    fetchTahunAjaran();
+  }, []);
+
   return (
     <section className="relative w-full min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0D4A46]">
 
@@ -46,7 +64,7 @@ export const Hero: React.FC<HeroProps> = ({
             <Sparkles className="w-4 h-4 text-[#79EEDE]" />
 
             <span className="text-sm font-semibold">
-              Tahun Ajaran 2025/2026
+              Tahun Ajaran {tahunAjaran}
             </span>
 
           </div>

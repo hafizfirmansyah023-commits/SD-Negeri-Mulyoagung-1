@@ -98,7 +98,32 @@ CREATE TABLE `guru_tendik` (
   `motto` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `pengaturan_sekolah` (
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`) VALUES
+('tahun_ajaran', '2025/2026');
+
 -- --------------------------------------------------------
+
+
+--
+-- Table structure for table `pengaturan_sekolah`
+--
+
+CREATE TABLE `pengaturan_sekolah` (
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`) VALUES
+('tahun_ajaran', '2025/2026');
 
 --
 -- Table structure for table `users`
@@ -207,6 +232,78 @@ ALTER TABLE `berita`
 --
 ALTER TABLE `galeri`
   ADD CONSTRAINT `galeri_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sambutan_kepsek`
+--
+
+CREATE TABLE `sambutan_kepsek` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `sambutan` text NOT NULL,
+  `foto` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sambutan_kepsek`
+--
+
+INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`) VALUES
+(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600');
+
+--
+-- Indexes for table `sambutan_kepsek`
+--
+ALTER TABLE `sambutan_kepsek`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `sambutan_kepsek`
+--
+ALTER TABLE `sambutan_kepsek`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pengumuman_penting`
+--
+
+CREATE TABLE `pengumuman_penting` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `isi` text NOT NULL,
+  `running_text` varchar(255) DEFAULT NULL,
+  `show_popup` tinyint(1) NOT NULL DEFAULT 1,
+  `show_button` tinyint(1) NOT NULL DEFAULT 0,
+  `button_text` varchar(100) DEFAULT NULL,
+  `button_link` varchar(255) DEFAULT NULL,
+  `show_photo` tinyint(1) NOT NULL DEFAULT 0,
+  `foto` varchar(255) DEFAULT NULL,
+  `photo_link` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pengumuman_penting`
+--
+
+INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`) VALUES
+(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sdn1mulyoagung.sch.id/ppdb', 0, '', '', 1);
+
+--
+-- Indexes for table `pengumuman_penting`
+--
+ALTER TABLE `pengumuman_penting`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `pengumuman_penting`
+--
+ALTER TABLE `pengumuman_penting`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
