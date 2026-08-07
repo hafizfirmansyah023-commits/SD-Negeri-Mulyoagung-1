@@ -93,8 +93,8 @@ export const SchoolProfileSection: React.FC = () => {
             <button
               onClick={() => setActiveTab('visi-misi')}
               className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'visi-misi'
-                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
-                  : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
+                ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
                 }`}
             >
               Visi & Misi
@@ -102,8 +102,8 @@ export const SchoolProfileSection: React.FC = () => {
             <button
               onClick={() => setActiveTab('sejarah')}
               className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'sejarah'
-                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
-                  : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
+                ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
                 }`}
             >
               Sejarah Sekolah
@@ -111,8 +111,8 @@ export const SchoolProfileSection: React.FC = () => {
             <button
               onClick={() => setActiveTab('fasilitas')}
               className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'fasilitas'
-                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
-                  : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
+                ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
                 }`}
             >
               Fasilitas Pembelajaran
@@ -189,6 +189,7 @@ export const SchoolProfileSection: React.FC = () => {
         {activeTab === 'sejarah' && (
           <div className="relative bg-white/75 backdrop-blur-xl rounded-3xl p-6 sm:p-10 lg:p-12 border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.12)] hover:border-teal-200/80 transition-all duration-300 space-y-6 animate-fade-in overflow-hidden">
             <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-100/40 to-transparent rounded-tr-3xl pointer-events-none" />
+
             <div className="flex items-center gap-3">
               <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-md shadow-amber-900/20">
                 <History className="w-6 h-6" />
@@ -196,20 +197,26 @@ export const SchoolProfileSection: React.FC = () => {
               <div>
                 <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">Perjalanan Pengabdian</span>
                 <h3 className="text-2xl font-extrabold text-[#1E3A8A]">
-                  Sejarah Singkat SD Negeri Mulyoagung 1
+                  Sejarah Singkat SD Negeri 1 Mulyoagung
                 </h3>
               </div>
             </div>
 
             <div className="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4 pt-2">
-              <p className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100/60">
-                SD Negeri 1 Mulyoagung didirikan sejak tahun 1978 sebagai wujud perhatian pemerintah daerah terhadap akses pendidikan dasar bermutu di wilayah Kecamatan Dau, Kabupaten Malang.
+              <p className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100/60 font-medium">
+                SD Negeri 1 Mulyoagung didirikan pada tahun 1970-an di pusat Kecamatan Dau, Kabupaten Malang. Terletak di kawasan strategis yang dekat dengan wilayah wisata, industri, dan lembaga pemerintahan, sekolah ini hadir untuk memenuhi kebutuhan pendidikan masyarakat dengan latar belakang siswa yang beragam.
               </p>
+
               <p>
-                Berdiri di atas tanah seluas lebih dari 3.465 m², sekolah ini terus bertransformasi mengiringi perkembangan jaman. Dari yang semula berawal dari bangunan sederhana dengan 6 ruang kelas, kini SD Negeri 1 Mulyoagung telah menjelma menjadi sekolah rujukan berakreditasi A yang dilengkapi sarana ruang seni, lab ipa, laboratorium komputer, perpustakaan, serta berbagai sarana pendukung modern.
+                Pada bulan <strong>Desember 2018</strong>, sekolah mengalami babak penting dalam perjalanannya melalui proses <em>merger</em> (penggabungan) dua lembaga, yaitu SD Negeri 1 Mulyoagung dan SD Negeri 3 Mulyoagung. Penggabungan ini semakin memperkuat sinergi fasilitas, tenaga pendidik, dan manajemen sekolah dalam menghadirkan layanan pendidikan dasar yang makin berkualitas.
               </p>
+
               <p>
-                Ribuan lulusan alumni terbaik telah lahir dan melanjutkan pendidikan ke jenjang terbaik di Kabupaten Malang hingga luar daerah. Komitmen kami tetap konsisten: mendidik dengan hati, mengutamakan akhlak mulia, dan mencetak generasi unggul yang siap menjawab tantangan masa depan.
+                Ciri khas lain yang menjadi kebanggaan sekolah adalah keberadaan <strong>Ikon Patung Semar</strong> di area sekolah, yang menyimbolkan komitmen kuat SDN 1 Mulyoagung dalam melestarikan nilai-nilai budaya dan kearifan lokal Jawa.
+              </p>
+
+              <p>
+                Kini, di bawah kepemimpinan yang berdedikasi serta didukung fasilitator dan Guru Penggerak, SD Negeri 1 Mulyoagung terus bertransformasi menerapkan Kurikulum Merdeka. Sekolah berkomitmen membentuk generasi unggul yang beriman dan bertakwa, berakhlak mulia, bernalar kritis, mandiri, kreatif, serta berkebinekaan global sesuai nilai-nilai Profil Pelajar Pancasila.
               </p>
             </div>
           </div>

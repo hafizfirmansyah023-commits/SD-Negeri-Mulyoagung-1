@@ -148,7 +148,7 @@ export default function CmsSidebar({
                     >
                         <User size={18} /> Pengaturan Akun
                     </button>
-                    
+
                     {user.role === 'ADMIN' && (
                         <button
                             onClick={() => setActiveTab('pengaturan')}
