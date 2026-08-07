@@ -5,7 +5,7 @@ cms untuk mengedit sambutan kepala sekolah
 
 foto juga akan terambil dari database
 
-data : foto, nama, sambutan
+data : foto, nama, sambutan (belum ditambahkan ke database, tolong ditambahkan)
 
 sambutan diambil dari database
 
