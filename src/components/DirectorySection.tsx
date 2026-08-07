@@ -126,7 +126,7 @@ export const DirectorySection: React.FC = () => {
           <div className="flex items-start gap-2">
             <GraduationCap className="w-3.5 h-3.5 text-[#028C84] shrink-0 mt-0.5" />
             <div className="min-w-0 flex-1">
-              <span className="text-slate-600 break-words">{teacher.education}</span>
+              <span className="text-slate-600 break-words">Riwayat Pendidikan: {teacher.education}</span>
             </div>
           </div>
           {teacher.gender && (
