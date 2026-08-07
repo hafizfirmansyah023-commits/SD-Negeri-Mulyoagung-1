@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { User, Plus, Trash2, Key, Shield, FileText } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { UserSession } from './types';
 
-interface UserSession {
-  id: number;
-  username: string;
-  role: 'ADMIN' | 'TIM';
-  nama_penanggung_jawab: string;
-  foto: string;
-}
 
 interface UserData {
   id: number;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Image, Calendar, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { UserSession } from './types';
 
 interface GalleryItem {
   id: number;
@@ -14,13 +15,7 @@ interface GalleryItem {
   uploaded_by: number;
 }
 
-interface UserSession {
-  id: number;
-  username: string;
-  role: 'ADMIN' | 'TIM';
-  nama_penanggung_jawab: string;
-  foto: string;
-}
+
 
 interface GaleriCrudProps {
   currentUser: UserSession;
