@@ -35,11 +35,14 @@ elseif ($method === 'POST') {
         $status = isset($_POST['status']) ? trim($_POST['status']) : '';
         $motto = isset($_POST['motto']) ? trim($_POST['motto']) : '';
 
-        if (empty($nama) || empty($nip) || empty($jabatan) || empty($tugas) || empty($riwayat_pendidikan) || empty($jenis_kelamin) || empty($status)) {
+        if (empty($nama) || empty($jabatan) || empty($tugas) || empty($riwayat_pendidikan) || empty($jenis_kelamin) || empty($status)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Semua kolom data guru harus diisi."]);
             exit();
         }
+
+        // NIP Optional ( nullable )
+        $nip = !empty($_POST['nip']) ? trim($_POST['nip']) : null;
 
         // Handle file upload
         $foto_path = '';
@@ -72,11 +75,13 @@ elseif ($method === 'POST') {
         $status = isset($_POST['status']) ? trim($_POST['status']) : '';
         $motto = isset($_POST['motto']) ? trim($_POST['motto']) : '';
 
-        if ($id === 0 || empty($nama) || empty($nip) || empty($jabatan) || empty($tugas) || empty($riwayat_pendidikan) || empty($jenis_kelamin) || empty($status)) {
+        if ($id === 0 || empty($nama) || empty($jabatan) || empty($tugas) || empty($riwayat_pendidikan) || empty($jenis_kelamin) || empty($status)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Data tidak lengkap untuk pembaruan."]);
             exit();
         }
+
+        $nip = !empty($_POST['nip']) ? trim($_POST['nip']) : null;
 
         // Fetch existing teacher to keep/delete old photo
         $stmt = $conn->prepare("SELECT foto FROM guru_tendik WHERE id = ?");

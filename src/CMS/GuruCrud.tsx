@@ -32,7 +32,7 @@ export default function GuruCrud() {
   const [tugas, setTugas] = useState('');
   const [riwayatPendidikan, setRiwayatPendidikan] = useState('');
   const [jenisKelamin, setJenisKelamin] = useState<'Laki-laki' | 'Perempuan'>('Laki-laki');
-  const [status, setStatus] = useState('PNS');
+  const [status, setStatus] = useState('');
   const [motto, setMotto] = useState('');
   const [fotoFile, setFotoFile] = useState<File | null>(null);
 
@@ -64,7 +64,7 @@ export default function GuruCrud() {
     setTugas('');
     setRiwayatPendidikan('');
     setJenisKelamin('Laki-laki');
-    setStatus('PNS');
+    setStatus('');
     setMotto('');
     setFotoFile(null);
     setEditId(null);
@@ -102,7 +102,7 @@ export default function GuruCrud() {
       formData.append('id', editId.toString());
     }
     formData.append('nama', nama);
-    formData.append('nip', nip);
+    formData.append('nip', nip ? nip.trim() : '');
     formData.append('jabatan', jabatan);
     formData.append('tugas', tugas);
     formData.append('riwayat_pendidikan', riwayatPendidikan);
@@ -299,7 +299,6 @@ export default function GuruCrud() {
                   <label className="block text-slate-700 text-sm font-medium mb-1.5">NIP</label>
                   <input
                     type="text"
-                    required
                     value={nip}
                     onChange={(e) => setNip(e.target.value)}
                     placeholder="Contoh: 19820315..."
@@ -320,6 +319,7 @@ export default function GuruCrud() {
                     <option value="Kepala Sekolah">Kepala Sekolah</option>
                     <option value="Guru Wali Kelas">Guru Wali Kelas</option>
                     <option value="Guru Mata Pelajaran">Guru Mata Pelajaran</option>
+                    <option value="Tata Usaha">Tata Usaha</option>
                     <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
                   </select>
                 </div>
@@ -355,7 +355,7 @@ export default function GuruCrud() {
                     required
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    placeholder="PNS, GTT, Honorer, dll"
+                    placeholder="AKTIF,PENSIUN,MUTASI"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
                   />
                 </div>
