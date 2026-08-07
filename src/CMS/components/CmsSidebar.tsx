@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft, School, Building, Award } from 'lucide-react';
+import { Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft, School, Building, Award, Megaphone } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
 
@@ -78,6 +78,16 @@ export default function CmsSidebar({
                         }`}
                     >
                         <Award size={18} /> Sambutan Kepsek
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('pengumuman')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
+                            activeTab === 'pengumuman'
+                                ? 'bg-teal-600 text-white'
+                                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                        }`}
+                    >
+                        <Megaphone size={18} /> Pengumuman Penting
                     </button>
                     <button
                         onClick={() => setActiveTab('fasilitas')}

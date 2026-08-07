@@ -9,6 +9,7 @@ import UserCrud from './UserCrud';
 import Verifikasi from './Verifikasi';
 import FasilitasCrud from './FasilitasCrud';
 import SambutanKepsekCrud from './SambutanKepsekCrud';
+import PengumumanCrud from './PengumumanCrud';
 
 interface DashboardProps {
     onBackToHome: () => void;
@@ -62,6 +63,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
             <main className="flex-grow p-6 md:p-10 max-w-7xl">
                 {activeTab === 'guru' && <GuruCrud />}
                 {activeTab === 'sambutan' && <SambutanKepsekCrud />}
+                {activeTab === 'pengumuman' && <PengumumanCrud />}
                 {activeTab === 'fasilitas' && <FasilitasCrud currentUser={user} />}
                 {activeTab === 'galeri' && <GaleriCrud currentUser={user} />}
                 {activeTab === 'berita' && <BeritaCrud currentUser={user} />}

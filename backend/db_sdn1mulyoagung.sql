@@ -239,6 +239,46 @@ ALTER TABLE `sambutan_kepsek`
 ALTER TABLE `sambutan_kepsek`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pengumuman_penting`
+--
+
+CREATE TABLE `pengumuman_penting` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `isi` text NOT NULL,
+  `running_text` varchar(255) DEFAULT NULL,
+  `show_popup` tinyint(1) NOT NULL DEFAULT 1,
+  `show_button` tinyint(1) NOT NULL DEFAULT 0,
+  `button_text` varchar(100) DEFAULT NULL,
+  `button_link` varchar(255) DEFAULT NULL,
+  `show_photo` tinyint(1) NOT NULL DEFAULT 0,
+  `foto` varchar(255) DEFAULT NULL,
+  `photo_link` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pengumuman_penting`
+--
+
+INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`) VALUES
+(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sdn1mulyoagung.sch.id/ppdb', 0, '', '', 1);
+
+--
+-- Indexes for table `pengumuman_penting`
+--
+ALTER TABLE `pengumuman_penting`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for table `pengumuman_penting`
+--
+ALTER TABLE `pengumuman_penting`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
