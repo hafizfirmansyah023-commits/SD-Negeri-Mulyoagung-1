@@ -24,7 +24,11 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
         const savedUser = localStorage.getItem('cms_user');
         if (savedUser) {
             try {
-                setUser(JSON.parse(savedUser));
+                const parsed = JSON.parse(savedUser);
+                setUser(parsed);
+                if (parsed.role === 'TIM') {
+                    setActiveTab('galeri');
+                }
             } catch (e) {
                 localStorage.removeItem('cms_user');
             }
@@ -34,6 +38,11 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
     const handleLoginSuccess = (loggedInUser: UserSession) => {
         setUser(loggedInUser);
         localStorage.setItem('cms_user', JSON.stringify(loggedInUser));
+        if (loggedInUser.role === 'TIM') {
+            setActiveTab('galeri');
+        } else {
+            setActiveTab('guru');
+        }
     };
 
     const handleLogout = () => {
@@ -62,17 +71,17 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
             />
 
             <main className="flex-grow p-6 md:p-10 max-w-7xl">
-                {activeTab === 'guru' && <GuruCrud />}
-                {activeTab === 'sambutan' && <SambutanKepsekCrud />}
-                {activeTab === 'pengumuman' && <PengumumanCrud />}
-                {activeTab === 'fasilitas' && <FasilitasCrud currentUser={user} />}
+                {activeTab === 'guru' && user.role === 'ADMIN' && <GuruCrud />}
+                {activeTab === 'sambutan' && user.role === 'ADMIN' && <SambutanKepsekCrud />}
+                {activeTab === 'pengumuman' && user.role === 'ADMIN' && <PengumumanCrud />}
+                {activeTab === 'fasilitas' && user.role === 'ADMIN' && <FasilitasCrud currentUser={user} />}
                 {activeTab === 'galeri' && <GaleriCrud currentUser={user} />}
                 {activeTab === 'berita' && <BeritaCrud currentUser={user} />}
                 {activeTab === 'verifikasi' && user.role === 'ADMIN' && <Verifikasi />}
                 {activeTab === 'user' && (
                     <UserCrud currentUser={user} onUpdateCurrentUser={handleUpdateUser} />
                 )}
-                {activeTab === 'pengaturan' && <PengaturanSekolah />}
+                {activeTab === 'pengaturan' && user.role === 'ADMIN' && <PengaturanSekolah />}
             </main>
         </div>
     );
