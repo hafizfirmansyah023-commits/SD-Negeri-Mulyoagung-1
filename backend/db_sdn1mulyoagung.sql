@@ -98,6 +98,16 @@ CREATE TABLE `guru_tendik` (
   `motto` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `pengaturan_sekolah` (
+  `setting_key` varchar(100) NOT NULL,
+  `setting_value` text NOT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`setting_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`) VALUES
+('tahun_ajaran', '2025/2026');
+
 -- --------------------------------------------------------
 
 

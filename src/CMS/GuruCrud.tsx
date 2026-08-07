@@ -316,9 +316,11 @@ export default function GuruCrud() {
                     onChange={(e) => setJabatan(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
                   >
+                    <option value="Komite Sekolah">Komite Sekolah</option>
                     <option value="Kepala Sekolah">Kepala Sekolah</option>
                     <option value="Guru Wali Kelas">Guru Wali Kelas</option>
                     <option value="Guru Mata Pelajaran">Guru Mata Pelajaran</option>
+                    <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
                   </select>
                 </div>
                 <div>

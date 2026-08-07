@@ -10,6 +10,7 @@ import Verifikasi from './Verifikasi';
 import FasilitasCrud from './FasilitasCrud';
 import SambutanKepsekCrud from './SambutanKepsekCrud';
 import PengumumanCrud from './PengumumanCrud';
+import PengaturanSekolah from './PengaturanSekolah';
 
 interface DashboardProps {
     onBackToHome: () => void;
@@ -71,6 +72,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'user' && (
                     <UserCrud currentUser={user} onUpdateCurrentUser={handleUpdateUser} />
                 )}
+                {activeTab === 'pengaturan' && <PengaturanSekolah />}
             </main>
         </div>
     );
