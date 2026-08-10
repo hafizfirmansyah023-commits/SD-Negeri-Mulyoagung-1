@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Plus, Edit2, Trash2, Image as ImageIcon, Monitor, BookOpen, Activity,
-    HeartPulse, Coffee, Trees, Building, Sparkles, AlertCircle, X
+    HeartPulse, Coffee, Trees, Building, Sparkles, AlertCircle, X, Search, RotateCcw
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { UserSession } from './types';
@@ -53,6 +53,9 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    // Search state
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Modal & Form States
     const [showModal, setShowModal] = useState(false);
@@ -177,6 +180,14 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
         }
     };
 
+    const filteredItems = items.filter((fac) => {
+        return (
+            !searchTerm.trim() ||
+            fac.judul.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            fac.deskripsi.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
+
     return (
         <div className="space-y-6">
             {/* Header & Controls */}
@@ -193,6 +204,36 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
                 >
                     <Plus size={18} /> Tambah Fasilitas
                 </button>
+            </div>
+
+            {/* Search Bar */}
+            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                <div className="relative w-full md:w-80">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Cari fasilitas, deskripsi..."
+                        className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm text-slate-700 placeholder-slate-400"
+                    />
+                    {searchTerm && (
+                        <button
+                            onClick={() => setSearchTerm('')}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                            <X size={15} />
+                        </button>
+                    )}
+                </div>
+                {searchTerm && (
+                    <button
+                        onClick={() => setSearchTerm('')}
+                        className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
+                    >
+                        <RotateCcw size={14} /> Reset
+                    </button>
+                )}
             </div>
 
             {/* Notifications */}
@@ -216,13 +257,25 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
             {/* Card Grid */}
             {loading ? (
                 <div className="text-center py-12 text-slate-500">Memuat data fasilitas...</div>
-            ) : items.length === 0 ? (
+            ) : filteredItems.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 text-slate-500">
-                    Belum ada data fasilitas pembelajaran. Klik tombol "Tambah Fasilitas" di atas untuk menambah.
+                    {searchTerm ? (
+                        <div>
+                            <p>Tidak ditemukan fasilitas yang sesuai dengan "{searchTerm}".</p>
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                            >
+                                <RotateCcw size={14} /> Reset Pencarian
+                            </button>
+                        </div>
+                    ) : (
+                        'Belum ada data fasilitas pembelajaran. Klik tombol "Tambah Fasilitas" di atas untuk menambah.'
+                    )}
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {items.map((fac) => (
+                    {filteredItems.map((fac) => (
                         <div
                             key={fac.id}
                             className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"

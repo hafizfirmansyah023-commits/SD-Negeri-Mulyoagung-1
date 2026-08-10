@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, BarChart3, Hash, Tag } from 'lucide-react';
+import { Plus, Edit2, Trash2, BarChart3, Hash, Tag, Search, RotateCcw, X } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { UserSession } from './types';
 
@@ -21,6 +21,9 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Search state
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -131,6 +134,15 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
     }
   };
 
+  const filteredItems = items.filter((item) => {
+    return (
+      !searchTerm.trim() ||
+      item.judul.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.jumlah.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -146,6 +158,36 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
         >
           <Plus size={18} /> Tambah Statistik
         </button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+        <div className="relative w-full md:w-80">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Cari judul, label, jumlah..."
+            className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm text-slate-700 placeholder-slate-400"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+        {searchTerm && (
+          <button
+            onClick={() => setSearchTerm('')}
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
+          >
+            <RotateCcw size={14} /> Reset
+          </button>
+        )}
       </div>
 
       {error && (
@@ -166,7 +208,7 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {items.map((item) => (
+          {filteredItems.map((item) => (
             <div key={item.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
               <div className="p-6 space-y-3">
                 <div className="flex items-center justify-between">
@@ -201,10 +243,20 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
             </div>
           ))}
 
-          {items.length === 0 && (
+          {filteredItems.length === 0 && (
             <div className="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-100">
               <BarChart3 size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500">Belum ada data statistik.</p>
+              <p className="text-slate-500 font-medium">
+                {searchTerm ? `Tidak ada data statistik yang sesuai dengan "${searchTerm}".` : 'Belum ada data statistik.'}
+              </p>
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                >
+                  <RotateCcw size={14} /> Reset Pencarian
+                </button>
+              )}
             </div>
           )}
         </div>

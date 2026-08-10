@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, User, BookOpen, GraduationCap, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, User, BookOpen, GraduationCap, Users, Search, Filter, RotateCcw, X } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface Teacher {
@@ -22,6 +22,12 @@ export default function GuruCrud() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Search & Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedJabatan, setSelectedJabatan] = useState('ALL');
+  const [selectedGender, setSelectedGender] = useState('ALL');
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -64,7 +70,7 @@ export default function GuruCrud() {
     setTugas('');
     setRiwayatPendidikan('');
     setJenisKelamin('Laki-laki');
-    setStatus('');
+    setStatus('Aktif');
     setMotto('');
     setFotoFile(null);
     setEditId(null);
@@ -158,14 +164,41 @@ export default function GuruCrud() {
     }
   };
 
+  // Dynamic filter options derived from database data
+  const availableJabatan = Array.from(new Set(teachers.map((t) => t.jabatan).filter(Boolean)));
+  const availableGenders = Array.from(new Set(teachers.map((t) => t.jenis_kelamin).filter(Boolean)));
+  const availableStatuses = Array.from(new Set(teachers.map((t) => t.status).filter(Boolean)));
+
+  const filteredTeachers = teachers.filter((t) => {
+    const matchesSearch =
+      !searchTerm.trim() ||
+      t.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (t.nip && t.nip.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      t.tugas.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (t.riwayat_pendidikan && t.riwayat_pendidikan.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesJabatan = selectedJabatan === 'ALL' || t.jabatan === selectedJabatan;
+    const matchesGender = selectedGender === 'ALL' || t.jenis_kelamin === selectedGender;
+    const matchesStatus = selectedStatus === 'ALL' || t.status === selectedStatus;
+    return matchesSearch && matchesJabatan && matchesGender && matchesStatus;
+  });
+
+  const isFiltered = searchTerm !== '' || selectedJabatan !== 'ALL' || selectedGender !== 'ALL' || selectedStatus !== 'ALL';
+
+  const handleResetFilter = () => {
+    setSearchTerm('');
+    setSelectedJabatan('ALL');
+    setSelectedGender('ALL');
+    setSelectedStatus('ALL');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Users className="text-teal-600" /> Direktori Guru & Tendik
+            <Users className="text-teal-600" /> Manajemen Guru & Staff
           </h2>
-          <p className="text-slate-500 text-sm">Kelola profil guru, kepala sekolah, dan staf kependidikan.</p>
+          <p className="text-slate-500 text-sm">Kelola profil guru, staf tata usaha, dan tenaga kependidikan sekolah.</p>
         </div>
         <button
           onClick={handleOpenCreate}
@@ -173,6 +206,81 @@ export default function GuruCrud() {
         >
           <Plus size={18} /> Tambah Guru / Staff
         </button>
+      </div>
+
+      {/* Filter & Search Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-80">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Cari nama, NIP, tugas, pendidikan..."
+            className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm text-slate-700 placeholder-slate-400"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-slate-400" />
+            <select
+              value={selectedJabatan}
+              onChange={(e) => setSelectedJabatan(e.target.value)}
+              className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
+            >
+              <option value="ALL">Semua Jabatan</option>
+              {availableJabatan.map((j) => (
+                <option key={j} value={j}>
+                  {j}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <select
+            value={selectedGender}
+            onChange={(e) => setSelectedGender(e.target.value)}
+            className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
+          >
+            <option value="ALL">Semua Gender</option>
+            {availableGenders.map((g) => (
+              <option key={g} value={g}>
+                {g}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
+          >
+            <option value="ALL">Semua Status</option>
+            {availableStatuses.map((st) => (
+              <option key={st} value={st}>
+                {st}
+              </option>
+            ))}
+          </select>
+
+          {isFiltered && (
+            <button
+              onClick={handleResetFilter}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
+            >
+              <RotateCcw size={14} /> Reset Filter
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -193,7 +301,7 @@ export default function GuruCrud() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {teachers.map((t) => (
+          {filteredTeachers.map((t) => (
             <div key={t.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
               <div>
                 <div className="relative h-48 bg-slate-100 flex items-center justify-center">
@@ -253,10 +361,20 @@ export default function GuruCrud() {
             </div>
           ))}
 
-          {teachers.length === 0 && (
+          {filteredTeachers.length === 0 && (
             <div className="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-100">
               <User size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500">Belum ada data guru/staff kependidikan.</p>
+              <p className="text-slate-500 font-medium">
+                {isFiltered ? 'Tidak ada data guru/staff yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada data guru/staff kependidikan.'}
+              </p>
+              {isFiltered && (
+                <button
+                  onClick={handleResetFilter}
+                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                >
+                  <RotateCcw size={14} /> Reset Filter
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -350,14 +468,15 @@ export default function GuruCrud() {
                 </div>
                 <div>
                   <label className="block text-slate-700 text-sm font-medium mb-1.5">Status Kepegawaian</label>
-                  <input
-                    type="text"
-                    required
+                  <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    placeholder="AKTIF,PENSIUN,MUTASI"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  />
+                  >
+                    <option value="Aktif">Aktif</option>
+                    <option value="Mutasi">Mutasi</option>
+                    <option value="Pensiun">Pensiun</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-slate-700 text-sm font-medium mb-1.5">Riwayat Pendidikan</label>

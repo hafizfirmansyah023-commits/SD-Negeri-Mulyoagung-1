@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Plus, Trash2, Key, Shield, FileText } from 'lucide-react';
+import { User, Plus, Trash2, Key, Shield, FileText, Search, Filter, RotateCcw, X } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { UserSession } from './types';
 
@@ -24,6 +24,10 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Search & Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRole, setSelectedRole] = useState('ALL');
 
   // Self Update form states
   const [username, setUsername] = useState(currentUser.username);
@@ -272,75 +276,148 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
         </div>
 
         {/* User Management List (Admin Only) */}
-        {currentUser.role === 'ADMIN' && (
-          <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 lg:col-span-2">
-            <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
-              <Shield className="text-teal-600" size={18} /> Kelola Akses Pengguna
-            </h3>
+        {currentUser.role === 'ADMIN' && (() => {
+          const availableRoles = Array.from(new Set(users.map((u) => u.role).filter(Boolean)));
+          const filteredUsers = users.filter((u) => {
+            const matchesSearch =
+              !searchTerm.trim() ||
+              u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              u.nama_penanggung_jawab.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesRole = selectedRole === 'ALL' || u.role === selectedRole;
+            return matchesSearch && matchesRole;
+          });
+          const isFiltered = searchTerm !== '' || selectedRole !== 'ALL';
 
-            {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-teal-600"></div>
+          return (
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 lg:col-span-2">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-3">
+                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                  <Shield className="text-teal-600" size={18} /> Kelola Akses Pengguna
+                </h3>
               </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase font-bold">
-                      <th className="pb-3">User</th>
-                      <th className="pb-3">Role</th>
-                      <th className="pb-3 text-right">Aksi</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users.map((u) => (
-                      <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                        <td className="py-3 flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center shrink-0 border border-slate-200">
-                            {u.foto ? (
-                              <img
-                                src={getImageUrl(u.foto)}
-                                alt={u.nama_penanggung_jawab}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <User size={20} className="text-slate-400" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-semibold text-slate-800 text-sm">{u.nama_penanggung_jawab}</p>
-                            <p className="text-xs text-slate-400">@{u.username}</p>
-                          </div>
-                        </td>
-                        <td className="py-3">
-                          <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
-                            u.role === 'ADMIN' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}>
-                            {u.role}
-                          </span>
-                        </td>
-                        <td className="py-3 text-right">
-                          <button
-                            onClick={() => handleDeleteUser(u.id)}
-                            disabled={u.id === currentUser.id}
-                            className={`p-2 rounded-lg transition-colors inline-flex cursor-pointer ${
-                              u.id === currentUser.id
-                                ? 'text-slate-300 bg-slate-50 cursor-not-allowed'
-                                : 'text-red-600 bg-red-50 hover:bg-red-100'
-                            }`}
-                            title="Hapus User"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </td>
-                      </tr>
+
+              {/* Filter & Search Bar */}
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Cari username / nama..."
+                    className="w-full pl-9 pr-8 py-1.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-xs text-slate-700 placeholder-slate-400 bg-white"
+                  />
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <Filter size={15} className="text-slate-400" />
+                  <select
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
+                  >
+                    <option value="ALL">Semua Role</option>
+                    {availableRoles.map((r) => (
+                      <option key={r} value={r}>
+                        {r}
+                      </option>
                     ))}
-                  </tbody>
-                </table>
+                  </select>
+
+                  {isFiltered && (
+                    <button
+                      onClick={() => {
+                        setSearchTerm('');
+                        setSelectedRole('ALL');
+                      }}
+                      className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
+                    >
+                      <RotateCcw size={13} /> Reset
+                    </button>
+                  )}
+                </div>
               </div>
-            )}
-          </div>
-        )}
+
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-teal-600"></div>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase font-bold">
+                        <th className="pb-3">User</th>
+                        <th className="pb-3">Role</th>
+                        <th className="pb-3 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredUsers.map((u) => (
+                        <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+                          <td className="py-3 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center shrink-0 border border-slate-200">
+                              {u.foto ? (
+                                <img
+                                  src={getImageUrl(u.foto)}
+                                  alt={u.nama_penanggung_jawab}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <User size={20} className="text-slate-400" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-slate-800 text-sm">{u.nama_penanggung_jawab}</p>
+                              <p className="text-xs text-slate-400">@{u.username}</p>
+                            </div>
+                          </td>
+                          <td className="py-3">
+                            <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                              u.role === 'ADMIN' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
+                            }`}>
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="py-3 text-right">
+                            <button
+                              onClick={() => handleDeleteUser(u.id)}
+                              disabled={u.id === currentUser.id}
+                              className={`p-2 rounded-lg transition-colors inline-flex cursor-pointer ${
+                                u.id === currentUser.id
+                                  ? 'text-slate-300 bg-slate-50 cursor-not-allowed'
+                                  : 'text-red-600 bg-red-50 hover:bg-red-100'
+                              }`}
+                              title="Hapus User"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+
+                      {filteredUsers.length === 0 && (
+                        <tr>
+                          <td colSpan={3} className="py-8 text-center text-slate-400 text-sm font-medium">
+                            {isFiltered ? 'Tidak ada pengguna yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada pengguna terdaftar.'}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          );
+        })()}
       </div>
 
       {/* Admin Add User Modal */}

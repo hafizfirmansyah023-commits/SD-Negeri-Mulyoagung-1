@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, FileText, Calendar, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, FileText, Calendar, CheckCircle2, Clock, XCircle, Search, Filter, RotateCcw, X } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { UserSession } from './types';
 
@@ -27,6 +27,11 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Search & Filter states
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [selectedStatus, setSelectedStatus] = useState('ALL');
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -172,6 +177,29 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     }
   };
 
+  // Dynamic filter options derived from database data
+  const availableCategories = Array.from(new Set(articles.map((a) => a.kategori).filter(Boolean)));
+  const availableStatuses = Array.from(new Set(articles.map((a) => a.status_verifikasi).filter(Boolean)));
+
+  const filteredArticles = articles.filter((art) => {
+    const matchesSearch =
+      !searchTerm.trim() ||
+      art.judul.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      art.isi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (art.uploader && art.uploader.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = selectedCategory === 'ALL' || art.kategori === selectedCategory;
+    const matchesStatus = selectedStatus === 'ALL' || art.status_verifikasi === selectedStatus;
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
+
+  const isFiltered = searchTerm !== '' || selectedCategory !== 'ALL' || selectedStatus !== 'ALL';
+
+  const handleResetFilter = () => {
+    setSearchTerm('');
+    setSelectedCategory('ALL');
+    setSelectedStatus('ALL');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -187,6 +215,68 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
         >
           <Plus size={18} /> Tulis Berita
         </button>
+      </div>
+
+      {/* Filter & Search Bar */}
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="relative w-full md:w-80">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Cari judul, isi, uploader..."
+            className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm text-slate-700 placeholder-slate-400"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="flex items-center gap-2">
+            <Filter size={16} className="text-slate-400" />
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
+            >
+              <option value="ALL">Semua Kategori</option>
+              {availableCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
+          >
+            <option value="ALL">Semua Status</option>
+            {availableStatuses.map((st) => (
+              <option key={st} value={st}>
+                {st === 'Verified' ? 'Terverifikasi' : st === 'Rejected' ? 'Ditolak' : 'Menunggu Verifikasi'}
+              </option>
+            ))}
+          </select>
+
+          {isFiltered && (
+            <button
+              onClick={handleResetFilter}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
+            >
+              <RotateCcw size={14} /> Reset Filter
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (
@@ -207,7 +297,7 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {articles.map((art) => (
+          {filteredArticles.map((art) => (
             <div key={art.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
               <div>
                 <div className="relative h-56 bg-slate-100">
@@ -255,10 +345,20 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
             </div>
           ))}
 
-          {articles.length === 0 && (
+          {filteredArticles.length === 0 && (
             <div className="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-100">
               <FileText size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500">Belum ada berita ditulis.</p>
+              <p className="text-slate-500 font-medium">
+                {isFiltered ? 'Tidak ada berita yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada berita ditulis.'}
+              </p>
+              {isFiltered && (
+                <button
+                  onClick={handleResetFilter}
+                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                >
+                  <RotateCcw size={14} /> Reset Filter
+                </button>
+              )}
             </div>
           )}
         </div>
