@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2026 at 06:33 AM
+-- Generation Time: Aug 10, 2026 at 06:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -37,6 +37,13 @@ CREATE TABLE `berita` (
   `status_verifikasi` enum('Pending','Verified','Rejected') NOT NULL DEFAULT 'Pending',
   `uploaded_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `berita`
+--
+
+INSERT INTO `berita` (`id`, `judul`, `isi`, `foto`, `kategori`, `tanggal`, `status_verifikasi`, `uploaded_by`) VALUES
+(3, 'Innovative Government Award (IGA) dari Pemerintah Kabupaten Malang berkat program inovasi pendidikan unggulan mereka yang dikenal sebagai Inovasi HARAPAN.', 'Inovasi HARAPAN dari SD Negeri 1 Mulyoagung yang berfokus pada peningkatan mutu pelayanan dan sistem pembelajaran.', 'backend/uploads/berita/1785992845_Screenshot 2026-08-06 120707.png', 'Prestasi', '2026-08-06', 'Verified', 3);
 
 -- --------------------------------------------------------
 
@@ -88,7 +95,7 @@ CREATE TABLE `galeri` (
 CREATE TABLE `guru_tendik` (
   `id` int(11) NOT NULL,
   `nama` varchar(255) NOT NULL,
-  `nip` varchar(50) NOT NULL,
+  `nip` varchar(50) DEFAULT NULL,
   `jabatan` varchar(100) NOT NULL,
   `tugas` varchar(255) NOT NULL,
   `foto` varchar(255) DEFAULT NULL,
@@ -98,18 +105,34 @@ CREATE TABLE `guru_tendik` (
   `motto` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE `pengaturan_sekolah` (
-  `setting_key` varchar(100) NOT NULL,
-  `setting_value` text NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`setting_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+--
+-- Dumping data for table `guru_tendik`
+--
 
-INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`) VALUES
-('tahun_ajaran', '2025/2026');
+INSERT INTO `guru_tendik` (`id`, `nama`, `nip`, `jabatan`, `tugas`, `foto`, `riwayat_pendidikan`, `jenis_kelamin`, `status`, `motto`) VALUES
+(3, 'Soleh', NULL, 'Komite Sekolah', 'Komite Sekolah', 'backend/uploads/guru/1786069668_logoma.jpg', 'S1', 'Laki-laki', 'Aktif', '\"Bersama Maju, Bergandengan Tangan Menuju Sekolah Unggul.\"'),
+(4, 'AMALIA DYAH ERVIANA, S.Pd.', '198507172006042012', 'Kepala Sekolah', 'Kepala Sekolah', 'backend/uploads/guru/1786070223_kepsek.jpg', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'Berani berinovasi untuk pendidikan yang lebih bermakna.'),
+(5, 'ANISA CHOIRINA, S.Pd.', NULL, 'Tata Usaha', 'Tata Usaha & Unit Perpustakaan', 'backend/uploads/guru/1786070771_Screenshot 2026-08-07 094553.png', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'p'),
+(6, 'ZAINURI, M.Pd.', NULL, 'Guru Mata Pelajaran', 'Pendidikan Agama Islam', 'backend/uploads/guru/1786071170_logoma.jpg', 'S2  (Pendidikan Guru Sekolah Dasar)', 'Laki-laki', 'Aktif', 'p'),
+(7, 'WEGA BAGUS SETIAWAN, S.Or., M.Pd., Gr.', NULL, 'Guru Mata Pelajaran', 'Pendidikan Jasmani Dan Rohani', 'backend/uploads/guru/1786071266_logoma.jpg', 'S1 PJOK', 'Laki-laki', 'Aktif', 'p'),
+(8, 'FANDI ARI WIJAYA, S.Or., Gr.', NULL, 'Guru Mata Pelajaran', 'Pendidikan Jasmani Dan Rohani', 'backend/uploads/guru/1786071327_logoma.jpg', 'S1 PJOK', 'Laki-laki', 'Aktif', 'p'),
+(9, 'SUNU HAYUTAMA, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 1A', 'backend/uploads/guru/1786071419_logoma.jpg', 'S1  (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'p'),
+(10, 'PUTRI ANGGUN LIARTA, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 1B', 'backend/uploads/guru/1786071504_logoma.jpg', 'S1', 'Perempuan', 'Aktif', 'p'),
+(11, 'RATHA YULIYA KIRNAWATI, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 2A', 'backend/uploads/guru/1786071592_logoma.jpg', 'S1', 'Perempuan', 'Aktif', 'p'),
+(12, 'YUNIA NUR AFIYAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 2B', 'backend/uploads/guru/1786071638_logoma.jpg', 'S1', 'Perempuan', 'Aktif', 'p'),
+(13, 'ADI KURNIAWAN, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 3A', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
+(14, 'SOQIBATUL ISLAMIYAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 3B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(15, 'NUR AINI FARIDA, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 4A', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(16, 'SRI HARTATIK, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 4B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(17, 'SITI MAISAROH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 5A', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(18, 'YUNI TRI HARIANTI, S.IP., S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 5B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(19, 'VIVIN NOHTAHFIAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 6A', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(20, 'Yulida Ariani, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 6B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(21, 'ABDUL MUJIB', NULL, 'Tenaga Kependidikan', 'Penjaga', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
+(22, 'MARSUDI', NULL, 'Tenaga Kependidikan', 'Tenaga Kebersihan', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
+(23, 'AGUS SUKOCO', NULL, 'Tenaga Kependidikan', 'Tenaga Keamanan', '', 'SD', 'Laki-laki', 'Aktif', 'p');
 
 -- --------------------------------------------------------
-
 
 --
 -- Table structure for table `pengaturan_sekolah`
@@ -118,12 +141,87 @@ INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`) VALUES
 CREATE TABLE `pengaturan_sekolah` (
   `setting_key` varchar(100) NOT NULL,
   `setting_value` text NOT NULL,
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`setting_key`)
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`) VALUES
-('tahun_ajaran', '2025/2026');
+--
+-- Dumping data for table `pengaturan_sekolah`
+--
+
+INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`, `updated_at`) VALUES
+('tahun_ajaran', '2026/2027', '2026-08-07 01:59:45');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pengumuman_penting`
+--
+
+CREATE TABLE `pengumuman_penting` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(255) NOT NULL,
+  `isi` text NOT NULL,
+  `running_text` varchar(255) DEFAULT NULL,
+  `show_popup` tinyint(1) NOT NULL DEFAULT 1,
+  `show_button` tinyint(1) NOT NULL DEFAULT 0,
+  `button_text` varchar(100) DEFAULT NULL,
+  `button_link` varchar(255) DEFAULT NULL,
+  `show_photo` tinyint(1) NOT NULL DEFAULT 0,
+  `foto` varchar(255) DEFAULT NULL,
+  `photo_link` varchar(255) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pengumuman_penting`
+--
+
+INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`) VALUES
+(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sdn1mulyoagung.sch.id/ppdb', 0, '', '', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sambutan_kepsek`
+--
+
+CREATE TABLE `sambutan_kepsek` (
+  `id` int(11) NOT NULL,
+  `nama` varchar(255) NOT NULL,
+  `sambutan` text NOT NULL,
+  `foto` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sambutan_kepsek`
+--
+
+INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`) VALUES
+(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786324881_kepsek.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `statistik_sekolah`
+--
+
+CREATE TABLE `statistik_sekolah` (
+  `id` int(11) NOT NULL,
+  `judul` varchar(50) NOT NULL,
+  `jumlah` varchar(50) NOT NULL,
+  `label` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `statistik_sekolah`
+--
+
+INSERT INTO `statistik_sekolah` (`id`, `judul`, `jumlah`, `label`) VALUES
+(1, 'Siswa', '250+', 'Siswa Aktif'),
+(2, 'Alumni', '1000+', 'Alumni'),
+(3, 'Akreditasi', 'A', 'Akreditasi');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `users`
@@ -177,6 +275,30 @@ ALTER TABLE `guru_tendik`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `pengaturan_sekolah`
+--
+ALTER TABLE `pengaturan_sekolah`
+  ADD PRIMARY KEY (`setting_key`);
+
+--
+-- Indexes for table `pengumuman_penting`
+--
+ALTER TABLE `pengumuman_penting`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `sambutan_kepsek`
+--
+ALTER TABLE `sambutan_kepsek`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `statistik_sekolah`
+--
+ALTER TABLE `statistik_sekolah`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -191,7 +313,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `fasilitas`
@@ -209,7 +331,25 @@ ALTER TABLE `galeri`
 -- AUTO_INCREMENT for table `guru_tendik`
 --
 ALTER TABLE `guru_tendik`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `pengumuman_penting`
+--
+ALTER TABLE `pengumuman_penting`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `sambutan_kepsek`
+--
+ALTER TABLE `sambutan_kepsek`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `statistik_sekolah`
+--
+ALTER TABLE `statistik_sekolah`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -232,78 +372,6 @@ ALTER TABLE `berita`
 --
 ALTER TABLE `galeri`
   ADD CONSTRAINT `galeri_ibfk_1` FOREIGN KEY (`uploaded_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
--- --------------------------------------------------------
-
---
--- Table structure for table `sambutan_kepsek`
---
-
-CREATE TABLE `sambutan_kepsek` (
-  `id` int(11) NOT NULL,
-  `nama` varchar(255) NOT NULL,
-  `sambutan` text NOT NULL,
-  `foto` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `sambutan_kepsek`
---
-
-INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`) VALUES
-(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600');
-
---
--- Indexes for table `sambutan_kepsek`
---
-ALTER TABLE `sambutan_kepsek`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for table `sambutan_kepsek`
---
-ALTER TABLE `sambutan_kepsek`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `pengumuman_penting`
---
-
-CREATE TABLE `pengumuman_penting` (
-  `id` int(11) NOT NULL,
-  `judul` varchar(255) NOT NULL,
-  `isi` text NOT NULL,
-  `running_text` varchar(255) DEFAULT NULL,
-  `show_popup` tinyint(1) NOT NULL DEFAULT 1,
-  `show_button` tinyint(1) NOT NULL DEFAULT 0,
-  `button_text` varchar(100) DEFAULT NULL,
-  `button_link` varchar(255) DEFAULT NULL,
-  `show_photo` tinyint(1) NOT NULL DEFAULT 0,
-  `foto` varchar(255) DEFAULT NULL,
-  `photo_link` varchar(255) DEFAULT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `pengumuman_penting`
---
-
-INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`) VALUES
-(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sdn1mulyoagung.sch.id/ppdb', 0, '', '', 1);
-
---
--- Indexes for table `pengumuman_penting`
---
-ALTER TABLE `pengumuman_penting`
-  ADD PRIMARY KEY (`id`);
-
---
--- AUTO_INCREMENT for table `pengumuman_penting`
---
-ALTER TABLE `pengumuman_penting`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
