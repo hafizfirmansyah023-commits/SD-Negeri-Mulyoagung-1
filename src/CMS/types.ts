@@ -6,4 +6,5 @@ export interface UserSession {
     foto: string;
 }
 
-export type CmsTab = 'guru' | 'fasilitas' | 'galeri' | 'berita' | 'user' | 'verifikasi' | 'pengaturan';
+
+export type CmsTab = 'guru' | 'fasilitas' | 'galeri' | 'berita' | 'user' | 'verifikasi' | 'sambutan' | 'pengumuman' | 'pengaturan';
