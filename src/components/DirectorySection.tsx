@@ -79,12 +79,6 @@ export const DirectorySection: React.FC = () => {
       if (term === 'unit perpustakaan') {
         return subj.includes('perpustakaan') || role.includes('perpustakaan');
       }
-      if (term === 'guru pai') {
-        return subj.includes('pai') || subj.includes('agama islam');
-      }
-      if (term === 'guru pjok') {
-        return subj.includes('pjok') || subj.includes('penjas') || subj.includes('olahraga');
-      }
       if (term.startsWith('kelas ')) {
         const classCode = term.replace('kelas ', '').trim();
         return subj.includes(classCode) || subj.includes(`kelas ${classCode}`) || subj.includes(`fase ${classCode}`);
@@ -129,8 +123,6 @@ export const DirectorySection: React.FC = () => {
           if (term === 'kepala sekolah') return role.includes('kepala');
           if (term === 'tata usaha') return role.includes('tata usaha') || subj.includes('tata usaha');
           if (term === 'unit perpustakaan') return subj.includes('perpustakaan') || role.includes('perpustakaan');
-          if (term === 'guru pai') return subj.includes('pai') || subj.includes('agama islam');
-          if (term === 'guru pjok') return subj.includes('pjok') || subj.includes('penjas') || subj.includes('olahraga');
           if (term.startsWith('kelas ')) {
             const classCode = term.replace('kelas ', '').trim();
             return subj.includes(classCode) || subj.includes(`kelas ${classCode}`) || subj.includes(`fase ${classCode}`);
@@ -164,6 +156,34 @@ export const DirectorySection: React.FC = () => {
     const teacherObj = findOrBuildTeacherObj(roleOrTask, fallbackName);
     setSelectedTeacherForModal(teacherObj);
   };
+
+  // ============================================================
+  // GROUPING DINAMIS: GURU MATA PELAJARAN
+  // Mengelompokkan guru dengan role "Guru Mata Pelajaran" berdasarkan
+  // field "tugas" (subject). Jika ada 2+ guru dengan tugas/mapel yang
+  // sama persis, mereka digabung menjadi satu card (dipisah label "&").
+  // Card baru otomatis muncul ketika ada guru baru dengan mapel baru
+  // ditambahkan lewat halaman admin (data guru_tendik).
+  // ============================================================
+  const mapelGroups = React.useMemo(() => {
+    const mapelTeachers = teachers.filter(
+      (t) => (t.role || t.title || '').trim().toLowerCase() === 'guru mata pelajaran'
+    );
+
+    const groups: { [subjectKey: string]: { label: string; teachers: Teacher[] } } = {};
+
+    mapelTeachers.forEach((t) => {
+      const rawSubject = (t.subject || 'Lainnya').trim();
+      const key = rawSubject.toLowerCase(); // normalisasi supaya "PJOK" & "pjok" dianggap sama
+
+      if (!groups[key]) {
+        groups[key] = { label: rawSubject.toUpperCase(), teachers: [] };
+      }
+      groups[key].teachers.push(t);
+    });
+
+    return Object.values(groups).sort((a, b) => a.label.localeCompare(b.label));
+  }, [teachers]);
 
   const roles = ['Semua', 'Bagan Struktur', 'Kepala Sekolah', 'Komite Sekolah', 'Guru Wali Kelas', 'Guru Mata Pelajaran', 'Tata Usaha', 'Tenaga Kependidikan'];
 
@@ -504,58 +524,48 @@ export const DirectorySection: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* COLUMN 2: GURU MATA PELAJARAN */}
+                  {/* COLUMN 2: GURU MATA PELAJARAN (DINAMIS dari data guru_tendik) */}
                   <div className="border-2 border-emerald-600 rounded-2xl overflow-hidden bg-emerald-50/40 p-2.5 space-y-3 shadow-sm">
                     <div className="bg-emerald-700 text-white font-black text-xs uppercase px-2 py-1.5 rounded-lg text-center tracking-wide">
                       GURU MATA PELAJARAN
                     </div>
 
-                    {/* Guru PAI */}
-                    <div
-                      onClick={() => handleCardClick('guru pai', 'ZAINURI, M.Pd.')}
-                      className="border border-emerald-500 rounded-xl overflow-hidden bg-white hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer"
-                    >
-                      <div className="bg-emerald-600 text-white font-extrabold text-xs uppercase px-2 py-1 text-center">
-                        GURU PAI
-                      </div>
-                      <div className="p-2.5 flex items-center gap-2 bg-emerald-50/30">
-                        <div className="w-7 h-7 rounded-full bg-sky-100 border border-sky-400 flex items-center justify-center text-sky-600 shrink-0">
-                          <User className="w-4 h-4" />
-                        </div>
-                        <div className="font-extrabold text-xs text-slate-800 uppercase leading-snug break-words">
-                          {getTeacherName('guru pai', 'ZAINURI, M.Pd.')}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Guru PJOK */}
-                    <div
-                      onClick={() => handleCardClick('guru pjok', 'WEGA BAGUS SETIAWAN, S.Or., M.Pd., Gr. & FANDI ARI WIJAYA, S.Or., Gr.')}
-                      className="border border-emerald-500 rounded-xl overflow-hidden bg-white hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer"
-                    >
-                      <div className="bg-emerald-600 text-white font-extrabold text-xs uppercase px-2 py-1 text-center">
-                        GURU PJOK
-                      </div>
-                      <div className="p-2.5 space-y-1.5 bg-emerald-50/30">
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-sky-100 border border-sky-400 flex items-center justify-center text-sky-600 shrink-0">
-                            <User className="w-3.5 h-3.5" />
+                    {mapelGroups.length > 0 ? (
+                      mapelGroups.map((group) => (
+                        <div
+                          key={group.label}
+                          onClick={() => setSelectedTeacherForModal(group.teachers[0])}
+                          className="border border-emerald-500 rounded-xl overflow-hidden bg-white hover:shadow-md hover:scale-[1.02] transition-all cursor-pointer"
+                        >
+                          <div className="bg-emerald-600 text-white font-extrabold text-xs uppercase px-2 py-1 text-center">
+                            {group.label}
                           </div>
-                          <div className="font-extrabold text-xs text-slate-800 uppercase leading-snug break-words">
-                            {getTeacherName('guru pjok', 'WEGA BAGUS SETIAWAN, S.Or., M.Pd., Gr.')}
+                          <div className="p-2.5 space-y-1.5 bg-emerald-50/30">
+                            {group.teachers.map((t, idx) => (
+                              <React.Fragment key={t.id}>
+                                {idx > 0 && (
+                                  <div className="text-[11px] font-extrabold text-emerald-800 text-center uppercase">
+                                    &
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-sky-100 border border-sky-400 flex items-center justify-center text-sky-600 shrink-0">
+                                    <User className="w-3.5 h-3.5" />
+                                  </div>
+                                  <div className="font-extrabold text-xs text-slate-800 uppercase leading-snug break-words">
+                                    {t.name}
+                                  </div>
+                                </div>
+                              </React.Fragment>
+                            ))}
                           </div>
                         </div>
-                        <div className="text-[11px] font-extrabold text-emerald-800 text-center uppercase">&</div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-full bg-sky-100 border border-sky-400 flex items-center justify-center text-sky-600 shrink-0">
-                            <User className="w-3.5 h-3.5" />
-                          </div>
-                          <div className="font-extrabold text-xs text-slate-800 uppercase leading-snug break-words">
-                            {getTeacherName('guru pjok 2', 'FANDI ARI WIJAYA, S.Or., Gr.')}
-                          </div>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-[11px] text-slate-400 italic py-3">
+                        Belum ada data Guru Mata Pelajaran
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* COLUMN 3: GURU KELAS (2 SUB-COLUMNS) */}
