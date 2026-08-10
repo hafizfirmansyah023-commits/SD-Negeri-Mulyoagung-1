@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Check, X, ShieldAlert, CheckCircle2 } from 'lucide-react';
-import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { getApiBaseUrl } from '../config/api';
 import { useCmsFilter } from './hooks/useCmsFilter';
 import CmsFilterBar from './components/CmsFilterBar';
 import { getUniqueValues } from './utils/cmsHelpers';
+import { VerifikasiCard } from './verifikasi/VerifikasiCard';
 
 interface GalleryItem {
   id: number;
@@ -136,7 +137,7 @@ export default function Verifikasi() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header section - Mobile Optimized */}
+      {/* Header */}
       <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
         <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
           <ShieldAlert className="text-teal-600 shrink-0" /> Pusat Verifikasi Konten
@@ -176,7 +177,7 @@ export default function Verifikasi() {
         </div>
       </div>
 
-      {/* Reusable Filter Bar */}
+      {/* Filter Bar */}
       <CmsFilterBar
         searchTerm={activeFilter.searchTerm}
         onSearchChange={activeFilter.setSearchTerm}
@@ -196,17 +197,8 @@ export default function Verifikasi() {
         ]}
       />
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
-          {success}
-        </div>
-      )}
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
+      {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
@@ -218,39 +210,17 @@ export default function Verifikasi() {
           {activeSubTab === 'berita' && (
             <div className="space-y-4">
               {newsFilter.filteredItems.map((art) => (
-                <div key={art.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 flex flex-col md:flex-row gap-4 sm:gap-6 items-start justify-between">
-                  <div className="flex flex-col sm:flex-row gap-4 items-start flex-grow w-full">
-                    <div className="w-full sm:w-44 h-36 sm:h-28 bg-slate-100 rounded-xl overflow-hidden shrink-0">
-                      <img src={getImageUrl(art.foto)} alt={art.judul} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex gap-2 items-center flex-wrap">
-                        <span className="bg-teal-50 text-teal-700 border border-teal-200 text-[11px] px-2.5 py-0.5 rounded-full font-bold">
-                          {art.kategori}
-                        </span>
-                        <span className="text-xs text-slate-400">{art.tanggal}</span>
-                      </div>
-                      <h3 className="font-bold text-slate-800 text-base sm:text-lg">{art.judul}</h3>
-                      <p className="text-slate-500 text-xs sm:text-sm line-clamp-2">{art.isi}</p>
-                      <p className="text-xs text-slate-400">Pengirim: <strong className="text-slate-600">{art.uploader}</strong></p>
-                    </div>
-                  </div>
-
-                  <div className="flex sm:flex-col gap-2.5 shrink-0 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                    <button
-                      onClick={() => handleVerifyNews(art.id, 'Verified')}
-                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-colors cursor-pointer min-h-[40px]"
-                    >
-                      <Check size={16} /> Setujui
-                    </button>
-                    <button
-                      onClick={() => handleVerifyNews(art.id, 'Rejected')}
-                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer min-h-[40px]"
-                    >
-                      <X size={16} /> Tolak
-                    </button>
-                  </div>
-                </div>
+                <VerifikasiCard
+                  key={art.id}
+                  id={art.id}
+                  judul={art.judul}
+                  deskripsiAtauIsi={art.isi}
+                  foto={art.foto}
+                  kategori={art.kategori}
+                  tanggal={art.tanggal}
+                  uploader={art.uploader}
+                  onVerify={handleVerifyNews}
+                />
               ))}
 
               {newsFilter.filteredItems.length === 0 && (
@@ -268,39 +238,17 @@ export default function Verifikasi() {
           {activeSubTab === 'galeri' && (
             <div className="space-y-4">
               {galleryFilter.filteredItems.map((item) => (
-                <div key={item.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 flex flex-col md:flex-row gap-4 sm:gap-6 items-start justify-between">
-                  <div className="flex flex-col sm:flex-row gap-4 items-start flex-grow w-full">
-                    <div className="w-full sm:w-44 h-36 sm:h-28 bg-slate-100 rounded-xl overflow-hidden shrink-0">
-                      <img src={getImageUrl(item.foto)} alt={item.judul} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex gap-2 items-center flex-wrap">
-                        <span className="bg-teal-50 text-teal-700 border border-teal-200 text-[11px] px-2.5 py-0.5 rounded-full font-bold">
-                          {item.kategori}
-                        </span>
-                        <span className="text-xs text-slate-400">{item.tanggal}</span>
-                      </div>
-                      <h3 className="font-bold text-slate-800 text-base sm:text-lg">{item.judul}</h3>
-                      <p className="text-slate-500 text-xs sm:text-sm line-clamp-2">{item.deskripsi}</p>
-                      <p className="text-xs text-slate-400">Pengirim: <strong className="text-slate-600">{item.uploader}</strong></p>
-                    </div>
-                  </div>
-
-                  <div className="flex sm:flex-col gap-2.5 shrink-0 w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                    <button
-                      onClick={() => handleVerifyGallery(item.id, 'Verified')}
-                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold shadow-sm transition-colors cursor-pointer min-h-[40px]"
-                    >
-                      <Check size={16} /> Setujui
-                    </button>
-                    <button
-                      onClick={() => handleVerifyGallery(item.id, 'Rejected')}
-                      className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-700 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors cursor-pointer min-h-[40px]"
-                    >
-                      <X size={16} /> Tolak
-                    </button>
-                  </div>
-                </div>
+                <VerifikasiCard
+                  key={item.id}
+                  id={item.id}
+                  judul={item.judul}
+                  deskripsiAtauIsi={item.deskripsi}
+                  foto={item.foto}
+                  kategori={item.kategori}
+                  tanggal={item.tanggal}
+                  uploader={item.uploader}
+                  onVerify={handleVerifyGallery}
+                />
               ))}
 
               {galleryFilter.filteredItems.length === 0 && (

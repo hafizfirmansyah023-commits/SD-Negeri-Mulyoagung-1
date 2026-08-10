@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Plus, Image, RotateCcw } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
-import { UserSession } from '../types';
-import { useGalleryData, GalleryItem } from '../hooks/useGalleryData';
-import { useCmsFilter } from '../hooks/useCmsFilter';
-import CmsFilterBar from '../components/CmsFilterBar';
-import { getUniqueValues } from '../utils/cmsHelpers';
+import { UserSession } from './types';
+import { useGalleryData, GalleryItem } from './hooks/useGalleryData';
+import { useCmsFilter } from './hooks/useCmsFilter';
+import CmsFilterBar from './components/CmsFilterBar';
+import { getUniqueValues } from './utils/cmsHelpers';
 import { GaleriCard } from './galeri/GaleriCard';
 import { GaleriFormModal } from './galeri/GaleriFormModal';
 

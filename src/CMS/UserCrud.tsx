@@ -64,7 +64,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
       }
     } catch {
       setError('Gagal memuat daftar pengguna.');
-    } fontally {
+    } finally {
       setLoading(false);
     }
   };
