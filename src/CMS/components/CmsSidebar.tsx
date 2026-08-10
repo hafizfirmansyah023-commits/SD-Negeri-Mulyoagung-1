@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft, School, Building, Settings, Award, Megaphone } from 'lucide-react';
+import { Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft, School, Building, Settings, Award, Megaphone, BarChart3 } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
 
@@ -61,6 +61,7 @@ export default function CmsSidebar({
                 <nav className="p-4 space-y-1.5">
                     {user.role === 'ADMIN' && (
                       <>
+                        
                         <button
                             onClick={() => setActiveTab('guru')}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
@@ -90,6 +91,16 @@ export default function CmsSidebar({
                             }`}
                         >
                             <Megaphone size={18} /> Pengumuman Penting
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('statistik')}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
+                                activeTab === 'statistik'
+                                    ? 'bg-teal-600 text-white'
+                                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                            }`}
+                        >
+                            <BarChart3 size={18} /> Statistik Sekolah
                         </button>
                         <button
                             onClick={() => setActiveTab('fasilitas')}
@@ -148,7 +159,7 @@ export default function CmsSidebar({
                     >
                         <User size={18} /> Pengaturan Akun
                     </button>
-
+                    
                     {user.role === 'ADMIN' && (
                         <button
                             onClick={() => setActiveTab('pengaturan')}

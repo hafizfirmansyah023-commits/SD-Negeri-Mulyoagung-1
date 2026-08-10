@@ -7,4 +7,4 @@ export interface UserSession {
 }
 
 
-export type CmsTab = 'guru' | 'fasilitas' | 'galeri' | 'berita' | 'user' | 'verifikasi' | 'sambutan' | 'pengumuman' | 'pengaturan';
+export type CmsTab = 'guru' | 'fasilitas' | 'galeri' | 'berita' | 'user' | 'verifikasi' | 'sambutan' | 'pengumuman'| 'statistik' | 'pengaturan';
