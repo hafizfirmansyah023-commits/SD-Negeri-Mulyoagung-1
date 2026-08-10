@@ -217,14 +217,14 @@ export default function GuruCrud() {
                   <div className="space-y-2 pt-2 border-t border-slate-100">
                     <div className="flex items-center gap-2 text-slate-600 text-sm">
                       <BookOpen size={16} className="text-slate-400 shrink-0" />
-                      <span>{t.tugas}</span>
+                      <span>Tugas: {t.tugas}</span>
                     </div>
                     <div className="flex items-center gap-2 text-slate-600 text-sm">
                       <GraduationCap size={16} className="text-slate-400 shrink-0" />
-                      <span>{t.riwayat_pendidikan}</span>
+                      <span>Riwayat Pendidikan: {t.riwayat_pendidikan}</span>
                     </div>
                     <div className="text-xs text-slate-400 flex justify-between pt-1">
-                      <span>JK: {t.jenis_kelamin}</span>
+                      <span>Jenis Kelamin: {t.jenis_kelamin}</span>
                       <span>Status: {t.status}</span>
                     </div>
                     {t.motto && (
