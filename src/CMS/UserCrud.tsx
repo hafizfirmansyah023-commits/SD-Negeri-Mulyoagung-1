@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { User, Plus, Trash2, Key, Shield, FileText, Search, Filter, RotateCcw, X } from 'lucide-react';
-import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { User, Plus, Shield } from 'lucide-react';
+import { getApiBaseUrl } from '../config/api';
 import { UserSession } from './types';
-
-
-interface UserData {
-  id: number;
-  username: string;
-  role: 'ADMIN' | 'TIM';
-  nama_penanggung_jawab: string;
-  foto: string;
-}
+import { useCmsFilter } from './hooks/useCmsFilter';
+import CmsFilterBar from './components/CmsFilterBar';
+import { getUniqueValues } from './utils/cmsHelpers';
+import { SelfProfileCard } from './user/SelfProfileCard';
+import { UserTable, UserData } from './user/UserTable';
+import { UserFormModal } from './user/UserFormModal';
 
 interface UserCrudProps {
   currentUser: UserSession;
@@ -24,10 +21,6 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-
-  // Search & Filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState('ALL');
 
   // Self Update form states
   const [username, setUsername] = useState(currentUser.username);
@@ -43,6 +36,23 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [newRole, setNewRole] = useState<'ADMIN' | 'TIM'>('TIM');
   const [newFotoFile, setNewFotoFile] = useState<File | null>(null);
 
+  // Filter Hook
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    resetFilter,
+    isFiltered,
+    filteredItems: filteredUsers,
+  } = useCmsFilter<UserData>({
+    items: users,
+    searchFields: ['username', 'nama_penanggung_jawab'],
+    initialFilters: { role: 'ALL' },
+  });
+
+  const availableRoles = getUniqueValues(users, 'role');
+
   const fetchUsers = async () => {
     if (currentUser.role !== 'ADMIN') return;
     setLoading(true);
@@ -52,9 +62,9 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
       if (result.status === 'success') {
         setUsers(result.data || []);
       }
-    } catch (err) {
+    } catch {
       setError('Gagal memuat daftar pengguna.');
-    } finally {
+    } fontally {
       setLoading(false);
     }
   };
@@ -90,13 +100,12 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
         setSuccess('Profil Anda berhasil diperbarui.');
         setPassword('');
         setFotoFile(null);
-        // Update dashboard state
         onUpdateCurrentUser(result.user);
         fetchUsers();
       } else {
         setError(result.message || 'Gagal memperbarui profil.');
       }
-    } catch (err) {
+    } catch {
       setError('Terjadi kesalahan saat mengirim data.');
     }
   };
@@ -132,21 +141,19 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
         setNewFotoFile(null);
         fetchUsers();
       } else {
-        setError(result.message || 'Gagal menambahkan pengguna.');
+        setError(result.message || 'Gagal menambah pengguna.');
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat menghubungi server.');
+    } catch {
+      setError('Terjadi kesalahan saat mengirim data.');
     }
   };
 
   const handleDeleteUser = async (id: number) => {
     if (id === currentUser.id) {
-      alert('Anda tidak bisa menghapus akun Anda sendiri.');
+      alert('Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif.');
       return;
     }
-    if (!window.confirm('Apakah Anda yakin ingin menghapus pengguna ini?')) return;
-    setError('');
-    setSuccess('');
+    if (!window.confirm('Apakah Anda yakin ingin menghapus akun pengguna ini?')) return;
 
     const formData = new FormData();
     formData.append('action', 'delete');
@@ -159,359 +166,113 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
       });
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message);
+        setSuccess('Pengguna berhasil dihapus.');
         fetchUsers();
       } else {
         setError(result.message || 'Gagal menghapus pengguna.');
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat menghapus data.');
+    } catch {
+      setError('Terjadi kesalahan saat menghapus pengguna.');
     }
   };
 
   return (
-    <div className="space-y-8">
-      {/* Title */}
-      <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex justify-between items-center">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <User className="text-teal-600" /> Pengaturan Akun & Pengguna
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <User className="text-teal-600 shrink-0" /> Pengaturan Akun & Akses
           </h2>
-          <p className="text-slate-500 text-sm">Ubah profil Anda atau kelola akses pengguna lain.</p>
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">Kelola profil pribadi dan hak akses pengguna CMS.</p>
         </div>
         {currentUser.role === 'ADMIN' && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all transform hover:scale-102 cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all cursor-pointer text-sm"
           >
-            <Plus size={18} /> Tambah User
+            <Plus size={18} /> Tambah User Baru
           </button>
         )}
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-          {error}
-        </div>
-      )}
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
+      {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
-      {success && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
-          {success}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Profile Settings */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 lg:col-span-1">
-          <h3 className="text-lg font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <Key className="text-teal-600" size={18} /> Profil & Keamanan Saya
-          </h3>
-          
-          <form onSubmit={handleUpdateSelf} className="space-y-4">
-            <div className="flex justify-center pb-2">
-              <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-teal-500/20 bg-slate-100 flex items-center justify-center">
-                {currentUser.foto ? (
-                  <img
-                    src={getImageUrl(currentUser.foto)}
-                    alt="Foto Profil"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User size={40} className="text-slate-400" />
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1">Nama Penanggung Jawab</label>
-              <input
-                type="text"
-                required
-                value={nama}
-                onChange={(e) => setNama(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1">Username</label>
-              <input
-                type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1">Ganti Password (Opsional)</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password baru"
-                className="w-full px-4 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
-
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1">Foto Profil Baru (Opsional)</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFotoFile(e.target.files?.[0] || null)}
-                className="w-full text-slate-600 text-xs border border-slate-200 rounded-xl file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-2.5 rounded-xl shadow-sm cursor-pointer transition-colors"
-            >
-              Perbarui Profil
-            </button>
-          </form>
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Self Profile Card */}
+        <SelfProfileCard
+          currentUser={currentUser}
+          username={username}
+          setUsername={setUsername}
+          nama={nama}
+          setNama={setNama}
+          password={password}
+          setPassword={setPassword}
+          setFotoFile={setFotoFile}
+          onSubmit={handleUpdateSelf}
+        />
 
         {/* User Management List (Admin Only) */}
-        {currentUser.role === 'ADMIN' && (() => {
-          const availableRoles = Array.from(new Set(users.map((u) => u.role).filter(Boolean)));
-          const filteredUsers = users.filter((u) => {
-            const matchesSearch =
-              !searchTerm.trim() ||
-              u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-              u.nama_penanggung_jawab.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesRole = selectedRole === 'ALL' || u.role === selectedRole;
-            return matchesSearch && matchesRole;
-          });
-          const isFiltered = searchTerm !== '' || selectedRole !== 'ALL';
-
-          return (
-            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-6 lg:col-span-2">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-3">
-                <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                  <Shield className="text-teal-600" size={18} /> Kelola Akses Pengguna
-                </h3>
-              </div>
-
-              {/* Filter & Search Bar */}
-              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
-                <div className="relative w-full sm:w-64">
-                  <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Cari username / nama..."
-                    className="w-full pl-9 pr-8 py-1.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-xs text-slate-700 placeholder-slate-400 bg-white"
-                  />
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm('')}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <Filter size={15} className="text-slate-400" />
-                  <select
-                    value={selectedRole}
-                    onChange={(e) => setSelectedRole(e.target.value)}
-                    className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
-                  >
-                    <option value="ALL">Semua Role</option>
-                    {availableRoles.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
-
-                  {isFiltered && (
-                    <button
-                      onClick={() => {
-                        setSearchTerm('');
-                        setSelectedRole('ALL');
-                      }}
-                      className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors cursor-pointer"
-                    >
-                      <RotateCcw size={13} /> Reset
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-teal-600"></div>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-slate-100 text-slate-400 text-xs uppercase font-bold">
-                        <th className="pb-3">User</th>
-                        <th className="pb-3">Role</th>
-                        <th className="pb-3 text-right">Aksi</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredUsers.map((u) => (
-                        <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                          <td className="py-3 flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden flex items-center justify-center shrink-0 border border-slate-200">
-                              {u.foto ? (
-                                <img
-                                  src={getImageUrl(u.foto)}
-                                  alt={u.nama_penanggung_jawab}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <User size={20} className="text-slate-400" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="font-semibold text-slate-800 text-sm">{u.nama_penanggung_jawab}</p>
-                              <p className="text-xs text-slate-400">@{u.username}</p>
-                            </div>
-                          </td>
-                          <td className="py-3">
-                            <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
-                              u.role === 'ADMIN' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-amber-50 text-amber-700 border border-amber-200'
-                            }`}>
-                              {u.role}
-                            </span>
-                          </td>
-                          <td className="py-3 text-right">
-                            <button
-                              onClick={() => handleDeleteUser(u.id)}
-                              disabled={u.id === currentUser.id}
-                              className={`p-2 rounded-lg transition-colors inline-flex cursor-pointer ${
-                                u.id === currentUser.id
-                                  ? 'text-slate-300 bg-slate-50 cursor-not-allowed'
-                                  : 'text-red-600 bg-red-50 hover:bg-red-100'
-                              }`}
-                              title="Hapus User"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-
-                      {filteredUsers.length === 0 && (
-                        <tr>
-                          <td colSpan={3} className="py-8 text-center text-slate-400 text-sm font-medium">
-                            {isFiltered ? 'Tidak ada pengguna yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada pengguna terdaftar.'}
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+        {currentUser.role === 'ADMIN' && (
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 sm:space-y-6 lg:col-span-2">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 className="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Shield className="text-teal-600 shrink-0" size={18} /> Kelola Akses Pengguna
+              </h3>
             </div>
-          );
-        })()}
+
+            {/* Filter Bar */}
+            <CmsFilterBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              searchPlaceholder="Cari username / nama..."
+              isFiltered={isFiltered}
+              onReset={resetFilter}
+              selectFilters={[
+                {
+                  key: 'role',
+                  value: filters.role || 'ALL',
+                  onChange: (val) => setFilter('role', val),
+                  options: [
+                    { value: 'ALL', label: 'Semua Role' },
+                    ...availableRoles.map((r) => ({ value: r, label: r })),
+                  ],
+                },
+              ]}
+            />
+
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-teal-600"></div>
+              </div>
+            ) : (
+              <UserTable
+                users={filteredUsers}
+                currentUser={currentUser}
+                isFiltered={isFiltered}
+                onDeleteUser={handleDeleteUser}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Admin Add User Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-xl border border-slate-100 overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-6 text-white flex justify-between items-center">
-              <h3 className="text-lg font-bold">Tambah Pengguna Baru</h3>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="text-white hover:text-slate-200 text-2xl font-bold cursor-pointer"
-              >
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleAddUser} className="p-6 space-y-4">
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1">Nama Penanggung Jawab</label>
-                <input
-                  type="text"
-                  required
-                  value={newNama}
-                  onChange={(e) => setNewNama(e.target.value)}
-                  placeholder="Nama Lengkap / Jabatan"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1">Username</label>
-                <input
-                  type="text"
-                  required
-                  value={newUsername}
-                  onChange={(e) => setNewUsername(e.target.value)}
-                  placeholder="Username untuk login"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1">Password</label>
-                <input
-                  type="password"
-                  required
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Password akun"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1">Akses Role</label>
-                <select
-                  value={newRole}
-                  onChange={(e) => setNewRole(e.target.value as 'ADMIN' | 'TIM')}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                >
-                  <option value="TIM">TIM (Upload berita & galeri perlu verifikasi)</option>
-                  <option value="ADMIN">ADMIN (Akses penuh CRUD & Verifikasi)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1">Foto Profil (Opsional)</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setNewFotoFile(e.target.files?.[0] || null)}
-                  className="w-full text-slate-600 text-xs border border-slate-200 rounded-xl file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 font-medium cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 font-medium cursor-pointer"
-                >
-                  Simpan Pengguna
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <UserFormModal
+        showAddModal={showAddModal}
+        newNama={newNama}
+        setNewNama={setNewNama}
+        newUsername={newUsername}
+        setNewUsername={setNewUsername}
+        newPassword={newPassword}
+        setNewPassword={setNewPassword}
+        newRole={newRole}
+        setNewRole={setNewRole}
+        setNewFotoFile={setNewFotoFile}
+        onClose={() => setShowAddModal(false)}
+        onSubmit={handleAddUser}
+      />
     </div>
   );
 }

@@ -71,7 +71,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 onLogout={handleLogout}
             />
 
-            <main className="flex-grow p-6 md:p-10 max-w-7xl">
+            <main className="flex-grow p-4 sm:p-6 md:p-10 max-w-7xl w-full overflow-x-hidden">
                 {activeTab === 'guru' && user.role === 'ADMIN' && <GuruCrud />}
                 {activeTab === 'sambutan' && user.role === 'ADMIN' && <SambutanKepsekCrud />}
                 {activeTab === 'pengumuman' && user.role === 'ADMIN' && <PengumumanCrud />}

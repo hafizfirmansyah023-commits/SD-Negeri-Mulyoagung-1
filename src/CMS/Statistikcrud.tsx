@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, BarChart3, Hash, Tag, Search, RotateCcw, X } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Plus, Edit2, Trash2, BarChart3, Hash, Tag, RotateCcw } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { UserSession } from './types';
+import { useCmsFilter } from './hooks/useCmsFilter';
+import CmsFilterBar from './components/CmsFilterBar';
 
 interface StatistikItem {
   id: number;
@@ -22,9 +24,6 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Search state
-  const [searchTerm, setSearchTerm] = useState('');
-
   // Form states
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
@@ -32,7 +31,19 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
   const [jumlah, setJumlah] = useState('');
   const [label, setLabel] = useState('');
 
-  const fetchStatistik = async () => {
+  // Filter Hook
+  const {
+    searchTerm,
+    setSearchTerm,
+    resetFilter,
+    isFiltered,
+    filteredItems,
+  } = useCmsFilter<StatistikItem>({
+    items,
+    searchFields: ['judul', 'jumlah', 'label'],
+  });
+
+  const fetchStatistik = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(`${API_BASE}/backend/API/statistik.php`);
@@ -42,16 +53,16 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
       } else {
         setError(result.message || 'Gagal memuat data statistik.');
       }
-    } catch (err) {
+    } catch {
       setError('Gagal menghubungi server.');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStatistik();
-  }, []);
+  }, [fetchStatistik]);
 
   const resetForm = () => {
     setJudul('');
@@ -101,10 +112,10 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
         resetForm();
         fetchStatistik();
       } else {
-        setError(result.message || 'Gagal menyimpan data.');
+        setError(result.message || 'Gagal menyimpan statistik.');
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat menyimpan data.');
+    } catch {
+      setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
 
@@ -129,66 +140,41 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
       } else {
         setError(result.message || 'Gagal menghapus data.');
       }
-    } catch (err) {
+    } catch {
       setError('Terjadi kesalahan saat menghapus data.');
     }
   };
 
-  const filteredItems = items.filter((item) => {
-    return (
-      !searchTerm.trim() ||
-      item.judul.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.jumlah.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <BarChart3 className="text-teal-600" /> Statistik Sekolah
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <BarChart3 className="text-teal-600 shrink-0" /> Statistik Sekolah
           </h2>
-          <p className="text-slate-500 text-sm">Kelola angka-angka statistik yang ditampilkan di halaman utama (Siswa Aktif, Alumni, Akreditasi, dsb).</p>
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+            Kelola angka-angka statistik yang ditampilkan di halaman utama (Siswa Aktif, Alumni, Akreditasi, dsb).
+          </p>
         </div>
-        <button
-          onClick={handleOpenCreate}
-          className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all transform hover:scale-102 cursor-pointer"
-        >
-          <Plus size={18} /> Tambah Statistik
-        </button>
-      </div>
-
-      {/* Search Bar */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Cari judul, label, jumlah..."
-            className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm text-slate-700 placeholder-slate-400"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-            >
-              <X size={15} />
-            </button>
-          )}
-        </div>
-        {searchTerm && (
+        {currentUser.role === 'ADMIN' && (
           <button
-            onClick={() => setSearchTerm('')}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
+            onClick={handleOpenCreate}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all cursor-pointer text-sm"
           >
-            <RotateCcw size={14} /> Reset
+            <Plus size={18} /> Tambah Statistik
           </button>
         )}
       </div>
+
+      {/* Filter Bar */}
+      <CmsFilterBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Cari judul, label, jumlah..."
+        isFiltered={isFiltered}
+        onReset={resetFilter}
+      />
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
@@ -207,10 +193,10 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredItems.map((item) => (
             <div key={item.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
-              <div className="p-6 space-y-3">
+              <div className="p-5 sm:p-6 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 bg-teal-50 text-teal-700 border border-teal-200 text-xs px-2.5 py-1 rounded-full font-semibold">
                     <Tag size={12} /> {item.judul}
@@ -219,22 +205,22 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
                 </div>
 
                 <div className="text-center py-4">
-                  <p className="text-4xl font-extrabold text-[#1E3A8A] leading-none">{item.jumlah}</p>
-                  <p className="text-slate-500 text-sm font-semibold mt-2">{item.label}</p>
+                  <p className="text-3xl sm:text-4xl font-extrabold text-[#1E3A8A] leading-none">{item.jumlah}</p>
+                  <p className="text-slate-500 text-xs sm:text-sm font-semibold mt-2">{item.label}</p>
                 </div>
               </div>
 
               {currentUser.role === 'ADMIN' && (
-                <div className="p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
                   <button
                     onClick={() => handleOpenEdit(item)}
-                    className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                   >
                     <Edit2 size={14} /> Ubah
                   </button>
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
                   >
                     <Trash2 size={14} /> Hapus
                   </button>
@@ -244,14 +230,14 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
           ))}
 
           {filteredItems.length === 0 && (
-            <div className="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-100">
+            <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
               <BarChart3 size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium">
-                {searchTerm ? `Tidak ada data statistik yang sesuai dengan "${searchTerm}".` : 'Belum ada data statistik.'}
+              <p className="text-slate-500 font-medium text-sm">
+                {isFiltered ? 'Tidak ada data statistik yang sesuai dengan kata kunci pencarian.' : 'Belum ada data statistik.'}
               </p>
-              {searchTerm && (
+              {isFiltered && (
                 <button
-                  onClick={() => setSearchTerm('')}
+                  onClick={resetFilter}
                   className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
                 >
                   <RotateCcw size={14} /> Reset Pencarian
@@ -262,21 +248,21 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
         </div>
       )}
 
-      {/* Modal Form */}
+      {/* Modal Form - Mobile Scrollable */}
       {showModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-3xl w-full max-w-md shadow-xl border border-slate-100 overflow-hidden my-8">
-            <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-6 text-white flex justify-between items-center">
-              <h3 className="text-xl font-bold">{editId ? 'Ubah Statistik' : 'Tambah Statistik Baru'}</h3>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-md shadow-xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col">
+            <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-4 sm:p-6 text-white flex justify-between items-center shrink-0">
+              <h3 className="text-base sm:text-lg font-bold">{editId ? 'Ubah Data Statistik' : 'Tambah Statistik Baru'}</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="text-white hover:text-slate-200 text-2xl font-semibold cursor-pointer"
+                className="text-white hover:text-slate-200 text-2xl font-semibold cursor-pointer p-1"
               >
                 &times;
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto">
               {error && (
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                   {error}
@@ -284,56 +270,58 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
               )}
 
               <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1.5">Judul / Kunci Statistik</label>
-                <input
-                  type="text"
-                  required
-                  value={judul}
-                  onChange={(e) => setJudul(e.target.value)}
-                  placeholder="Contoh: siswa, alumni, akreditasi"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                />
-                <p className="text-slate-400 text-xs mt-1">Nama unik untuk mengidentifikasi statistik ini.</p>
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1.5">Jumlah / Angka</label>
+                <label className="block text-slate-700 text-sm font-medium mb-1">Kategori / Judul Singkat</label>
                 <div className="relative">
-                  <Hash size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Tag className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
                   <input
                     type="text"
                     required
-                    value={jumlah}
-                    onChange={(e) => setJumlah(e.target.value)}
-                    placeholder="Contoh: 250+, 500+, A"
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                    value={judul}
+                    onChange={(e) => setJudul(e.target.value)}
+                    placeholder="Contoh: Siswa, Alumni, Akreditasi"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1.5">Label Tampilan</label>
+                <label className="block text-slate-700 text-sm font-medium mb-1">Angka / Nilai Utama</label>
+                <div className="relative">
+                  <Hash className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+                  <input
+                    type="text"
+                    required
+                    value={jumlah}
+                    onChange={(e) => setJumlah(e.target.value)}
+                    placeholder="Contoh: 250+, 1000+, A"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm font-bold text-slate-800"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1">Label Penjelas</label>
                 <input
                   type="text"
                   required
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
-                  placeholder="Contoh: Siswa Aktif, Alumni, Akreditasi"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                  placeholder="Contoh: Siswa Aktif Terdaftar"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 font-medium transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 text-sm font-medium transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2.5 rounded-xl text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 font-medium transition-colors cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-sm font-medium transition-colors cursor-pointer"
                 >
                   Simpan Statistik
                 </button>

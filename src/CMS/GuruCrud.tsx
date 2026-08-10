@@ -1,33 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, User, BookOpen, GraduationCap, Users, Search, Filter, RotateCcw, X } from 'lucide-react';
-import { getApiBaseUrl, getImageUrl } from '../config/api';
-
-interface Teacher {
-  id: number;
-  nama: string;
-  nip: string;
-  jabatan: string;
-  tugas: string;
-  foto: string;
-  riwayat_pendidikan: string;
-  jenis_kelamin: 'Laki-laki' | 'Perempuan';
-  status: string;
-  motto: string;
-}
+import React, { useState } from 'react';
+import { Plus, User, Users, RotateCcw } from 'lucide-react';
+import { getApiBaseUrl } from '../config/api';
+import { useTeacherData, Teacher } from './hooks/useTeacherData';
+import { useCmsFilter } from './hooks/useCmsFilter';
+import CmsFilterBar from './components/CmsFilterBar';
+import { getUniqueValues } from './utils/cmsHelpers';
+import { GuruCard } from './guru/GuruCard';
+import { GuruFormModal } from './guru/GuruFormModal';
 
 const API_BASE = getApiBaseUrl();
 
 export default function GuruCrud() {
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  // Search & Filter states
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedJabatan, setSelectedJabatan] = useState('ALL');
-  const [selectedGender, setSelectedGender] = useState('ALL');
-  const [selectedStatus, setSelectedStatus] = useState('ALL');
+  const {
+    teachers,
+    loading,
+    error,
+    setError,
+    success,
+    setSuccess,
+    fetchTeachers,
+    deleteTeacher,
+  } = useTeacherData();
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -38,30 +31,28 @@ export default function GuruCrud() {
   const [tugas, setTugas] = useState('');
   const [riwayatPendidikan, setRiwayatPendidikan] = useState('');
   const [jenisKelamin, setJenisKelamin] = useState<'Laki-laki' | 'Perempuan'>('Laki-laki');
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState('Aktif');
   const [motto, setMotto] = useState('');
   const [fotoFile, setFotoFile] = useState<File | null>(null);
 
-  const fetchTeachers = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE}/backend/API/guru.php`);
-      const result = await response.json();
-      if (result.status === 'success') {
-        setTeachers(result.data || []);
-      } else {
-        setError(result.message || 'Gagal memuat data guru.');
-      }
-    } catch (err) {
-      setError('Gagal menghubungi server backend.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Filter Hook
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    resetFilter,
+    isFiltered,
+    filteredItems: filteredTeachers,
+  } = useCmsFilter<Teacher>({
+    items: teachers,
+    searchFields: ['nama', 'nip', 'tugas', 'riwayat_pendidikan'],
+    initialFilters: { jabatan: 'ALL', jenis_kelamin: 'ALL', status: 'ALL' },
+  });
 
-  useEffect(() => {
-    fetchTeachers();
-  }, []);
+  const availableJabatan = getUniqueValues(teachers, 'jabatan');
+  const availableGenders = getUniqueValues(teachers, 'jenis_kelamin');
+  const availableStatuses = getUniqueValues(teachers, 'status');
 
   const resetForm = () => {
     setNama('');
@@ -91,7 +82,7 @@ export default function GuruCrud() {
     setTugas(t.tugas);
     setRiwayatPendidikan(t.riwayat_pendidikan);
     setJenisKelamin(t.jenis_kelamin);
-    setStatus(t.status);
+    setStatus(t.status || 'Aktif');
     setMotto(t.motto || '');
     setFotoFile(null);
     setShowModal(true);
@@ -108,7 +99,7 @@ export default function GuruCrud() {
       formData.append('id', editId.toString());
     }
     formData.append('nama', nama);
-    formData.append('nip', nip ? nip.trim() : '');
+    formData.append('nip', nip);
     formData.append('jabatan', jabatan);
     formData.append('tugas', tugas);
     formData.append('riwayat_pendidikan', riwayatPendidikan);
@@ -131,245 +122,102 @@ export default function GuruCrud() {
         resetForm();
         fetchTeachers();
       } else {
-        setError(result.message || 'Gagal menyimpan data.');
+        setError(result.message || 'Gagal menyimpan data guru.');
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat menyimpan data.');
+    } catch {
+      setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Apakah Anda yakin ingin menghapus data guru ini?')) return;
-    setError('');
-    setSuccess('');
-
-    const formData = new FormData();
-    formData.append('action', 'delete');
-    formData.append('id', id.toString());
-
-    try {
-      const response = await fetch(`${API_BASE}/backend/API/guru.php`, {
-        method: 'POST',
-        body: formData,
-      });
-      const result = await response.json();
-      if (result.status === 'success') {
-        setSuccess(result.message);
-        fetchTeachers();
-      } else {
-        setError(result.message || 'Gagal menghapus data.');
-      }
-    } catch (err) {
-      setError('Terjadi kesalahan saat menghapus data.');
-    }
-  };
-
-  // Dynamic filter options derived from database data
-  const availableJabatan = Array.from(new Set(teachers.map((t) => t.jabatan).filter(Boolean)));
-  const availableGenders = Array.from(new Set(teachers.map((t) => t.jenis_kelamin).filter(Boolean)));
-  const availableStatuses = Array.from(new Set(teachers.map((t) => t.status).filter(Boolean)));
-
-  const filteredTeachers = teachers.filter((t) => {
-    const matchesSearch =
-      !searchTerm.trim() ||
-      t.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (t.nip && t.nip.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      t.tugas.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (t.riwayat_pendidikan && t.riwayat_pendidikan.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesJabatan = selectedJabatan === 'ALL' || t.jabatan === selectedJabatan;
-    const matchesGender = selectedGender === 'ALL' || t.jenis_kelamin === selectedGender;
-    const matchesStatus = selectedStatus === 'ALL' || t.status === selectedStatus;
-    return matchesSearch && matchesJabatan && matchesGender && matchesStatus;
-  });
-
-  const isFiltered = searchTerm !== '' || selectedJabatan !== 'ALL' || selectedGender !== 'ALL' || selectedStatus !== 'ALL';
-
-  const handleResetFilter = () => {
-    setSearchTerm('');
-    setSelectedJabatan('ALL');
-    setSelectedGender('ALL');
-    setSelectedStatus('ALL');
+    await deleteTeacher(id);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+    <div className="space-y-4 sm:space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-100">
         <div>
-          <h2 className="text-2xl font-bold text-slate-800 flex items-center gap-2">
-            <Users className="text-teal-600" /> Manajemen Guru & Staff
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
+            <Users className="text-teal-600 shrink-0" /> Manajemen Guru & Staff
           </h2>
-          <p className="text-slate-500 text-sm">Kelola profil guru, staf tata usaha, dan tenaga kependidikan sekolah.</p>
+          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">Kelola profil guru, staf tata usaha, dan tenaga kependidikan sekolah.</p>
         </div>
         <button
           onClick={handleOpenCreate}
-          className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all transform hover:scale-102 cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-sm transition-all cursor-pointer text-sm"
         >
           <Plus size={18} /> Tambah Guru / Staff
         </button>
       </div>
 
-      {/* Filter & Search Bar */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full md:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Cari nama, NIP, tugas, pendidikan..."
-            className="w-full pl-10 pr-9 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm text-slate-700 placeholder-slate-400"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-            >
-              <X size={15} />
-            </button>
-          )}
-        </div>
+      {/* Filter Bar Component */}
+      <CmsFilterBar
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Cari nama, NIP, tugas, pendidikan..."
+        isFiltered={isFiltered}
+        onReset={resetFilter}
+        selectFilters={[
+          {
+            key: 'jabatan',
+            value: filters.jabatan || 'ALL',
+            onChange: (val) => setFilter('jabatan', val),
+            options: [
+              { value: 'ALL', label: 'Semua Jabatan' },
+              ...availableJabatan.map((j) => ({ value: j, label: j })),
+            ],
+          },
+          {
+            key: 'jenis_kelamin',
+            value: filters.jenis_kelamin || 'ALL',
+            onChange: (val) => setFilter('jenis_kelamin', val),
+            options: [
+              { value: 'ALL', label: 'Semua Gender' },
+              ...availableGenders.map((g) => ({ value: g, label: g })),
+            ],
+          },
+          {
+            key: 'status',
+            value: filters.status || 'ALL',
+            onChange: (val) => setFilter('status', val),
+            options: [
+              { value: 'ALL', label: 'Semua Status' },
+              ...availableStatuses.map((st) => ({ value: st, label: st })),
+            ],
+          },
+        ]}
+      />
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-2">
-            <Filter size={16} className="text-slate-400" />
-            <select
-              value={selectedJabatan}
-              onChange={(e) => setSelectedJabatan(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
-            >
-              <option value="ALL">Semua Jabatan</option>
-              {availableJabatan.map((j) => (
-                <option key={j} value={j}>
-                  {j}
-                </option>
-              ))}
-            </select>
-          </div>
+      {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
+      {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
-          <select
-            value={selectedGender}
-            onChange={(e) => setSelectedGender(e.target.value)}
-            className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
-          >
-            <option value="ALL">Semua Gender</option>
-            {availableGenders.map((g) => (
-              <option key={g} value={g}>
-                {g}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer"
-          >
-            <option value="ALL">Semua Status</option>
-            {availableStatuses.map((st) => (
-              <option key={st} value={st}>
-                {st}
-              </option>
-            ))}
-          </select>
-
-          {isFiltered && (
-            <button
-              onClick={handleResetFilter}
-              className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer"
-            >
-              <RotateCcw size={14} /> Reset Filter
-            </button>
-          )}
-        </div>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">
-          {success}
-        </div>
-      )}
-
+      {/* Teacher Grid */}
       {loading ? (
         <div className="flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredTeachers.map((t) => (
-            <div key={t.id} className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="relative h-48 bg-slate-100 flex items-center justify-center">
-                  {t.foto ? (
-                    <img
-                      src={getImageUrl(t.foto)}
-                      alt={t.nama}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <User size={64} className="text-slate-400" />
-                  )}
-                  <span className="absolute top-3 right-3 bg-teal-600/90 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-medium">
-                    {t.jabatan}
-                  </span>
-                </div>
-                <div className="p-5 space-y-3">
-                  <h3 className="font-bold text-slate-800 text-lg leading-tight">{t.nama}</h3>
-                  <p className="text-slate-400 text-xs font-mono">NIP. {t.nip}</p>
-                  
-                  <div className="space-y-2 pt-2 border-t border-slate-100">
-                    <div className="flex items-center gap-2 text-slate-600 text-sm">
-                      <BookOpen size={16} className="text-slate-400 shrink-0" />
-                      <span>Tugas: {t.tugas}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600 text-sm">
-                      <GraduationCap size={16} className="text-slate-400 shrink-0" />
-                      <span>Riwayat Pendidikan: {t.riwayat_pendidikan}</span>
-                    </div>
-                    <div className="text-xs text-slate-400 flex justify-between pt-1">
-                      <span>Jenis Kelamin: {t.jenis_kelamin}</span>
-                      <span>Status: {t.status}</span>
-                    </div>
-                    {t.motto && (
-                      <p className="text-xs italic text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100 mt-1">
-                        "{t.motto}"
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-                <button
-                  onClick={() => handleOpenEdit(t)}
-                  className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  <Edit2 size={14} /> Ubah
-                </button>
-                <button
-                  onClick={() => handleDelete(t.id)}
-                  className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer"
-                >
-                  <Trash2 size={14} /> Hapus
-                </button>
-              </div>
-            </div>
+            <GuruCard
+              key={t.id}
+              teacher={t}
+              onEdit={handleOpenEdit}
+              onDelete={handleDelete}
+            />
           ))}
 
           {filteredTeachers.length === 0 && (
-            <div className="col-span-full bg-white p-12 rounded-2xl text-center border border-slate-100">
+            <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
               <User size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium">
+              <p className="text-slate-500 font-medium text-sm">
                 {isFiltered ? 'Tidak ada data guru/staff yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada data guru/staff kependidikan.'}
               </p>
               {isFiltered && (
                 <button
-                  onClick={handleResetFilter}
+                  onClick={resetFilter}
                   className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
                 >
                   <RotateCcw size={14} /> Reset Filter
@@ -380,158 +228,31 @@ export default function GuruCrud() {
         </div>
       )}
 
-      {/* Modal Form */}
-      {showModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-3xl w-full max-w-2xl shadow-xl border border-slate-100 overflow-hidden my-8">
-            <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-6 text-white flex justify-between items-center">
-              <h3 className="text-xl font-bold">{editId ? 'Ubah Profil Guru/Staff' : 'Tambah Guru/Staff Baru'}</h3>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-white hover:text-slate-200 text-2xl font-semibold cursor-pointer"
-              >
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                  {error}
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">Nama Lengkap</label>
-                  <input
-                    type="text"
-                    required
-                    value={nama}
-                    onChange={(e) => setNama(e.target.value)}
-                    placeholder="Nama beserta gelar"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">NIP</label>
-                  <input
-                    type="text"
-                    value={nip}
-                    onChange={(e) => setNip(e.target.value)}
-                    placeholder="Contoh: 19820315..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">Jabatan Utama</label>
-                  <select
-                    value={jabatan}
-                    onChange={(e) => setJabatan(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  >
-                    <option value="Komite Sekolah">Komite Sekolah</option>
-                    <option value="Kepala Sekolah">Kepala Sekolah</option>
-                    <option value="Guru Wali Kelas">Guru Wali Kelas</option>
-                    <option value="Guru Mata Pelajaran">Guru Mata Pelajaran</option>
-                    <option value="Tata Usaha">Tata Usaha</option>
-                    <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">Tugas Spesifik / Mata Pelajaran</label>
-                  <input
-                    type="text"
-                    required
-                    value={tugas}
-                    onChange={(e) => setTugas(e.target.value)}
-                    placeholder="Contoh: Guru Kelas I, Agama Islam, PJOK, dll"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">Jenis Kelamin</label>
-                  <select
-                    value={jenisKelamin}
-                    onChange={(e) => setJenisKelamin(e.target.value as 'Laki-laki' | 'Perempuan')}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  >
-                    <option value="Laki-laki">Laki-laki</option>
-                    <option value="Perempuan">Perempuan</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">Status Kepegawaian</label>
-                  <select
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  >
-                    <option value="Aktif">Aktif</option>
-                    <option value="Mutasi">Mutasi</option>
-                    <option value="Pensiun">Pensiun</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate-700 text-sm font-medium mb-1.5">Riwayat Pendidikan</label>
-                  <input
-                    type="text"
-                    required
-                    value={riwayatPendidikan}
-                    onChange={(e) => setRiwayatPendidikan(e.target.value)}
-                    placeholder="Contoh: S1 PGSD Univ Negeri Malang"
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1.5">Motto / Kutipan Pribadi</label>
-                <textarea
-                  rows={2}
-                  value={motto}
-                  onChange={(e) => setMotto(e.target.value)}
-                  placeholder="Contoh: Mendidik dengan hati, membentuk karakter mulia."
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 resize-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 text-sm font-medium mb-1.5">Foto Profil</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFotoFile(e.target.files?.[0] || null)}
-                  className="w-full text-slate-600 text-sm border border-slate-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
-                />
-                <p className="text-slate-400 text-xs mt-1">Biarkan kosong jika tidak ingin mengubah foto.</p>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-5 py-2.5 rounded-xl text-slate-700 bg-slate-100 hover:bg-slate-200 font-medium transition-colors cursor-pointer"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl text-white bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 font-medium transition-colors cursor-pointer"
-                >
-                  Simpan Data
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Form Modal */}
+      <GuruFormModal
+        showModal={showModal}
+        editId={editId}
+        nama={nama}
+        setNama={setNama}
+        nip={nip}
+        setNip={setNip}
+        jabatan={jabatan}
+        setJabatan={setJabatan}
+        tugas={tugas}
+        setTugas={setTugas}
+        riwayatPendidikan={riwayatPendidikan}
+        setRiwayatPendidikan={setRiwayatPendidikan}
+        jenisKelamin={jenisKelamin}
+        setJenisKelamin={setJenisKelamin}
+        status={status}
+        setStatus={setStatus}
+        motto={motto}
+        setMotto={setMotto}
+        setFotoFile={setFotoFile}
+        error={error}
+        onClose={() => setShowModal(false)}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
