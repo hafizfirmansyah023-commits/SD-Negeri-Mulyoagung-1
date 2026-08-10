@@ -1,0 +1,1 @@
+untuk di bagian directory jika status pensiun itu sendirikan,bikinkan lagi kolom di bawah tenaga pendidikan, dan untuk di bagian bagan tidak usah di tampilkan. jadi yang di bagan yang di tampilkan itu yang aktif atau mutasi saja
