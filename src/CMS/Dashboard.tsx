@@ -10,6 +10,7 @@ import Verifikasi from './Verifikasi';
 import FasilitasCrud from './FasilitasCrud';
 import SambutanKepsekCrud from './SambutanKepsekCrud';
 import PengumumanCrud from './PengumumanCrud';
+import StatistikCrud from './Statistikcrud';
 import PengaturanSekolah from './PengaturanSekolah';
 
 interface DashboardProps {
@@ -74,6 +75,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'guru' && user.role === 'ADMIN' && <GuruCrud />}
                 {activeTab === 'sambutan' && user.role === 'ADMIN' && <SambutanKepsekCrud />}
                 {activeTab === 'pengumuman' && user.role === 'ADMIN' && <PengumumanCrud />}
+                {activeTab === 'statistik' && user.role === 'ADMIN' && <StatistikCrud currentUser={user} />}
                 {activeTab === 'fasilitas' && user.role === 'ADMIN' && <FasilitasCrud currentUser={user} />}
                 {activeTab === 'galeri' && <GaleriCrud currentUser={user} />}
                 {activeTab === 'berita' && <BeritaCrud currentUser={user} />}
