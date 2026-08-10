@@ -16,7 +16,53 @@ if ($method === 'GET') {
     try {
         $stmt = $conn->query("SELECT * FROM guru_tendik ORDER BY id DESC");
         $teachers = $stmt->fetchAll();
-        echo json_encode(["status" => "success", "data" => $teachers]);
+
+        // Urutan prioritas berdasarkan jabatan
+        $roleOrder = [
+            'Kepala Sekolah'       => 1,
+            'Komite Sekolah'       => 2,
+            'Tata Usaha'           => 3,
+            'Guru Wali Kelas'      => 4,
+            'Guru Mata Pelajaran'  => 5,
+            'Tenaga Kependidikan'  => 6,
+        ];
+
+        // Fungsi untuk ekstrak nomor & huruf kelas dari field "tugas"
+        // Contoh: "Kelas 3A" -> [3, 'A'], "Wali Kelas 6B" -> [6, 'B']
+        $extractKelas = function ($tugas) {
+            if (preg_match('/kelas\s*(\d+)\s*([a-zA-Z]?)/i', (string) $tugas, $m)) {
+                return [(int) $m[1], strtoupper($m[2] ?? '')];
+            }
+            return [999, ''];
+        };
+
+        usort($teachers, function ($a, $b) use ($roleOrder, $extractKelas) {
+            $jabatanA = $a['jabatan'] ?? '';
+            $jabatanB = $b['jabatan'] ?? '';
+
+            $orderA = $roleOrder[$jabatanA] ?? 99;
+            $orderB = $roleOrder[$jabatanB] ?? 99;
+
+            if ($orderA !== $orderB) {
+                return $orderA <=> $orderB;
+            }
+
+            // Khusus Guru Wali Kelas: urutkan dari kelas terendah ke tertinggi (1A, 1B, 2A, 2B, ...)
+            if ($jabatanA === 'Guru Wali Kelas' && $jabatanB === 'Guru Wali Kelas') {
+                [$numA, $letA] = $extractKelas($a['tugas']);
+                [$numB, $letB] = $extractKelas($b['tugas']);
+
+                if ($numA !== $numB) {
+                    return $numA <=> $numB;
+                }
+                return strcmp($letA, $letB);
+            }
+
+            // Jabatan/kategori lain diurutkan berdasarkan nama
+            return strcmp($a['nama'] ?? '', $b['nama'] ?? '');
+        });
+
+        echo json_encode(["status" => "success", "data" => array_values($teachers)]);
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(["status" => "error", "message" => $e->getMessage()]);
