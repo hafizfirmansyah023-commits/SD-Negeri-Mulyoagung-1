@@ -42,143 +42,141 @@ export const SchoolProfileSection: React.FC = () => {
   const getFacilityIconByTitle = (title: string) => {
     const t = title.toLowerCase();
     if (t.includes('lab') || t.includes('komputer') || t.includes('tik') || t.includes('coding') || t.includes('multimedia')) {
-      return <Monitor className="w-5 h-5 text-[#028C84]" />;
+      return <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
     if (t.includes('pustaka') || t.includes('buku') || t.includes('baca') || t.includes('literasi')) {
-      return <BookOpen className="w-5 h-5 text-[#028C84]" />;
+      return <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
     if (t.includes('lapangan') || t.includes('olahraga') || t.includes('futsal') || t.includes('basket') || t.includes('senam') || t.includes('fisik')) {
-      return <Activity className="w-5 h-5 text-[#028C84]" />;
+      return <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
     if (t.includes('uks') || t.includes('sehat') || t.includes('kesehatan') || t.includes('poliklinik') || t.includes('medis')) {
-      return <HeartPulse className="w-5 h-5 text-[#028C84]" />;
+      return <HeartPulse className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
     if (t.includes('kantin') || t.includes('makan') || t.includes('gizi') || t.includes('kuliner') || t.includes('minum')) {
-      return <Coffee className="w-5 h-5 text-[#028C84]" />;
+      return <Coffee className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
     if (t.includes('taman') || t.includes('green') || t.includes('kebun') || t.includes('adiwiyata') || t.includes('pohon') || t.includes('hidroponik')) {
-      return <Trees className="w-5 h-5 text-[#028C84]" />;
+      return <Trees className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
     if (t.includes('musa') || t.includes('masjid') || t.includes('agama') || t.includes('ibadah')) {
-      return <Sparkles className="w-5 h-5 text-[#028C84]" />;
+      return <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
     }
-    return <Building className="w-5 h-5 text-[#028C84]" />;
+    return <Building className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
   };
 
   return (
-    <section id="profile-section" className="relative w-full py-16 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
-      {/* Decorative subtle ambient glows for white background */}
+    <section id="profile-section" className="relative w-full py-10 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-10 right-10 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-12 relative z-10">
-        {/* Header */}
-        <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 text-[#028C84] font-bold text-xs uppercase tracking-wider bg-teal-50/80 border border-teal-200/80 px-4 py-1.5 rounded-full shadow-sm backdrop-blur-md">
-            <Compass className="w-4 h-4 text-[#028C84]" />
+      
+      <div className="max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 space-y-6 sm:space-y-12 relative z-10">
+        
+        {/* Header Section */}
+        <div className="text-center max-w-2xl mx-auto space-y-2 sm:space-y-3">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[#028C84] font-bold text-[9px] sm:text-xs uppercase tracking-wider bg-teal-50/80 border border-teal-200/80 px-2.5 py-1 sm:px-4 sm:py-1.5 rounded-full shadow-sm">
+            <Compass className="w-3 h-3 sm:w-4 sm:h-4 text-[#028C84]" />
             Mengenal Sekolah Kami
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[black] tracking-tight">
+          <h2 className="text-xl sm:text-4xl font-extrabold text-[black] tracking-tight leading-tight">
             Profil SD Negeri 1 Mulyoagung
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-            Landasan visi pendidik, kilasan sejarah pengabdian, serta fasilitas sarana pendukung pembelajaran
+          <p className="text-slate-600 text-[11px] sm:text-base leading-snug px-1">
+            Landasan visi pendidik, kilasan sejarah pengabdian, serta fasilitas pendukung.
           </p>
         </div>
 
-        {/* Liquid Glass Pill Tab Switcher */}
-        <div className="flex justify-center">
-          <div className="inline-flex p-1.5 rounded-full bg-white/70 backdrop-blur-xl border border-teal-100 shadow-[0_4px_20px_0_rgba(2,140,132,0.08)] space-x-1">
+        {/* Tab Buttons - Dirampingkan untuk mobile */}
+        <div className="flex justify-center w-full">
+          <div className="flex w-full sm:w-auto p-1 rounded-xl sm:rounded-full bg-white/70 backdrop-blur-xl border border-teal-100 shadow-sm">
             <button
               onClick={() => setActiveTab('visi-misi')}
-              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'visi-misi'
-                ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
-                : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
-                }`}
+              className={`flex-1 sm:flex-none py-1.5 sm:py-2 px-1 sm:px-6 text-[10px] sm:text-sm font-bold rounded-lg sm:rounded-full transition-all duration-300 ${
+                activeTab === 'visi-misi'
+                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                  : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
+              }`}
             >
               Visi & Misi
             </button>
             <button
               onClick={() => setActiveTab('sejarah')}
-              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'sejarah'
-                ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
-                : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
-                }`}
+              className={`flex-1 sm:flex-none py-1.5 sm:py-2 px-1 sm:px-6 text-[10px] sm:text-sm font-bold rounded-lg sm:rounded-full transition-all duration-300 ${
+                activeTab === 'sejarah'
+                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                  : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
+              }`}
             >
-              Sejarah Sekolah
+              Sejarah
             </button>
             <button
               onClick={() => setActiveTab('fasilitas')}
-              className={`py-2.5 px-6 text-xs sm:text-sm font-bold rounded-full transition-all duration-300 cursor-pointer ${activeTab === 'fasilitas'
-                ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
-                : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
-                }`}
+              className={`flex-1 sm:flex-none py-1.5 sm:py-2 px-1 sm:px-6 text-[10px] sm:text-sm font-bold rounded-lg sm:rounded-full transition-all duration-300 ${
+                activeTab === 'fasilitas'
+                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20 scale-[1.02]'
+                  : 'text-slate-600 hover:text-[#028C84] hover:bg-teal-50/50'
+              }`}
             >
-              Fasilitas Pembelajaran
+              Fasilitas
             </button>
           </div>
         </div>
 
         {/* Tab 1: Visi & Misi */}
         {activeTab === 'visi-misi' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start animate-fade-in">
-            {/* Visi Liquid Glass Card */}
-            <div className="group relative bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.12)] hover:border-teal-200/80 transition-all duration-300 space-y-5">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-teal-100/40 to-transparent rounded-tr-3xl pointer-events-none" />
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-[#1e40af] text-white shadow-md shadow-blue-950/20">
-                  <Target className="w-6 h-6" />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-start animate-fade-in">
+            {/* Visi Card */}
+            <div className="group relative bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-white/80 shadow-sm transition-all space-y-3 sm:space-y-5">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="p-2 sm:p-3 rounded-lg sm:rounded-2xl bg-gradient-to-br from-[#1E3A8A] to-[#1e40af] text-white">
+                  <Target className="w-4 h-4 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-teal-600 uppercase tracking-wider">Arah Pendirian</span>
-                  <h3 className="text-xl font-extrabold text-[#1E3A8A]">
+                  <span className="text-[9px] sm:text-xs font-bold text-teal-600 uppercase tracking-wider">Arah Pendirian</span>
+                  <h3 className="text-sm sm:text-xl font-extrabold text-[#1E3A8A] leading-none mt-0.5">
                     Visi Sekolah
                   </h3>
                 </div>
               </div>
-              <div className="relative overflow-hidden rounded-2xl p-5 bg-gradient-to-r from-teal-50/90 via-white/80 to-teal-50/40 border border-teal-100/80 shadow-inner">
-                <p className="text-base sm:text-lg text-slate-800 font-bold leading-relaxed border-l-4 border-[#028C84] pl-4">
-                  "Terwujudnya murid yang beriman dan bertakwa, bernalar kritis, berkarakter mulia,
-                  sehat jasmani, dan unggul dalam digitalisasi."
+              <div className="relative overflow-hidden rounded-xl p-3 sm:p-5 bg-gradient-to-r from-teal-50/90 to-teal-50/40 border border-teal-100/80">
+                <p className="text-[11px] sm:text-lg text-slate-800 font-bold leading-snug sm:leading-relaxed border-l-2 sm:border-l-4 border-[#028C84] pl-2.5 sm:pl-4">
+                  "Terwujudnya murid yang beriman dan bertakwa, bernalar kritis, berkarakter mulia, sehat jasmani, dan unggul dalam digitalisasi."
                 </p>
               </div>
             </div>
 
-            {/* Misi Liquid Glass Card */}
-            <div className="group relative bg-white/70 backdrop-blur-xl rounded-3xl p-6 sm:p-8 border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.12)] hover:border-teal-200/80 transition-all duration-300 space-y-5">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-100/40 to-transparent rounded-tr-3xl pointer-events-none" />
-              <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-gradient-to-br from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-900/20">
-                  <Compass className="w-6 h-6" />
+            {/* Misi Card */}
+            <div className="group relative bg-white/70 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-white/80 shadow-sm transition-all space-y-3 sm:space-y-5">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <div className="p-2 sm:p-3 rounded-lg sm:rounded-2xl bg-gradient-to-br from-[#028C84] to-[#156B63] text-white">
+                  <Compass className="w-4 h-4 sm:w-6 sm:h-6" />
                 </div>
                 <div>
-                  <span className="text-xs font-bold text-teal-600 uppercase tracking-wider">Langkah Strategis</span>
-                  <h3 className="text-xl font-extrabold text-[#1E3A8A]">
+                  <span className="text-[9px] sm:text-xs font-bold text-teal-600 uppercase tracking-wider">Langkah Strategis</span>
+                  <h3 className="text-sm sm:text-xl font-extrabold text-[#1E3A8A] leading-none mt-0.5">
                     Misi Utama Sekolah
                   </h3>
                 </div>
               </div>
-              <ul className="space-y-3.5 text-sm sm:text-base text-slate-700">
-                <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.</span>
+              <ul className="space-y-1.5 sm:space-y-3.5 text-[11px] sm:text-base text-slate-700 leading-snug">
+                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
+                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia.</span>
                 </li>
-                <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah, proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis, berpikir reflektif, serta memecahkan masalah.</span>
+                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
+                  <span>Menyelenggarakan pembelajaran berpusat pada murid melalui pendekatan berbasis masalah dan proyek.</span>
                 </li>
-                <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin, tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati sesuai nilai-nilai Profil Lulusan.</span>
+                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
+                  <span>Menumbuhkan karakter mulia melalui budaya positif, disiplin, peduli, dan gotong royong.</span>
                 </li>
-                <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar untuk meningkatkan kesehatan jasmani.</span>
+                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
+                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak.</span>
                 </li>
-                <li className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-teal-50/60 transition-colors">
-                  <CheckCircle2 className="w-5 h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.</span>
+                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
+                  <span>Mengembangkan budaya digital dengan pemanfaatan teknologi dan literasi digital.</span>
                 </li>
               </ul>
             </div>
@@ -187,36 +185,31 @@ export const SchoolProfileSection: React.FC = () => {
 
         {/* Tab 2: Sejarah */}
         {activeTab === 'sejarah' && (
-          <div className="relative bg-white/75 backdrop-blur-xl rounded-3xl p-6 sm:p-10 lg:p-12 border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.12)] hover:border-teal-200/80 transition-all duration-300 space-y-6 animate-fade-in overflow-hidden">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-100/40 to-transparent rounded-tr-3xl pointer-events-none" />
-
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white shadow-md shadow-amber-900/20">
-                <History className="w-6 h-6" />
+          <div className="relative bg-white/75 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-10 lg:p-12 border border-white/80 shadow-sm space-y-3 sm:space-y-6 animate-fade-in">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="p-2 sm:p-3 rounded-lg sm:rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+                <History className="w-4 h-4 sm:w-6 sm:h-6" />
               </div>
               <div>
-                <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">Perjalanan Pengabdian</span>
-                <h3 className="text-2xl font-extrabold text-[#1E3A8A]">
-                  Sejarah Singkat SD Negeri 1 Mulyoagung
+                <span className="text-[9px] sm:text-xs font-bold text-amber-600 uppercase tracking-wider">Perjalanan Pengabdian</span>
+                <h3 className="text-sm sm:text-2xl font-extrabold text-[#1E3A8A] leading-none mt-0.5">
+                  Sejarah SDN 1 Mulyoagung
                 </h3>
               </div>
             </div>
 
-            <div className="prose max-w-none text-slate-700 text-sm sm:text-base leading-relaxed space-y-4 pt-2">
-              <p className="p-4 bg-teal-50/40 rounded-2xl border border-teal-100/60 font-medium">
-                SD Negeri 1 Mulyoagung didirikan pada tahun 1970-an di pusat Kecamatan Dau, Kabupaten Malang. Terletak di kawasan strategis yang dekat dengan wilayah wisata, industri, dan lembaga pemerintahan, sekolah ini hadir untuk memenuhi kebutuhan pendidikan masyarakat dengan latar belakang siswa yang beragam.
+            <div className="prose max-w-none text-slate-700 text-[11px] sm:text-base leading-snug sm:leading-relaxed space-y-2.5 sm:space-y-4">
+              <p className="p-2.5 sm:p-4 bg-teal-50/40 rounded-lg sm:rounded-2xl border border-teal-100/60 font-medium">
+                Didirikan pada tahun 1970-an di pusat Kecamatan Dau, Malang, sekolah ini hadir untuk memenuhi kebutuhan pendidikan masyarakat di kawasan strategis yang dekat dengan wilayah wisata dan industri.
               </p>
-
               <p>
-                Pada bulan <strong>Desember 2018</strong>, sekolah mengalami babak penting dalam perjalanannya melalui proses <em>merger</em> (penggabungan) dua lembaga, yaitu SD Negeri 1 Mulyoagung dan SD Negeri 3 Mulyoagung. Penggabungan ini semakin memperkuat sinergi fasilitas, tenaga pendidik, dan manajemen sekolah dalam menghadirkan layanan pendidikan dasar yang makin berkualitas.
+                Pada bulan <strong>Desember 2018</strong>, sekolah mengalami babak penting melalui proses <em>merger</em> antara SDN 1 Mulyoagung dan SDN 3 Mulyoagung, memperkuat sinergi fasilitas dan manajemen sekolah.
               </p>
-
               <p>
-                Ciri khas lain yang menjadi kebanggaan sekolah adalah keberadaan <strong>Ikon Patung Semar</strong> di area sekolah, yang menyimbolkan komitmen kuat SDN 1 Mulyoagung dalam melestarikan nilai-nilai budaya dan kearifan lokal Jawa.
+                Ciri khas kebanggaan sekolah adalah <strong>Ikon Patung Semar</strong>, menyimbolkan komitmen kelestarian budaya kearifan lokal Jawa.
               </p>
-
               <p>
-                Kini, di bawah kepemimpinan yang berdedikasi serta didukung fasilitator dan Guru Penggerak, SD Negeri 1 Mulyoagung terus bertransformasi menerapkan Kurikulum Merdeka. Sekolah berkomitmen membentuk generasi unggul yang beriman dan bertakwa, berakhlak mulia, bernalar kritis, mandiri, kreatif, serta berkebinekaan global sesuai nilai-nilai Profil Pelajar Pancasila.
+                Kini, didukung fasilitator dan Guru Penggerak, SDN 1 Mulyoagung bertransformasi menerapkan Kurikulum Merdeka untuk membentuk generasi unggul sesuai Profil Pelajar Pancasila.
               </p>
             </div>
           </div>
@@ -224,34 +217,34 @@ export const SchoolProfileSection: React.FC = () => {
 
         {/* Tab 3: Fasilitas */}
         {activeTab === 'fasilitas' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 animate-fade-in">
             {facilities.map((fac) => {
               const imageSrc = fac.foto ? getImageUrl(fac.foto) : (fac.image || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=600');
               return (
                 <div
                   key={fac.id}
-                  className="group relative bg-white/75 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/80 shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_12px_35px_rgba(2,140,132,0.14)] hover:border-teal-200/80 transition-all duration-300 flex flex-col hover:-translate-y-1"
+                  className="group relative bg-white/75 backdrop-blur-xl rounded-xl sm:rounded-3xl overflow-hidden border border-white/80 shadow-sm flex flex-col"
                 >
-                  <div className="h-48 w-full overflow-hidden relative">
+                  {/* Tinggi gambar diperkecil pada mobile agar tidak lonjong */}
+                  <div className="h-28 sm:h-52 w-full overflow-hidden relative">
                     <img
                       src={imageSrc}
                       alt={fac.judul}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3 bg-white/85 backdrop-blur-md p-2.5 rounded-2xl shadow-md border border-white/60">
+                    <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-md p-1.5 sm:p-2.5 rounded-lg sm:rounded-2xl shadow-sm">
                       {getFacilityIconByTitle(fac.judul)}
                     </div>
                   </div>
 
-                  <div className="p-6 space-y-2 flex-grow flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-bold text-lg text-[#1E3A8A] group-hover:text-[#028C84] transition-colors">
-                        {fac.judul}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">
-                        {fac.deskripsi}
-                      </p>
-                    </div>
+                  <div className="p-3 sm:p-6 flex-grow flex flex-col">
+                    <h4 className="font-bold text-[12px] sm:text-lg text-[#1E3A8A] leading-tight line-clamp-1 sm:line-clamp-none">
+                      {fac.judul}
+                    </h4>
+                    {/* Line-clamp memastikan deskripsi tidak memanjang ke bawah */}
+                    <p className="text-[10px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3">
+                      {fac.deskripsi}
+                    </p>
                   </div>
                 </div>
               );
