@@ -66,10 +66,9 @@ function AppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setTimeout(() => {
       AOS.refresh();
-    }, 100); // Sedikit delay agar DOM render selesai sebelum AOS kalkulasi ulang
+    }, 100);
   }, [location.pathname]);
 
-  // Handle tampilan CMS terpisah (jika ada halaman khusus tanpa header/footer)
   if (activeTab === 'cms') {
     return <Dashboard onBackToHome={() => navigate('/')} />;
   }
@@ -104,11 +103,11 @@ function AppContent() {
               <div data-aos="fade-right" data-aos-delay="100">
                 <NewsSection onViewAllClick={() => setActiveTab('news')} />
               </div>
-              <div data-aos="zoom-in" data-aos-delay="100">
-                <VideoProfileSection />
-              </div>
               <div data-aos="fade-left" data-aos-delay="100">
                 <SchoolProfileSection />
+              </div>
+              <div data-aos="zoom-in" data-aos-delay="100">
+                <VideoProfileSection />
               </div>
               <div data-aos="fade-up" data-aos-delay="100">
                 <ContactSection />
