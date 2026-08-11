@@ -1,15 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Save, Calendar, CheckCircle2, AlertCircle, Link as LinkIcon, ExternalLink } from 'lucide-react';
+import {
+  Settings,
+  Save,
+  Calendar,
+  CheckCircle2,
+  AlertCircle,
+  Link as LinkIcon,
+  ExternalLink,
+  Mail,
+  Phone,
+  MessageCircle,
+  MapPin,
+  Share2,
+  Plus,
+  Trash2,
+  Edit2,
+  X,
+  Sparkles
+} from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
+import { SocialMediaIcon } from '../components/common/SocialMediaIcon';
 
 const API_BASE = getApiBaseUrl();
+
+export interface MedsosItem {
+  id: string;
+  name: string;
+  url: string;
+  icon: string;
+}
 
 export default function PengaturanSekolah() {
   const [tahunAjaran, setTahunAjaran] = useState('2025/2026');
   const [linkPpdb, setLinkPpdb] = useState('');
+  const [emailSekolah, setEmailSekolah] = useState('sdnmulyoagung01@gmail.com');
+  const [teleponSekolah, setTeleponSekolah] = useState('(0341) 466-730');
+  const [whatsappSekolah, setWhatsappSekolah] = useState('08123456789');
+  const [alamatSekolah, setAlamatSekolah] = useState('JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur');
+  const [medsosList, setMedsosList] = useState<MedsosItem[]>([]);
+
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Modal State for Medsos CRUD
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<MedsosItem | null>(null);
+  const [formData, setFormData] = useState({ name: '', url: '', icon: 'auto' });
 
   useEffect(() => {
     fetchSettings();
@@ -23,6 +60,11 @@ export default function PengaturanSekolah() {
       if (result.status === 'success') {
         if (result.tahun_ajaran) setTahunAjaran(result.tahun_ajaran);
         if (result.link_ppdb !== undefined) setLinkPpdb(result.link_ppdb);
+        if (result.email_sekolah) setEmailSekolah(result.email_sekolah);
+        if (result.telepon_sekolah) setTeleponSekolah(result.telepon_sekolah);
+        if (result.whatsapp_sekolah) setWhatsappSekolah(result.whatsapp_sekolah);
+        if (result.alamat_sekolah) setAlamatSekolah(result.alamat_sekolah);
+        if (Array.isArray(result.medsos_links)) setMedsosList(result.medsos_links);
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'Gagal memuat data pengaturan.' });
@@ -31,24 +73,30 @@ export default function PengaturanSekolah() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSaveAll = async (updatedMedsos?: MedsosItem[]) => {
     setMessage(null);
     setSaving(true);
 
+    const targetMedsos = updatedMedsos !== undefined ? updatedMedsos : medsosList;
+
     try {
-      const formData = new FormData();
-      formData.append('tahun_ajaran', tahunAjaran);
-      formData.append('link_ppdb', linkPpdb);
+      const form = new FormData();
+      form.append('tahun_ajaran', tahunAjaran);
+      form.append('link_ppdb', linkPpdb);
+      form.append('email_sekolah', emailSekolah);
+      form.append('telepon_sekolah', teleponSekolah);
+      form.append('whatsapp_sekolah', whatsappSekolah);
+      form.append('alamat_sekolah', alamatSekolah);
+      form.append('medsos_links', JSON.stringify(targetMedsos));
 
       const response = await fetch(`${API_BASE}/backend/API/pengaturan.php`, {
         method: 'POST',
-        body: formData,
+        body: form,
       });
 
       const result = await response.json();
       if (result.status === 'success') {
-        setMessage({ type: 'success', text: 'Pengaturan sekolah berhasil diperbarui!' });
+        setMessage({ type: 'success', text: 'Pengaturan & kontak sekolah berhasil disimpan!' });
       } else {
         setMessage({ type: 'error', text: result.message || 'Gagal menyimpan perubahan.' });
       }
@@ -59,16 +107,74 @@ export default function PengaturanSekolah() {
     }
   };
 
+  // Medsos CRUD Handlers
+  const handleOpenAddModal = () => {
+    setEditingItem(null);
+    setFormData({ name: '', url: '', icon: 'auto' });
+    setModalOpen(true);
+  };
+
+  const handleOpenEditModal = (item: MedsosItem) => {
+    setEditingItem(item);
+    setFormData({ name: item.name, url: item.url, icon: item.icon || 'auto' });
+    setModalOpen(true);
+  };
+
+  const handleDeleteMedsos = (id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus media sosial ini?')) {
+      const newList = medsosList.filter((m) => m.id !== id);
+      setMedsosList(newList);
+      handleSaveAll(newList);
+    }
+  };
+
+  const handleSaveMedsosItem = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.url) return;
+
+    let newList: MedsosItem[];
+
+    if (editingItem) {
+      newList = medsosList.map((m) =>
+        m.id === editingItem.id ? { ...m, name: formData.name, url: formData.url, icon: formData.icon } : m
+      );
+    } else {
+      const newItem: MedsosItem = {
+        id: `medsos-${Date.now()}`,
+        name: formData.name,
+        url: formData.url,
+        icon: formData.icon,
+      };
+      newList = [...medsosList, newItem];
+    }
+
+    setMedsosList(newList);
+    setModalOpen(false);
+    handleSaveAll(newList);
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-        <div className="p-3 bg-teal-100 text-teal-700 rounded-xl">
-          <Settings size={24} />
+    <div className="space-y-8 pb-12">
+      {/* Header */}
+      <div className="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div className="flex items-center gap-3">
+          <div className="p-3 bg-teal-100 text-teal-700 rounded-xl">
+            <Settings size={24} />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-slate-800">Pengaturan Sekolah & Kontak</h2>
+            <p className="text-sm text-slate-500">Kelola tahun ajaran, link PPDB, kontak resmi, dan media sosial</p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">Pengaturan Sekolah</h2>
-          <p className="text-sm text-slate-500">Kelola tahun ajaran dan tautan PPDB Online sekolah</p>
-        </div>
+
+        <button
+          onClick={() => handleSaveAll()}
+          disabled={saving || loading}
+          className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-teal-700/20 disabled:opacity-50 cursor-pointer"
+        >
+          <Save size={18} />
+          {saving ? 'Menyimpan...' : 'Simpan Semua'}
+        </button>
       </div>
 
       {message && (
@@ -84,68 +190,315 @@ export default function PengaturanSekolah() {
         </div>
       )}
 
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
-              <Calendar size={16} className="text-teal-600" />
-              Tahun Ajaran Aktif (Hero Section)
-            </label>
-            <input
-              type="text"
-              required
-              value={tahunAjaran}
-              onChange={(e) => setTahunAjaran(e.target.value)}
-              placeholder="Contoh: 2025/2026 atau 2026/2027"
-              className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
-            />
-            <p className="text-xs text-slate-500 mt-2">
-              Tahun ajaran ini akan ditampilkan secara otomatis pada badge bagian atas Hero Section di halaman utama website.
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* SECTION 1: Pengaturan Utama & PPDB */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+          <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+            <Sparkles className="w-5 h-5 text-teal-600" />
+            <h3 className="font-bold text-slate-800 text-base">Konfigurasi Halaman Utama & PPDB</h3>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
-              <LinkIcon size={16} className="text-teal-600" />
-              Link / URL PPDB Online (Halaman Utama)
-            </label>
-            <div className="relative">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
+                <Calendar size={16} className="text-teal-600" />
+                Tahun Ajaran Aktif (Hero Badge)
+              </label>
               <input
-                type="url"
-                value={linkPpdb}
-                onChange={(e) => setLinkPpdb(e.target.value)}
-                placeholder="Contoh: https://ppdb.malangkab.go.id atau link Google Form PPDB"
-                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800 pr-10"
+                type="text"
+                required
+                value={tahunAjaran}
+                onChange={(e) => setTahunAjaran(e.target.value)}
+                placeholder="Contoh: 2025/2026 atau 2026/2027"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
               />
-              {linkPpdb && (
-                <a
-                  href={linkPpdb}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-600 hover:text-teal-800 p-1"
-                  title="Uji coba buka link PPDB"
-                >
-                  <ExternalLink size={18} />
-                </a>
-              )}
+              <p className="text-xs text-slate-500 mt-1.5">
+                Ditampilkan otomatis pada badge bagian atas Hero Section.
+              </p>
             </div>
-            <p className="text-xs text-slate-500 mt-2">
-              Link PPDB Online ini akan dipakai secara langsung ketika pengunjung mengklik tombol <strong>PPDB Online</strong> di halaman utama. Jika dikosongkan, tombol akan secara otomatis mengarahkan ke formulir pop-up internal bawaan website.
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
+                <LinkIcon size={16} className="text-teal-600" />
+                Link / URL PPDB Online
+              </label>
+              <div className="relative">
+                <input
+                  type="url"
+                  value={linkPpdb}
+                  onChange={(e) => setLinkPpdb(e.target.value)}
+                  placeholder="Contoh: https://ppdb.malangkab.go.id atau link Google Form"
+                  className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800 pr-10"
+                />
+                {linkPpdb && (
+                  <a
+                    href={linkPpdb}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-600 hover:text-teal-800 p-1"
+                    title="Uji coba buka link PPDB"
+                  >
+                    <ExternalLink size={18} />
+                  </a>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 mt-1.5">
+                Digunakan pada tombol PPDB di Header, Hero, dan Footer. Jika dikosongkan, akan membuka formulir pop-up internal.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 2: Kontak Resmi Sekolah */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+          <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+            <Phone className="w-5 h-5 text-teal-600" />
+            <h3 className="font-bold text-slate-800 text-base">Informasi Kontak Sekolah (Header, Footer, & Kontak)</h3>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-2">
+                <Mail size={15} className="text-teal-600" />
+                Email Resmi Sekolah
+              </label>
+              <input
+                type="email"
+                value={emailSekolah}
+                onChange={(e) => setEmailSekolah(e.target.value)}
+                placeholder="sdnmulyoagung01@gmail.com"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-2">
+                  <Phone size={15} className="text-teal-600" />
+                  Telepon Sekolah
+                </label>
+                <input
+                  type="text"
+                  value={teleponSekolah}
+                  onChange={(e) => setTeleponSekolah(e.target.value)}
+                  placeholder="(0341) 466-730"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-2">
+                  <MessageCircle size={15} className="text-emerald-600" />
+                  WhatsApp Pengaduan
+                </label>
+                <input
+                  type="text"
+                  value={whatsappSekolah}
+                  onChange={(e) => setWhatsappSekolah(e.target.value)}
+                  placeholder="08123456789"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-2">
+                <MapPin size={15} className="text-teal-600" />
+                Alamat Lengkap Sekolah
+              </label>
+              <textarea
+                rows={2}
+                value={alamatSekolah}
+                onChange={(e) => setAlamatSekolah(e.target.value)}
+                placeholder="Jl. Raya Mulyoagung No. 121 ..."
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 3: Kelola Media Sosial (CRUD) */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
+          <div>
+            <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+              <Share2 className="w-5 h-5 text-teal-600" />
+              Kelola Tautan Media Sosial
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Media sosial ini akan muncul pada Footer dan Halaman Kontak. Icon dapat ditentukan secara otomatis berdasarkan nama platform atau dipillih manual.
             </p>
           </div>
 
-          <div className="pt-2">
-            <button
-              type="submit"
-              disabled={saving || loading}
-              className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-teal-700/20 disabled:opacity-50 cursor-pointer"
+          <button
+            onClick={handleOpenAddModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm cursor-pointer shrink-0"
+          >
+            <Plus size={16} />
+            <span>Tambah Media Sosial</span>
+          </button>
+        </div>
+
+        {/* Medsos Table/List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {medsosList.map((item) => (
+            <div
+              key={item.id}
+              className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 flex items-center justify-between gap-3 shadow-2xs transition-all"
             >
-              <Save size={18} />
-              {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
-            </button>
-          </div>
-        </form>
+              <div className="flex items-center gap-3 min-w-0">
+                <SocialMediaIcon
+                  name={item.name}
+                  icon={item.icon}
+                  className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm"
+                  iconClassName="w-5 h-5"
+                />
+                <div className="min-w-0">
+                  <div className="font-bold text-sm text-slate-800 truncate">{item.name}</div>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-teal-600 hover:underline truncate block max-w-[180px]"
+                  >
+                    {item.url}
+                  </a>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    Icon: {item.icon === 'auto' ? 'Otomatis' : item.icon}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 shrink-0">
+                <button
+                  onClick={() => handleOpenEditModal(item)}
+                  className="p-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer"
+                  title="Edit"
+                >
+                  <Edit2 size={16} />
+                </button>
+                <button
+                  onClick={() => handleDeleteMedsos(item.id)}
+                  className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                  title="Hapus"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {medsosList.length === 0 && (
+            <div className="col-span-full py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
+              <p className="text-sm text-slate-500 font-semibold">Belum ada media sosial yang ditambahkan.</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Modal Add / Edit Medsos */}
+      {modalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5 border border-slate-200">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-800 text-base">
+                {editingItem ? 'Edit Media Sosial' : 'Tambah Media Sosial Baru'}
+              </h3>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveMedsosItem} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Nama Platform / Media Sosial *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Instagram, YouTube, TikTok, Facebook, Twitter, WhatsApp"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Link / URL Tautan *
+                </label>
+                <input
+                  type="url"
+                  required
+                  placeholder="https://..."
+                  value={formData.url}
+                  onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Pilihan Icon
+                </label>
+                <select
+                  value={formData.icon}
+                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+                >
+                  <option value="auto">✨ Otomatis (Berdasarkan Nama Platform)</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="YouTube">YouTube</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="Twitter">Twitter / X</option>
+                  <option value="WhatsApp">WhatsApp</option>
+                  <option value="Telegram">Telegram</option>
+                  <option value="LinkedIn">LinkedIn</option>
+                  <option value="Globe">Globe / Website</option>
+                  <option value="Link">Tautan Generik (Link)</option>
+                </select>
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Pilih "Otomatis" agar icon langsung menyesuaikan saat Anda mengetik nama platform.
+                </p>
+              </div>
+
+              {/* Icon Preview */}
+              <div className="p-3 bg-slate-50 rounded-xl flex items-center gap-3 border border-slate-200">
+                <span className="text-xs font-bold text-slate-600">Pratinjau Icon:</span>
+                <SocialMediaIcon
+                  name={formData.name || 'Platform'}
+                  icon={formData.icon}
+                  className="w-8 h-8 rounded-lg bg-teal-600 text-white flex items-center justify-center"
+                  iconClassName="w-4 h-4"
+                />
+                <span className="text-xs font-semibold text-slate-800">{formData.name || 'Pratinjau'}</span>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-md cursor-pointer"
+                >
+                  Simpan Media Sosial
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
