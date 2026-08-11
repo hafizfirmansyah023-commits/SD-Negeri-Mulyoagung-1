@@ -19,9 +19,9 @@ export const FasilitasCard: React.FC<FasilitasCardProps> = ({
   onDelete,
 }) => {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+    <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
       <div>
-        <div className="h-44 w-full bg-slate-100 relative overflow-hidden">
+        <div className="relative h-44 sm:h-48 w-full bg-slate-100 overflow-hidden">
           {fac.foto ? (
             <img
               src={getImageUrl(fac.foto)}
@@ -41,24 +41,24 @@ export const FasilitasCard: React.FC<FasilitasCardProps> = ({
         </div>
 
         <div className="p-4 sm:p-5 space-y-2">
-          <h3 className="font-bold text-slate-800 text-base sm:text-lg">{fac.judul}</h3>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed line-clamp-3">
+          <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1">{fac.judul}</h3>
+          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed line-clamp-2">
             {fac.deskripsi}
           </p>
         </div>
       </div>
 
       {currentUser.role === 'ADMIN' && (
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-2.5">
+        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
           <button
             onClick={() => onEdit(fac)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
           >
             <Edit2 size={14} /> Ubah
           </button>
           <button
             onClick={() => onDelete(fac.id)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
           >
             <Trash2 size={14} /> Hapus
           </button>
