@@ -160,23 +160,32 @@ export const SchoolProfileSection: React.FC = () => {
               <ul className="space-y-1.5 sm:space-y-3.5 text-[11px] sm:text-base text-slate-700 leading-snug">
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia.</span>
+                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, 
+                    dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menyelenggarakan pembelajaran berpusat pada murid melalui pendekatan berbasis masalah dan proyek.</span>
+                  <span>Menyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah,
+                     proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis,
+                      berpikir reflektif, serta memecahkan masalah.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menumbuhkan karakter mulia melalui budaya positif, disiplin, peduli, dan gotong royong.</span>
+                  <span>Menumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin,
+                     tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati
+                      sesuai nilai-nilai Profil Lulusan.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak.</span>
+                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan
+                     hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar
+                      untuk meningkatkan kesehatan jasmani.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mengembangkan budaya digital dengan pemanfaatan teknologi dan literasi digital.</span>
+                  <span>Mengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi
+                     dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital
+                      secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.</span>
                 </li>
               </ul>
             </div>
