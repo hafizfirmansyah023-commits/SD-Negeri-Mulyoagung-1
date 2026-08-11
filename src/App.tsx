@@ -23,6 +23,7 @@ import { PrincipalGreeting } from './components/PrincipalGreeting';
 import { NewsSection } from './components/NewsSection';
 import { VideoProfileSection } from './components/VideoProfileSection';
 import { DirectorySection } from './components/DirectorySection';
+
 import { GallerySection } from './components/GallerySection';
 import { SchoolProfileSection } from './components/SchoolProfileSection';
 import { ContactSection } from './components/ContactSection';
@@ -55,7 +56,7 @@ function AppContent() {
     }
   };
 
-  // Inisialisasi AOS dan pengaturan mode terang
+  // AOS dan pengaturan mode terang
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('dark');
@@ -82,24 +83,16 @@ function AppContent() {
     };
   }, [location.pathname]);
 
-  // Restore posisi scroll jika tombol Back 'POP' ditekan
+  // Restore posisi scroll saat pindah halaman
   useEffect(() => {
-    if (navigationType === 'POP') {
-      const savedY = scrollPositions.current[location.pathname] ?? 0;
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: savedY, behavior: 'instant' as ScrollBehavior });
-        setTimeout(() => {
-          AOS.refresh();
-        }, 100);
-      });
-    } else {
-      // Navigasi (PUSH / REPLACE) -> scroll ke paling atas
-      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    const savedY = scrollPositions.current[location.pathname] ?? 0;
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: savedY, behavior: 'instant' as ScrollBehavior });
       setTimeout(() => {
         AOS.refresh();
       }, 100);
-    }
-  }, [location.pathname, navigationType]);
+    });
+  }, [location.pathname]);
 
   if (activeTab === 'cms') {
     return <Dashboard onBackToHome={() => navigate('/')} />;

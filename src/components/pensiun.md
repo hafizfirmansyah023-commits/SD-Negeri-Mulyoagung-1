@@ -1,1 +1,7 @@
-untuk di bagian directory jika status pensiun itu sendirikan,bikinkan lagi kolom di bawah tenaga pendidikan, dan untuk di bagian bagan tidak usah di tampilkan. jadi yang di bagan yang di tampilkan itu yang aktif atau mutasi saja
+Fitur Guru Pensiun:
+
+Bagan Utama: Sembunyikan status pensiun.
+
+Halaman Terpisah: Buat tampilan + navigasi khusus guru pensiun.
+
+UI/UX: Tema konsisten dengan halaman utama & mobile-responsive.
