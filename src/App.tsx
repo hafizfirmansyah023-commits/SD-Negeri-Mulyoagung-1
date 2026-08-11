@@ -35,11 +35,38 @@ import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
 
+import { getApiBaseUrl } from './config/api';
+
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const navigationType = useNavigationType();
   const [ppdbOpen, setPpdbOpen] = useState(false);
+  const [linkPpdb, setLinkPpdb] = useState('');
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/pengaturan.php`);
+        const data = await response.json();
+        if (data.status === 'success' && data.link_ppdb) {
+          setLinkPpdb(data.link_ppdb.trim());
+        }
+      } catch (err) {
+        // Fallback
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleOpenPpdb = () => {
+    if (linkPpdb && linkPpdb !== '') {
+      window.open(linkPpdb, '_blank', 'noopener,noreferrer');
+    } else {
+      setPpdbOpen(true);
+    }
+  };
+
 
   // Menyimpan posisi scroll per halaman (posisi Y terakhir untuk setiap route)
   const scrollPositions = useRef<Record<string, number>>({});
@@ -114,7 +141,8 @@ function AppContent() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenPpdb={() => setPpdbOpen(true)}
+        onOpenPpdb={handleOpenPpdb}
+        linkPpdb={linkPpdb}
       />
 
       {/* Main Page Content */}
@@ -126,7 +154,7 @@ function AppContent() {
             element={
               <>
                 <div data-aos="fade-down">
-                  <Hero onOpenPpdb={() => setPpdbOpen(true)} setActiveTab={setActiveTab} />
+                  <Hero onOpenPpdb={handleOpenPpdb} setActiveTab={setActiveTab} linkPpdb={linkPpdb} />
                 </div>
                 <div data-aos="fade-up" data-aos-delay="100">
                   <Stats />
@@ -207,9 +235,12 @@ function AppContent() {
       <div data-aos="fade-up" data-aos-anchor-placement="top-bottom">
         <Footer
           setActiveTab={setActiveTab}
-          onOpenPpdb={() => setPpdbOpen(true)}
+          onOpenPpdb={handleOpenPpdb}
+          linkPpdb={linkPpdb}
         />
       </div>
+
+
 
       <PpdbModal isOpen={ppdbOpen} onClose={() => setPpdbOpen(false)} />
 

@@ -8,6 +8,7 @@ interface MobileNavDrawerProps {
   activeTab: NavTab;
   onNavClick: (tab: NavTab) => void;
   onOpenPpdb: () => void;
+  linkPpdb?: string;
 }
 
 export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
@@ -15,6 +16,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
   activeTab,
   onNavClick,
   onOpenPpdb,
+  linkPpdb,
 }) => (
   <div className="md:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-xl transition-all">
     <div className="flex flex-col gap-2">
@@ -45,13 +47,25 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
       </button>
 
       <div className="pt-3 mt-2 border-t border-slate-200 dark:border-slate-800">
-        <button
-          onClick={onOpenPpdb}
-          className="w-full bg-[#028C84] hover:bg-[#006a64] text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md"
-        >
-          <Sparkles className="w-4 h-4" />
-          Daftar Sekarang (PPDB Online)
-        </button>
+        {linkPpdb ? (
+          <a
+            href={linkPpdb}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-[#028C84] hover:bg-[#006a64] text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md"
+          >
+            <Sparkles className="w-4 h-4" />
+            Daftar Sekarang (PPDB Online)
+          </a>
+        ) : (
+          <button
+            onClick={onOpenPpdb}
+            className="w-full bg-[#028C84] hover:bg-[#006a64] text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md"
+          >
+            <Sparkles className="w-4 h-4" />
+            Daftar Sekarang (PPDB Online)
+          </button>
+        )}
       </div>
     </div>
   </div>
