@@ -23,6 +23,10 @@ export const AnnouncementPopup: React.FC = () => {
         const response = await fetch(`${getApiBaseUrl()}/backend/API/pengumuman.php`);
         const result = await response.json();
         if (result.status === 'success' && result.data) {
+          const isActivePublic = result.data.public_active !== undefined 
+            ? parseInt(result.data.public_active) === 1 
+            : parseInt(result.data.is_active) === 1;
+
           const config = {
             judul: result.data.judul,
             isi: result.data.isi,
@@ -33,7 +37,7 @@ export const AnnouncementPopup: React.FC = () => {
             show_photo: parseInt(result.data.show_photo) === 1,
             foto: result.data.foto,
             photo_link: result.data.photo_link,
-            is_active: parseInt(result.data.is_active) === 1,
+            is_active: isActivePublic,
           };
           setData(config);
 
