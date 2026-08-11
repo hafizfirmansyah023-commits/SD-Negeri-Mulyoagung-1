@@ -8,14 +8,16 @@ import { OrgChartSection } from './directory/OrgChartSection';
 import { DirectoryContent } from './directory/DirectoryContent';
 import { TeacherProfileModal } from './directory/TeacherProfileModal';
 import { PensiunContent } from './directory/PensiunContent';
+import { MutasiContent } from './directory/MutasiContent';
 
 export const DirectorySection: React.FC = () => {
   const teachers = useTeachersData();
   const [searchTerm, setSearchTerm] = useState('');
   const [pensiunSearchTerm, setPensiunSearchTerm] = useState('');
+  const [mutasiSearchTerm, setMutasiSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('Semua');
   const [selectedTeacherForModal, setSelectedTeacherForModal] = useState<Teacher | null>(null);
-  const [activeTab, setActiveTab] = useState<'aktif' | 'pensiun'>('aktif');
+  const [activeTab, setActiveTab] = useState<'aktif' | 'pensiun' | 'mutasi'>('aktif');
 
   const scrollToBagan = () => {
     const el = document.getElementById('bagan-struktur-section');
@@ -45,15 +47,22 @@ export const DirectorySection: React.FC = () => {
     setSelectedTeacherForModal(findOrBuildTeacherObj(teachers, roleOrTask, fallbackName));
   };
 
-  // Filter out retired teachers from the main directory
-  const activeTeachers = teachers.filter(t => t.status?.toLowerCase() !== 'pensiun' && t.status?.toLowerCase() !== 'purna tugas');
+  // Only active teachers shown in main directory & org chart (exclude pensiun & mutasi)
+  const activeTeachers = teachers.filter((t) => {
+    const st = (t.status || '').toLowerCase();
+    if (!st || st === 'aktif') return true;
+    return false;
+  });
 
   const filteredTeachers = filterAndSortTeachers(activeTeachers, searchTerm, roleFilter);
 
+  const tabScrollPositions = React.useRef<{ aktif: number; pensiun: number; mutasi: number }>({
+    aktif: 0,
+    pensiun: 0,
+    mutasi: 0,
+  });
 
-  const tabScrollPositions = React.useRef<{ aktif: number; pensiun: number }>({ aktif: 0, pensiun: 0 });
-
-  const handleTabChange = (newTab: 'aktif' | 'pensiun') => {
+  const handleTabChange = (newTab: 'aktif' | 'pensiun' | 'mutasi') => {
     if (newTab === activeTab) return;
     // Simpan posisi scroll untuk tab yang sedang ditinggalkan
     tabScrollPositions.current[activeTab] = window.scrollY;
@@ -85,12 +94,12 @@ export const DirectorySection: React.FC = () => {
           </p>
         </div>
 
-        {/* Tabs for Aktif vs Pensiun */}
+        {/* Tabs for Aktif vs Pensiun vs Mutasi */}
         <div className="flex justify-center mb-8">
-          <div className="bg-teal-50/80 p-1.5 rounded-2xl border border-teal-100 flex gap-2">
+          <div className="bg-teal-50/80 p-1.5 rounded-2xl border border-teal-100 flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => handleTabChange('aktif')}
-              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                 activeTab === 'aktif'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20'
                   : 'text-slate-600 hover:text-[#028C84] hover:bg-white/60'
@@ -100,7 +109,7 @@ export const DirectorySection: React.FC = () => {
             </button>
             <button
               onClick={() => handleTabChange('pensiun')}
-              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                 activeTab === 'pensiun'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20'
                   : 'text-slate-600 hover:text-[#028C84] hover:bg-white/60'
@@ -108,11 +117,20 @@ export const DirectorySection: React.FC = () => {
             >
               Purna Tugas (Pensiun)
             </button>
+            <button
+              onClick={() => handleTabChange('mutasi')}
+              className={`px-5 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
+                activeTab === 'mutasi'
+                  ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20'
+                  : 'text-slate-600 hover:text-[#028C84] hover:bg-white/60'
+              }`}
+            >
+              Status Mutasi
+            </button>
           </div>
         </div>
 
-
-        {activeTab === 'aktif' ? (
+        {activeTab === 'aktif' && (
           <>
             <DirectoryFilterBar
               searchTerm={searchTerm}
@@ -139,11 +157,22 @@ export const DirectorySection: React.FC = () => {
               />
             )}
           </>
-        ) : (
+        )}
+
+        {activeTab === 'pensiun' && (
           <PensiunContent
             teachers={teachers}
             searchTerm={pensiunSearchTerm}
             onSearchChange={(e) => setPensiunSearchTerm(e.target.value)}
+            onTeacherClick={setSelectedTeacherForModal}
+          />
+        )}
+
+        {activeTab === 'mutasi' && (
+          <MutasiContent
+            teachers={teachers}
+            searchTerm={mutasiSearchTerm}
+            onSearchChange={(e) => setMutasiSearchTerm(e.target.value)}
             onTeacherClick={setSelectedTeacherForModal}
           />
         )}
@@ -153,3 +182,4 @@ export const DirectorySection: React.FC = () => {
     </section>
   );
 };
+
