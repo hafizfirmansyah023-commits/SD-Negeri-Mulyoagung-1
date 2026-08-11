@@ -1,0 +1,1 @@
+tambahkan fitur crop untuk memposisikan foto seperti di whastap

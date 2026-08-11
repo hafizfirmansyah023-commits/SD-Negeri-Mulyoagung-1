@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2026 at 05:16 AM
+-- Generation Time: Aug 11, 2026 at 07:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,26 +111,51 @@ CREATE TABLE `guru_tendik` (
 
 INSERT INTO `guru_tendik` (`id`, `nama`, `nip`, `jabatan`, `tugas`, `foto`, `riwayat_pendidikan`, `jenis_kelamin`, `status`, `motto`) VALUES
 (3, 'Soleh', NULL, 'Komite Sekolah', 'Komite Sekolah', 'backend/uploads/guru/1786069668_logoma.jpg', 'S1', 'Laki-laki', 'Aktif', '\"Bersama Maju, Bergandengan Tangan Menuju Sekolah Unggul.\"'),
-(4, 'AMALIA DYAH ERVIANA, S.Pd.', '198507172006042012', 'Kepala Sekolah', 'Kepala Sekolah', 'backend/uploads/guru/1786070223_kepsek.jpg', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'Berani berinovasi untuk pendidikan yang lebih bermakna.'),
+(4, 'AMALIA DYAH ERVIANA, S.Pd.', '198507172006042012', 'Kepala Sekolah', 'Kepala Sekolah', 'backend/uploads/guru/1786426203_Amalia Dyah Erviana.jpg', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'Berani berinovasi untuk pendidikan yang lebih bermakna.'),
 (5, 'ANISA CHOIRINA, S.Pd.', NULL, 'Tata Usaha', 'Tata Usaha & Unit Perpustakaan', 'backend/uploads/guru/1786070771_Screenshot 2026-08-07 094553.png', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'p'),
 (6, 'ZAINURI, M.Pd.', NULL, 'Guru Mata Pelajaran', 'Pendidikan Agama Islam', 'backend/uploads/guru/1786071170_logoma.jpg', 'S2  (Pendidikan Guru Sekolah Dasar)', 'Laki-laki', 'Aktif', 'p'),
 (7, 'WEGA BAGUS SETIAWAN, S.Or., M.Pd., Gr.', NULL, 'Guru Mata Pelajaran', 'Pendidikan Jasmani Dan Rohani', 'backend/uploads/guru/1786071266_logoma.jpg', 'S1 PJOK', 'Laki-laki', 'Aktif', 'p'),
 (8, 'FANDI ARI WIJAYA, S.Or., Gr.', NULL, 'Guru Mata Pelajaran', 'Pendidikan Jasmani Dan Rohani', 'backend/uploads/guru/1786071327_logoma.jpg', 'S1 PJOK', 'Laki-laki', 'Aktif', 'p'),
 (9, 'SUNU HAYUTAMA, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 1A', 'backend/uploads/guru/1786339856_Screenshot 2026-08-10 123039.png', 'S1  (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'p'),
 (10, 'PUTRI ANGGUN LIARTA, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 1B', 'backend/uploads/guru/1786339889_Screenshot 2026-08-10 123120.png', 'S1', 'Perempuan', 'Aktif', 'p'),
-(11, 'RATNA YULIYA KIRNAWATI, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 2A', 'backend/uploads/guru/1786339925_Screenshot 2026-08-10 123152.png', 'S1', 'Perempuan', 'Aktif', 'p'),
+(11, 'RATNA YULIYA KIRNAWATI, S.Pd.', 'null', 'Guru Wali Kelas', 'Guru Kelas 2A', 'backend/uploads/guru/1786426504_bu_ratna.png', 'S1', 'Perempuan', 'Aktif', 'p'),
 (12, 'YUNIA NUR AFIYAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 2B', 'backend/uploads/guru/1786071638_logoma.jpg', 'S1', 'Perempuan', 'Aktif', 'p'),
-(13, 'ADI KURNIAWAN, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 3A', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
-(14, 'SOQIBATUL ISLAMIYAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 3B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(13, 'ADI KURNIAWAN, S.Pd.', 'null', 'Guru Wali Kelas', 'Guru Kelas 3A & 3B', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
+(14, 'SOQIBATUL ISLAMIYAH, S.Pd.', 'null', 'Guru Wali Kelas', 'Guru Kelas 3B', '', 'S1', 'Perempuan', 'Mutasi', 'p'),
 (15, 'NUR AINI FARIDA, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 4A', '', 'S1', 'Perempuan', 'Aktif', 'p'),
 (16, 'SRI HARTATIK, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 4B', 'backend/uploads/guru/1786340232_Screenshot 2026-08-10 123645.png', 'S1', 'Perempuan', 'Aktif', 'p'),
-(17, 'SITI MAISAROH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 5A', '', 'S1', 'Perempuan', 'Aktif', 'p'),
+(17, 'SITI MAISAROH, S.Pd.', 'null', 'Guru Wali Kelas', 'Guru Kelas 5A', 'backend/uploads/guru/1786426222_bu_siti.png', 'S1', 'Perempuan', 'Aktif', 'p'),
 (18, 'YUNI TRI HARIANTI, S.IP., S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 5B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
 (19, 'VIVIN NOHTAHFIAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 6A', 'backend/uploads/guru/1786340264_Screenshot 2026-08-10 123732.png', 'S1', 'Perempuan', 'Aktif', 'p'),
 (20, 'Yulida Ariani, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 6B', '', 'S1', 'Perempuan', 'Aktif', 'p'),
 (21, 'ABDUL MUJIB', NULL, 'Tenaga Kependidikan', 'Penjaga', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
 (22, 'MARSUDI', NULL, 'Tenaga Kependidikan', 'Tenaga Kebersihan', '', 'S1', 'Laki-laki', 'Aktif', 'p'),
 (23, 'AGUS SUKOCO', NULL, 'Tenaga Kependidikan', 'Tenaga Keamanan', '', 'SD', 'Laki-laki', 'Aktif', 'p');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hero_carousel`
+--
+
+CREATE TABLE `hero_carousel` (
+  `id` int(11) NOT NULL,
+  `foto` varchar(255) NOT NULL,
+  `caption` varchar(255) NOT NULL,
+  `tag` varchar(100) DEFAULT 'Kegiatan Utama',
+  `urutan` int(11) DEFAULT 0,
+  `is_active` tinyint(4) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hero_carousel`
+--
+
+INSERT INTO `hero_carousel` (`id`, `foto`, `caption`, `tag`, `urutan`, `is_active`, `created_at`) VALUES
+(1, 'backend/uploads/hero/1786422448_img2.webp', 'MA ONE BERGELORAA!!', 'Galeri Sekolah', 1, 1, '2026-08-11 04:27:28'),
+(3, 'backend/uploads/hero/1786425334_Screenshot 2026-08-06 120707.png', 'MA ONE BERGELORA!!', 'Galeri Sekolah', 2, 1, '2026-08-11 05:15:34'),
+(4, 'backend/uploads/hero/1786425871_lapangan.jpeg', 'MA ONE BERGELORA!!!', 'Fasilitas Sekolah', 3, 1, '2026-08-11 05:24:31');
 
 -- --------------------------------------------------------
 
@@ -149,7 +174,13 @@ CREATE TABLE `pengaturan_sekolah` (
 --
 
 INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`, `updated_at`) VALUES
-('tahun_ajaran', '2026/2027', '2026-08-07 01:59:45');
+('alamat_sekolah', 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur', '2026-08-11 03:54:01'),
+('email_sekolah', 'sdnmulyoagung01@gmail.com', '2026-08-11 03:54:01'),
+('link_ppdb', 'https://sd-spmbmalangkab.id/', '2026-08-11 03:31:06'),
+('medsos_links', '[{\"id\":\"1\",\"name\":\"YouTube\",\"url\":\"https:\\/\\/www.youtube.com\\/@mulyoagungsatu3851\",\"icon\":\"auto\"},{\"id\":\"2\",\"name\":\"Instagram\",\"url\":\"https:\\/\\/www.instagram.com\\/mulyoagung1_dau\",\"icon\":\"auto\"},{\"id\":\"3\",\"name\":\"Facebook\",\"url\":\"https:\\/\\/www.facebook.com\\/profile.php?id=100085140035121\",\"icon\":\"auto\"},{\"id\":\"4\",\"name\":\"TikTok\",\"url\":\"https:\\/\\/www.tiktok.com\\/@mulyoagung.1\",\"icon\":\"auto\"}]', '2026-08-11 03:54:01'),
+('tahun_ajaran', '2026/2027', '2026-08-07 01:59:45'),
+('telepon_sekolah', '(0341) 466-730', '2026-08-11 03:54:01'),
+('whatsapp_sekolah', '08123456789', '2026-08-11 03:54:01');
 
 -- --------------------------------------------------------
 
@@ -179,7 +210,7 @@ CREATE TABLE `pengumuman_penting` (
 --
 
 INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`, `tanggal_mulai`, `tanggal_selesai`) VALUES
-(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sdn1mulyoagung.sch.id/ppdb', 1, 'backend/uploads/pengumuman/1786411305_Screenshot 2026-08-11 082132.png', '', 1, NULL, NULL);
+(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sd-spmbmalangkab.id/', 1, 'backend/uploads/pengumuman/1786411305_Screenshot 2026-08-11 082132.png', '', 1, '2026-08-11', '2026-08-18');
 
 -- --------------------------------------------------------
 
@@ -199,7 +230,7 @@ CREATE TABLE `sambutan_kepsek` (
 --
 
 INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`) VALUES
-(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786324881_kepsek.jpg');
+(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg');
 
 -- --------------------------------------------------------
 
@@ -277,6 +308,12 @@ ALTER TABLE `guru_tendik`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `hero_carousel`
+--
+ALTER TABLE `hero_carousel`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `pengaturan_sekolah`
 --
 ALTER TABLE `pengaturan_sekolah`
@@ -327,13 +364,19 @@ ALTER TABLE `fasilitas`
 -- AUTO_INCREMENT for table `galeri`
 --
 ALTER TABLE `galeri`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `guru_tendik`
 --
 ALTER TABLE `guru_tendik`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT for table `hero_carousel`
+--
+ALTER TABLE `hero_carousel`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `pengumuman_penting`
