@@ -16,10 +16,16 @@ import {
   Trash2,
   Edit2,
   X,
-  Sparkles
+  Sparkles,
+  Image as ImageIcon,
+  Filter,
+  Upload,
+  Tag,
+  GripVertical
 } from 'lucide-react';
-import { getApiBaseUrl } from '../config/api';
+import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { SocialMediaIcon } from '../components/common/SocialMediaIcon';
+import { validateImageFile } from './utils/fileValidation';
 
 const API_BASE = getApiBaseUrl();
 
@@ -30,7 +36,21 @@ export interface MedsosItem {
   icon: string;
 }
 
+export interface HeroCarouselItem {
+  id: number;
+  foto: string;
+  caption: string;
+  tag: string;
+  urutan: number;
+  is_active: number;
+}
+
+export type SettingsFilter = 'all' | 'ppdb' | 'hero' | 'contact' | 'medsos';
+
 export default function PengaturanSekolah() {
+  const [activeFilter, setActiveFilter] = useState<SettingsFilter>('all');
+
+  // General Settings State
   const [tahunAjaran, setTahunAjaran] = useState('2025/2026');
   const [linkPpdb, setLinkPpdb] = useState('');
   const [emailSekolah, setEmailSekolah] = useState('sdnmulyoagung01@gmail.com');
@@ -38,6 +58,16 @@ export default function PengaturanSekolah() {
   const [whatsappSekolah, setWhatsappSekolah] = useState('08123456789');
   const [alamatSekolah, setAlamatSekolah] = useState('JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur');
   const [medsosList, setMedsosList] = useState<MedsosItem[]>([]);
+
+  // Hero Carousel State
+  const [heroSlides, setHeroSlides] = useState<HeroCarouselItem[]>([]);
+  const [heroModalOpen, setHeroModalOpen] = useState(false);
+  const [editingHero, setEditingHero] = useState<HeroCarouselItem | null>(null);
+  const [heroCaption, setHeroCaption] = useState('');
+  const [heroTag, setHeroTag] = useState('Kegiatan Utama');
+  const [heroUrutan, setHeroUrutan] = useState(0);
+  const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [heroPreview, setHeroPreview] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -50,6 +80,7 @@ export default function PengaturanSekolah() {
 
   useEffect(() => {
     fetchSettings();
+    fetchHeroSlides();
   }, []);
 
   const fetchSettings = async () => {
@@ -70,6 +101,18 @@ export default function PengaturanSekolah() {
       setMessage({ type: 'error', text: 'Gagal memuat data pengaturan.' });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchHeroSlides = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/backend/API/hero_carousel.php`);
+      const json = await res.json();
+      if (json.status === 'success' && Array.isArray(json.data)) {
+        setHeroSlides(json.data);
+      }
+    } catch (e) {
+      console.error('Failed to fetch hero carousel:', e);
     }
   };
 
@@ -153,27 +196,225 @@ export default function PengaturanSekolah() {
     handleSaveAll(newList);
   };
 
+  // Drag and Drop State & Handlers for Hero Carousel
+  const [draggedHeroIndex, setDraggedHeroIndex] = useState<number | null>(null);
+
+  const handleHeroDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedHeroIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleHeroDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleHeroDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedHeroIndex === null || draggedHeroIndex === dropIndex) return;
+
+    const newSlides = [...heroSlides];
+    const [draggedItem] = newSlides.splice(draggedHeroIndex, 1);
+    newSlides.splice(dropIndex, 0, draggedItem);
+
+    // Re-assign urutan sequence
+    const reordered = newSlides.map((item, idx) => ({
+      ...item,
+      urutan: idx + 1,
+    }));
+
+    setHeroSlides(reordered);
+    setDraggedHeroIndex(null);
+    saveHeroOrder(reordered);
+  };
+
+  const saveHeroOrder = async (items: HeroCarouselItem[]) => {
+    try {
+      const payload = items.map((it, idx) => ({
+        id: it.id,
+        urutan: idx + 1,
+      }));
+      const form = new FormData();
+      form.append('action', 'reorder');
+      form.append('items', JSON.stringify(payload));
+
+      const res = await fetch(`${API_BASE}/backend/API/hero_carousel.php`, {
+        method: 'POST',
+        body: form,
+      });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Urutan foto carousel hero berhasil diperbarui!' });
+      }
+    } catch (e) {
+      console.error('Failed to save order:', e);
+    }
+  };
+
+  // Hero Carousel CRUD Handlers
+  const handleOpenAddHero = () => {
+    setEditingHero(null);
+    setHeroCaption('MA ONE BERGELORA!!!');
+    setHeroTag('Kegiatan Utama');
+    setHeroUrutan(heroSlides.length + 1);
+    setHeroFile(null);
+    setHeroPreview(null);
+    setHeroModalOpen(true);
+  };
+
+  const handleOpenEditHero = (item: HeroCarouselItem) => {
+    setEditingHero(item);
+    setHeroCaption(item.caption);
+    setHeroTag(item.tag || 'Kegiatan Utama');
+    setHeroUrutan(item.urutan || 0);
+    setHeroFile(null);
+    setHeroPreview(item.foto ? getImageUrl(item.foto) : null);
+    setHeroModalOpen(true);
+  };
+
+  const handleDeleteHero = async (id: number) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus foto carousel ini?')) return;
+    try {
+      const form = new FormData();
+      form.append('action', 'delete');
+      form.append('id', id.toString());
+
+      const res = await fetch(`${API_BASE}/backend/API/hero_carousel.php`, {
+        method: 'POST',
+        body: form,
+      });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Foto carousel hero berhasil dihapus.' });
+        fetchHeroSlides();
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menghapus foto carousel.' });
+      }
+    } catch (e) {
+      setMessage({ type: 'error', text: 'Gagal menghubungkan ke server.' });
+    }
+  };
+
+  const handleSaveHero = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!heroCaption.trim()) {
+      setMessage({ type: 'error', text: 'Caption foto tidak boleh kosong.' });
+      return;
+    }
+
+    try {
+      const form = new FormData();
+      if (editingHero) {
+        form.append('id', editingHero.id.toString());
+      }
+      form.append('caption', heroCaption);
+      form.append('tag', heroTag);
+      form.append('urutan', heroUrutan.toString());
+      if (heroFile) {
+        form.append('foto', heroFile);
+      }
+
+      const res = await fetch(`${API_BASE}/backend/API/hero_carousel.php`, {
+        method: 'POST',
+        body: form,
+      });
+      const result = await res.json();
+
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: result.message || 'Foto carousel hero berhasil disimpan.' });
+        setHeroModalOpen(false);
+        fetchHeroSlides();
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan foto carousel.' });
+      }
+    } catch (e) {
+      setMessage({ type: 'error', text: 'Gagal menghubungkan ke server.' });
+    }
+  };
+
   return (
     <div className="space-y-8 pb-12">
-      {/* Header */}
-      <div className="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200 gap-4">
         <div className="flex items-center gap-3">
           <div className="p-3 bg-teal-100 text-teal-700 rounded-xl">
             <Settings size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-800">Pengaturan Sekolah & Kontak</h2>
-            <p className="text-sm text-slate-500">Kelola tahun ajaran, link PPDB, kontak resmi, dan media sosial</p>
+            <h2 className="text-xl font-bold text-slate-800">Pengaturan Sekolah & Carousel Hero</h2>
+            <p className="text-sm text-slate-500">Kelola modul PPDB, carousel foto hero, kontak resmi, dan media sosial</p>
           </div>
         </div>
 
         <button
           onClick={() => handleSaveAll()}
           disabled={saving || loading}
-          className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-teal-700/20 disabled:opacity-50 cursor-pointer"
+          className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-teal-700/20 disabled:opacity-50 cursor-pointer shrink-0"
         >
           <Save size={18} />
           {saving ? 'Menyimpan...' : 'Simpan Semua'}
+        </button>
+      </div>
+
+      {/* Module Filter Tabs / Buttons */}
+      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2 overflow-x-auto">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-500 px-3 flex items-center gap-1.5 shrink-0">
+          <Filter size={14} className="text-teal-600" /> Filter Modul:
+        </span>
+
+        <button
+          onClick={() => setActiveFilter('all')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            activeFilter === 'all'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          🌟 Semua Pengaturan
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('ppdb')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            activeFilter === 'ppdb'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          🎓 Halaman PPDB &amp; Tahun Ajaran
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('hero')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            activeFilter === 'hero'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          🖼️ Carousel Hero Header
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('contact')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            activeFilter === 'contact'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          📞 Kontak &amp; Alamat Sekolah
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('medsos')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+            activeFilter === 'medsos'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+          }`}
+        >
+          📱 Media Sosial
         </button>
       </div>
 
@@ -190,15 +431,15 @@ export default function PengaturanSekolah() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* SECTION 1: Pengaturan Utama & PPDB */}
+      {/* SECTION 1: Pengaturan Utama & PPDB */}
+      {(activeFilter === 'all' || activeFilter === 'ppdb') && (
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
             <Sparkles className="w-5 h-5 text-teal-600" />
-            <h3 className="font-bold text-slate-800 text-base">Konfigurasi Halaman Utama & PPDB</h3>
+            <h3 className="font-bold text-slate-800 text-base">Konfigurasi Halaman PPDB &amp; Tahun Ajaran</h3>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
                 <Calendar size={16} className="text-teal-600" />
@@ -248,12 +489,117 @@ export default function PengaturanSekolah() {
             </div>
           </div>
         </div>
+      )}
 
-        {/* SECTION 2: Kontak Resmi Sekolah */}
+      {/* SECTION 2: Carousel Hero Header CRUD */}
+      {(activeFilter === 'all' || activeFilter === 'hero') && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <ImageIcon className="w-5 h-5 text-teal-600" />
+                Kelola Foto Carousel Hero Header (Landscape)
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Foto-foto ini akan tampil bergantian pada slider di bagian kanan Hero utama. Seluruh foto berukuran lanskap seragam.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddHero}
+              className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm cursor-pointer shrink-0"
+            >
+              <Plus size={16} />
+              <span>Tambah Foto Hero</span>
+            </button>
+          </div>
+
+          {/* Hero Carousel Grid in Landscape Ratio with Drag & Drop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {heroSlides.map((item, index) => (
+              <div
+                key={item.id}
+                draggable
+                onDragStart={(e) => handleHeroDragStart(e, index)}
+                onDragOver={handleHeroDragOver}
+                onDrop={(e) => handleHeroDrop(e, index)}
+                className={`bg-slate-50 rounded-2xl border transition-all duration-200 group flex flex-col cursor-grab active:cursor-grabbing ${
+                  draggedHeroIndex === index
+                    ? 'opacity-40 border-teal-500 scale-95 ring-2 ring-teal-500/30'
+                    : 'border-slate-200 hover:border-teal-400 hover:shadow-md'
+                }`}
+              >
+                {/* Landscape Photo Container */}
+                <div className="relative w-full aspect-video bg-slate-900 overflow-hidden rounded-t-2xl">
+                  <img
+                    src={getImageUrl(item.foto)}
+                    alt={item.caption}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
+                  />
+                  
+                  {/* Drag Handle Overlay Tag */}
+                  <div className="absolute top-2.5 left-2.5 bg-black/65 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
+                    <GripVertical size={12} className="text-teal-400" />
+                    <span>Geser #{item.urutan}</span>
+                  </div>
+
+                  <div className="absolute top-2.5 right-2.5 bg-teal-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md">
+                    {item.tag || 'Hero Slide'}
+                  </div>
+                </div>
+
+                <div className="p-4 flex-grow flex flex-col justify-between space-y-3">
+                  <div>
+                    <span className="text-xs font-bold text-slate-800 line-clamp-2 leading-snug">
+                      {item.caption}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-slate-400">
+                    <span className="text-[10px] font-semibold flex items-center gap-1">
+                      <GripVertical size={12} /> Drag &amp; Drop
+                    </span>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditHero(item)}
+                        className="p-1.5 text-slate-600 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer text-xs font-semibold flex items-center gap-1"
+                        title="Edit Foto & Caption"
+                      >
+                        <Edit2 size={14} /> Edit
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteHero(item.id)}
+                        className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer text-xs font-semibold flex items-center gap-1"
+                        title="Hapus Foto"
+                      >
+                        <Trash2 size={14} /> Hapus
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {heroSlides.length === 0 && (
+              <div className="col-span-full py-10 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300">
+                <ImageIcon className="w-10 h-10 mx-auto text-slate-400 mb-2" />
+                <p className="text-sm font-bold text-slate-700">Belum ada foto carousel hero yang diunggah.</p>
+                <p className="text-xs text-slate-500 mt-1">Sistem saat ini menggunakan foto bawaan default.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION 3: Kontak Resmi Sekolah */}
+      {(activeFilter === 'all' || activeFilter === 'contact') && (
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
           <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
             <Phone className="w-5 h-5 text-teal-600" />
-            <h3 className="font-bold text-slate-800 text-base">Informasi Kontak Sekolah (Header, Footer, & Kontak)</h3>
+            <h3 className="font-bold text-slate-800 text-base">Informasi Kontak &amp; Alamat Sekolah</h3>
           </div>
 
           <div className="space-y-4">
@@ -316,86 +662,208 @@ export default function PengaturanSekolah() {
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* SECTION 3: Kelola Media Sosial (CRUD) */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
-              <Share2 className="w-5 h-5 text-teal-600" />
-              Kelola Tautan Media Sosial
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Media sosial ini akan muncul pada Footer dan Halaman Kontak. Icon dapat ditentukan secara otomatis berdasarkan nama platform atau dipillih manual.
-            </p>
+      {/* SECTION 4: Kelola Media Sosial (CRUD) */}
+      {(activeFilter === 'all' || activeFilter === 'medsos') && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
+            <div>
+              <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+                <Share2 className="w-5 h-5 text-teal-600" />
+                Kelola Tautan Media Sosial
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Media sosial ini akan muncul pada Footer dan Halaman Kontak. Icon dapat ditentukan secara otomatis berdasarkan nama platform atau dipilih manual.
+              </p>
+            </div>
+
+            <button
+              onClick={handleOpenAddModal}
+              className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm cursor-pointer shrink-0"
+            >
+              <Plus size={16} />
+              <span>Tambah Media Sosial</span>
+            </button>
           </div>
 
-          <button
-            onClick={handleOpenAddModal}
-            className="flex items-center gap-2 px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-sm cursor-pointer shrink-0"
-          >
-            <Plus size={16} />
-            <span>Tambah Media Sosial</span>
-          </button>
-        </div>
+          {/* Medsos Table/List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {medsosList.map((item) => (
+              <div
+                key={item.id}
+                className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 flex items-center justify-between gap-3 shadow-2xs transition-all"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <SocialMediaIcon
+                    name={item.name}
+                    icon={item.icon}
+                    className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm"
+                    iconClassName="w-5 h-5"
+                  />
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm text-slate-800 truncate">{item.name}</div>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-teal-600 hover:underline truncate block max-w-[180px]"
+                    >
+                      {item.url}
+                    </a>
+                    <span className="text-[10px] text-slate-400 font-medium">
+                      Icon: {item.icon === 'auto' ? 'Otomatis' : item.icon}
+                    </span>
+                  </div>
+                </div>
 
-        {/* Medsos Table/List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {medsosList.map((item) => (
-            <div
-              key={item.id}
-              className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 flex items-center justify-between gap-3 shadow-2xs transition-all"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <SocialMediaIcon
-                  name={item.name}
-                  icon={item.icon}
-                  className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm"
-                  iconClassName="w-5 h-5"
-                />
-                <div className="min-w-0">
-                  <div className="font-bold text-sm text-slate-800 truncate">{item.name}</div>
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-teal-600 hover:underline truncate block max-w-[180px]"
+                <div className="flex items-center gap-1 shrink-0">
+                  <button
+                    onClick={() => handleOpenEditModal(item)}
+                    className="p-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer"
+                    title="Edit"
                   >
-                    {item.url}
-                  </a>
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    Icon: {item.icon === 'auto' ? 'Otomatis' : item.icon}
-                  </span>
+                    <Edit2 size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteMedsos(item.id)}
+                    className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                    title="Hapus"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {medsosList.length === 0 && (
+              <div className="col-span-full py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
+                <p className="text-sm text-slate-500 font-semibold">Belum ada media sosial yang ditambahkan.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal Add / Edit Hero Carousel */}
+      {heroModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-200 my-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
+                <ImageIcon className="text-teal-600" size={18} />
+                {editingHero ? 'Edit Foto Carousel Hero' : 'Tambah Foto Carousel Hero Baru'}
+              </h3>
+              <button
+                onClick={() => setHeroModalOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveHero} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
+                  <Upload size={14} className="text-teal-600" /> File Foto Lanskap *
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = validateImageFile(e.target.files?.[0] || null, e.target);
+                    if (file) {
+                      setHeroFile(file);
+                      setHeroPreview(URL.createObjectURL(file));
+                    }
+                  }}
+                  className="w-full text-slate-600 text-xs border border-slate-300 rounded-xl file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Format: Gambar (JPG, PNG, WEBP). Maksimal 5MB. Rasio lanskap disarankan.
+                </p>
+              </div>
+
+              {/* Landscape Image Preview Box */}
+              {heroPreview && (
+                <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shadow-sm">
+                  <img
+                    src={heroPreview}
+                    alt="Pratinjau Hero"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-md">
+                    Pratinjau Lanskap
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  Caption / Keterangan Singkat *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Pembentukan Karakter & Prestasi Siswa"
+                  value={heroCaption}
+                  onChange={(e) => setHeroCaption(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1">
+                    <Tag size={13} className="text-teal-600" /> Kategori / Tag
+                  </label>
+                  <select
+                    value={heroTag}
+                    onChange={(e) => setHeroTag(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-xs font-semibold text-slate-800"
+                  >
+                    <option value="Kegiatan Utama">Kegiatan Utama</option>
+                    <option value="Fasilitas Sekolah">Fasilitas Sekolah</option>
+                    <option value="Suasana Belajar">Suasana Belajar</option>
+                    <option value="Karakter Mulia">Karakter Mulia</option>
+                    <option value="Prestasi Siswa">Prestasi Siswa</option>
+                    <option value="Galeri Sekolah">Galeri Sekolah</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    Urutan Tampil
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={heroUrutan}
+                    onChange={(e) => setHeroUrutan(parseInt(e.target.value) || 1)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-xs font-bold text-slate-800"
+                  />
                 </div>
               </div>
 
-              <div className="flex items-center gap-1 shrink-0">
+              <div className="pt-3 flex justify-end gap-3 border-t border-slate-100">
                 <button
-                  onClick={() => handleOpenEditModal(item)}
-                  className="p-2 text-slate-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors cursor-pointer"
-                  title="Edit"
+                  type="button"
+                  onClick={() => setHeroModalOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
                 >
-                  <Edit2 size={16} />
+                  Batal
                 </button>
                 <button
-                  onClick={() => handleDeleteMedsos(item.id)}
-                  className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                  title="Hapus"
+                  type="submit"
+                  className="px-5 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-xl shadow-md transition-colors cursor-pointer"
                 >
-                  <Trash2 size={16} />
+                  Simpan Foto Hero
                 </button>
               </div>
-            </div>
-          ))}
-
-          {medsosList.length === 0 && (
-            <div className="col-span-full py-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-300">
-              <p className="text-sm text-slate-500 font-semibold">Belum ada media sosial yang ditambahkan.</p>
-            </div>
-          )}
+            </form>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Modal Add / Edit Medsos */}
       {modalOpen && (
@@ -407,7 +875,7 @@ export default function PengaturanSekolah() {
               </h3>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 transition-colors"
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
@@ -484,7 +952,7 @@ export default function PengaturanSekolah() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
                   Batal
                 </button>
