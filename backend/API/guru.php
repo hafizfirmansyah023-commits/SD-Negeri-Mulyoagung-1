@@ -3,7 +3,6 @@ require_once '../config/koneksi.php';
 
 header("Content-Type: application/json");
 
-// Ensure upload directory exists
 $upload_dir = '../uploads/guru/';
 if (!file_exists($upload_dir)) {
     mkdir($upload_dir, 0777, true);
@@ -12,12 +11,11 @@ if (!file_exists($upload_dir)) {
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    // Get all teachers
+
     try {
         $stmt = $conn->query("SELECT * FROM guru_tendik ORDER BY id DESC");
         $teachers = $stmt->fetchAll();
 
-        // Urutan prioritas berdasarkan jabatan
         $roleOrder = [
             'Kepala Sekolah'       => 1,
             'Komite Sekolah'       => 2,
@@ -87,10 +85,10 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        // NIP Optional ( nullable )
+        
         $nip = !empty($_POST['nip']) ? trim($_POST['nip']) : null;
 
-        // Handle file upload
+        
         $foto_path = '';
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
             $file_tmp = $_FILES['foto']['tmp_name'];
@@ -129,7 +127,7 @@ elseif ($method === 'POST') {
 
         $nip = !empty($_POST['nip']) ? trim($_POST['nip']) : null;
 
-        // Fetch existing teacher to keep/delete old photo
+        
         $stmt = $conn->prepare("SELECT foto FROM guru_tendik WHERE id = ?");
         $stmt->execute([$id]);
         $teacher = $stmt->fetch();
@@ -141,7 +139,7 @@ elseif ($method === 'POST') {
 
         $foto_path = $teacher['foto'];
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            // Delete old photo if exists
+            
             if (!empty($foto_path) && file_exists('../' . str_replace('backend/', '', $foto_path))) {
                 @unlink('../' . str_replace('backend/', '', $foto_path));
             }
@@ -172,7 +170,7 @@ elseif ($method === 'POST') {
         }
 
         try {
-            // Delete old photo first
+            
             $stmt = $conn->prepare("SELECT foto FROM guru_tendik WHERE id = ?");
             $stmt->execute([$id]);
             $teacher = $stmt->fetch();

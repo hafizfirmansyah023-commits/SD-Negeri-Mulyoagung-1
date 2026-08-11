@@ -39,14 +39,14 @@ export const getTeacherNameByRole = (
   targetRoleOrTask: string,
   fallbackName: string
 ): string => {
-  if (!teachers || teachers.length === 0) return fallbackName;
+  if (!teachers || teachers.length === 0) return '-';
   const term = targetRoleOrTask.toLowerCase();
 
   const matches = teachers.filter((t) => matchesRoleOrTask(t, term));
 
   if (matches.length === 1) return matches[0].name;
   if (matches.length > 1) return matches.map((m) => m.name).join(' & ');
-  return fallbackName;
+  return '-';
 };
 
 // Cari (atau bangun) objek Teacher lengkap dari DB, dipakai saat kotak Bagan
@@ -75,16 +75,16 @@ export const findOrBuildTeacherObj = (
 
   return {
     id: `modal-${targetRoleOrTask}`,
-    name: fallbackName,
+    name: '-',
     title: targetRoleOrTask.toUpperCase(),
     role: targetRoleOrTask.toUpperCase(),
     nip: '-',
     subject: targetRoleOrTask,
     image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400',
-    education: 'Pendidikan Pendidik / Tendik SD Negeri 1 Mulyoagung',
-    gender: 'Laki-laki / Perempuan',
-    status: 'Aktif',
-    quote: 'Berdedikasi untuk kemajuan pendidikan siswa-siswi SD Negeri 1 Mulyoagung.',
+    education: '-',
+    gender: '-',
+    status: 'Kosong',
+    quote: 'Belum ada data pengisi jabatan ini.',
   };
 };
 

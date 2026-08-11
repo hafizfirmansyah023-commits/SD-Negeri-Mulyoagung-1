@@ -6,9 +6,10 @@ interface HeaderActionsProps {
   activeTab: NavTab;
   onCmsClick: () => void;
   onOpenPpdb: () => void;
+  linkPpdb?: string;
 }
 
-export const HeaderActions: React.FC<HeaderActionsProps> = ({ activeTab, onCmsClick, onOpenPpdb }) => (
+export const HeaderActions: React.FC<HeaderActionsProps> = ({ activeTab, onCmsClick, onOpenPpdb, linkPpdb }) => (
   <div className="hidden md:flex items-center gap-3">
     <button
       onClick={onCmsClick}
@@ -19,12 +20,25 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({ activeTab, onCmsCl
       CMS Portal
     </button>
 
-    <button
-      onClick={onOpenPpdb}
-      className="bg-[#028C84] hover:bg-[#006a64] text-white font-semibold text-sm py-2.5 px-6 rounded-full transition-all shadow-sm hover:shadow-md hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
-    >
-      <Sparkles className="w-4 h-4" />
-      Daftar Sekarang
-    </button>
+    {linkPpdb ? (
+      <a
+        href={linkPpdb}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-[#028C84] hover:bg-[#006a64] text-white font-semibold text-sm py-2.5 px-6 rounded-full transition-all shadow-sm hover:shadow-md hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
+      >
+        <Sparkles className="w-4 h-4" />
+        Daftar Sekarang
+      </a>
+    ) : (
+      <button
+        onClick={onOpenPpdb}
+        className="bg-[#028C84] hover:bg-[#006a64] text-white font-semibold text-sm py-2.5 px-6 rounded-full transition-all shadow-sm hover:shadow-md hover:scale-[1.02] flex items-center gap-2 cursor-pointer"
+      >
+        <Sparkles className="w-4 h-4" />
+        Daftar Sekarang
+      </button>
+    )}
   </div>
 );
+

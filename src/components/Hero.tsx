@@ -8,21 +8,25 @@ import { getApiBaseUrl } from '../config/api';
 interface HeroProps {
   onOpenPpdb: () => void;
   setActiveTab: (tab: NavTab) => void;
+  linkPpdb?: string;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   onOpenPpdb,
   setActiveTab,
+  linkPpdb,
 }) => {
   const [tahunAjaran, setTahunAjaran] = useState('2025/2026');
+  const [customLinkPpdb, setCustomLinkPpdb] = useState('');
 
   useEffect(() => {
     const fetchTahunAjaran = async () => {
       try {
         const response = await fetch(`${getApiBaseUrl()}/backend/API/pengaturan.php`);
         const data = await response.json();
-        if (data.status === 'success' && data.tahun_ajaran) {
-          setTahunAjaran(data.tahun_ajaran);
+        if (data.status === 'success') {
+          if (data.tahun_ajaran) setTahunAjaran(data.tahun_ajaran);
+          if (data.link_ppdb) setCustomLinkPpdb(data.link_ppdb.trim());
         }
       } catch (err) {
         // Keep default fallback
@@ -30,6 +34,8 @@ export const Hero: React.FC<HeroProps> = ({
     };
     fetchTahunAjaran();
   }, []);
+
+  const activePpdbUrl = linkPpdb || customLinkPpdb;
 
   return (
     // min-h diperkecil untuk mobile agar tidak terlalu kosong ke bawah
@@ -84,13 +90,26 @@ export const Hero: React.FC<HeroProps> = ({
           <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center lg:justify-start">
 
             {/* PPDB */}
-            <button
-              onClick={onOpenPpdb}
-              className="group flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 rounded-full bg-[#156B63] hover:bg-[#20C997] text-white text-sm sm:text-base font-semibold transition-all duration-300 shadow-xl hover:scale-105 hover:shadow-[#20C997]/30"
-            >
-              PPDB Online
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
+            {activePpdbUrl ? (
+              <a
+                href={activePpdbUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 rounded-full bg-[#156B63] hover:bg-[#20C997] text-white text-sm sm:text-base font-semibold transition-all duration-300 shadow-xl hover:scale-105 hover:shadow-[#20C997]/30"
+              >
+                PPDB Online
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </a>
+            ) : (
+              <button
+                onClick={onOpenPpdb}
+                className="group flex items-center justify-center gap-2 px-6 py-3 sm:px-8 sm:py-4 rounded-full bg-[#156B63] hover:bg-[#20C997] text-white text-sm sm:text-base font-semibold transition-all duration-300 shadow-xl hover:scale-105 hover:shadow-[#20C997]/30"
+              >
+                PPDB Online
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              </button>
+            )}
+
 
             {/* Profil */}
             <button

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -23,6 +23,7 @@ import { PrincipalGreeting } from './components/PrincipalGreeting';
 import { NewsSection } from './components/NewsSection';
 import { VideoProfileSection } from './components/VideoProfileSection';
 import { DirectorySection } from './components/DirectorySection';
+
 import { GallerySection } from './components/GallerySection';
 import { SchoolProfileSection } from './components/SchoolProfileSection';
 import { ContactSection } from './components/ContactSection';
@@ -34,11 +35,38 @@ import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
 
+import { getApiBaseUrl } from './config/api';
+
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
   const navigationType = useNavigationType();
   const [ppdbOpen, setPpdbOpen] = useState(false);
+  const [linkPpdb, setLinkPpdb] = useState('');
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/pengaturan.php`);
+        const data = await response.json();
+        if (data.status === 'success' && data.link_ppdb) {
+          setLinkPpdb(data.link_ppdb.trim());
+        }
+      } catch (err) {
+        // Fallback
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleOpenPpdb = () => {
+    if (linkPpdb && linkPpdb !== '') {
+      window.open(linkPpdb, '_blank', 'noopener,noreferrer');
+    } else {
+      setPpdbOpen(true);
+    }
+  };
+
 
   // Menyimpan posisi scroll per halaman (posisi Y terakhir untuk setiap route)
   const scrollPositions = useRef<Record<string, number>>({});
@@ -55,7 +83,7 @@ function AppContent() {
     }
   };
 
-  // Inisialisasi AOS dan pengaturan mode terang
+  // AOS dan pengaturan mode terang
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('dark');
@@ -82,23 +110,23 @@ function AppContent() {
     };
   }, [location.pathname]);
 
-  // Restore posisi scroll jika tombol Back 'POP' ditekan
-  useEffect(() => {
+  // Restore posisi scroll saat pindah halaman
+  useLayoutEffect(() => {
     if (navigationType === 'POP') {
+      // Jika user klik tombol Back, kembalikan posisi scroll terakhir
       const savedY = scrollPositions.current[location.pathname] ?? 0;
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: savedY, behavior: 'instant' as ScrollBehavior });
-        setTimeout(() => {
-          AOS.refresh();
-        }, 100);
-      });
+      window.scrollTo({ top: savedY, behavior: 'instant' as ScrollBehavior });
     } else {
-      // Navigasi (PUSH / REPLACE) -> scroll ke paling atas
+      // Jika navigasi baru (PUSH), scroll ke paling atas
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-      setTimeout(() => {
-        AOS.refresh();
-      }, 100);
     }
+    
+    // Refresh animasi AOS
+    const timer = setTimeout(() => {
+      AOS.refresh();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [location.pathname, navigationType]);
 
   if (activeTab === 'cms') {
@@ -113,7 +141,8 @@ function AppContent() {
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenPpdb={() => setPpdbOpen(true)}
+        onOpenPpdb={handleOpenPpdb}
+        linkPpdb={linkPpdb}
       />
 
       {/* Main Page Content */}
@@ -125,7 +154,7 @@ function AppContent() {
             element={
               <>
                 <div data-aos="fade-down">
-                  <Hero onOpenPpdb={() => setPpdbOpen(true)} setActiveTab={setActiveTab} />
+                  <Hero onOpenPpdb={handleOpenPpdb} setActiveTab={setActiveTab} linkPpdb={linkPpdb} />
                 </div>
                 <div data-aos="fade-up" data-aos-delay="100">
                   <Stats />
@@ -206,9 +235,12 @@ function AppContent() {
       <div data-aos="fade-up" data-aos-anchor-placement="top-bottom">
         <Footer
           setActiveTab={setActiveTab}
-          onOpenPpdb={() => setPpdbOpen(true)}
+          onOpenPpdb={handleOpenPpdb}
+          linkPpdb={linkPpdb}
         />
       </div>
+
+
 
       <PpdbModal isOpen={ppdbOpen} onClose={() => setPpdbOpen(false)} />
 

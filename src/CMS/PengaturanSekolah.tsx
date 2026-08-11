@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Save, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Settings, Save, Calendar, CheckCircle2, AlertCircle, Link as LinkIcon, ExternalLink } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 
 const API_BASE = getApiBaseUrl();
 
 export default function PengaturanSekolah() {
   const [tahunAjaran, setTahunAjaran] = useState('2025/2026');
+  const [linkPpdb, setLinkPpdb] = useState('');
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -19,8 +20,9 @@ export default function PengaturanSekolah() {
     try {
       const response = await fetch(`${API_BASE}/backend/API/pengaturan.php`);
       const result = await response.json();
-      if (result.status === 'success' && result.tahun_ajaran) {
-        setTahunAjaran(result.tahun_ajaran);
+      if (result.status === 'success') {
+        if (result.tahun_ajaran) setTahunAjaran(result.tahun_ajaran);
+        if (result.link_ppdb !== undefined) setLinkPpdb(result.link_ppdb);
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'Gagal memuat data pengaturan.' });
@@ -37,6 +39,7 @@ export default function PengaturanSekolah() {
     try {
       const formData = new FormData();
       formData.append('tahun_ajaran', tahunAjaran);
+      formData.append('link_ppdb', linkPpdb);
 
       const response = await fetch(`${API_BASE}/backend/API/pengaturan.php`, {
         method: 'POST',
@@ -45,7 +48,7 @@ export default function PengaturanSekolah() {
 
       const result = await response.json();
       if (result.status === 'success') {
-        setMessage({ type: 'success', text: 'Tahun ajaran berhasil diperbarui!' });
+        setMessage({ type: 'success', text: 'Pengaturan sekolah berhasil diperbarui!' });
       } else {
         setMessage({ type: 'error', text: result.message || 'Gagal menyimpan perubahan.' });
       }
@@ -64,7 +67,7 @@ export default function PengaturanSekolah() {
         </div>
         <div>
           <h2 className="text-xl font-bold text-slate-800">Pengaturan Sekolah</h2>
-          <p className="text-sm text-slate-500">Kelola tahun ajaran dan konfigurasi informasi sekolah</p>
+          <p className="text-sm text-slate-500">Kelola tahun ajaran dan tautan PPDB Online sekolah</p>
         </div>
       </div>
 
@@ -82,7 +85,7 @@ export default function PengaturanSekolah() {
       )}
 
       <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-lg">
+        <form onSubmit={handleSubmit} className="space-y-6 max-w-xl">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
               <Calendar size={16} className="text-teal-600" />
@@ -98,6 +101,36 @@ export default function PengaturanSekolah() {
             />
             <p className="text-xs text-slate-500 mt-2">
               Tahun ajaran ini akan ditampilkan secara otomatis pada badge bagian atas Hero Section di halaman utama website.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2 flex items-center gap-2">
+              <LinkIcon size={16} className="text-teal-600" />
+              Link / URL PPDB Online (Halaman Utama)
+            </label>
+            <div className="relative">
+              <input
+                type="url"
+                value={linkPpdb}
+                onChange={(e) => setLinkPpdb(e.target.value)}
+                placeholder="Contoh: https://ppdb.malangkab.go.id atau link Google Form PPDB"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800 pr-10"
+              />
+              {linkPpdb && (
+                <a
+                  href={linkPpdb}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-600 hover:text-teal-800 p-1"
+                  title="Uji coba buka link PPDB"
+                >
+                  <ExternalLink size={18} />
+                </a>
+              )}
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              Link PPDB Online ini akan dipakai secara langsung ketika pengunjung mengklik tombol <strong>PPDB Online</strong> di halaman utama. Jika dikosongkan, tombol akan secara otomatis mengarahkan ke formulir pop-up internal bawaan website.
             </p>
           </div>
 
