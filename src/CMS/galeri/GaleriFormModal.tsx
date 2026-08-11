@@ -1,4 +1,5 @@
 import React from 'react';
+import { validateImageFile } from '../utils/fileValidation';
 
 interface GaleriFormModalProps {
   showModal: boolean;
@@ -113,10 +114,13 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setFotoFile(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const file = validateImageFile(e.target.files?.[0] || null, e.target);
+                setFotoFile(file);
+              }}
               className="w-full text-slate-600 text-xs sm:text-sm border border-slate-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
             />
-            {editId && <p className="text-slate-400 text-xs mt-1">Biarkan kosong jika tidak ingin mengubah foto.</p>}
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">

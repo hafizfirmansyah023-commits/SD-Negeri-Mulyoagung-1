@@ -92,3 +92,33 @@
 .dark ::-webkit-scrollbar-thumb:hover {
   background: #475569;
 }
+
+@keyframes spinReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes loadingBarSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-spin-reverse {
+  animation: spinReverse 4s linear infinite;
+}
+
+.animate-loading-bar {
+  animation: loadingBarSweep 1.6s ease-in-out infinite;
+}
+

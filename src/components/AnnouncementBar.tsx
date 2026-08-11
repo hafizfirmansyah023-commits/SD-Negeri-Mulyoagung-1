@@ -13,7 +13,10 @@ export const AnnouncementBar: React.FC = () => {
         const response = await fetch(`${getApiBaseUrl()}/backend/API/pengumuman.php`);
         const result = await response.json();
         if (result.status === 'success' && result.data) {
-          setIsActive(parseInt(result.data.is_active) === 1);
+          const isActivePublic = result.data.public_active !== undefined 
+            ? parseInt(result.data.public_active) === 1 
+            : parseInt(result.data.is_active) === 1;
+          setIsActive(isActivePublic);
           setRunningText(result.data.running_text || '');
         }
       } catch (err) {

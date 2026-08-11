@@ -1,8 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Globe, Link, Eye } from 'lucide-react';
+import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Globe, Link, Eye, Calendar, Clock, Sparkles } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { validateImageFile } from './utils/fileValidation';
 
 const API_BASE = getApiBaseUrl();
+
+// Helper functions for date calculations
+const getTodayStr = (): string => {
+  return new Date().toISOString().split('T')[0];
+};
+
+const getDaysBetween = (startStr: string, endStr: string): number => {
+  if (!startStr || !endStr) return 7;
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  const diffTime = end.getTime() - start.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 1;
+};
+
+const addDays = (startStr: string, days: number): string => {
+  if (!startStr) return '';
+  const date = new Date(startStr);
+  date.setDate(date.getDate() + (days || 1));
+  return date.toISOString().split('T')[0];
+};
 
 export default function PengumumanCrud() {
   const [judul, setJudul] = useState('');
@@ -21,6 +43,11 @@ export default function PengumumanCrud() {
   const [photoFile, setFotoFile] = useState<File | null>(null);
   const [photoLink, setPhotoLink] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  // Batas Tanggal & Masa Aktif
+  const [tanggalMulai, setTanggalMulai] = useState(getTodayStr());
+  const [tanggalSelesai, setTanggalSelesai] = useState(addDays(getTodayStr(), 7));
+  const [durasiHari, setDurasiHari] = useState(7);
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -45,6 +72,18 @@ export default function PengumumanCrud() {
         setShowPhoto(parseInt(result.data.show_photo) === 1);
         setPhotoUrl(result.data.foto || '');
         setPhotoLink(result.data.photo_link || '');
+
+        const start = result.data.tanggal_mulai || getTodayStr();
+        setTanggalMulai(start);
+
+        if (result.data.tanggal_selesai) {
+          setTanggalSelesai(result.data.tanggal_selesai);
+          setDurasiHari(getDaysBetween(start, result.data.tanggal_selesai));
+        } else {
+          const defaultEnd = addDays(start, 7);
+          setTanggalSelesai(defaultEnd);
+          setDurasiHari(7);
+        }
       } else {
         setError(result.message || 'Gagal memuat data pengumuman.');
       }
@@ -59,11 +98,38 @@ export default function PengumumanCrud() {
     fetchPengumuman();
   }, []);
 
+  const handleStartChange = (val: string) => {
+    setTanggalMulai(val);
+    if (val) {
+      setTanggalSelesai(addDays(val, durasiHari));
+    }
+  };
+
+  const handleEndChange = (val: string) => {
+    setTanggalSelesai(val);
+    if (val && tanggalMulai) {
+      const days = getDaysBetween(tanggalMulai, val);
+      setDurasiHari(days);
+    }
+  };
+
+  const handleDaysChange = (daysNum: number) => {
+    const safeDays = daysNum > 0 ? daysNum : 1;
+    setDurasiHari(safeDays);
+    if (tanggalMulai) {
+      setTanggalSelesai(addDays(tanggalMulai, safeDays));
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFotoFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      const file = validateImageFile(e.target.files[0], e.target);
+      if (file) {
+        setFotoFile(file);
+        setPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setFotoFile(null);
+      }
     }
   };
 
@@ -84,6 +150,8 @@ export default function PengumumanCrud() {
     formData.append('button_link', buttonLink);
     formData.append('show_photo', showPhoto ? '1' : '0');
     formData.append('photo_link', photoLink);
+    formData.append('tanggal_mulai', tanggalMulai);
+    formData.append('tanggal_selesai', tanggalSelesai);
     if (photoFile) {
       formData.append('foto', photoFile);
     }
@@ -210,6 +278,119 @@ export default function PengumumanCrud() {
             {/* Middle/Right form inputs */}
             <div className="lg:col-span-2 space-y-5">
               <h3 className="font-bold text-slate-700 text-sm border-b pb-2">Detail Konten & Desain</h3>
+
+              {/* Date Range & Duration Card */}
+              <div className="p-4 sm:p-5 bg-gradient-to-br from-slate-50 to-teal-50/30 rounded-2xl border border-teal-100/80 space-y-4">
+                <div className="flex items-center justify-between border-b border-teal-100 pb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="text-teal-600" size={18} />
+                    <span className="font-bold text-slate-800 text-sm">Batas Tanggal & Masa Aktif Pengumuman</span>
+                  </div>
+
+                  {/* Expiration Status Badge */}
+                  {(() => {
+                    const today = getTodayStr();
+                    if (today < tanggalMulai) {
+                      return (
+                        <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-semibold flex items-center gap-1">
+                          <Clock size={12} /> Belum Mulai
+                        </span>
+                      );
+                    } else if (today > tanggalSelesai) {
+                      return (
+                        <span className="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-semibold flex items-center gap-1">
+                          <AlertCircle size={12} /> Kedaluwarsa (Expired)
+                        </span>
+                      );
+                    } else {
+                      return (
+                        <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold flex items-center gap-1">
+                          <CheckCircle2 size={12} /> Aktif Berjalan
+                        </span>
+                      );
+                    }
+                  })()}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Tanggal Mulai */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1">
+                      <Calendar size={13} className="text-teal-600" /> Tanggal Mulai
+                    </label>
+                    <input
+                      type="date"
+                      value={tanggalMulai}
+                      onChange={(e) => handleStartChange(e.target.value)}
+                      className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600 font-medium"
+                      required
+                    />
+                  </div>
+
+                  {/* Tanggal Selesai */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1">
+                      <Calendar size={13} className="text-teal-600" /> Tanggal Selesai (Batas)
+                    </label>
+                    <input
+                      type="date"
+                      value={tanggalSelesai}
+                      onChange={(e) => handleEndChange(e.target.value)}
+                      className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600 font-medium"
+                      required
+                    />
+                  </div>
+
+                  {/* Number Input Hari */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1">
+                      <Clock size={13} className="text-teal-600" /> Jumlah Hari Aktif
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        max="365"
+                        value={durasiHari}
+                        onChange={(e) => handleDaysChange(parseInt(e.target.value) || 1)}
+                        className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600 font-bold"
+                        required
+                      />
+                      <span className="absolute right-3 top-2 text-xs text-slate-400 font-medium pointer-events-none">Hari</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Preset Buttons */}
+                <div className="flex items-center gap-2 pt-1 flex-wrap">
+                  <span className="text-xs text-slate-500 font-medium mr-1 flex items-center gap-1">
+                    <Sparkles size={12} className="text-teal-600" /> Durasi Cepat:
+                  </span>
+                  {[
+                    { label: '3 Hari', days: 3 },
+                    { label: '7 Hari (1 Mgg)', days: 7 },
+                    { label: '14 Hari (2 Mgg)', days: 14 },
+                    { label: '30 Hari (1 Bln)', days: 30 },
+                  ].map((preset) => (
+                    <button
+                      key={preset.days}
+                      type="button"
+                      onClick={() => handleDaysChange(preset.days)}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer border ${
+                        durasiHari === preset.days
+                          ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-teal-50 hover:text-teal-700 hover:border-teal-300'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+
+                <p className="text-[11px] text-slate-500 italic">
+                  * Pengumuman akan otomatis tidak ditampilkan di website publik setelah melewati tanggal selesai.
+                </p>
+              </div>
               
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -302,17 +483,20 @@ export default function PengumumanCrud() {
                         />
                       </label>
                     </div>
-                    <div className="flex-grow w-full">
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1">
-                        <Link size={14} className="text-slate-400" /> Link Klik Foto (Tujuan URL - Opsional)
-                      </label>
-                      <input
-                        type="text"
-                        value={photoLink}
-                        onChange={(e) => setPhotoLink(e.target.value)}
-                        placeholder="Link dibuka ketika gambar di-klik..."
-                        className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600"
-                      />
+                    <div className="flex-grow w-full space-y-2">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                          <Link size={14} className="text-slate-400" /> Link Klik Foto (Tujuan URL - Opsional)
+                        </label>
+                        <input
+                          type="text"
+                          value={photoLink}
+                          onChange={(e) => setPhotoLink(e.target.value)}
+                          placeholder="Link dibuka ketika gambar di-klik..."
+                          className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600"
+                        />
+                      </div>
+                      <p className="text-slate-400 text-[11px]">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
                     </div>
                   </div>
                 </div>

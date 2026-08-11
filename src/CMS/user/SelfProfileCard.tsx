@@ -2,6 +2,7 @@ import React from 'react';
 import { Key, User } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession } from '../types';
+import { validateImageFile } from '../utils/fileValidation';
 
 interface SelfProfileCardProps {
   currentUser: UserSession;
@@ -85,9 +86,13 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setFotoFile(e.target.files?.[0] || null)}
+            onChange={(e) => {
+              const file = validateImageFile(e.target.files?.[0] || null, e.target);
+              setFotoFile(file);
+            }}
             className="w-full text-slate-600 text-xs border border-slate-200 rounded-xl file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
           />
+          <p className="text-slate-400 text-[11px] mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
         </div>
 
         <button

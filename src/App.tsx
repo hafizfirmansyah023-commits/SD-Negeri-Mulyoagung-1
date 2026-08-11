@@ -34,6 +34,7 @@ import { AnnouncementBar } from './components/AnnouncementBar';
 import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
+import { LoadingProvider } from './context/LoadingContext';
 
 import { getApiBaseUrl } from './config/api';
 
@@ -250,11 +251,12 @@ function AppContent() {
     </div>
   );
 }
-
 export default function App() {
   return (
     <Router>
-      <AppContent />
+      <LoadingProvider>
+        <AppContent />
+      </LoadingProvider>
     </Router>
   );
 }
