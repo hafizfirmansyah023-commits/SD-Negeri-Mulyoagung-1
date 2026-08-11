@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -84,15 +84,23 @@ function AppContent() {
   }, [location.pathname]);
 
   // Restore posisi scroll saat pindah halaman
-  useEffect(() => {
-    const savedY = scrollPositions.current[location.pathname] ?? 0;
-    requestAnimationFrame(() => {
+  useLayoutEffect(() => {
+    if (navigationType === 'POP') {
+      // Jika user klik tombol Back, kembalikan posisi scroll terakhir
+      const savedY = scrollPositions.current[location.pathname] ?? 0;
       window.scrollTo({ top: savedY, behavior: 'instant' as ScrollBehavior });
-      setTimeout(() => {
-        AOS.refresh();
-      }, 100);
-    });
-  }, [location.pathname]);
+    } else {
+      // Jika navigasi baru (PUSH), scroll ke paling atas
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+    }
+    
+    // Refresh animasi AOS
+    const timer = setTimeout(() => {
+      AOS.refresh();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [location.pathname, navigationType]);
 
   if (activeTab === 'cms') {
     return <Dashboard onBackToHome={() => navigate('/')} />;

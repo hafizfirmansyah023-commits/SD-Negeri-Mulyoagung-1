@@ -8,10 +8,17 @@ import { getApiBaseUrl, getImageUrl } from '../config/api';
  * Jika API gagal atau mengembalikan data kosong, otomatis fallback
  * ke TEACHERS_DIRECTORY (data statis lokal).
  */
+let cachedTeachers: Teacher[] | null = null;
+
 export const useTeachersData = (): Teacher[] => {
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>(cachedTeachers || []);
 
   useEffect(() => {
+    if (cachedTeachers) {
+      setTeachers(cachedTeachers);
+      return;
+    }
+
     const loadTeachers = async () => {
       try {
         const response = await fetch(`${getApiBaseUrl()}/backend/API/guru.php`);
@@ -33,11 +40,14 @@ export const useTeachersData = (): Teacher[] => {
             status: t.status,
             quote: t.motto,
           }));
+          cachedTeachers = mapped;
           setTeachers(mapped);
         } else {
+          cachedTeachers = TEACHERS_DIRECTORY;
           setTeachers(TEACHERS_DIRECTORY);
         }
       } catch (e) {
+        cachedTeachers = TEACHERS_DIRECTORY;
         setTeachers(TEACHERS_DIRECTORY);
       }
     };
