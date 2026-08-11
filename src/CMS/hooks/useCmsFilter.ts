@@ -35,12 +35,10 @@ export function useCmsFilter<T>({
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
-      // Custom filter logic if provided
       if (customFilter) {
         return customFilter(item, searchTerm, filters);
       }
 
-      // Default search term matching
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase();
         const matchesSearch = searchFields.some((field) => {

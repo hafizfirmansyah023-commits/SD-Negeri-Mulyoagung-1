@@ -1,10 +1,3 @@
-/**
- * Utility functions for CMS module
- */
-
-/**
- * Extracts unique non-empty string values from an array of objects for a given key.
- */
 export function getUniqueValues<T>(items: T[], key: keyof T): string[] {
   const values: string[] = [];
   for (const item of items) {
@@ -18,9 +11,6 @@ export function getUniqueValues<T>(items: T[], key: keyof T): string[] {
   return values;
 }
 
-/**
- * Formats date string to ID locale display string or YYYY-MM-DD format
- */
 export function formatCmsDate(dateStr: string): string {
   if (!dateStr) return '-';
   try {
