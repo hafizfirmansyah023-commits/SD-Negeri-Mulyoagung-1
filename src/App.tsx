@@ -14,8 +14,7 @@ import {
   Navigate
 } from 'react-router-dom';
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // Mengimpor CSS AOS
-
+import 'aos/dist/aos.css'; 
 import { NavTab } from './types';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -35,7 +34,6 @@ import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
 
-// Komponen utama yang dibungkus oleh Router agar bisa menggunakan useLocation, useNavigate, dan useNavigationType
 function AppContent() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -49,7 +47,6 @@ function AppContent() {
   const path = location.pathname.replace('/', '');
   const activeTab = (path === '' ? 'home' : path) as NavTab;
 
-  // Adaptasi setActiveTab agar merubah URL alih-alih merubah state secara langsung
   const setActiveTab = (tab: NavTab) => {
     if (tab === 'home') {
       navigate('/');
@@ -85,10 +82,9 @@ function AppContent() {
     };
   }, [location.pathname]);
 
-  // Pengelolaan posisi scroll saat navigasi antar halaman (restore posisi scroll jika tombol Back 'POP' ditekan)
+  // Restore posisi scroll jika tombol Back 'POP' ditekan
   useEffect(() => {
     if (navigationType === 'POP') {
-      // Navigasi Kembali (Back) -> pulihkan posisi scroll terakhir dari lokasi tersebut
       const savedY = scrollPositions.current[location.pathname] ?? 0;
       requestAnimationFrame(() => {
         window.scrollTo({ top: savedY, behavior: 'instant' as ScrollBehavior });
@@ -97,7 +93,7 @@ function AppContent() {
         }, 100);
       });
     } else {
-      // Navigasi Baru (PUSH / REPLACE) -> scroll ke paling atas
+      // Navigasi (PUSH / REPLACE) -> scroll ke paling atas
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
       setTimeout(() => {
         AOS.refresh();
@@ -111,10 +107,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8f9fa] text-slate-900 transition-colors duration-300 font-sans selection:bg-teal-600 selection:text-white overflow-hidden">
-      {/* Running Text Info Penting */}
+      
       <AnnouncementBar />
 
-      {/* Header */}
       <Header
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -124,7 +119,7 @@ function AppContent() {
       {/* Main Page Content */}
       <main className="flex-grow">
         <Routes>
-          {/* Halaman Home */}
+
           <Route
             path="/"
             element={
@@ -154,7 +149,6 @@ function AppContent() {
             }
           />
 
-          {/* Halaman Profile */}
           <Route
             path="/profile"
             element={
@@ -169,7 +163,6 @@ function AppContent() {
             }
           />
 
-          {/* Halaman Directory */}
           <Route
             path="/directory"
             element={
@@ -179,7 +172,6 @@ function AppContent() {
             }
           />
 
-          {/* Halaman Gallery */}
           <Route
             path="/gallery"
             element={
@@ -189,7 +181,6 @@ function AppContent() {
             }
           />
 
-          {/* Halaman News */}
           <Route
             path="/news"
             element={
@@ -199,7 +190,6 @@ function AppContent() {
             }
           />
 
-          {/* Halaman Contact */}
           <Route
             path="/contact"
             element={
@@ -209,12 +199,10 @@ function AppContent() {
             }
           />
 
-          {/* Fallback route: Jika URL tidak dikenali, arahkan ke Home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
-      {/* Footer */}
       <div data-aos="fade-up" data-aos-anchor-placement="top-bottom">
         <Footer
           setActiveTab={setActiveTab}
@@ -222,13 +210,10 @@ function AppContent() {
         />
       </div>
 
-      {/* PPDB Registration Modal */}
       <PpdbModal isOpen={ppdbOpen} onClose={() => setPpdbOpen(false)} />
 
-      {/* Floating Back to Top Button */}
       <BackToTop />
 
-      {/* Announcement Pop-up */}
       <AnnouncementPopup />
     </div>
   );
