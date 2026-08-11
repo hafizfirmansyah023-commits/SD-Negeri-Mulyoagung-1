@@ -35,51 +35,46 @@ export default function CmsSidebar({
         <>
           <button
             onClick={() => handleSelectTab('guru')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === 'guru'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'guru'
                 ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Users size={18} /> Direktori Guru
           </button>
           <button
             onClick={() => handleSelectTab('sambutan')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === 'sambutan'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'sambutan'
                 ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Award size={18} /> Sambutan Kepsek
           </button>
           <button
             onClick={() => handleSelectTab('pengumuman')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === 'pengumuman'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'pengumuman'
                 ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Megaphone size={18} /> Pengumuman Penting
           </button>
           <button
             onClick={() => handleSelectTab('statistik')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === 'statistik'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'statistik'
                 ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
+              }`}
           >
             <BarChart3 size={18} /> Statistik Sekolah
           </button>
           <button
             onClick={() => handleSelectTab('fasilitas')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-              activeTab === 'fasilitas'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'fasilitas'
                 ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
+              }`}
           >
             <Building size={18} /> Fasilitas Pembelajaran
           </button>
@@ -88,22 +83,20 @@ export default function CmsSidebar({
 
       <button
         onClick={() => handleSelectTab('galeri')}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-          activeTab === 'galeri'
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
             ? 'bg-teal-600 text-white shadow-sm'
             : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-        }`}
+          }`}
       >
         <Image size={18} /> Galeri Foto
       </button>
 
       <button
         onClick={() => handleSelectTab('berita')}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-          activeTab === 'berita'
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
             ? 'bg-teal-600 text-white shadow-sm'
             : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-        }`}
+          }`}
       >
         <FileText size={18} /> Berita & Pengumuman
       </button>
@@ -111,39 +104,36 @@ export default function CmsSidebar({
       {user.role === 'ADMIN' && (
         <button
           onClick={() => handleSelectTab('verifikasi')}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-            activeTab === 'verifikasi'
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'verifikasi'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-          }`}
+            }`}
         >
           <ShieldAlert size={18} /> Pusat Verifikasi
         </button>
       )}
 
-      <button
-        onClick={() => handleSelectTab('user')}
-        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-          activeTab === 'user'
-            ? 'bg-teal-600 text-white shadow-sm'
-            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-        }`}
-      >
-        <User size={18} /> Pengaturan Akun
-      </button>
-
       {user.role === 'ADMIN' && (
         <button
           onClick={() => handleSelectTab('pengaturan')}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${
-            activeTab === 'pengaturan'
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'pengaturan'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-          }`}
+            }`}
         >
-          <Settings size={18} /> Pengaturan Sekolah
+          <Settings size={18} /> Pengaturan Website
         </button>
       )}
+
+      <button
+        onClick={() => handleSelectTab('user')}
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'user'
+            ? 'bg-teal-600 text-white shadow-sm'
+            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+          }`}
+      >
+        <User size={18} /> Pengaturan Akun
+      </button>
     </nav>
   );
 
@@ -178,9 +168,8 @@ export default function CmsSidebar({
 
       {/* Sidebar Content container (Drawer on mobile, Sticky on desktop) */}
       <aside
-        className={`fixed md:sticky top-0 left-0 bottom-0 z-50 md:z-auto w-72 md:w-64 bg-slate-900 text-white flex flex-col h-screen max-h-screen shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
+        className={`fixed md:sticky top-0 left-0 bottom-0 z-50 md:z-auto w-72 md:w-64 bg-slate-900 text-white flex flex-col h-screen max-h-screen shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
       >
         <div className="flex-grow">
           {/* Logo Section */}
@@ -216,11 +205,10 @@ export default function CmsSidebar({
             <div className="overflow-hidden">
               <p className="font-bold text-xs truncate text-slate-200">{user.nama_penanggung_jawab}</p>
               <span
-                className={`text-[10px] uppercase font-bold tracking-wide px-2 py-0.5 rounded-full inline-block mt-0.5 ${
-                  user.role === 'ADMIN'
+                className={`text-[10px] uppercase font-bold tracking-wide px-2 py-0.5 rounded-full inline-block mt-0.5 ${user.role === 'ADMIN'
                     ? 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'
                     : 'bg-amber-900/60 text-amber-300 border border-amber-700/50'
-                }`}
+                  }`}
               >
                 {user.role}
               </span>
