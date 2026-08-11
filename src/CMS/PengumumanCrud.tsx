@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Globe, Link, Eye } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { validateImageFile } from './utils/fileValidation';
 
 const API_BASE = getApiBaseUrl();
 
@@ -61,9 +62,13 @@ export default function PengumumanCrud() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFotoFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      const file = validateImageFile(e.target.files[0], e.target);
+      if (file) {
+        setFotoFile(file);
+        setPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setFotoFile(null);
+      }
     }
   };
 
@@ -302,17 +307,20 @@ export default function PengumumanCrud() {
                         />
                       </label>
                     </div>
-                    <div className="flex-grow w-full">
-                      <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1">
-                        <Link size={14} className="text-slate-400" /> Link Klik Foto (Tujuan URL - Opsional)
-                      </label>
-                      <input
-                        type="text"
-                        value={photoLink}
-                        onChange={(e) => setPhotoLink(e.target.value)}
-                        placeholder="Link dibuka ketika gambar di-klik..."
-                        className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600"
-                      />
+                    <div className="flex-grow w-full space-y-2">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
+                          <Link size={14} className="text-slate-400" /> Link Klik Foto (Tujuan URL - Opsional)
+                        </label>
+                        <input
+                          type="text"
+                          value={photoLink}
+                          onChange={(e) => setPhotoLink(e.target.value)}
+                          placeholder="Link dibuka ketika gambar di-klik..."
+                          className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600"
+                        />
+                      </div>
+                      <p className="text-slate-400 text-[11px]">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
                     </div>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
+import logoImg from '../../assets/images/logo.png';
 
 interface CmsSidebarProps {
   user: UserSession;
@@ -151,7 +152,7 @@ export default function CmsSidebar({
       {/* Mobile Top Navigation Header */}
       <div className="md:hidden bg-slate-900 text-white px-4 py-3.5 flex justify-between items-center sticky top-0 z-40 shadow-md border-b border-slate-800">
         <div className="flex items-center gap-2.5">
-          <School className="text-teal-400 shrink-0" size={24} />
+          <img src={logoImg} alt="Logo SD" className="w-7 h-7 object-contain shrink-0" />
           <div>
             <h1 className="font-bold text-xs leading-tight text-slate-200">SDN 1 Mulyoagung</h1>
             <p className="text-[10px] text-teal-400 font-semibold uppercase">{activeTab}</p>
@@ -185,7 +186,7 @@ export default function CmsSidebar({
           {/* Logo Section */}
           <div className="p-5 sm:p-6 border-b border-slate-800 flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <School className="text-teal-400 shrink-0" size={28} />
+              <img src={logoImg} alt="Logo SD" className="w-8 h-8 object-contain shrink-0" />
               <div>
                 <h1 className="font-bold text-sm leading-tight text-slate-200">SDN 1 Mulyoagung</h1>
                 <p className="text-xs text-slate-500">Dashboard Konten</p>

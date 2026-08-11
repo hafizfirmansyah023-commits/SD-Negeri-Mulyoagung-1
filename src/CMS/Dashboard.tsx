@@ -13,6 +13,8 @@ import PengumumanCrud from './PengumumanCrud';
 import StatistikCrud from './Statistikcrud';
 import PengaturanSekolah from './PengaturanSekolah';
 
+import { FileValidationModal } from './components/FileValidationModal';
+
 interface DashboardProps {
     onBackToHome: () => void;
 }
@@ -58,7 +60,12 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
     };
 
     if (!user) {
-        return <CmsLogin onLoginSuccess={handleLoginSuccess} onBackToHome={onBackToHome} />;
+        return (
+            <>
+                <CmsLogin onLoginSuccess={handleLoginSuccess} onBackToHome={onBackToHome} />
+                <FileValidationModal />
+            </>
+        );
     }
 
     return (
@@ -85,6 +92,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 )}
                 {activeTab === 'pengaturan' && user.role === 'ADMIN' && <PengaturanSekolah />}
             </main>
+            <FileValidationModal />
         </div>
     );
 }

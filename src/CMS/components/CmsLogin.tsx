@@ -3,6 +3,7 @@ import { ArrowLeft, School, Eye, EyeOff, RotateCw } from 'lucide-react';
 import { getApiBaseUrl } from '../../config/api';
 import { UserSession } from '../types';
 import heroImg1 from '../../assets/images/img2.webp';
+import logoImg from '../../assets/images/logo.png';
 
 interface CmsLoginProps {
     onLoginSuccess: (user: UserSession) => void;
@@ -100,8 +101,8 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
             <div className="relative z-10 bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20 max-w-md w-full overflow-hidden transition-all duration-300">
                 {/* Header */}
                 <div className="bg-gradient-to-r from-[#0D4A46] to-[#156B63] p-8 text-white text-center border-b border-teal-500/20">
-                    <School size={48} className="mx-auto mb-3 text-[#79EEDE]" />
-                    <h1 className="text-2xl font-bold">CMS SDN 1 Mulyoagung</h1>
+                    <img src={logoImg} alt="Logo SD" className="w-16 h-16 mx-auto mb-3 object-contain drop-shadow-md" />
+                    <h1 className="text-2xl font-bold">CMS SD Negeri 1 Mulyoagung</h1>
                     <p className="text-teal-100/90 text-sm mt-1">Dashboard Konten & Kesiswaan</p>
                 </div>
 

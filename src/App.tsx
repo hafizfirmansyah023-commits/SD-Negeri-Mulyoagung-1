@@ -34,6 +34,7 @@ import { AnnouncementBar } from './components/AnnouncementBar';
 import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
+import { LoadingProvider } from './context/LoadingContext';
 
 // Komponen utama yang dibungkus oleh Router agar bisa menggunakan useLocation, useNavigate, dan useNavigationType
 function AppContent() {
@@ -233,11 +234,12 @@ function AppContent() {
     </div>
   );
 }
-
 export default function App() {
   return (
     <Router>
-      <AppContent />
+      <LoadingProvider>
+        <AppContent />
+      </LoadingProvider>
     </Router>
   );
 }

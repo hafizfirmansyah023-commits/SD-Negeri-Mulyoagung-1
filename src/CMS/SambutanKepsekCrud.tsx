@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Upload, Save, User, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { validateImageFile } from './utils/fileValidation';
 
 const API_BASE = getApiBaseUrl();
 
@@ -48,9 +49,13 @@ export default function SambutanKepsekCrud() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setFotoFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      const file = validateImageFile(e.target.files[0], e.target);
+      if (file) {
+        setFotoFile(file);
+        setPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setFotoFile(null);
+      }
     }
   };
 
@@ -149,7 +154,7 @@ export default function SambutanKepsekCrud() {
                 </label>
               </div>
               <p className="text-slate-400 text-xs text-center max-w-xs">
-                Format yang disarankan: JPG, PNG, atau WEBP. Maksimal 2MB.
+                Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.
               </p>
             </div>
 

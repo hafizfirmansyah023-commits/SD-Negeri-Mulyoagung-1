@@ -1,4 +1,5 @@
 import React from 'react';
+import { validateImageFile } from '../utils/fileValidation';
 
 interface UserFormModalProps {
   showAddModal: boolean;
@@ -98,9 +99,13 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => setNewFotoFile(e.target.files?.[0] || null)}
+              onChange={(e) => {
+                const file = validateImageFile(e.target.files?.[0] || null, e.target);
+                setNewFotoFile(file);
+              }}
               className="w-full text-slate-600 text-xs sm:text-sm border border-slate-200 rounded-xl file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
             />
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
