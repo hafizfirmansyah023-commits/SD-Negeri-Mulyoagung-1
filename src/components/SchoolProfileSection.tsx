@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom'; // <-- TAMBAHAN IMPORT
+import { Target, Compass, History, Monitor, BookOpen, Activity, HeartPulse, Coffee, Trees, CheckCircle2, Sparkles, Building, X } from 'lucide-react'; // <-- TAMBAHAN ICON X
 import { SCHOOL_FACILITIES } from '../data/schoolData';
-import { Target, Compass, History, Monitor, BookOpen, Activity, HeartPulse, Coffee, Trees, CheckCircle2, Sparkles, Building } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 
 interface DynamicFacility {
@@ -15,6 +16,7 @@ const API_BASE = getApiBaseUrl();
 
 export const SchoolProfileSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'visi-misi' | 'sejarah' | 'fasilitas'>('visi-misi');
+  
   const [facilities, setFacilities] = useState<DynamicFacility[]>(
     SCHOOL_FACILITIES.map((f) => ({
       id: f.id,
@@ -23,6 +25,8 @@ export const SchoolProfileSection: React.FC = () => {
       image: f.image,
     }))
   );
+
+  const [selectedFacility, setSelectedFacility] = useState<DynamicFacility | null>(null);
 
   useEffect(() => {
     const fetchFacilities = async () => {
@@ -38,6 +42,18 @@ export const SchoolProfileSection: React.FC = () => {
     };
     fetchFacilities();
   }, []);
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (selectedFacility) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedFacility]);
 
   const getFacilityIconByTitle = (title: string) => {
     const t = title.toLowerCase();
@@ -85,7 +101,7 @@ export const SchoolProfileSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Tab Buttons - Dirampingkan untuk mobile */}
+        {/* Tab Buttons */}
         <div className="flex justify-center w-full">
           <div className="flex w-full sm:w-auto p-1 rounded-xl sm:rounded-full bg-white/70 backdrop-blur-xl border border-teal-100 shadow-sm">
             <button
@@ -160,32 +176,23 @@ export const SchoolProfileSection: React.FC = () => {
               <ul className="space-y-1.5 sm:space-y-3.5 text-[11px] sm:text-base text-slate-700 leading-snug">
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, 
-                    dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.</span>
+                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah,
-                     proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis,
-                      berpikir reflektif, serta memecahkan masalah.</span>
+                  <span>Menyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah, proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis, berpikir reflektif, serta memecahkan masalah.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin,
-                     tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati
-                      sesuai nilai-nilai Profil Lulusan.</span>
+                  <span>Menumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin, tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati sesuai nilai-nilai Profil Lulusan.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan
-                     hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar
-                      untuk meningkatkan kesehatan jasmani.</span>
+                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar untuk meningkatkan kesehatan jasmani.</span>
                 </li>
                 <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
                   <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi
-                     dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital
-                      secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.</span>
+                  <span>Mengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.</span>
                 </li>
               </ul>
             </div>
@@ -232,14 +239,14 @@ export const SchoolProfileSection: React.FC = () => {
               return (
                 <div
                   key={fac.id}
-                  className="group relative bg-white/75 backdrop-blur-xl rounded-xl sm:rounded-3xl overflow-hidden border border-white/80 shadow-sm flex flex-col"
+                  onClick={() => setSelectedFacility(fac)} 
+                  className="group relative bg-white/75 backdrop-blur-xl rounded-xl sm:rounded-3xl overflow-hidden border border-white/80 shadow-sm flex flex-col cursor-pointer hover:shadow-lg transition-all duration-300"
                 >
-                  {/* Tinggi gambar diperkecil pada mobile agar tidak lonjong */}
-                  <div className="h-28 sm:h-52 w-full overflow-hidden relative">
+                  <div className="h-32 sm:h-52 w-full overflow-hidden relative">
                     <img
                       src={imageSrc}
                       alt={fac.judul}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-md p-1.5 sm:p-2.5 rounded-lg sm:rounded-2xl shadow-sm">
                       {getFacilityIconByTitle(fac.judul)}
@@ -247,11 +254,10 @@ export const SchoolProfileSection: React.FC = () => {
                   </div>
 
                   <div className="p-3 sm:p-6 flex-grow flex flex-col">
-                    <h4 className="font-bold text-[12px] sm:text-lg text-[#1E3A8A] leading-tight line-clamp-1 sm:line-clamp-none">
+                    <h4 className="font-bold text-[13px] sm:text-lg text-[#1E3A8A] leading-tight line-clamp-1 sm:line-clamp-none">
                       {fac.judul}
                     </h4>
-                    {/* Line-clamp memastikan deskripsi tidak memanjang ke bawah */}
-                    <p className="text-[10px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3">
+                    <p className="text-[11px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3">
                       {fac.deskripsi}
                     </p>
                   </div>
@@ -261,6 +267,53 @@ export const SchoolProfileSection: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* === MODAL POPUP FASILITAS (DENGAN CREATE-PORTAL) === */}
+      {selectedFacility && createPortal(
+        <div 
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in"
+          onClick={() => setSelectedFacility(null)}
+        >
+          <div 
+            className="relative w-full max-w-3xl lg:max-w-4xl max-h-[90vh] bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col my-auto text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Tombol Close */}
+            <button
+              onClick={() => setSelectedFacility(null)}
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 p-2 sm:p-2.5 rounded-full bg-black/50 hover:bg-black/80 text-white transition-colors border border-white/20 shadow-md cursor-pointer"
+              aria-label="Tutup Detail"
+            >
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+
+            {/* Area Gambar */}
+            <div className="w-full flex-shrink overflow-hidden flex items-center justify-center bg-slate-100 min-h-0 relative">
+              <img 
+                src={selectedFacility.foto ? getImageUrl(selectedFacility.foto) : (selectedFacility.image || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=600')}
+                alt={selectedFacility.judul}
+                className="w-full h-auto max-h-[55vh] sm:max-h-[70vh] object-cover object-center" 
+              />
+            </div>
+
+            {/* Area Teks (Bisa di-scroll jika deskripsi sangat panjang) */}
+            <div className="p-4 sm:p-6 sm:p-8 bg-white space-y-2 sm:space-y-3 overflow-y-auto shrink-0">
+              <div className="flex items-center gap-3 mb-1">
+                <div className="bg-[#1E3A8A]/10 p-2 sm:p-2.5 rounded-xl text-[#1E3A8A]">
+                   {getFacilityIconByTitle(selectedFacility.judul)}
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-[#1E3A8A]">
+                  {selectedFacility.judul}
+                </h3>
+              </div>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                {selectedFacility.deskripsi}
+              </p>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </section>
   );
 };
