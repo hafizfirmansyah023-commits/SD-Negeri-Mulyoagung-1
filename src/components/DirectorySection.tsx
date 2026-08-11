@@ -51,6 +51,20 @@ export const DirectorySection: React.FC = () => {
   const filteredTeachers = filterAndSortTeachers(activeTeachers, searchTerm, roleFilter);
 
 
+  const tabScrollPositions = React.useRef<{ aktif: number; pensiun: number }>({ aktif: 0, pensiun: 0 });
+
+  const handleTabChange = (newTab: 'aktif' | 'pensiun') => {
+    if (newTab === activeTab) return;
+    // Simpan posisi scroll untuk tab yang sedang ditinggalkan
+    tabScrollPositions.current[activeTab] = window.scrollY;
+    setActiveTab(newTab);
+
+    // Kembalikan posisi scroll untuk tab tujuan secara instan
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: tabScrollPositions.current[newTab] ?? 0, behavior: 'instant' as ScrollBehavior });
+    });
+  };
+
   return (
     <section className="relative w-full py-16 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
       {/* Decorative ambient glows matching SchoolProfileSection */}
@@ -75,7 +89,7 @@ export const DirectorySection: React.FC = () => {
         <div className="flex justify-center mb-8">
           <div className="bg-teal-50/80 p-1.5 rounded-2xl border border-teal-100 flex gap-2">
             <button
-              onClick={() => setActiveTab('aktif')}
+              onClick={() => handleTabChange('aktif')}
               className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                 activeTab === 'aktif'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20'
@@ -85,7 +99,7 @@ export const DirectorySection: React.FC = () => {
               Guru & Tendik Aktif
             </button>
             <button
-              onClick={() => setActiveTab('pensiun')}
+              onClick={() => handleTabChange('pensiun')}
               className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                 activeTab === 'pensiun'
                   ? 'bg-gradient-to-r from-[#028C84] to-[#156B63] text-white shadow-md shadow-teal-700/20'
@@ -96,6 +110,7 @@ export const DirectorySection: React.FC = () => {
             </button>
           </div>
         </div>
+
 
         {activeTab === 'aktif' ? (
           <>

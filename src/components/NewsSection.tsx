@@ -9,12 +9,19 @@ interface NewsSectionProps {
   onViewAllClick?: () => void;
 }
 
+let cachedArticles: Article[] | null = null;
+
 export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = useState<Article[]>(cachedArticles || []);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
 
   useEffect(() => {
+    if (cachedArticles) {
+      setArticles(cachedArticles);
+      return;
+    }
+
     const loadNews = async () => {
       try {
         const response = await fetch(`${getApiBaseUrl()}/backend/API/newsAPI.php`);
@@ -33,11 +40,14 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
             readTime: '3 menit',
             featured: true
           }));
+          cachedArticles = mapped;
           setArticles(mapped);
         } else {
+          cachedArticles = NEWS_ARTICLES;
           setArticles(NEWS_ARTICLES);
         }
       } catch (e) {
+        cachedArticles = NEWS_ARTICLES;
         setArticles(NEWS_ARTICLES);
       }
     };
