@@ -3,6 +3,19 @@ import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { Check, RotateCw, ZoomIn, ZoomOut } from 'lucide-react';
 
+export interface CropRatioOption {
+  label: string;
+  value: number | null;
+}
+
+export const CROP_RATIO_OPTIONS: CropRatioOption[] = [
+  { label: '1:1', value: 1 },
+  { label: '4:3', value: 4 / 3 },
+  { label: '3:2', value: 3 / 2 },
+  { label: '16:9', value: 16 / 9 },
+  { label: 'Bebas', value: null },
+];
+
 interface ImageCropModalProps {
   open: boolean;
   imageSrc: string | null;
@@ -12,6 +25,7 @@ interface ImageCropModalProps {
   outputHeight?: number;
   outputType?: string;
   title?: string;
+  ratioOptions?: CropRatioOption[];
   onCancel: () => void;
   onConfirm: (blob: Blob) => void;
 }
@@ -39,24 +53,30 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
   outputHeight,
   outputType = 'image/png',
   title = 'Potong Foto',
+  ratioOptions,
   onCancel,
   onConfirm,
 }) => {
   const imageRef = useRef<HTMLImageElement | null>(null);
   const cropperRef = useRef<Cropper | null>(null);
   const circularRef = useRef(circular);
+  const ratioRef = useRef<number | null>(null);
   const [processing, setProcessing] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [currentRatio, setCurrentRatio] = useState<number | null>(null);
 
   circularRef.current = circular;
 
-  // Reset status ketika sumber gambar / modal berubah.
+  // Reset status ketika sumber gambar / modal / rasio default berubah.
   useEffect(() => {
     setImgLoaded(false);
     setLoadFailed(false);
     setProcessing(false);
-  }, [open, imageSrc]);
+    const initial = Number.isFinite(aspectRatio) ? aspectRatio : null;
+    ratioRef.current = initial;
+    setCurrentRatio(initial);
+  }, [open, imageSrc, aspectRatio]);
 
   // Inisialisasi Cropper hanya setelah gambar benar-benar selesai dimuat.
   useEffect(() => {
@@ -66,7 +86,7 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
     if (!image || image.naturalWidth === 0) return;
 
     const cropper = new Cropper(image, {
-      aspectRatio,
+      aspectRatio: ratioRef.current ?? NaN,
       viewMode: 1,
       dragMode: 'move',
       autoCropArea: 1,
@@ -116,15 +136,27 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
   const zoomOut = () => cropperRef.current?.zoom(-0.1);
   const rotate = () => cropperRef.current?.rotate(90);
 
+  const selectRatio = (value: number | null) => {
+    ratioRef.current = value;
+    setCurrentRatio(value);
+    cropperRef.current?.setAspectRatio(value ?? NaN);
+  };
+
   const handleConfirm = () => {
     const cropper = cropperRef.current;
     if (!cropper || processing) return;
 
     setProcessing(true);
     try {
+      const ratio = ratioRef.current;
+      const cropOptions =
+        ratio === null
+          ? { maxWidth: 1920, maxHeight: 1920 }
+          : outputWidth
+            ? { width: outputWidth, height: Math.round(outputWidth / ratio) }
+            : {};
       const canvas = cropper.getCroppedCanvas({
-        width: outputWidth,
-        height: outputHeight,
+        ...cropOptions,
         imageSmoothingQuality: 'high',
       });
       canvas.toBlob((blob) => {
@@ -190,6 +222,28 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
             )}
             {circular && <div className="crop-modal-mask absolute inset-0 pointer-events-none" />}
           </div>
+
+          {ratioOptions && ratioOptions.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {ratioOptions.map((opt) => {
+                const active = currentRatio === opt.value;
+                return (
+                  <button
+                    key={opt.label}
+                    type="button"
+                    onClick={() => selectRatio(opt.value)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                      active
+                        ? 'bg-teal-600 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="flex items-center justify-center gap-2 sm:gap-3">
             <button

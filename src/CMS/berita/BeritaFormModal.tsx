@@ -1,6 +1,7 @@
 import React from 'react';
 import { getImageUrl } from '../../config/api';
 import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
+import { CROP_RATIO_OPTIONS } from '../components/ImageCropModal';
 
 interface BeritaFormModalProps {
   showModal: boolean;
@@ -117,7 +118,7 @@ export const BeritaFormModal: React.FC<BeritaFormModalProps> = ({
           <div>
             <ImageUploadField
               label="Foto Utama Berita"
-              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis rasio 4:3. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
               currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
               currentOriginalImage={
                 currentOriginalFoto
@@ -130,6 +131,7 @@ export const BeritaFormModal: React.FC<BeritaFormModalProps> = ({
               previewShape="rounded"
               aspectRatio={4 / 3}
               outputWidth={1024}
+              ratioOptions={CROP_RATIO_OPTIONS}
               onFileChange={setFotoSelection}
             />
             <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>

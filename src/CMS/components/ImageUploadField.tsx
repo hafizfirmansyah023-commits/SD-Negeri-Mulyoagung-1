@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Check, Crop, X } from 'lucide-react';
 import { validateImageFile } from '../utils/fileValidation';
-import { ImageCropModal } from './ImageCropModal';
+import { ImageCropModal, type CropRatioOption } from './ImageCropModal';
 
 export interface ImageUploadPayload {
   original: File | null;
@@ -19,6 +19,7 @@ interface ImageUploadFieldProps {
   outputWidth?: number;
   outputType?: string;
   previewShape?: 'circle' | 'rounded';
+  ratioOptions?: CropRatioOption[];
 }
 
 interface SelectedImage {
@@ -38,6 +39,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
   outputWidth = 512,
   outputType = 'image/png',
   previewShape = 'circle',
+  ratioOptions,
 }) => {
   const [selected, setSelected] = useState<SelectedImage | null>(null);
   const [cropOpen, setCropOpen] = useState(false);
@@ -198,6 +200,7 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
         outputWidth={outputWidth}
         outputHeight={Math.round(outputWidth / aspectRatio)}
         outputType={outputType}
+        ratioOptions={ratioOptions}
         onCancel={closeCrop}
         onConfirm={handleCropConfirm}
       />

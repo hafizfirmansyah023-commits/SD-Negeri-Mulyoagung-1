@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Crop, Globe, Link, Eye, Calendar, Clock, Sparkles } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { validateImageFile } from './utils/fileValidation';
-import { ImageCropModal } from './components/ImageCropModal';
+import { ImageCropModal, CROP_RATIO_OPTIONS } from './components/ImageCropModal';
 
 const API_BASE = getApiBaseUrl();
 
@@ -575,6 +575,7 @@ export default function PengumumanCrud() {
         title="Potong Foto Brosur / Poster"
         outputWidth={800}
         outputHeight={800}
+        ratioOptions={CROP_RATIO_OPTIONS}
         onCancel={handleCropCancel}
         onConfirm={handleCropConfirm}
       />
