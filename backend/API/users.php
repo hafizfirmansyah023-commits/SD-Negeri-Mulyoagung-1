@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'users');
 
 $upload_dir = '../uploads/profile/';
 if (!file_exists($upload_dir)) {
@@ -12,8 +15,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     try {
-        $stmt = $conn->query("SELECT id, username, role, nama_penanggung_jawab, foto FROM users ORDER BY id DESC");
+        $stmt = $conn->query("SELECT id, username, role, nama_penanggung_jawab, foto, foto_crop FROM users ORDER BY id DESC");
         $users = $stmt->fetchAll();
+        foto_map_rows($users);
         echo json_encode(["status" => "success", "data" => $users]);
     } catch (PDOException $e) {
         http_response_code(500);
@@ -45,18 +49,12 @@ elseif ($method === 'POST') {
         }
 
         // Handle photo upload
-        $foto_path = '';
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $file_name = time() . '_' . basename($_FILES['foto']['name']);
-            if (move_uploaded_file($_FILES['foto']['tmp_name'], $upload_dir . $file_name)) {
-                $foto_path = 'backend/uploads/profile/' . $file_name;
-            }
-        }
+        [$foto_path, $foto_crop_path] = foto_handle_create($upload_dir, 'backend/uploads/profile/');
 
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         try {
-            $stmt = $conn->prepare("INSERT INTO users (username, password, role, nama_penanggung_jawab, foto) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([$username, $hashed_password, $role, $nama, $foto_path]);
+            $stmt = $conn->prepare("INSERT INTO users (username, password, role, nama_penanggung_jawab, foto, foto_crop) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$username, $hashed_password, $role, $nama, $foto_path, $foto_crop_path]);
             echo json_encode(["status" => "success", "message" => "User berhasil ditambahkan."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -77,7 +75,7 @@ elseif ($method === 'POST') {
         }
 
         // Check if username unique to others
-        $stmt = $conn->prepare("SELECT id, password, foto, role FROM users WHERE id = ?");
+        $stmt = $conn->prepare("SELECT id, password, foto, foto_crop, role FROM users WHERE id = ?");
         $stmt->execute([$id]);
         $existing_user = $stmt->fetch();
         if (!$existing_user) {
@@ -95,29 +93,21 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $foto_path = $existing_user['foto'];
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            if (!empty($foto_path) && file_exists('../' . str_replace('backend/', '', $foto_path))) {
-                @unlink('../' . str_replace('backend/', '', $foto_path));
-            }
-            $file_name = time() . '_' . basename($_FILES['foto']['name']);
-            if (move_uploaded_file($_FILES['foto']['tmp_name'], $upload_dir . $file_name)) {
-                $foto_path = 'backend/uploads/profile/' . $file_name;
-            }
-        }
+        [$foto_path, $foto_crop_path] = foto_handle_update($upload_dir, 'backend/uploads/profile/', $existing_user['foto'], $existing_user['foto_crop'] ?? '');
 
         $final_role = empty($role) ? $existing_user['role'] : $role;
         
         try {
             if (!empty($password)) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ?, nama_penanggung_jawab = ?, role = ?, foto = ? WHERE id = ?");
-                $stmt->execute([$username, $hashed_password, $nama, $final_role, $foto_path, $id]);
+                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ?, nama_penanggung_jawab = ?, role = ?, foto = ?, foto_crop = ? WHERE id = ?");
+                $stmt->execute([$username, $hashed_password, $nama, $final_role, $foto_path, $foto_crop_path, $id]);
             } else {
-                $stmt = $conn->prepare("UPDATE users SET username = ?, nama_penanggung_jawab = ?, role = ?, foto = ? WHERE id = ?");
-                $stmt->execute([$username, $nama, $final_role, $foto_path, $id]);
+                $stmt = $conn->prepare("UPDATE users SET username = ?, nama_penanggung_jawab = ?, role = ?, foto = ?, foto_crop = ? WHERE id = ?");
+                $stmt->execute([$username, $nama, $final_role, $foto_path, $foto_crop_path, $id]);
             }
 
+            $foto_tampil = !empty($foto_crop_path) ? $foto_crop_path : $foto_path;
             echo json_encode([
                 "status" => "success",
                 "message" => "Profil berhasil diperbarui.",
@@ -126,7 +116,8 @@ elseif ($method === 'POST') {
                     "username" => $username,
                     "role" => $final_role,
                     "nama_penanggung_jawab" => $nama,
-                    "foto" => $foto_path
+                    "foto" => $foto_tampil,
+                    "foto_original" => $foto_path
                 ]
             ]);
         } catch (PDOException $e) {
@@ -144,14 +135,12 @@ elseif ($method === 'POST') {
 
         try {
             // Delete profile photo
-            $stmt = $conn->prepare("SELECT foto FROM users WHERE id = ?");
+            $stmt = $conn->prepare("SELECT foto, foto_crop FROM users WHERE id = ?");
             $stmt->execute([$id]);
             $user = $stmt->fetch();
-            if ($user && !empty($user['foto'])) {
-                $relative_photo = '../' . str_replace('backend/', '', $user['foto']);
-                if (file_exists($relative_photo)) {
-                    @unlink($relative_photo);
-                }
+            if ($user) {
+                foto_unlink($user['foto']);
+                foto_unlink($user['foto_crop'] ?? '');
             }
 
             $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");

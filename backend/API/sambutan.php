@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'sambutan_kepsek');
 
 // Ensure upload directory exists
 $upload_dir = '../uploads/sambutan/';
@@ -16,6 +19,7 @@ if ($method === 'GET') {
         $stmt = $conn->query("SELECT * FROM sambutan_kepsek WHERE id = 1");
         $data = $stmt->fetch();
         if ($data) {
+            foto_map_row($data);
             echo json_encode(["status" => "success", "data" => $data]);
         } else {
             // Fallback if empty database
@@ -37,34 +41,29 @@ elseif ($method === 'POST') {
     }
 
     // Fetch existing record to check for old photo
-    $stmt = $conn->query("SELECT foto FROM sambutan_kepsek WHERE id = 1");
+    $stmt = $conn->query("SELECT foto, foto_crop FROM sambutan_kepsek WHERE id = 1");
     $existing = $stmt->fetch();
     $foto_path = $existing ? $existing['foto'] : '';
+    $foto_crop_path = $existing ? ($existing['foto_crop'] ?? '') : '';
 
     // Handle file upload
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        // Delete old photo if it is a local file (starts with backend/)
-        if (!empty($foto_path) && strpos($foto_path, 'backend/') === 0) {
-            $relative_photo = '../' . str_replace('backend/', '', $foto_path);
-            if (file_exists($relative_photo)) {
-                @unlink($relative_photo);
-            }
-        }
-        $file_tmp = $_FILES['foto']['tmp_name'];
-        $file_name = time() . '_' . basename($_FILES['foto']['name']);
-        $target_file = $upload_dir . $file_name;
-        if (move_uploaded_file($file_tmp, $target_file)) {
-            $foto_path = 'backend/uploads/sambutan/' . $file_name;
-        }
+    if (foto_has_upload('foto_original')) {
+        foto_unlink($foto_path);
+        foto_unlink($foto_crop_path);
+        $foto_path = foto_save_file('foto_original', $upload_dir, 'backend/uploads/sambutan/');
+        $foto_crop_path = foto_save_file('foto', $upload_dir, 'backend/uploads/sambutan/');
+    } elseif (foto_has_upload('foto')) {
+        foto_unlink($foto_crop_path);
+        $foto_crop_path = foto_save_file('foto', $upload_dir, 'backend/uploads/sambutan/');
     }
 
     try {
         if ($existing) {
-            $stmt = $conn->prepare("UPDATE sambutan_kepsek SET nama = ?, sambutan = ?, foto = ? WHERE id = 1");
-            $stmt->execute([$nama, $sambutan, $foto_path]);
+            $stmt = $conn->prepare("UPDATE sambutan_kepsek SET nama = ?, sambutan = ?, foto = ?, foto_crop = ? WHERE id = 1");
+            $stmt->execute([$nama, $sambutan, $foto_path, $foto_crop_path]);
         } else {
-            $stmt = $conn->prepare("INSERT INTO sambutan_kepsek (id, nama, sambutan, foto) VALUES (1, ?, ?, ?)");
-            $stmt->execute([$nama, $sambutan, $foto_path]);
+            $stmt = $conn->prepare("INSERT INTO sambutan_kepsek (id, nama, sambutan, foto, foto_crop) VALUES (1, ?, ?, ?, ?)");
+            $stmt->execute([$nama, $sambutan, $foto_path, $foto_crop_path]);
         }
         echo json_encode(["status" => "success", "message" => "Sambutan Kepala Sekolah berhasil diperbarui."]);
     } catch (PDOException $e) {

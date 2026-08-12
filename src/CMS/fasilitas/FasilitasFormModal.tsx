@@ -1,5 +1,6 @@
 import React from 'react';
-import { validateImageFile } from '../utils/fileValidation';
+import { getImageUrl } from '../../config/api';
+import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 
 interface FasilitasFormModalProps {
   showModal: boolean;
@@ -8,9 +9,11 @@ interface FasilitasFormModalProps {
   setJudul: (val: string) => void;
   deskripsi: string;
   setDeskripsi: (val: string) => void;
+  currentFoto?: string;
+  currentOriginalFoto?: string;
   fotoUrl: string;
   setFotoUrl: (val: string) => void;
-  setFotoFile: (file: File | null) => void;
+  setFotoSelection: (payload: ImageUploadPayload) => void;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
 }
@@ -22,9 +25,11 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
   setJudul,
   deskripsi,
   setDeskripsi,
+  currentFoto,
+  currentOriginalFoto,
   fotoUrl,
   setFotoUrl,
-  setFotoFile,
+  setFotoSelection,
   onClose,
   onSubmit,
 }) => {
@@ -73,17 +78,23 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Unggah Foto Fasilitas</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = validateImageFile(e.target.files?.[0] || null, e.target);
-                setFotoFile(file);
-              }}
-              className="w-full text-xs sm:text-sm text-slate-600 border border-slate-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+            <ImageUploadField
+              label="Unggah Foto Fasilitas"
+              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis rasio 4:3. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+              currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
+              currentOriginalImage={
+                currentOriginalFoto
+                  ? getImageUrl(currentOriginalFoto)
+                  : currentFoto
+                    ? getImageUrl(currentFoto)
+                    : undefined
+              }
+              circular={false}
+              previewShape="rounded"
+              aspectRatio={4 / 3}
+              outputWidth={1024}
+              onFileChange={setFotoSelection}
             />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
           </div>
 
           <div>
