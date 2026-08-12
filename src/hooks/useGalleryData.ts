@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { GALLERY_ITEMS } from '../data/schoolData';
 import { GalleryItem } from '../types';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
-import { DEFAULT_GALLERY_IMAGE, mapApiGalleryCategory } from '../utils/galleryHelpers';
+import { DEFAULT_GALLERY_IMAGE } from '../utils/galleryHelpers';
 
 /**
  * Mengambil data galeri dari backend (galeri.php).
@@ -29,7 +29,7 @@ export const useGalleryData = (): GalleryItem[] => {
           const mapped: GalleryItem[] = result.data.map((item: any) => ({
             id: item.id.toString(),
             title: item.judul,
-            category: mapApiGalleryCategory(item.kategori) as any,
+            category: item.kategori,
             date: item.tanggal,
             image: item.foto ? getImageUrl(item.foto) : DEFAULT_GALLERY_IMAGE,
             description: item.deskripsi,
