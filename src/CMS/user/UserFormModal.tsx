@@ -1,5 +1,5 @@
 import React from 'react';
-import { validateImageFile } from '../utils/fileValidation';
+import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 
 interface UserFormModalProps {
   showAddModal: boolean;
@@ -11,7 +11,7 @@ interface UserFormModalProps {
   setNewPassword: (val: string) => void;
   newRole: 'ADMIN' | 'TIM';
   setNewRole: (val: 'ADMIN' | 'TIM') => void;
-  setNewFotoFile: (file: File | null) => void;
+  setNewFotoSelection: (payload: ImageUploadPayload) => void;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
 }
@@ -26,7 +26,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
   setNewPassword,
   newRole,
   setNewRole,
-  setNewFotoFile,
+  setNewFotoSelection,
   onClose,
   onSubmit,
 }) => {
@@ -95,15 +95,13 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1">Foto Profil (Opsional)</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = validateImageFile(e.target.files?.[0] || null, e.target);
-                setNewFotoFile(file);
-              }}
-              className="w-full text-slate-600 text-xs sm:text-sm border border-slate-200 rounded-xl file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+            <ImageUploadField
+              label="Foto Profil (Opsional)"
+              hint="Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis 1:1."
+              circular
+              previewShape="circle"
+              outputWidth={512}
+              onFileChange={setNewFotoSelection}
             />
             <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
           </div>

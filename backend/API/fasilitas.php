@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'fasilitas');
 
 // Ensure upload directory exists
 $upload_dir = '../uploads/fasilitas/';
@@ -16,6 +19,7 @@ try {
       `judul` varchar(255) NOT NULL,
       `deskripsi` text NOT NULL,
       `foto` varchar(255) DEFAULT NULL,
+      `foto_crop` varchar(255) DEFAULT NULL,
       PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;");
 
@@ -47,6 +51,7 @@ if ($method === 'GET') {
     try {
         $stmt = $conn->query("SELECT * FROM fasilitas ORDER BY id DESC");
         $data = $stmt->fetchAll();
+        foto_map_rows($data);
         echo json_encode(["status" => "success", "data" => $data]);
     } catch (PDOException $e) {
         http_response_code(500);
@@ -66,21 +71,21 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $foto_path = '';
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $file_tmp = $_FILES['foto']['tmp_name'];
-            $file_name = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['foto']['name']));
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $foto_path = 'backend/uploads/fasilitas/' . $file_name;
-            }
-        } elseif (isset($_POST['foto_url']) && !empty($_POST['foto_url'])) {
+        $has_original = isset($_FILES['foto_original']) && $_FILES['foto_original']['error'] === UPLOAD_ERR_OK;
+        $has_crop = isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK;
+        if ($has_original || $has_crop) {
+            [$foto_path, $foto_crop_path] = foto_handle_create($upload_dir, 'backend/uploads/fasilitas/');
+        } elseif (isset($_POST['foto_url']) && !empty(trim($_POST['foto_url']))) {
             $foto_path = trim($_POST['foto_url']);
+            $foto_crop_path = '';
+        } else {
+            $foto_path = '';
+            $foto_crop_path = '';
         }
 
         try {
-            $stmt = $conn->prepare("INSERT INTO fasilitas (judul, deskripsi, foto) VALUES (?, ?, ?)");
-            $stmt->execute([$judul, $deskripsi, $foto_path]);
+            $stmt = $conn->prepare("INSERT INTO fasilitas (judul, deskripsi, foto, foto_crop) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$judul, $deskripsi, $foto_path, $foto_crop_path]);
             echo json_encode(["status" => "success", "message" => "Fasilitas berhasil ditambahkan."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -98,7 +103,7 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $stmt = $conn->prepare("SELECT foto FROM fasilitas WHERE id = ?");
+        $stmt = $conn->prepare("SELECT foto, foto_crop FROM fasilitas WHERE id = ?");
         $stmt->execute([$id]);
         $fac = $stmt->fetch();
         if (!$fac) {
@@ -107,27 +112,23 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $foto_path = $fac['foto'];
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            if (!empty($foto_path) && strpos($foto_path, 'backend/uploads/') === 0) {
-                $old_file = '../' . str_replace('backend/', '', $foto_path);
-                if (file_exists($old_file)) {
-                    @unlink($old_file);
-                }
-            }
-            $file_tmp = $_FILES['foto']['tmp_name'];
-            $file_name = time() . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES['foto']['name']));
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $foto_path = 'backend/uploads/fasilitas/' . $file_name;
-            }
-        } elseif (isset($_POST['foto_url']) && !empty($_POST['foto_url'])) {
+        $has_original = isset($_FILES['foto_original']) && $_FILES['foto_original']['error'] === UPLOAD_ERR_OK;
+        $has_crop = isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK;
+        if (isset($_POST['foto_url']) && !empty(trim($_POST['foto_url'])) && !$has_original && !$has_crop) {
             $foto_path = trim($_POST['foto_url']);
+            $foto_crop_path = '';
+            if (strpos($fac['foto'], 'backend/uploads/') === 0) foto_unlink($fac['foto']);
+            if (strpos($fac['foto_crop'] ?? '', 'backend/uploads/') === 0) foto_unlink($fac['foto_crop']);
+        } elseif ($has_original || $has_crop) {
+            [$foto_path, $foto_crop_path] = foto_handle_update($upload_dir, 'backend/uploads/fasilitas/', $fac['foto'], $fac['foto_crop'] ?? '');
+        } else {
+            $foto_path = $fac['foto'];
+            $foto_crop_path = $fac['foto_crop'] ?? '';
         }
 
         try {
-            $stmt = $conn->prepare("UPDATE fasilitas SET judul = ?, deskripsi = ?, foto = ? WHERE id = ?");
-            $stmt->execute([$judul, $deskripsi, $foto_path, $id]);
+            $stmt = $conn->prepare("UPDATE fasilitas SET judul = ?, deskripsi = ?, foto = ?, foto_crop = ? WHERE id = ?");
+            $stmt->execute([$judul, $deskripsi, $foto_path, $foto_crop_path, $id]);
             echo json_encode(["status" => "success", "message" => "Fasilitas berhasil diperbarui."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -142,13 +143,15 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $stmt = $conn->prepare("SELECT foto FROM fasilitas WHERE id = ?");
+        $stmt = $conn->prepare("SELECT foto, foto_crop FROM fasilitas WHERE id = ?");
         $stmt->execute([$id]);
         $fac = $stmt->fetch();
-        if ($fac && !empty($fac['foto']) && strpos($fac['foto'], 'backend/uploads/') === 0) {
-            $old_file = '../' . str_replace('backend/', '', $fac['foto']);
-            if (file_exists($old_file)) {
-                @unlink($old_file);
+        if ($fac) {
+            if (!empty($fac['foto']) && strpos($fac['foto'], 'backend/uploads/') === 0) {
+                foto_unlink($fac['foto']);
+            }
+            if (!empty($fac['foto_crop']) && strpos($fac['foto_crop'], 'backend/uploads/') === 0) {
+                foto_unlink($fac['foto_crop']);
             }
         }
 

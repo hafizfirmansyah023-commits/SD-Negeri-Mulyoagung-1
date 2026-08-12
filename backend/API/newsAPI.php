@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'berita');
 
 $upload_dir = '../uploads/berita/';
 if (!file_exists($upload_dir)) {
@@ -22,6 +25,7 @@ if ($method === 'GET') {
             $stmt = $conn->query("SELECT b.*, u.nama_penanggung_jawab as uploader FROM berita b LEFT JOIN users u ON b.uploaded_by = u.id WHERE b.status_verifikasi = 'Verified' ORDER BY b.tanggal DESC, b.id DESC");
         }
         $articles = $stmt->fetchAll();
+        foto_map_rows($articles);
         echo json_encode(["status" => "success", "data" => $articles]);
     } catch (PDOException $e) {
         http_response_code(500);
@@ -46,31 +50,22 @@ elseif ($method === 'POST') {
         }
 
         // Handle file upload
-        if (!isset($_FILES['foto']) || $_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
+        $has_original = isset($_FILES['foto_original']) && $_FILES['foto_original']['error'] === UPLOAD_ERR_OK;
+        $has_crop = isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK;
+        if (!$has_original && !$has_crop) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "File foto wajib diunggah."]);
             exit();
         }
 
-        $file_tmp = $_FILES['foto']['tmp_name'];
-        $file_name = time() . '_' . basename($_FILES['foto']['name']);
-        $target_file = $upload_dir . $file_name;
-        $foto_path = '';
-
-        if (move_uploaded_file($file_tmp, $target_file)) {
-            $foto_path = 'backend/uploads/berita/' . $file_name;
-        } else {
-            http_response_code(500);
-            echo json_encode(["status" => "error", "message" => "Gagal mengunggah foto."]);
-            exit();
-        }
+        [$foto_path, $foto_crop_path] = foto_handle_create($upload_dir, 'backend/uploads/berita/');
 
         // Verification status based on role
         $status_verifikasi = ($role === 'ADMIN') ? 'Verified' : 'Pending';
 
         try {
-            $stmt = $conn->prepare("INSERT INTO berita (judul, isi, foto, kategori, tanggal, status_verifikasi, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$judul, $isi, $foto_path, $kategori, $tanggal, $status_verifikasi, $uploaded_by]);
+            $stmt = $conn->prepare("INSERT INTO berita (judul, isi, foto, foto_crop, kategori, tanggal, status_verifikasi, uploaded_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$judul, $isi, $foto_path, $foto_crop_path, $kategori, $tanggal, $status_verifikasi, $uploaded_by]);
             echo json_encode(["status" => "success", "message" => "Berita berhasil ditambahkan" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -91,7 +86,7 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $stmt = $conn->prepare("SELECT foto, status_verifikasi FROM berita WHERE id = ?");
+        $stmt = $conn->prepare("SELECT foto, foto_crop, status_verifikasi FROM berita WHERE id = ?");
         $stmt->execute([$id]);
         $article = $stmt->fetch();
         if (!$article) {
@@ -100,26 +95,14 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $foto_path = $article['foto'];
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            // Delete old photo
-            if (!empty($foto_path) && file_exists('../' . str_replace('backend/', '', $foto_path))) {
-                @unlink('../' . str_replace('backend/', '', $foto_path));
-            }
-            $file_tmp = $_FILES['foto']['tmp_name'];
-            $file_name = time() . '_' . basename($_FILES['foto']['name']);
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $foto_path = 'backend/uploads/berita/' . $file_name;
-            }
-        }
+        [$foto_path, $foto_crop_path] = foto_handle_update($upload_dir, 'backend/uploads/berita/', $article['foto'], $article['foto_crop'] ?? '');
 
         // If updated by TIM, revert back to Pending verification
         $status_verifikasi = ($role === 'ADMIN') ? $article['status_verifikasi'] : 'Pending';
 
         try {
-            $stmt = $conn->prepare("UPDATE berita SET judul = ?, isi = ?, foto = ?, kategori = ?, tanggal = ?, status_verifikasi = ? WHERE id = ?");
-            $stmt->execute([$judul, $isi, $foto_path, $kategori, $tanggal, $status_verifikasi, $id]);
+            $stmt = $conn->prepare("UPDATE berita SET judul = ?, isi = ?, foto = ?, foto_crop = ?, kategori = ?, tanggal = ?, status_verifikasi = ? WHERE id = ?");
+            $stmt->execute([$judul, $isi, $foto_path, $foto_crop_path, $kategori, $tanggal, $status_verifikasi, $id]);
             echo json_encode(["status" => "success", "message" => "Berita berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -136,14 +119,12 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("SELECT foto FROM berita WHERE id = ?");
+            $stmt = $conn->prepare("SELECT foto, foto_crop FROM berita WHERE id = ?");
             $stmt->execute([$id]);
             $article = $stmt->fetch();
-            if ($article && !empty($article['foto'])) {
-                $relative_photo = '../' . str_replace('backend/', '', $article['foto']);
-                if (file_exists($relative_photo)) {
-                    @unlink($relative_photo);
-                }
+            if ($article) {
+                foto_unlink($article['foto']);
+                foto_unlink($article['foto_crop'] ?? '');
             }
 
             $stmt = $conn->prepare("DELETE FROM berita WHERE id = ?");

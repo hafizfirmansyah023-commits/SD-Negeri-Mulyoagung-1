@@ -8,6 +8,7 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { SelfProfileCard } from './user/SelfProfileCard';
 import { UserTable, UserData } from './user/UserTable';
 import { UserFormModal } from './user/UserFormModal';
+import { ImageUploadPayload } from './components/ImageUploadField';
 
 interface UserCrudProps {
   currentUser: UserSession;
@@ -26,7 +27,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [username, setUsername] = useState(currentUser.username);
   const [nama, setNama] = useState(currentUser.nama_penanggung_jawab);
   const [password, setPassword] = useState('');
-  const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
 
   // Admin Create User form states
   const [showAddModal, setShowAddModal] = useState(false);
@@ -34,7 +35,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [newPassword, setNewPassword] = useState('');
   const [newNama, setNewNama] = useState('');
   const [newRole, setNewRole] = useState<'ADMIN' | 'TIM'>('TIM');
-  const [newFotoFile, setNewFotoFile] = useState<File | null>(null);
+  const [newFotoSelection, setNewFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
 
   // Filter Hook
   const {
@@ -86,8 +87,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     if (password) {
       formData.append('password', password);
     }
-    if (fotoFile) {
-      formData.append('foto', fotoFile);
+    if (fotoSelection.original) {
+      formData.append('foto_original', fotoSelection.original);
+    }
+    if (fotoSelection.cropped) {
+      formData.append('foto', fotoSelection.cropped);
     }
 
     try {
@@ -99,7 +103,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
       if (result.status === 'success') {
         setSuccess('Profil Anda berhasil diperbarui.');
         setPassword('');
-        setFotoFile(null);
+        setFotoSelection({ original: null, cropped: null });
         onUpdateCurrentUser(result.user);
         fetchUsers();
       } else {
@@ -121,8 +125,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     formData.append('password', newPassword);
     formData.append('nama_penanggung_jawab', newNama);
     formData.append('role', newRole);
-    if (newFotoFile) {
-      formData.append('foto', newFotoFile);
+    if (newFotoSelection.original) {
+      formData.append('foto_original', newFotoSelection.original);
+    }
+    if (newFotoSelection.cropped) {
+      formData.append('foto', newFotoSelection.cropped);
     }
 
     try {
@@ -138,7 +145,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
         setNewPassword('');
         setNewNama('');
         setNewRole('TIM');
-        setNewFotoFile(null);
+        setNewFotoSelection({ original: null, cropped: null });
         fetchUsers();
       } else {
         setError(result.message || 'Gagal menambah pengguna.');
@@ -209,7 +216,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
           setNama={setNama}
           password={password}
           setPassword={setPassword}
-          setFotoFile={setFotoFile}
+          setFotoSelection={setFotoSelection}
           onSubmit={handleUpdateSelf}
         />
 
@@ -269,7 +276,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
         setNewPassword={setNewPassword}
         newRole={newRole}
         setNewRole={setNewRole}
-        setNewFotoFile={setNewFotoFile}
+        setNewFotoSelection={setNewFotoSelection}
         onClose={() => setShowAddModal(false)}
         onSubmit={handleAddUser}
       />

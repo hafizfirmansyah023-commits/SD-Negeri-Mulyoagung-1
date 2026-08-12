@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'users');
 
 // Helper to get JSON input
 $input = json_decode(file_get_contents('php://input'), true);
@@ -27,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
+            $foto_tampil = !empty($user['foto_crop']) ? $user['foto_crop'] : $user['foto'];
             // Success login
             echo json_encode([
                 "status" => "success",
@@ -36,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "username" => $user['username'],
                     "role" => $user['role'],
                     "nama_penanggung_jawab" => $user['nama_penanggung_jawab'],
-                    "foto" => $user['foto']
+                    "foto" => $foto_tampil,
+                    "foto_original" => $user['foto']
                 ]
             ]);
         } else {

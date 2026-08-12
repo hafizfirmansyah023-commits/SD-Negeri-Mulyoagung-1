@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Globe, Link, Eye, Calendar, Clock, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Crop, Globe, Link, Eye, Calendar, Clock, Sparkles } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { validateImageFile } from './utils/fileValidation';
+import { ImageCropModal } from './components/ImageCropModal';
 
 const API_BASE = getApiBaseUrl();
 
@@ -40,9 +41,17 @@ export default function PengumumanCrud() {
   
   const [showPhoto, setShowPhoto] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
+  const [photoOriginalUrl, setPhotoOriginalUrl] = useState('');
   const [photoFile, setFotoFile] = useState<File | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [photoLink, setPhotoLink] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [cropName, setCropName] = useState('foto');
+  const cropSrcRef = useRef<string | null>(null);
+  cropSrcRef.current = cropSrc;
 
   // Batas Tanggal & Masa Aktif
   const [tanggalMulai, setTanggalMulai] = useState(getTodayStr());
@@ -71,6 +80,7 @@ export default function PengumumanCrud() {
         setButtonLink(result.data.button_link || '');
         setShowPhoto(parseInt(result.data.show_photo) === 1);
         setPhotoUrl(result.data.foto || '');
+        setPhotoOriginalUrl(result.data.foto_original || '');
         setPhotoLink(result.data.photo_link || '');
 
         const start = result.data.tanggal_mulai || getTodayStr();
@@ -122,15 +132,40 @@ export default function PengumumanCrud() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = validateImageFile(e.target.files[0], e.target);
-      if (file) {
-        setFotoFile(file);
-        setPreviewUrl(URL.createObjectURL(file));
-      } else {
-        setFotoFile(null);
-      }
+    const file = validateImageFile(e.target.files?.[0] || null, e.target);
+    if (!file) return;
+    e.target.value = '';
+    if (cropSrcRef.current) URL.revokeObjectURL(cropSrcRef.current);
+    setOriginalFile(file);
+    setCropName(file.name);
+    setCropSrc(URL.createObjectURL(file));
+    setCropOpen(true);
+  };
+
+  const handleReCrop = () => {
+    const source = photoOriginalUrl || photoUrl;
+    if (!source) return;
+    if (cropSrcRef.current) URL.revokeObjectURL(cropSrcRef.current);
+    setCropName(source.split('/').pop() || 'foto');
+    setCropSrc(getImageUrl(source));
+    setCropOpen(true);
+  };
+
+  const handleCropCancel = () => {
+    setCropOpen(false);
+    if (cropSrcRef.current) {
+      URL.revokeObjectURL(cropSrcRef.current);
+      setCropSrc(null);
     }
+  };
+
+  const handleCropConfirm = (blob: Blob) => {
+    const base = (cropName.replace(/\.[^.]+$/, '').trim() || 'foto').replace(/[^\w\- ]/g, '');
+    const file = new File([blob], `${base || 'foto'}.png`, { type: 'image/png' });
+    setFotoFile(file);
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(URL.createObjectURL(file));
+    handleCropCancel();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -152,6 +187,9 @@ export default function PengumumanCrud() {
     formData.append('photo_link', photoLink);
     formData.append('tanggal_mulai', tanggalMulai);
     formData.append('tanggal_selesai', tanggalSelesai);
+    if (originalFile) {
+      formData.append('foto_original', originalFile);
+    }
     if (photoFile) {
       formData.append('foto', photoFile);
     }
@@ -165,6 +203,7 @@ export default function PengumumanCrud() {
       if (result.status === 'success') {
         setSuccess(result.message || 'Pengumuman berhasil diperbarui.');
         setFotoFile(null);
+        setOriginalFile(null);
         setPreviewUrl(null);
         fetchPengumuman();
       } else {
@@ -496,7 +535,17 @@ export default function PengumumanCrud() {
                           className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600"
                         />
                       </div>
+
                       <p className="text-slate-400 text-[11px]">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
+                      {photoUrl && (
+                        <button
+                          type="button"
+                          onClick={handleReCrop}
+                          className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-teal-600 hover:text-teal-700 transition-colors cursor-pointer"
+                        >
+                          <Crop size={13} /> Potong Ulang Foto Saat Ini
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -517,6 +566,18 @@ export default function PengumumanCrud() {
           </div>
         </form>
       )}
+
+      <ImageCropModal
+        open={cropOpen}
+        imageSrc={cropSrc}
+        aspectRatio={1}
+        circular={false}
+        title="Potong Foto Brosur / Poster"
+        outputWidth={800}
+        outputHeight={800}
+        onCancel={handleCropCancel}
+        onConfirm={handleCropConfirm}
+      />
     </div>
   );
 }

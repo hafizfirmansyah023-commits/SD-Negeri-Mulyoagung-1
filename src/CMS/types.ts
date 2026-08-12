@@ -4,6 +4,7 @@ export interface UserSession {
     role: 'ADMIN' | 'TIM';
     nama_penanggung_jawab: string;
     foto: string;
+    foto_original?: string;
 }
 
 

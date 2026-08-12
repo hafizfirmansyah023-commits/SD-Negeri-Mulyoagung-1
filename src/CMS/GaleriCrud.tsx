@@ -8,6 +8,7 @@ import CmsFilterBar from './components/CmsFilterBar';
 import { getUniqueValues } from './utils/cmsHelpers';
 import { GaleriCard } from './galeri/GaleriCard';
 import { GaleriFormModal } from './galeri/GaleriFormModal';
+import { ImageUploadPayload } from './components/ImageUploadField';
 
 interface GaleriCrudProps {
   currentUser: UserSession;
@@ -34,7 +35,9 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
   const [deskripsi, setDeskripsi] = useState('');
   const [kategori, setKategori] = useState('Kegiatan Sekolah');
   const [tanggal, setTanggal] = useState(new Date().toISOString().split('T')[0]);
-  const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
+  const [currentFoto, setCurrentFoto] = useState('');
+  const [currentOriginalFoto, setCurrentOriginalFoto] = useState('');
 
   // Filter Hook
   const {
@@ -59,7 +62,9 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     setDeskripsi('');
     setKategori('Kegiatan Sekolah');
     setTanggal(new Date().toISOString().split('T')[0]);
-    setFotoFile(null);
+    setFotoSelection({ original: null, cropped: null });
+    setCurrentFoto('');
+    setCurrentOriginalFoto('');
     setEditId(null);
     setError('');
   };
@@ -76,7 +81,9 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     setDeskripsi(item.deskripsi);
     setKategori(item.kategori);
     setTanggal(item.tanggal);
-    setFotoFile(null);
+    setFotoSelection({ original: null, cropped: null });
+    setCurrentFoto(item.foto || '');
+    setCurrentOriginalFoto(item.foto_original || '');
     setShowModal(true);
   };
 
@@ -96,8 +103,11 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     formData.append('tanggal', tanggal);
     formData.append('uploaded_by', currentUser.id.toString());
     formData.append('role', currentUser.role);
-    if (fotoFile) {
-      formData.append('foto', fotoFile);
+    if (fotoSelection.original) {
+      formData.append('foto_original', fotoSelection.original);
+    }
+    if (fotoSelection.cropped) {
+      formData.append('foto', fotoSelection.cropped);
     }
 
     try {
@@ -217,6 +227,8 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
       <GaleriFormModal
         showModal={showModal}
         editId={editId}
+        currentFoto={currentFoto}
+        currentOriginalFoto={currentOriginalFoto}
         judul={judul}
         setJudul={setJudul}
         deskripsi={deskripsi}
@@ -225,7 +237,7 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
         setKategori={setKategori}
         tanggal={tanggal}
         setTanggal={setTanggal}
-        setFotoFile={setFotoFile}
+        setFotoSelection={setFotoSelection}
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}

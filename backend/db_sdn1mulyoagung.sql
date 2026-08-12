@@ -32,6 +32,7 @@ CREATE TABLE `berita` (
   `judul` varchar(255) NOT NULL,
   `isi` text NOT NULL,
   `foto` varchar(255) NOT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL,
   `kategori` varchar(100) NOT NULL,
   `tanggal` date NOT NULL,
   `status_verifikasi` enum('Pending','Verified','Rejected') NOT NULL DEFAULT 'Pending',
@@ -55,7 +56,8 @@ CREATE TABLE `fasilitas` (
   `id` int(11) NOT NULL,
   `judul` varchar(255) NOT NULL,
   `deskripsi` text NOT NULL,
-  `foto` varchar(255) DEFAULT NULL
+  `foto` varchar(255) DEFAULT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -80,6 +82,7 @@ CREATE TABLE `galeri` (
   `judul` varchar(255) NOT NULL,
   `deskripsi` text NOT NULL,
   `foto` varchar(255) NOT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL,
   `kategori` varchar(100) NOT NULL,
   `tanggal` date NOT NULL,
   `status_verifikasi` enum('Pending','Verified','Rejected') NOT NULL DEFAULT 'Pending',
@@ -99,6 +102,7 @@ CREATE TABLE `guru_tendik` (
   `jabatan` varchar(100) NOT NULL,
   `tugas` varchar(255) NOT NULL,
   `foto` varchar(255) DEFAULT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL,
   `riwayat_pendidikan` text NOT NULL,
   `jenis_kelamin` enum('Laki-laki','Perempuan') NOT NULL,
   `status` enum('Aktif','Mutasi','Pensiun','') NOT NULL,
@@ -141,6 +145,7 @@ INSERT INTO `guru_tendik` (`id`, `nama`, `nip`, `jabatan`, `tugas`, `foto`, `riw
 CREATE TABLE `hero_carousel` (
   `id` int(11) NOT NULL,
   `foto` varchar(255) NOT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL,
   `caption` varchar(255) NOT NULL,
   `tag` varchar(100) DEFAULT 'Kegiatan Utama',
   `urutan` int(11) DEFAULT 0,
@@ -199,6 +204,7 @@ CREATE TABLE `pengumuman_penting` (
   `button_link` varchar(255) DEFAULT NULL,
   `show_photo` tinyint(1) NOT NULL DEFAULT 0,
   `foto` varchar(255) DEFAULT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL,
   `photo_link` varchar(255) DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT 1,
   `tanggal_mulai` date DEFAULT NULL,
@@ -222,7 +228,8 @@ CREATE TABLE `sambutan_kepsek` (
   `id` int(11) NOT NULL,
   `nama` varchar(255) NOT NULL,
   `sambutan` text NOT NULL,
-  `foto` varchar(255) DEFAULT NULL
+  `foto` varchar(255) DEFAULT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -266,7 +273,8 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `role` enum('ADMIN','TIM') NOT NULL DEFAULT 'TIM',
   `nama_penanggung_jawab` varchar(255) NOT NULL,
-  `foto` varchar(255) DEFAULT NULL
+  `foto` varchar(255) DEFAULT NULL,
+  `foto_crop` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

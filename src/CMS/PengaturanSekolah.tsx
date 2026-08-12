@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Settings,
   Save,
@@ -21,11 +21,13 @@ import {
   Filter,
   Upload,
   Tag,
-  GripVertical
+  GripVertical,
+  Crop
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { SocialMediaIcon } from '../components/common/SocialMediaIcon';
 import { validateImageFile } from './utils/fileValidation';
+import { ImageCropModal } from './components/ImageCropModal';
 
 const API_BASE = getApiBaseUrl();
 
@@ -39,6 +41,7 @@ export interface MedsosItem {
 export interface HeroCarouselItem {
   id: number;
   foto: string;
+  foto_original?: string;
   caption: string;
   tag: string;
   urutan: number;
@@ -67,7 +70,14 @@ export default function PengaturanSekolah() {
   const [heroTag, setHeroTag] = useState('Kegiatan Utama');
   const [heroUrutan, setHeroUrutan] = useState(0);
   const [heroFile, setHeroFile] = useState<File | null>(null);
+  const [heroOriginalFile, setHeroOriginalFile] = useState<File | null>(null);
   const [heroPreview, setHeroPreview] = useState<string | null>(null);
+
+  const [heroCropOpen, setHeroCropOpen] = useState(false);
+  const [heroCropSrc, setHeroCropSrc] = useState<string | null>(null);
+  const [heroCropName, setHeroCropName] = useState('foto');
+  const heroCropSrcRef = useRef<string | null>(null);
+  heroCropSrcRef.current = heroCropSrc;
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -258,6 +268,7 @@ export default function PengaturanSekolah() {
     setHeroTag('Kegiatan Utama');
     setHeroUrutan(heroSlides.length + 1);
     setHeroFile(null);
+    setHeroOriginalFile(null);
     setHeroPreview(null);
     setHeroModalOpen(true);
   };
@@ -268,8 +279,46 @@ export default function PengaturanSekolah() {
     setHeroTag(item.tag || 'Kegiatan Utama');
     setHeroUrutan(item.urutan || 0);
     setHeroFile(null);
+    setHeroOriginalFile(null);
     setHeroPreview(item.foto ? getImageUrl(item.foto) : null);
     setHeroModalOpen(true);
+  };
+
+  const handleHeroFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = validateImageFile(e.target.files?.[0] || null, e.target);
+    if (!file) return;
+    e.target.value = '';
+    if (heroCropSrcRef.current) URL.revokeObjectURL(heroCropSrcRef.current);
+    setHeroOriginalFile(file);
+    setHeroCropName(file.name);
+    setHeroCropSrc(URL.createObjectURL(file));
+    setHeroCropOpen(true);
+  };
+
+  const handleHeroReCrop = () => {
+    const source = editingHero?.foto_original || editingHero?.foto;
+    if (!source) return;
+    if (heroCropSrcRef.current) URL.revokeObjectURL(heroCropSrcRef.current);
+    setHeroCropName(source.split('/').pop() || 'foto');
+    setHeroCropSrc(getImageUrl(source));
+    setHeroCropOpen(true);
+  };
+
+  const handleHeroCropCancel = () => {
+    setHeroCropOpen(false);
+    if (heroCropSrcRef.current) {
+      URL.revokeObjectURL(heroCropSrcRef.current);
+      setHeroCropSrc(null);
+    }
+  };
+
+  const handleHeroCropConfirm = (blob: Blob) => {
+    const base = (heroCropName.replace(/\.[^.]+$/, '').trim() || 'foto').replace(/[^\w\- ]/g, '');
+    const file = new File([blob], `${base || 'foto'}.png`, { type: 'image/png' });
+    setHeroFile(file);
+    if (heroPreview) URL.revokeObjectURL(heroPreview);
+    setHeroPreview(URL.createObjectURL(file));
+    handleHeroCropCancel();
   };
 
   const handleDeleteHero = async (id: number) => {
@@ -310,6 +359,9 @@ export default function PengaturanSekolah() {
       form.append('caption', heroCaption);
       form.append('tag', heroTag);
       form.append('urutan', heroUrutan.toString());
+      if (heroOriginalFile) {
+        form.append('foto_original', heroOriginalFile);
+      }
       if (heroFile) {
         form.append('foto', heroFile);
       }
@@ -770,18 +822,21 @@ export default function PengaturanSekolah() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => {
-                    const file = validateImageFile(e.target.files?.[0] || null, e.target);
-                    if (file) {
-                      setHeroFile(file);
-                      setHeroPreview(URL.createObjectURL(file));
-                    }
-                  }}
+                  onChange={handleHeroFileChange}
                   className="w-full text-slate-600 text-xs border border-slate-300 rounded-xl file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
                   Format: Gambar (JPG, PNG, WEBP). Maksimal 10MB. Rasio lanskap disarankan.
                 </p>
+                {editingHero && (
+                  <button
+                    type="button"
+                    onClick={handleHeroReCrop}
+                    className="mt-1 inline-flex items-center gap-1.5 text-[11px] font-semibold text-teal-600 hover:text-teal-700 transition-colors cursor-pointer"
+                  >
+                    <Crop size={13} /> Potong Ulang Foto Saat Ini
+                  </button>
+                )}
               </div>
 
               {/* Landscape Image Preview Box */}
@@ -864,6 +919,18 @@ export default function PengaturanSekolah() {
           </div>
         </div>
       )}
+
+      <ImageCropModal
+        open={heroCropOpen}
+        imageSrc={heroCropSrc}
+        aspectRatio={16 / 9}
+        circular={false}
+        title="Potong Foto Carousel Hero"
+        outputWidth={1920}
+        outputHeight={1080}
+        onCancel={handleHeroCropCancel}
+        onConfirm={handleHeroCropConfirm}
+      />
 
       {/* Modal Add / Edit Medsos */}
       {modalOpen && (

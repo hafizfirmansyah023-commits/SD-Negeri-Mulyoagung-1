@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'pengumuman_penting');
 
 // Ensure upload directory exists
 $upload_dir = '../uploads/pengumuman/';
@@ -41,6 +44,7 @@ if ($method === 'GET') {
                 $data['public_active'] = intval($data['is_active']);
             }
 
+            foto_map_row($data);
             echo json_encode(["status" => "success", "data" => $data]);
         } else {
             echo json_encode(["status" => "error", "message" => "Data pengumuman tidak ditemukan."]);
@@ -75,34 +79,29 @@ elseif ($method === 'POST') {
     }
 
     // Fetch existing record to check for old photo
-    $stmt = $conn->query("SELECT foto FROM pengumuman_penting WHERE id = 1");
+    $stmt = $conn->query("SELECT foto, foto_crop FROM pengumuman_penting WHERE id = 1");
     $existing = $stmt->fetch();
     $foto_path = $existing ? $existing['foto'] : '';
+    $foto_crop_path = $existing ? ($existing['foto_crop'] ?? '') : '';
 
     // Handle file upload
-    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-        // Delete old photo if it is a local file (starts with backend/)
-        if (!empty($foto_path) && strpos($foto_path, 'backend/') === 0) {
-            $relative_photo = '../' . str_replace('backend/', '', $foto_path);
-            if (file_exists($relative_photo)) {
-                @unlink($relative_photo);
-            }
-        }
-        $file_tmp = $_FILES['foto']['tmp_name'];
-        $file_name = time() . '_' . basename($_FILES['foto']['name']);
-        $target_file = $upload_dir . $file_name;
-        if (move_uploaded_file($file_tmp, $target_file)) {
-            $foto_path = 'backend/uploads/pengumuman/' . $file_name;
-        }
+    if (foto_has_upload('foto_original')) {
+        foto_unlink($foto_path);
+        foto_unlink($foto_crop_path);
+        $foto_path = foto_save_file('foto_original', $upload_dir, 'backend/uploads/pengumuman/');
+        $foto_crop_path = foto_save_file('foto', $upload_dir, 'backend/uploads/pengumuman/');
+    } elseif (foto_has_upload('foto')) {
+        foto_unlink($foto_crop_path);
+        $foto_crop_path = foto_save_file('foto', $upload_dir, 'backend/uploads/pengumuman/');
     }
 
     try {
         if ($existing) {
-            $stmt = $conn->prepare("UPDATE pengumuman_penting SET judul = ?, isi = ?, running_text = ?, show_popup = ?, show_button = ?, button_text = ?, button_link = ?, show_photo = ?, foto = ?, photo_link = ?, is_active = ?, tanggal_mulai = ?, tanggal_selesai = ? WHERE id = 1");
-            $stmt->execute([$judul, $isi, $running_text, $show_popup, $show_button, $button_text, $button_link, $show_photo, $foto_path, $photo_link, $is_active, $tanggal_mulai, $tanggal_selesai]);
+            $stmt = $conn->prepare("UPDATE pengumuman_penting SET judul = ?, isi = ?, running_text = ?, show_popup = ?, show_button = ?, button_text = ?, button_link = ?, show_photo = ?, foto = ?, foto_crop = ?, photo_link = ?, is_active = ?, tanggal_mulai = ?, tanggal_selesai = ? WHERE id = 1");
+            $stmt->execute([$judul, $isi, $running_text, $show_popup, $show_button, $button_text, $button_link, $show_photo, $foto_path, $foto_crop_path, $photo_link, $is_active, $tanggal_mulai, $tanggal_selesai]);
         } else {
-            $stmt = $conn->prepare("INSERT INTO pengumuman_penting (id, judul, isi, running_text, show_popup, show_button, button_text, button_link, show_photo, foto, photo_link, is_active, tanggal_mulai, tanggal_selesai) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$judul, $isi, $running_text, $show_popup, $show_button, $button_text, $button_link, $show_photo, $foto_path, $photo_link, $is_active, $tanggal_mulai, $tanggal_selesai]);
+            $stmt = $conn->prepare("INSERT INTO pengumuman_penting (id, judul, isi, running_text, show_popup, show_button, button_text, button_link, show_photo, foto, foto_crop, photo_link, is_active, tanggal_mulai, tanggal_selesai) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$judul, $isi, $running_text, $show_popup, $show_button, $button_text, $button_link, $show_photo, $foto_path, $foto_crop_path, $photo_link, $is_active, $tanggal_mulai, $tanggal_selesai]);
         }
         echo json_encode(["status" => "success", "message" => "Pengumuman Penting berhasil diperbarui."]);
     } catch (PDOException $e) {
