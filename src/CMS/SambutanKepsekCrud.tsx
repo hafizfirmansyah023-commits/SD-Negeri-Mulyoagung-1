@@ -154,7 +154,7 @@ export default function SambutanKepsekCrud() {
                 </label>
               </div>
               <p className="text-slate-400 text-xs text-center max-w-xs">
-                Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.
+                Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.
               </p>
             </div>
 

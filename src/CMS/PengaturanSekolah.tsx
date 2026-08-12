@@ -780,7 +780,7 @@ export default function PengaturanSekolah() {
                   className="w-full text-slate-600 text-xs border border-slate-300 rounded-xl file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"
                 />
                 <p className="text-[11px] text-slate-500 mt-1">
-                  Format: Gambar (JPG, PNG, WEBP). Maksimal 5MB. Rasio lanskap disarankan.
+                  Format: Gambar (JPG, PNG, WEBP). Maksimal 10MB. Rasio lanskap disarankan.
                 </p>
               </div>
 

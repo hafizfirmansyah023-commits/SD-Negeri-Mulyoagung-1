@@ -83,7 +83,7 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
               }}
               className="w-full text-xs sm:text-sm text-slate-600 border border-slate-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
             />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
           </div>
 
           <div>
