@@ -80,7 +80,7 @@ INSERT INTO `fasilitas` (`id`, `judul`, `deskripsi`, `foto`) VALUES
 CREATE TABLE `galeri` (
   `id` int(11) NOT NULL,
   `judul` varchar(255) NOT NULL,
-  `deskripsi` text NOT NULL,
+  `deskripsi` text DEFAULT NULL,
   `foto` varchar(255) NOT NULL,
   `foto_crop` varchar(255) DEFAULT NULL,
   `kategori` varchar(100) NOT NULL,
@@ -237,7 +237,7 @@ CREATE TABLE `sambutan_kepsek` (
 --
 
 INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`) VALUES
-(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg');
+(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamualaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg');
 
 -- --------------------------------------------------------
 

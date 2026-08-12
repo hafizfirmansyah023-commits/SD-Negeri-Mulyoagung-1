@@ -131,7 +131,7 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
               outputWidth={1024}
               onFileChange={setFotoSelection}
             />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis rasio 4:3. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
