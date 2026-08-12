@@ -23,6 +23,13 @@ function foto_ensure_column($conn, $table) {
     } catch (Exception $e) {
         // Kolom sudah ada.
     }
+    try {
+        // Perbaiki baris lama yang korup (nama file foto_crop sama dengan foto karena
+        // tabrakan nama saat upload). Kosongkan foto_crop agar foto asli dipertahankan.
+        $conn->exec("UPDATE `$table` SET foto_crop = NULL WHERE foto_crop IS NOT NULL AND foto_crop = foto");
+    } catch (Exception $e) {
+        // Kolom belum tersedia.
+    }
 }
 
 // Ubah satu baris hasil query: isi `foto` = tampilan, tambahkan `foto_original`.
@@ -49,8 +56,10 @@ function foto_has_upload($field) {
 // Simpan satu file dari form ke direktori upload, kembalikan path DB (atau '').
 function foto_save_file($field, $upload_dir, $prefix) {
     if (!foto_has_upload($field)) return '';
-    $name = time() . '_' . basename($_FILES[$field]['name']);
-    $name = preg_replace('/[^a-zA-Z0-9._-]/', '_', $name);
+    // Nama unik: timestamp + acak, mencegah tabrakan nama (mis. foto asli vs foto crop
+    // yang diunggah dalam detik yang sama dengan nama dasar identik).
+    $base = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES[$field]['name']));
+    $name = time() . '_' . bin2hex(random_bytes(4)) . '_' . $base;
     if (!move_uploaded_file($_FILES[$field]['tmp_name'], $upload_dir . $name)) return '';
     return $prefix . $name;
 }
