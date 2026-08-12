@@ -46,14 +46,24 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
   const cropperRef = useRef<Cropper | null>(null);
   const circularRef = useRef(circular);
   const [processing, setProcessing] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   circularRef.current = circular;
 
+  // Reset status ketika sumber gambar / modal berubah.
   useEffect(() => {
-    if (!open || !imageSrc) return;
+    setImgLoaded(false);
+    setLoadFailed(false);
+    setProcessing(false);
+  }, [open, imageSrc]);
+
+  // Inisialisasi Cropper hanya setelah gambar benar-benar selesai dimuat.
+  useEffect(() => {
+    if (!open || !imageSrc || !imgLoaded) return;
 
     const image = imageRef.current;
-    if (!image) return;
+    if (!image || image.naturalWidth === 0) return;
 
     const cropper = new Cropper(image, {
       aspectRatio,
@@ -62,6 +72,7 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
       autoCropArea: 1,
       responsive: true,
       restore: false,
+      checkCrossOrigin: false,
       guides: circular ? false : true,
       center: circular ? false : true,
       highlight: false,
@@ -82,14 +93,13 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
         cropper.setCropBoxData({ left: 0, top: 0, width: data.width, height: data.height });
       },
     });
-
     cropperRef.current = cropper;
 
     return () => {
       cropper.destroy();
       cropperRef.current = null;
     };
-  }, [open, imageSrc, aspectRatio, circular]);
+  }, [open, imageSrc, imgLoaded, aspectRatio, circular]);
 
   useEffect(() => {
     if (!open) return;
@@ -158,11 +168,26 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
             style={circular ? { aspectRatio: containerAspect } : { aspectRatio: containerAspect, maxHeight: '55vh' }}
           >
             <img
+              key={imageSrc}
               ref={imageRef}
               src={imageSrc}
+              crossOrigin="anonymous"
               alt="Pratinjau foto"
-              className="block max-w-none w-full h-full"
+              className="block max-w-none w-full h-full object-contain"
+              onLoad={() => {
+                setLoadFailed(false);
+                setImgLoaded(true);
+              }}
+              onError={() => {
+                setLoadFailed(true);
+                setImgLoaded(false);
+              }}
             />
+            {loadFailed && (
+              <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-sm px-6 text-center">
+                Gagal memuat gambar. Coba lagi atau pilih foto baru.
+              </div>
+            )}
             {circular && <div className="crop-modal-mask absolute inset-0 pointer-events-none" />}
           </div>
 
