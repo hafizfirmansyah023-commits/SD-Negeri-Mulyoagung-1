@@ -95,6 +95,7 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
               outputWidth={1024}
               onFileChange={setFotoSelection}
             />
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
           </div>
 
           <div>

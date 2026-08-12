@@ -535,7 +535,8 @@ export default function PengumumanCrud() {
                           className="w-full px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-slate-800 text-xs focus:ring-2 focus:ring-teal-600"
                         />
                       </div>
-                      <p className="text-slate-400 text-[11px]">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
+
+                      <p className="text-slate-400 text-[11px]">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
                       {photoUrl && (
                         <button
                           type="button"

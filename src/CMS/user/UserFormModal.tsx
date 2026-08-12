@@ -103,6 +103,7 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
               outputWidth={512}
               onFileChange={setNewFotoSelection}
             />
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">

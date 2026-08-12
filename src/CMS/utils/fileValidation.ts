@@ -21,7 +21,7 @@ export function validateImageFile(
 ): File | null {
   if (!file) return null;
 
-  const MAX_SIZE_MB = 5;
+  const MAX_SIZE_MB = 10;
   const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
 
   // Check file type

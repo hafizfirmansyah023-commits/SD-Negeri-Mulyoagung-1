@@ -86,7 +86,7 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
                 <option value="Kegiatan Sekolah">Kegiatan Sekolah</option>
                 <option value="Ekstrakurikuler">Ekstrakurikuler</option>
                 <option value="Prestasi">Prestasi</option>
-                <option value="Fasilitas">Fasilitas</option>
+                <option value="Pembelajaran">Pembelajaran</option>
                 <option value="Acara Khusus">Acara Khusus</option>
               </select>
             </div>
@@ -105,7 +105,6 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
           <div>
             <label className="block text-slate-700 text-sm font-medium mb-1.5">Deskripsi Singkat</label>
             <textarea
-              required
               rows={3}
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
@@ -131,7 +130,8 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
               aspectRatio={4 / 3}
               outputWidth={1024}
               onFileChange={setFotoSelection}
-            />
+            /
+            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">

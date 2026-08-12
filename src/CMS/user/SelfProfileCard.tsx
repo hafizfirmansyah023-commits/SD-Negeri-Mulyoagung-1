@@ -98,6 +98,7 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
             outputWidth={512}
             onFileChange={setFotoSelection}
           />
+          <p className="text-slate-400 text-[11px] mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
         </div>
 
         <button
