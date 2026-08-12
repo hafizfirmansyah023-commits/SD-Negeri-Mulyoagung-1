@@ -2,7 +2,7 @@ import React from 'react';
 import { Key, User } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession } from '../types';
-import { validateImageFile } from '../utils/fileValidation';
+import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 
 interface SelfProfileCardProps {
   currentUser: UserSession;
@@ -12,7 +12,7 @@ interface SelfProfileCardProps {
   setNama: (val: string) => void;
   password: string;
   setPassword: (val: string) => void;
-  setFotoFile: (file: File | null) => void;
+  setFotoSelection: (payload: ImageUploadPayload) => void;
   onSubmit: (e: React.FormEvent) => void;
 }
 
@@ -24,7 +24,7 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
   setNama,
   password,
   setPassword,
-  setFotoFile,
+  setFotoSelection,
   onSubmit,
 }) => {
   return (
@@ -82,17 +82,22 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
         </div>
 
         <div>
-          <label className="block text-slate-700 text-xs sm:text-sm font-medium mb-1">Ganti Foto Profil</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = validateImageFile(e.target.files?.[0] || null, e.target);
-              setFotoFile(file);
-            }}
-            className="w-full text-slate-600 text-xs border border-slate-200 rounded-xl file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+          <ImageUploadField
+            label="Ganti Foto Profil"
+            hint="Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis 1:1."
+            currentImage={currentUser.foto ? getImageUrl(currentUser.foto) : undefined}
+            currentOriginalImage={
+              currentUser.foto_original
+                ? getImageUrl(currentUser.foto_original)
+                : currentUser.foto
+                  ? getImageUrl(currentUser.foto)
+                  : undefined
+            }
+            circular
+            previewShape="circle"
+            outputWidth={512}
+            onFileChange={setFotoSelection}
           />
-          <p className="text-slate-400 text-[11px] mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB.</p>
         </div>
 
         <button

@@ -6,6 +6,7 @@ export interface GalleryItem {
   judul: string;
   deskripsi: string;
   foto: string;
+  foto_original?: string;
   kategori: string;
   tanggal: string;
   status_verifikasi: 'Pending' | 'Verified' | 'Rejected';

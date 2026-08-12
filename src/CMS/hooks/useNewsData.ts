@@ -6,6 +6,7 @@ export interface NewsArticle {
   judul: string;
   isi: string;
   foto: string;
+  foto_original?: string;
   kategori: string;
   tanggal: string;
   status_verifikasi: 'Pending' | 'Verified' | 'Rejected';

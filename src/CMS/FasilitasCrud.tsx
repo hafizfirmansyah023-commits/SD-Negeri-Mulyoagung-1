@@ -10,6 +10,7 @@ import CmsFilterBar from './components/CmsFilterBar';
 import { FasilitasCard } from './fasilitas/FasilitasCard';
 import { FasilitasFormModal } from './fasilitas/FasilitasFormModal';
 import { FasilitasDeleteModal } from './fasilitas/FasilitasDeleteModal';
+import { ImageUploadPayload } from './components/ImageUploadField';
 
 interface FasilitasCrudProps {
   currentUser: UserSession;
@@ -61,7 +62,9 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
   const [judul, setJudul] = useState('');
   const [deskripsi, setDeskripsi] = useState('');
   const [fotoUrl, setFotoUrl] = useState('');
-  const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
+  const [currentFoto, setCurrentFoto] = useState('');
+  const [currentOriginalFoto, setCurrentOriginalFoto] = useState('');
   const [deleteModalId, setDeleteModalId] = useState<number | null>(null);
 
   // Filter Hook
@@ -80,7 +83,9 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     setJudul('');
     setDeskripsi('');
     setFotoUrl('');
-    setFotoFile(null);
+    setFotoSelection({ original: null, cropped: null });
+    setCurrentFoto('');
+    setCurrentOriginalFoto('');
     setEditId(null);
     setError('');
   };
@@ -95,8 +100,10 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     setEditId(fac.id);
     setJudul(fac.judul);
     setDeskripsi(fac.deskripsi);
-    setFotoUrl(fac.foto || '');
-    setFotoFile(null);
+    setFotoUrl(fac.foto_original || fac.foto || '');
+    setFotoSelection({ original: null, cropped: null });
+    setCurrentFoto(fac.foto || '');
+    setCurrentOriginalFoto(fac.foto_original || '');
     setShowModal(true);
   };
 
@@ -112,9 +119,12 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     }
     formData.append('judul', judul);
     formData.append('deskripsi', deskripsi);
-    if (fotoFile) {
-      formData.append('foto', fotoFile);
-    } else if (fotoUrl) {
+    if (fotoSelection.original) {
+      formData.append('foto_original', fotoSelection.original);
+    }
+    if (fotoSelection.cropped) {
+      formData.append('foto', fotoSelection.cropped);
+    } else if (!fotoSelection.original && fotoUrl && fotoUrl !== (currentOriginalFoto || currentFoto)) {
       formData.append('foto_url', fotoUrl);
     }
 
@@ -237,9 +247,11 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
         setJudul={setJudul}
         deskripsi={deskripsi}
         setDeskripsi={setDeskripsi}
+        currentFoto={currentFoto}
+        currentOriginalFoto={currentOriginalFoto}
         fotoUrl={fotoUrl}
         setFotoUrl={setFotoUrl}
-        setFotoFile={setFotoFile}
+        setFotoSelection={setFotoSelection}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
       />

@@ -6,6 +6,7 @@ export interface FasilitasItem {
   judul: string;
   deskripsi: string;
   foto: string;
+  foto_original?: string;
 }
 
 const API_BASE = getApiBaseUrl();

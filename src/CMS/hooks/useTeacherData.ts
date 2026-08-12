@@ -8,6 +8,7 @@ export interface Teacher {
   jabatan: string;
   tugas: string;
   foto: string;
+  foto_original?: string;
   riwayat_pendidikan: string;
   jenis_kelamin: 'Laki-laki' | 'Perempuan';
   status: string;

@@ -1,9 +1,12 @@
 import React from 'react';
-import { validateImageFile } from '../utils/fileValidation';
+import { getImageUrl } from '../../config/api';
+import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 
 interface GaleriFormModalProps {
   showModal: boolean;
   editId: number | null;
+  currentFoto?: string;
+  currentOriginalFoto?: string;
   judul: string;
   setJudul: (val: string) => void;
   deskripsi: string;
@@ -12,7 +15,7 @@ interface GaleriFormModalProps {
   setKategori: (val: string) => void;
   tanggal: string;
   setTanggal: (val: string) => void;
-  setFotoFile: (file: File | null) => void;
+  setFotoSelection: (payload: ImageUploadPayload) => void;
   error: string;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -21,6 +24,8 @@ interface GaleriFormModalProps {
 export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
   showModal,
   editId,
+  currentFoto,
+  currentOriginalFoto,
   judul,
   setJudul,
   deskripsi,
@@ -29,7 +34,7 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
   setKategori,
   tanggal,
   setTanggal,
-  setFotoFile,
+  setFotoSelection,
   error,
   onClose,
   onSubmit,
@@ -110,17 +115,23 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">File Foto</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = validateImageFile(e.target.files?.[0] || null, e.target);
-                setFotoFile(file);
-              }}
-              className="w-full text-slate-600 text-xs sm:text-sm border border-slate-200 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100"
+            <ImageUploadField
+              label="File Foto"
+              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis rasio 4:3. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+              currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
+              currentOriginalImage={
+                currentOriginalFoto
+                  ? getImageUrl(currentOriginalFoto)
+                  : currentFoto
+                    ? getImageUrl(currentFoto)
+                    : undefined
+              }
+              circular={false}
+              previewShape="rounded"
+              aspectRatio={4 / 3}
+              outputWidth={1024}
+              onFileChange={setFotoSelection}
             />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
           </div>
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">

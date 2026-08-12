@@ -1,7 +1,10 @@
 <?php
 require_once '../config/koneksi.php';
+require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+
+foto_ensure_column($conn, 'guru_tendik');
 
 $upload_dir = '../uploads/guru/';
 if (!file_exists($upload_dir)) {
@@ -15,6 +18,7 @@ if ($method === 'GET') {
     try {
         $stmt = $conn->query("SELECT * FROM guru_tendik ORDER BY id DESC");
         $teachers = $stmt->fetchAll();
+        foto_map_rows($teachers);
 
         $roleOrder = [
             'Kepala Sekolah'       => 1,
@@ -89,19 +93,11 @@ elseif ($method === 'POST') {
         $nip = !empty($_POST['nip']) ? trim($_POST['nip']) : null;
 
         
-        $foto_path = '';
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $file_tmp = $_FILES['foto']['tmp_name'];
-            $file_name = time() . '_' . basename($_FILES['foto']['name']);
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $foto_path = 'backend/uploads/guru/' . $file_name;
-            }
-        }
+        [$foto_path, $foto_crop_path] = foto_handle_create($upload_dir, 'backend/uploads/guru/');
 
         try {
-            $stmt = $conn->prepare("INSERT INTO guru_tendik (nama, nip, jabatan, tugas, foto, riwayat_pendidikan, jenis_kelamin, status, motto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $riwayat_pendidikan, $jenis_kelamin, $status, $motto]);
+            $stmt = $conn->prepare("INSERT INTO guru_tendik (nama, nip, jabatan, tugas, foto, foto_crop, riwayat_pendidikan, jenis_kelamin, status, motto) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $foto_crop_path, $riwayat_pendidikan, $jenis_kelamin, $status, $motto]);
             echo json_encode(["status" => "success", "message" => "Guru/Staff berhasil ditambahkan."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -128,7 +124,7 @@ elseif ($method === 'POST') {
         $nip = !empty($_POST['nip']) ? trim($_POST['nip']) : null;
 
         
-        $stmt = $conn->prepare("SELECT foto FROM guru_tendik WHERE id = ?");
+        $stmt = $conn->prepare("SELECT foto, foto_crop FROM guru_tendik WHERE id = ?");
         $stmt->execute([$id]);
         $teacher = $stmt->fetch();
         if (!$teacher) {
@@ -137,23 +133,11 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $foto_path = $teacher['foto'];
-        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            
-            if (!empty($foto_path) && file_exists('../' . str_replace('backend/', '', $foto_path))) {
-                @unlink('../' . str_replace('backend/', '', $foto_path));
-            }
-            $file_tmp = $_FILES['foto']['tmp_name'];
-            $file_name = time() . '_' . basename($_FILES['foto']['name']);
-            $target_file = $upload_dir . $file_name;
-            if (move_uploaded_file($file_tmp, $target_file)) {
-                $foto_path = 'backend/uploads/guru/' . $file_name;
-            }
-        }
+        [$foto_path, $foto_crop_path] = foto_handle_update($upload_dir, 'backend/uploads/guru/', $teacher['foto'], $teacher['foto_crop'] ?? '');
 
         try {
-            $stmt = $conn->prepare("UPDATE guru_tendik SET nama = ?, nip = ?, jabatan = ?, tugas = ?, foto = ?, riwayat_pendidikan = ?, jenis_kelamin = ?, status = ?, motto = ? WHERE id = ?");
-            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $riwayat_pendidikan, $jenis_kelamin, $status, $motto, $id]);
+            $stmt = $conn->prepare("UPDATE guru_tendik SET nama = ?, nip = ?, jabatan = ?, tugas = ?, foto = ?, foto_crop = ?, riwayat_pendidikan = ?, jenis_kelamin = ?, status = ?, motto = ? WHERE id = ?");
+            $stmt->execute([$nama, $nip, $jabatan, $tugas, $foto_path, $foto_crop_path, $riwayat_pendidikan, $jenis_kelamin, $status, $motto, $id]);
             echo json_encode(["status" => "success", "message" => "Data Guru/Staff berhasil diperbarui."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -171,14 +155,12 @@ elseif ($method === 'POST') {
 
         try {
             
-            $stmt = $conn->prepare("SELECT foto FROM guru_tendik WHERE id = ?");
+            $stmt = $conn->prepare("SELECT foto, foto_crop FROM guru_tendik WHERE id = ?");
             $stmt->execute([$id]);
             $teacher = $stmt->fetch();
-            if ($teacher && !empty($teacher['foto'])) {
-                $relative_photo = '../' . str_replace('backend/', '', $teacher['foto']);
-                if (file_exists($relative_photo)) {
-                    @unlink($relative_photo);
-                }
+            if ($teacher) {
+                foto_unlink($teacher['foto']);
+                foto_unlink($teacher['foto_crop'] ?? '');
             }
 
             $stmt = $conn->prepare("DELETE FROM guru_tendik WHERE id = ?");

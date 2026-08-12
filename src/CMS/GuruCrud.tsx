@@ -7,6 +7,7 @@ import CmsFilterBar from './components/CmsFilterBar';
 import { getUniqueValues } from './utils/cmsHelpers';
 import { GuruCard } from './guru/GuruCard';
 import { GuruFormModal } from './guru/GuruFormModal';
+import { ImageUploadPayload } from './components/ImageUploadField';
 
 const API_BASE = getApiBaseUrl();
 
@@ -33,7 +34,9 @@ export default function GuruCrud() {
   const [jenisKelamin, setJenisKelamin] = useState<'Laki-laki' | 'Perempuan'>('Laki-laki');
   const [status, setStatus] = useState('Aktif');
   const [motto, setMotto] = useState('');
-  const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
+  const [currentFoto, setCurrentFoto] = useState('');
+  const [currentOriginalFoto, setCurrentOriginalFoto] = useState('');
 
   // Filter Hook
   const {
@@ -63,7 +66,9 @@ export default function GuruCrud() {
     setJenisKelamin('Laki-laki');
     setStatus('Aktif');
     setMotto('');
-    setFotoFile(null);
+    setFotoSelection({ original: null, cropped: null });
+    setCurrentFoto('');
+    setCurrentOriginalFoto('');
     setEditId(null);
     setError('');
   };
@@ -84,7 +89,9 @@ export default function GuruCrud() {
     setJenisKelamin(t.jenis_kelamin);
     setStatus(t.status || 'Aktif');
     setMotto(t.motto || '');
-    setFotoFile(null);
+    setFotoSelection({ original: null, cropped: null });
+    setCurrentFoto(t.foto || '');
+    setCurrentOriginalFoto(t.foto_original || '');
     setShowModal(true);
   };
 
@@ -106,8 +113,11 @@ export default function GuruCrud() {
     formData.append('jenis_kelamin', jenisKelamin);
     formData.append('status', status);
     formData.append('motto', motto);
-    if (fotoFile) {
-      formData.append('foto', fotoFile);
+    if (fotoSelection.original) {
+      formData.append('foto_original', fotoSelection.original);
+    }
+    if (fotoSelection.cropped) {
+      formData.append('foto', fotoSelection.cropped);
     }
 
     try {
@@ -232,6 +242,8 @@ export default function GuruCrud() {
       <GuruFormModal
         showModal={showModal}
         editId={editId}
+        currentFoto={currentFoto}
+        currentOriginalFoto={currentOriginalFoto}
         nama={nama}
         setNama={setNama}
         nip={nip}
@@ -248,7 +260,7 @@ export default function GuruCrud() {
         setStatus={setStatus}
         motto={motto}
         setMotto={setMotto}
-        setFotoFile={setFotoFile}
+        setFotoSelection={setFotoSelection}
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
