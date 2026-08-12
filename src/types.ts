@@ -30,7 +30,7 @@ export interface Teacher {
 export interface GalleryItem {
   id: string;
   title: string;
-  category: 'Kegiatan' | 'Pembelajaran' | 'Prestasi' | 'Fasilitas';
+  category: string;
   date: string;
   image: string;
   description: string;

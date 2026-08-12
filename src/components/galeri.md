@@ -1,3 +1,4 @@
-Error pada bagian Galeri:
-pads bagian filter dan untuk di filter nanti jika belum memasukan kategori maka kategori tidak muncul jika user sudah memasukan maka kategori terseubut akan muncul di filter
-dan samakan untuk logika filternya seperti di filter cms galer
+Error pada bagian filtering pada halaman utama yaitu halaman galeri dan berita :
+
+filter menampilkan berdasarkan data yang ada di tabel,field kategori
+sebagai contoh gunakan logika filter yang ada pada cms

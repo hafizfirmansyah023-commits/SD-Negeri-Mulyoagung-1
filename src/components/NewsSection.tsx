@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowRight, Calendar, Tag } from 'lucide-react';
 import { NEWS_ARTICLES } from '../data/schoolData';
 import { Article } from '../types';
@@ -54,7 +54,10 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
     loadNews();
   }, []);
 
-  const categories = ['Semua', 'Kegiatan', 'Prestasi', 'Edukasi', 'Pengumuman'];
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set(articles.map((a) => a.category).filter(Boolean)));
+    return ['Semua', ...unique];
+  }, [articles]);
 
   const filteredArticles =
     selectedCategory === 'Semua'

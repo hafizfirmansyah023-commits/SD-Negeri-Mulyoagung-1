@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Image } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { useGalleryData } from '../hooks/useGalleryData';
-import { GALLERY_CATEGORIES } from '../utils/galleryHelpers';
 import { GalleryCategoryFilter } from './gallery/GalleryCategoryFilter';
 import { GalleryGrid } from './gallery/GalleryGrid';
 import { PhotoLightboxModal } from './gallery/PhotoLightboxModal';
@@ -11,6 +10,11 @@ export const GallerySection: React.FC = () => {
   const galleryItems = useGalleryData();
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [activePhoto, setActivePhoto] = useState<GalleryItem | null>(null);
+
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set(galleryItems.map((item) => item.category).filter(Boolean)));
+    return ['Semua', ...unique];
+  }, [galleryItems]);
 
   const filteredGallery =
     selectedCategory === 'Semua' ? galleryItems : galleryItems.filter((item) => item.category === selectedCategory);
@@ -38,7 +42,7 @@ export const GallerySection: React.FC = () => {
         </div>
 
         <GalleryCategoryFilter
-          categories={GALLERY_CATEGORIES}
+          categories={categories}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
