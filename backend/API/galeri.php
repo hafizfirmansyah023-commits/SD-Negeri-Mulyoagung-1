@@ -33,15 +33,16 @@ elseif ($method === 'POST') {
 
     if ($action === 'create') {
         $judul = isset($_POST['judul']) ? trim($_POST['judul']) : '';
-        $deskripsi = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';
+        $deskripsi_raw = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';
+        $deskripsi = $deskripsi_raw === '' ? null : $deskripsi_raw;
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
         $uploaded_by = isset($_POST['uploaded_by']) ? intval($_POST['uploaded_by']) : null;
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
-        if (empty($judul) || empty($deskripsi) || empty($kategori) || empty($tanggal)) {
+        if (empty($judul) || empty($kategori) || empty($tanggal)) {
             http_response_code(400);
-            echo json_encode(["status" => "error", "message" => "Kolom judul, deskripsi, kategori, dan tanggal wajib diisi."]);
+            echo json_encode(["status" => "error", "message" => "Kolom judul, kategori, dan tanggal wajib diisi."]);
             exit();
         }
 
@@ -80,12 +81,13 @@ elseif ($method === 'POST') {
     elseif ($action === 'update') {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
         $judul = isset($_POST['judul']) ? trim($_POST['judul']) : '';
-        $deskripsi = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';
+        $deskripsi_raw = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';
+        $deskripsi = $deskripsi_raw === '' ? null : $deskripsi_raw;
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
-        if ($id === 0 || empty($judul) || empty($deskripsi) || empty($kategori) || empty($tanggal)) {
+        if ($id === 0 || empty($judul) || empty($kategori) || empty($tanggal)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Data tidak lengkap untuk pembaruan."]);
             exit();

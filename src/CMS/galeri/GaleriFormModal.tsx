@@ -81,7 +81,7 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
                 <option value="Kegiatan Sekolah">Kegiatan Sekolah</option>
                 <option value="Ekstrakurikuler">Ekstrakurikuler</option>
                 <option value="Prestasi">Prestasi</option>
-                <option value="Fasilitas">Fasilitas</option>
+                <option value="Pembelajaran">Pembelajaran</option>
                 <option value="Acara Khusus">Acara Khusus</option>
               </select>
             </div>
@@ -100,7 +100,6 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
           <div>
             <label className="block text-slate-700 text-sm font-medium mb-1.5">Deskripsi Singkat</label>
             <textarea
-              required
               rows={3}
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
