@@ -29,7 +29,9 @@ export const GuruCard: React.FC<GuruCardProps> = ({ teacher: t, onEdit, onDelete
         </div>
         <div className="p-4 sm:p-5 space-y-3">
           <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight">{t.nama}</h3>
-          <p className="text-slate-400 text-xs font-mono">NIP. {t.nip || '-'}</p>
+          <p className="text-slate-400 text-xs font-mono">
+            NIP. {t.nip && t.nip !== 'null' && t.nip.trim() !== '' ? t.nip : '-'}
+          </p>
 
           <div className="space-y-2 pt-2 border-t border-slate-100">
             <div className="flex items-center gap-2 text-slate-600 text-xs sm:text-sm">

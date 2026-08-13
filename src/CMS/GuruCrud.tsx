@@ -82,7 +82,7 @@ export default function GuruCrud() {
     setError('');
     setEditId(t.id);
     setNama(t.nama);
-    setNip(t.nip);
+    setNip(t.nip && t.nip !== 'null' ? t.nip : '');
     setJabatan(t.jabatan);
     setTugas(t.tugas);
     setRiwayatPendidikan(t.riwayat_pendidikan);
