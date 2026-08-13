@@ -4,6 +4,7 @@ import { NavTab } from '../types';
 import heroImg from '../assets/images/img1.webp';
 import heroImg1 from '../assets/images/img2.webp';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { ShinyText } from './common/ShinyText';
 
 interface HeroProps {
   onOpenPpdb: () => void;
@@ -130,9 +131,7 @@ export const Hero: React.FC<HeroProps> = ({
           
           <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-extrabold leading-[1.15] tracking-tight">
             Selamat Datang di <br className="hidden sm:block" />
-            <span className="text-[#8cf4ea] dark:text-teal-300 drop-shadow-sm">
-              SD Negeri 1 Mulyoagung
-            </span>
+            <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
           </h1>
 
           <p className="text-[13px] sm:text-lg lg:text-xl text-slate-100 dark:text-slate-200 max-w-2xl leading-snug sm:leading-relaxed opacity-95 mx-auto lg:mx-0">
