@@ -1,0 +1,1 @@
+Buatkan kode header responsif dengan animasi pill nav. Pastikan indikator latar belakang pil berpindah dengan transisi halus (smooth transition) saat menu diklik atau di-hover menggunakan [Tailwind CSS / React].
