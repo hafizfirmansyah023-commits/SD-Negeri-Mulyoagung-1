@@ -1,4 +1,1 @@
-Error pada bagian filtering pada halaman utama yaitu halaman galeri dan berita :
-
-filter menampilkan berdasarkan data yang ada di tabel,field kategori
-sebagai contoh gunakan logika filter yang ada pada cms
+Perbaikilah bagian **card Galeri** agar ukuran dan rasio gambar pada card menyesuaikan dengan ukuran gambar yang digunakan di **CMS**. Pastikan gambar ditampilkan secara proporsional dan memenuhi area card tanpa menyisakan ruang kosong atau bagian berwarna hitam di sisi gambar. Gunakan pengaturan ukuran, rasio, dan `object-fit` yang sesuai agar seluruh gambar terlihat rapi, responsif, dan konsisten dengan tampilan gambar dari CMS.
