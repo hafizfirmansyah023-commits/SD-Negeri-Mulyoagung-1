@@ -30,5 +30,5 @@ School website (SD Negeri Mulyoagung 1). React 19 + Vite + Tailwind 4 frontend (
 - Commit messages are in Indonesian. Branch flow: feature branches (e.g. `devhafiz`, `devp`) → PR into `dev` → `main`.
 
 ## Notes
-- `src/CMS/*.md`, `src/quicklink.md` are Indonesian work notes; some are pending feature requests, not docs.
+- Indonesian `.md` files scattered across `src/` (e.g. `src/quicklink.md`, `src/CMS/*.md`, `src/CMS/guru/crop.md`, `src/components/navbar.md`, `src/components/galeri.md`) are work notes / pending feature prompts, not docs. Exception: `src/CMS/components/RoleAccess.md` is a real rule.
 - `README.md` and `metadata.json` are stale AI Studio boilerplate; `scratch_check.ps1` is a one-off script. Trust `package.json`/`vite.config.ts` and `src/config/api.ts` over them.
