@@ -1,0 +1,1 @@
+tambahkan animasi di hero pada bagian SD Negeri 1 Mulyoagung dengan menggunakan animasi Shiny Text react

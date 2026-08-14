@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { X, Calendar, ArrowRight } from 'lucide-react';
 import { GalleryItem } from '../../types';
 
 interface PhotoLightboxModalProps {
@@ -25,56 +25,71 @@ export const PhotoLightboxModal: React.FC<PhotoLightboxModalProps> = ({ photo, o
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-md overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in"
       onClick={onClose}
     >
       <div 
-        className="relative w-full max-w-3xl lg:max-w-4xl max-h-[90vh] bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-800 my-auto text-left"
+        className="relative w-full max-w-2xl lg:max-w-3xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200/80 dark:border-slate-800 my-auto text-left"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Tombol Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 p-2 sm:p-2.5 rounded-full bg-slate-950/80 hover:bg-slate-950 text-white transition-colors border border-white/20 shadow-md cursor-pointer"
-          aria-label="Tutup Foto"
-        >
-          <X className="w-4 h-4 sm:w-5 sm:h-5" />
-        </button>
-
-        {/* Area Gambar */}
-        {/* min-h-0 dan flex-shrink penting agar gambar mau mengecil jika layar sempit */}
-        <div className="w-full flex-shrink overflow-hidden flex items-center justify-center bg-black min-h-0 relative">
-          <img 
-            src={photo.image} 
-            alt={photo.title} 
-            className="w-auto h-auto max-w-full max-h-[55vh] sm:max-h-[70vh] object-contain" 
+        {/* Banner Gambar Full (Konsisten dengan Modal Berita) */}
+        <div className="relative h-48 sm:h-72 lg:h-80 w-full overflow-hidden shrink-0 bg-slate-950">
+          <img
+            src={photo.image}
+            alt={photo.title}
+            className="w-full h-full object-cover"
           />
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+          
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 sm:p-2.5 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white transition-colors border border-white/20 shadow-md cursor-pointer z-10"
+            aria-label="Tutup Modal"
+          >
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+          </button>
 
-        {/* Area Teks (Bisa di-scroll jika deskripsi sangat panjang) */}
-        {/* Padding dan teks dirampingkan untuk mobile */}
-        <div className="p-4 sm:p-6 bg-slate-900 text-white space-y-2 sm:space-y-3 overflow-y-auto shrink-0">
-          <div className="flex items-center justify-between">
-            <span className="bg-[#028C84] text-white text-[10px] sm:text-xs font-bold px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-sm">
+          <div className="absolute bottom-3 left-4 right-4 sm:bottom-4 sm:left-6 sm:right-6 text-white space-y-1.5 sm:space-y-2">
+            <span className="bg-[#028C84] text-white text-[10px] sm:text-xs font-bold px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-sm inline-block">
               {photo.category}
             </span>
-            <span className="text-[11px] sm:text-xs text-slate-400 font-medium">
-              {photo.date}
-            </span>
+            <h2 className="text-base sm:text-2xl font-extrabold leading-snug drop-shadow-md">
+              {photo.title}
+            </h2>
           </div>
-          
-          <h3 className="text-base sm:text-xl font-bold leading-snug text-slate-100">
-            {photo.title}
-          </h3>
-          
-          {photo.description && (
-            <p className="text-[11px] sm:text-sm text-slate-300 leading-relaxed whitespace-pre-line">
+        </div>
+
+        {/* Modal Meta Bar */}
+        <div className="flex flex-wrap items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-50 dark:bg-slate-800/60 border-b border-slate-200 dark:border-slate-800 text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 font-medium">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#028C84]" />
+            {photo.date}
+          </span>
+        </div>
+
+        {/* Modal Content Body */}
+        <div className="p-4 sm:p-8 overflow-y-auto space-y-3 sm:space-y-4 text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed">
+          {photo.description ? (
+            <div className="space-y-3 sm:space-y-4 whitespace-pre-line text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed">
               {photo.description}
-            </p>
+            </div>
+          ) : (
+            <p className="italic text-slate-400 text-xs sm:text-sm">Dokumentasi foto kegiatan SD Negeri 1 Mulyoagung.</p>
           )}
+        </div>
+
+        {/* Modal Footer */}
+        <div className="p-3 sm:p-5 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex justify-end items-center shrink-0">
+          <button
+            onClick={onClose}
+            className="bg-[#1E3A8A] hover:bg-[#00236f] text-white text-[11px] sm:text-xs font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+          >
+            <span>Tutup</span>
+            <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+          </button>
         </div>
       </div>
     </div>,
     document.body
   );
-};
+};

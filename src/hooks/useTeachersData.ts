@@ -30,7 +30,7 @@ export const useTeachersData = (): Teacher[] => {
             name: t.nama,
             title: t.jabatan,
             role: t.jabatan,
-            nip: t.nip || '',
+            nip: t.nip && t.nip !== 'null' ? t.nip.trim() : '',
             subject: t.tugas,
             image: t.foto
               ? getImageUrl(t.foto)

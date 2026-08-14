@@ -248,6 +248,7 @@ function AppContent() {
       <BackToTop />
 
       <AnnouncementPopup />
+      
     </div>
   );
 }

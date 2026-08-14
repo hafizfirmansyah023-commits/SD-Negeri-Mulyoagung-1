@@ -59,7 +59,9 @@ export const TeacherProfileModal: React.FC<TeacherProfileModalProps> = ({ teache
                 {teacher.role || teacher.title}
               </span>
               <h4 className="text-lg sm:text-xl font-extrabold text-[#1E3A8A] leading-snug">{teacher.name}</h4>
-              <p className="text-[11px] sm:text-xs font-mono text-slate-500">NIP. {teacher.nip || '-'}</p>
+              <p className="text-[11px] sm:text-xs font-mono text-slate-500">
+                NIP. {teacher.nip && teacher.nip !== 'null' && teacher.nip.trim() !== '' ? teacher.nip : '-'}
+              </p>
             </div>
           </div>
 

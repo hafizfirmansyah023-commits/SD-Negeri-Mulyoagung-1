@@ -27,7 +27,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onClick }) =>
           <h3 className="font-extrabold text-base text-[#1E3A8A] group-hover:text-[#028C84] transition-colors leading-snug break-words">
             {teacher.name}
           </h3>
-          {teacher.nip ? (
+          {teacher.nip && teacher.nip !== 'null' && teacher.nip.trim() !== '' ? (
             <p className="text-xs font-mono text-slate-500 mt-0.5 truncate">NIP. {teacher.nip}</p>
           ) : (
             <p className="text-xs font-mono text-slate-400 mt-0.5 italic">NIP. -</p>

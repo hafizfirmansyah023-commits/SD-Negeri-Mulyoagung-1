@@ -10,30 +10,45 @@ interface GalleryCardProps {
 export const GalleryCard: React.FC<GalleryCardProps> = ({ item, onClick }) => (
   <div
     onClick={() => onClick(item)}
-    className="group relative h-64 sm:h-72 rounded-3xl overflow-hidden cursor-pointer shadow-[0_8px_25px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(2,140,132,0.18)] hover:border-teal-300/80 transition-all duration-300 border border-white/80 flex flex-col justify-end"
+    className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-200/80 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer hover:-translate-y-1"
   >
-    <img
-      src={item.image}
-      alt={item.title}
-      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 absolute inset-0"
-    />
-    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
+    <div>
+      {/* Container Foto - Samakan rasio & tinggi dengan CMS GaleriCard (h-44 sm:h-48) */}
+      <div className="relative h-44 sm:h-48 bg-slate-100 overflow-hidden">
+        <img
+          src={item.image}
+          alt={item.title}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+        <span className="absolute bottom-3 right-3 bg-slate-900/75 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-medium shadow-sm">
+          {item.category}
+        </span>
+        <div className="absolute top-3 right-3 bg-white/30 backdrop-blur-md text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/30">
+          <Maximize2 className="w-3.5 h-3.5" />
+        </div>
+      </div>
 
-    <div className="absolute top-4 right-4 bg-white/25 backdrop-blur-md text-white p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg border border-white/30 transform translate-y-1 group-hover:translate-y-0">
-      <Maximize2 className="w-4 h-4" />
+      {/* Detail Konten */}
+      <div className="p-4 sm:p-5 space-y-2">
+        <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1 group-hover:text-[#028C84] transition-colors">
+          {item.title}
+        </h3>
+        {item.description && (
+          <p className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed">
+            {item.description}
+          </p>
+        )}
+      </div>
     </div>
 
-    <div className="relative z-10 p-5 text-white space-y-2">
-      <span className="bg-[#028C84] text-white text-[10px] font-bold px-3 py-0.5 rounded-full inline-block shadow-sm">
-        {item.category}
-      </span>
-      <h3 className="text-base font-bold leading-snug line-clamp-1 group-hover:text-teal-200 transition-colors">
-        {item.title}
-      </h3>
-      <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
-        <Calendar className="w-3.5 h-3.5 text-teal-400" />
+    {/* Footer Tanggal */}
+    <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-400">
+      <span className="flex items-center gap-1.5">
+        <Calendar size={13} className="text-teal-600 shrink-0" />
         <span>{item.date}</span>
-      </div>
+      </span>
+      <span className="text-[11px] text-teal-600 font-semibold group-hover:underline">Lihat Detail</span>
     </div>
   </div>
 );
+
