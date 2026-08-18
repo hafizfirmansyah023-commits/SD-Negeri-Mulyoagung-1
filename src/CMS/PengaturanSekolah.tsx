@@ -48,7 +48,7 @@ export interface HeroCarouselItem {
   is_active: number;
 }
 
-export type SettingsFilter = 'all' | 'ppdb' | 'hero' | 'contact' | 'medsos';
+export type SettingsFilter = 'all' | 'ppdb' | 'hero' | 'contact' | 'medsos' | 'homepage' | 'konten';
 
 export default function PengaturanSekolah() {
   const [activeFilter, setActiveFilter] = useState<SettingsFilter>('all');
@@ -83,6 +83,90 @@ export default function PengaturanSekolah() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Homepage Sections State
+  const [homepageSections, setHomepageSections] = useState<{ key: string; judul: string; subjudul: string; is_active: boolean }[]>([]);
+  // Hero Content State
+  const [heroTitle, setHeroTitle] = useState('');
+  const [heroSubtitle, setHeroSubtitle] = useState('');
+  const [heroBg, setHeroBg] = useState('');
+  const [heroBgFile, setHeroBgFile] = useState<File | null>(null);
+  const [heroBgOriginalFile, setHeroBgOriginalFile] = useState<File | null>(null);
+  const [heroBgPreview, setHeroBgPreview] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState('');
+
+  const getYoutubeId = (url: string) => {
+    if (!url) return '';
+    const trimmed = url.trim();
+    if (trimmed.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+      return trimmed;
+    }
+    const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+    const match = trimmed.match(regExp);
+    return (match && match[1].length === 11) ? match[1] : '';
+  };
+  // Vision / Mission / History State
+  const [profilVisi, setProfilVisi] = useState('');
+  const [profilMisiInput, setProfilMisiInput] = useState('');
+  const [profilSejarah, setProfilSejarah] = useState('');
+
+  // Drag and drop for homepage sections
+  const [draggedSectionIndex, setDraggedSectionIndex] = useState<number | null>(null);
+
+  const handleSectionDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedSectionIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleSectionDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const handleSectionDrop = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (draggedSectionIndex === null || draggedSectionIndex === index) return;
+
+    const newList = [...homepageSections];
+    const draggedItem = newList[draggedSectionIndex];
+    newList.splice(draggedSectionIndex, 1);
+    newList.splice(index, 0, draggedItem);
+
+    setDraggedSectionIndex(null);
+    setHomepageSections(newList);
+  };
+
+  const updateSection = (index: number, field: string, value: any) => {
+    const newList = [...homepageSections];
+    newList[index] = { ...newList[index], [field]: value };
+    setHomepageSections(newList);
+  };
+
+  const [heroBgCropOpen, setHeroBgCropOpen] = useState(false);
+  const [heroBgCropSrc, setHeroBgCropSrc] = useState<string | null>(null);
+
+  const handleHeroBgFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = validateImageFile(e.target.files?.[0] || null, e.target);
+    if (!file) return;
+
+    setHeroBgOriginalFile(file);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setHeroBgCropSrc(reader.result as string);
+      setHeroBgCropOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleHeroBgCropConfirm = (croppedBlob: Blob) => {
+    const file = new File([croppedBlob], 'hero_bg.jpg', { type: 'image/jpeg' });
+    setHeroBgFile(file);
+    setHeroBgPreview(URL.createObjectURL(croppedBlob));
+    setHeroBgCropOpen(false);
+  };
+
+  const handleHeroBgCropCancel = () => {
+    setHeroBgCropOpen(false);
+  };
+
   // Modal State for Medsos CRUD
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MedsosItem | null>(null);
@@ -106,6 +190,17 @@ export default function PengaturanSekolah() {
         if (result.whatsapp_sekolah) setWhatsappSekolah(result.whatsapp_sekolah);
         if (result.alamat_sekolah) setAlamatSekolah(result.alamat_sekolah);
         if (Array.isArray(result.medsos_links)) setMedsosList(result.medsos_links);
+
+        if (Array.isArray(result.homepage_sections)) setHomepageSections(result.homepage_sections);
+        if (result.hero_title) setHeroTitle(result.hero_title);
+        if (result.hero_subtitle) setHeroSubtitle(result.hero_subtitle);
+        if (result.hero_bg) setHeroBg(result.hero_bg);
+        if (result.video_url) setVideoUrl(result.video_url);
+        if (result.profil_visi) setProfilVisi(result.profil_visi);
+        if (Array.isArray(result.profil_misi)) {
+          setProfilMisiInput(result.profil_misi.join('\n'));
+        }
+        if (result.profil_sejarah) setProfilSejarah(result.profil_sejarah);
       }
     } catch (err) {
       setMessage({ type: 'error', text: 'Gagal memuat data pengaturan.' });
@@ -141,6 +236,23 @@ export default function PengaturanSekolah() {
       form.append('whatsapp_sekolah', whatsappSekolah);
       form.append('alamat_sekolah', alamatSekolah);
       form.append('medsos_links', JSON.stringify(targetMedsos));
+
+      form.append('homepage_sections', JSON.stringify(homepageSections));
+      form.append('hero_title', heroTitle);
+      form.append('hero_subtitle', heroSubtitle);
+      form.append('video_url', videoUrl);
+      form.append('profil_visi', profilVisi);
+
+      const misiArr = profilMisiInput
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+      form.append('profil_misi', JSON.stringify(misiArr));
+      form.append('profil_sejarah', profilSejarah);
+
+      if (heroBgFile) {
+        form.append('hero_bg', heroBgFile);
+      }
 
       const response = await fetch(`${API_BASE}/backend/API/pengaturan.php`, {
         method: 'POST',
@@ -393,7 +505,7 @@ export default function PengaturanSekolah() {
             <Settings size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-800">Pengaturan Sekolah & Carousel Hero</h2>
+            <h2 className="text-xl font-bold text-slate-800">Pengaturan Website & Carousel Hero</h2>
             <p className="text-sm text-slate-500">Kelola modul PPDB, carousel foto hero, kontak resmi, dan media sosial</p>
           </div>
         </div>
@@ -416,55 +528,70 @@ export default function PengaturanSekolah() {
 
         <button
           onClick={() => setActiveFilter('all')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-            activeFilter === 'all'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'all'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-          }`}
+            }`}
         >
           🌟 Semua Pengaturan
         </button>
 
         <button
-          onClick={() => setActiveFilter('ppdb')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-            activeFilter === 'ppdb'
+          onClick={() => setActiveFilter('homepage')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'homepage'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-          }`}
+            }`}
+        >
+          🏠 Struktur Halaman Utama
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('konten')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'konten'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+        >
+          ✍️ Konten Utama
+        </button>
+
+        <button
+          onClick={() => setActiveFilter('ppdb')}
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'ppdb'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
         >
           🎓 Halaman PPDB &amp; Tahun Ajaran
         </button>
 
         <button
           onClick={() => setActiveFilter('hero')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-            activeFilter === 'hero'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'hero'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-          }`}
+            }`}
         >
           🖼️ Carousel Hero Header
         </button>
 
         <button
           onClick={() => setActiveFilter('contact')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-            activeFilter === 'contact'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'contact'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-          }`}
+            }`}
         >
           📞 Kontak &amp; Alamat Sekolah
         </button>
 
         <button
           onClick={() => setActiveFilter('medsos')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
-            activeFilter === 'medsos'
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${activeFilter === 'medsos'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
-          }`}
+            }`}
         >
           📱 Media Sosial
         </button>
@@ -472,16 +599,224 @@ export default function PengaturanSekolah() {
 
       {message && (
         <div
-          className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${
-            message.type === 'success'
+          className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${message.type === 'success'
               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
               : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
+            }`}
         >
           {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
           <span>{message.text}</span>
         </div>
       )}
+
+      {/* SECTION: STRUKTUR HALAMAN UTAMA */}
+      {(activeFilter === 'all' || activeFilter === 'homepage') && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+          <div>
+            <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+              <span>🏠 Struktur & Urutan Halaman Utama</span>
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Geser (drag & drop) kartu di bawah ini untuk mengatur urutan vertikal section di halaman utama. Gunakan centang/checkbox untuk menyembunyikan atau menampilkan section tersebut.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {homepageSections.map((sec, index) => (
+              <div
+                key={sec.key}
+                draggable
+                onDragStart={(e) => handleSectionDragStart(e, index)}
+                onDragOver={handleSectionDragOver}
+                onDrop={(e) => handleSectionDrop(e, index)}
+                className={`flex flex-col md:flex-row items-start md:items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 cursor-grab active:cursor-grabbing transition-all ${draggedSectionIndex === index ? 'opacity-40 border-teal-500 scale-[0.98]' : 'hover:border-teal-400'
+                  }`}
+              >
+                <div className="flex items-center gap-3 shrink-0">
+                  <GripVertical className="text-slate-400 shrink-0" size={20} />
+                  <input
+                    type="checkbox"
+                    checked={sec.is_active}
+                    onChange={(e) => updateSection(index, 'is_active', e.target.checked)}
+                    className="w-5 h-5 rounded text-teal-600 focus:ring-teal-500 border-slate-300 cursor-pointer"
+                  />
+                  <span className="font-bold text-sm text-slate-800 w-32 capitalize">
+                    {sec.key}
+                  </span>
+                </div>
+
+                {sec.key !== 'hero' && sec.key !== 'stats' && sec.key !== 'sambutan' ? (
+                  <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Judul Section"
+                        value={sec.judul}
+                        onChange={(e) => updateSection(index, 'judul', e.target.value)}
+                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-800 focus:ring-1 focus:ring-teal-600 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Subjudul Section (Deskripsi Singkat)"
+                        value={sec.subjudul}
+                        onChange={(e) => updateSection(index, 'subjudul', e.target.value)}
+                        className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs text-slate-700 focus:ring-1 focus:ring-teal-600 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-grow text-xs text-slate-500 italic">
+                    Section ini tidak memiliki judul kustom (konten diatur otomatis atau di tab Konten Utama).
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* SECTION: KONTEN UTAMA */}
+      {(activeFilter === 'all' || activeFilter === 'konten') && (
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+          <div>
+            <h3 className="font-bold text-slate-800 text-lg flex items-center gap-2">
+              <span>✍️ Edit Konten Utama Halaman Utama</span>
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Sesuaikan isi teks utama di halaman depan sekolah seperti Visi, Misi, Sejarah, Teks Hero Header, serta video profil resmi.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* HERO SETTINGS */}
+            <div className="space-y-4 border border-slate-100 p-4 rounded-xl bg-slate-50/50">
+              <h4 className="font-bold text-sm text-teal-800 uppercase tracking-wider border-b border-teal-100 pb-2">
+                Bagian Hero Header
+              </h4>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Judul Hero (Teks Berwarna Emas)
+                </label>
+                <input
+                  type="text"
+                  value={heroTitle}
+                  onChange={(e) => setHeroTitle(e.target.value)}
+                  placeholder="Selamat Datang di SD Negeri 1 Mulyoagung"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Subjudul / Deskripsi Singkat Hero
+                </label>
+                <textarea
+                  rows={4}
+                  value={heroSubtitle}
+                  onChange={(e) => setHeroSubtitle(e.target.value)}
+                  placeholder="Tuliskan deskripsi singkat pembuka sekolah..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+                />
+              </div>
+
+
+            </div>
+
+            {/* VIDEO & PROFILE TEXTS */}
+            <div className="space-y-4 border border-slate-100 p-4 rounded-xl bg-slate-50/50">
+              <h4 className="font-bold text-sm text-teal-800 uppercase tracking-wider border-b border-teal-100 pb-2">
+                Video &amp; Profil Sekolah
+              </h4>
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  URL Embed Video YouTube
+                </label>
+                <input
+                  type="url"
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/embed/..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+                />
+                <p className="text-[10px] text-slate-500 mt-1 mb-3">
+                  Masukkan URL video YouTube lengkap. Mendukung format biasa, sharing link, shorts, atau embed. Contoh: https://www.youtube.com/watch?v=5T2k922_Z8Q
+                </p>
+                {videoUrl.trim() && (
+                  <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-950 border border-slate-200 shadow-sm">
+                    {getYoutubeId(videoUrl) ? (
+                      <iframe
+                        className="w-full h-full"
+                        src={`https://www.youtube.com/embed/${getYoutubeId(videoUrl)}`}
+                        title="YouTube video player preview"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-xs text-slate-400">
+                        Format URL YouTube tidak dikenali. Preview tidak dapat dimuat.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Visi Sekolah
+                </label>
+                <textarea
+                  rows={3}
+                  value={profilVisi}
+                  onChange={(e) => setProfilVisi(e.target.value)}
+                  placeholder="Visi sekolah..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Misi Sekolah (Satu Baris Per Butir Misi)
+                </label>
+                <textarea
+                  rows={5}
+                  value={profilMisiInput}
+                  onChange={(e) => setProfilMisiInput(e.target.value)}
+                  placeholder="Tuliskan misi sekolah. Tekan enter/baris baru untuk memisahkan butir misi..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Sejarah Sekolah
+                </label>
+                <textarea
+                  rows={5}
+                  value={profilSejarah}
+                  onChange={(e) => setProfilSejarah(e.target.value)}
+                  placeholder="Sejarah singkat berdirinya sekolah..."
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ImageCropModal
+        open={heroBgCropOpen}
+        imageSrc={heroBgCropSrc}
+        aspectRatio={16 / 9}
+        circular={false}
+        title="Potong Foto Background Hero"
+        outputWidth={1920}
+        outputHeight={1080}
+        onCancel={handleHeroBgCropCancel}
+        onConfirm={handleHeroBgCropConfirm}
+      />
 
       {/* SECTION 1: Pengaturan Utama & PPDB */}
       {(activeFilter === 'all' || activeFilter === 'ppdb') && (
@@ -575,11 +910,10 @@ export default function PengaturanSekolah() {
                 onDragStart={(e) => handleHeroDragStart(e, index)}
                 onDragOver={handleHeroDragOver}
                 onDrop={(e) => handleHeroDrop(e, index)}
-                className={`bg-slate-50 rounded-2xl border transition-all duration-200 group flex flex-col cursor-grab active:cursor-grabbing ${
-                  draggedHeroIndex === index
+                className={`bg-slate-50 rounded-2xl border transition-all duration-200 group flex flex-col cursor-grab active:cursor-grabbing ${draggedHeroIndex === index
                     ? 'opacity-40 border-teal-500 scale-95 ring-2 ring-teal-500/30'
                     : 'border-slate-200 hover:border-teal-400 hover:shadow-md'
-                }`}
+                  }`}
               >
                 {/* Landscape Photo Container */}
                 <div className="relative w-full aspect-video bg-slate-900 overflow-hidden rounded-t-2xl">
@@ -588,7 +922,7 @@ export default function PengaturanSekolah() {
                     alt={item.caption}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
                   />
-                  
+
                   {/* Drag Handle Overlay Tag */}
                   <div className="absolute top-2.5 left-2.5 bg-black/65 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
                     <GripVertical size={12} className="text-teal-400" />

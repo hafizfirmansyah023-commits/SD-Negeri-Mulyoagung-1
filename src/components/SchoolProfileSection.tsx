@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'; // <-- TAMBAHAN IMPORT
 import { Target, Compass, History, Monitor, BookOpen, Activity, HeartPulse, Coffee, Trees, CheckCircle2, Sparkles, Building, X } from 'lucide-react'; // <-- TAMBAHAN ICON X
 import { SCHOOL_FACILITIES } from '../data/schoolData';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { useHomepageConfig } from '../hooks/useHomepageConfig';
 
 interface DynamicFacility {
   id: string | number;
@@ -15,6 +16,7 @@ interface DynamicFacility {
 const API_BASE = getApiBaseUrl();
 
 export const SchoolProfileSection: React.FC = () => {
+  const homepageConfig = useHomepageConfig();
   const [activeTab, setActiveTab] = useState<'visi-misi' | 'sejarah' | 'fasilitas'>('visi-misi');
   
   const [facilities, setFacilities] = useState<DynamicFacility[]>(
@@ -81,6 +83,10 @@ export const SchoolProfileSection: React.FC = () => {
     return <Building className="w-4 h-4 sm:w-5 sm:h-5 text-[#028C84]" />;
   };
 
+  const profileSection = homepageConfig.sections.find(s => s.key === 'profil');
+  const sectionTitle = profileSection ? profileSection.judul : 'Profil SD Negeri 1 Mulyoagung';
+  const sectionSubtitle = profileSection ? profileSection.subjudul : 'Landasan visi pendidik, kilasan sejarah pengabdian, serta fasilitas pendukung.';
+
   return (
     <section id="profile-section" className="relative w-full py-10 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
@@ -94,10 +100,10 @@ export const SchoolProfileSection: React.FC = () => {
             Mengenal Sekolah Kami
           </div>
           <h2 className="text-xl sm:text-4xl font-extrabold text-[black] tracking-tight leading-tight">
-            Profil SD Negeri 1 Mulyoagung
+            {sectionTitle}
           </h2>
           <p className="text-slate-600 text-[11px] sm:text-base leading-snug px-1">
-            Landasan visi pendidik, kilasan sejarah pengabdian, serta fasilitas pendukung.
+            {sectionSubtitle}
           </p>
         </div>
 
@@ -155,7 +161,7 @@ export const SchoolProfileSection: React.FC = () => {
               </div>
               <div className="relative overflow-hidden rounded-xl p-3 sm:p-5 bg-gradient-to-r from-teal-50/90 to-teal-50/40 border border-teal-100/80">
                 <p className="text-[11px] sm:text-lg text-slate-800 font-bold leading-snug sm:leading-relaxed border-l-2 sm:border-l-4 border-[#028C84] pl-2.5 sm:pl-4">
-                  "Terwujudnya murid yang beriman dan bertakwa, bernalar kritis, berkarakter mulia, sehat jasmani, dan unggul dalam digitalisasi."
+                  "{homepageConfig.visi}"
                 </p>
               </div>
             </div>
@@ -174,26 +180,12 @@ export const SchoolProfileSection: React.FC = () => {
                 </div>
               </div>
               <ul className="space-y-1.5 sm:space-y-3.5 text-[11px] sm:text-base text-slate-700 leading-snug">
-                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Melaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.</span>
-                </li>
-                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah, proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis, berpikir reflektif, serta memecahkan masalah.</span>
-                </li>
-                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Menumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin, tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati sesuai nilai-nilai Profil Lulusan.</span>
-                </li>
-                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar untuk meningkatkan kesehatan jasmani.</span>
-                </li>
-                <li className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
-                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
-                  <span>Mengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.</span>
-                </li>
+                {homepageConfig.misi.map((misiItem, idx) => (
+                  <li key={idx} className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                    <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
+                    <span>{misiItem}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
@@ -215,18 +207,11 @@ export const SchoolProfileSection: React.FC = () => {
             </div>
 
             <div className="prose max-w-none text-slate-700 text-[11px] sm:text-base leading-snug sm:leading-relaxed space-y-2.5 sm:space-y-4">
-              <p className="p-2.5 sm:p-4 bg-teal-50/40 rounded-lg sm:rounded-2xl border border-teal-100/60 font-medium">
-                Didirikan pada tahun 1970-an di pusat Kecamatan Dau, Malang, sekolah ini hadir untuk memenuhi kebutuhan pendidikan masyarakat di kawasan strategis yang dekat dengan wilayah wisata dan industri.
-              </p>
-              <p>
-                Pada bulan <strong>Desember 2018</strong>, sekolah mengalami babak penting melalui proses <em>merger</em> antara SDN 1 Mulyoagung dan SDN 3 Mulyoagung, memperkuat sinergi fasilitas dan manajemen sekolah.
-              </p>
-              <p>
-                Ciri khas kebanggaan sekolah adalah <strong>Ikon Patung Semar</strong>, menyimbolkan komitmen kelestarian budaya kearifan lokal Jawa.
-              </p>
-              <p>
-                Kini, didukung fasilitator dan Guru Penggerak, SDN 1 Mulyoagung bertransformasi menerapkan Kurikulum Merdeka untuk membentuk generasi unggul sesuai Profil Pelajar Pancasila.
-              </p>
+              {homepageConfig.sejarah.split(/\r?\n\r?\n/).map((paragraph, idx) => (
+                <p key={idx} className={idx === 0 ? "p-2.5 sm:p-4 bg-teal-50/40 rounded-lg sm:rounded-2xl border border-teal-100/60 font-medium" : ""}>
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </div>
         )}
