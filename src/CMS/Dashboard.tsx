@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { UserSession, CmsTab } from './types';
 import CmsLogin from './components/CmsLogin';
 import CmsSidebar from './components/CmsSidebar';
@@ -11,7 +12,7 @@ import FasilitasCrud from './FasilitasCrud';
 import SambutanKepsekCrud from './SambutanKepsekCrud';
 import PengumumanCrud from './PengumumanCrud';
 import StatistikCrud from './Statistikcrud';
-import PengaturanSekolah from './PengaturanSekolah';
+import PengaturanSekolah from './pengaturan';
 
 import { FileValidationModal } from './components/FileValidationModal';
 
@@ -21,7 +22,14 @@ interface DashboardProps {
 
 export default function Dashboard({ onBackToHome }: DashboardProps) {
     const [user, setUser] = useState<UserSession | null>(null);
-    const [activeTab, setActiveTab] = useState<CmsTab>('guru');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const activeTab = (location.pathname.split('/')[2] || 'guru') as CmsTab;
+
+    const setActiveTab = (tab: CmsTab) => {
+        navigate(`/cms/${tab}`);
+    };
 
     useEffect(() => {
         const savedUser = localStorage.getItem('cms_user');
@@ -29,29 +37,36 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
             try {
                 const parsed = JSON.parse(savedUser);
                 setUser(parsed);
+                const currentTab = location.pathname.split('/')[2] || '';
                 if (parsed.role === 'TIM') {
-                    setActiveTab('galeri');
+                    if (currentTab !== 'galeri' && currentTab !== 'berita') {
+                        navigate('/cms/galeri', { replace: true });
+                    }
+                } else if (parsed.role === 'ADMIN') {
+                    if (!currentTab || currentTab === '') {
+                        navigate('/cms/guru', { replace: true });
+                    }
                 }
             } catch (e) {
                 localStorage.removeItem('cms_user');
             }
         }
-    }, []);
+    }, [location.pathname, navigate]);
 
     const handleLoginSuccess = (loggedInUser: UserSession) => {
         setUser(loggedInUser);
         localStorage.setItem('cms_user', JSON.stringify(loggedInUser));
         if (loggedInUser.role === 'TIM') {
-            setActiveTab('galeri');
+            navigate('/cms/galeri', { replace: true });
         } else {
-            setActiveTab('guru');
+            navigate('/cms/guru', { replace: true });
         }
     };
 
     const handleLogout = () => {
         setUser(null);
         localStorage.removeItem('cms_user');
-        setActiveTab('guru');
+        navigate('/cms', { replace: true });
     };
 
     const handleUpdateUser = (updatedUser: UserSession) => {
@@ -78,7 +93,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 onLogout={handleLogout}
             />
 
-            <main className="flex-grow p-4 sm:p-6 md:p-10 max-w-7xl w-full overflow-x-hidden">
+            <main className="flex-grow p-4 sm:p-6 md:p-10 w-full overflow-x-hidden">
                 {activeTab === 'guru' && user.role === 'ADMIN' && <GuruCrud />}
                 {activeTab === 'sambutan' && user.role === 'ADMIN' && <SambutanKepsekCrud />}
                 {activeTab === 'pengumuman' && user.role === 'ADMIN' && <PengumumanCrud />}

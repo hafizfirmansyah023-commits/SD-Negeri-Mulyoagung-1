@@ -5,6 +5,7 @@ import heroImg from '../assets/images/img1.webp';
 import heroImg1 from '../assets/images/img2.webp';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { ShinyText } from './common/ShinyText';
+import { useHomepageConfig } from '../hooks/useHomepageConfig';
 
 interface HeroProps {
   onOpenPpdb: () => void;
@@ -17,6 +18,7 @@ export const Hero: React.FC<HeroProps> = ({
   setActiveTab,
   linkPpdb,
 }) => {
+  const homepageConfig = useHomepageConfig();
   const [tahunAjaran, setTahunAjaran] = useState('2025/2026');
   const [customLinkPpdb, setCustomLinkPpdb] = useState('');
 
@@ -105,7 +107,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div
           className="bg-cover bg-center w-full h-full opacity-30 scale-105"
           style={{
-            backgroundImage: `url(${heroImg1})`,
+            backgroundImage: `url(${homepageConfig.heroBg ? getImageUrl(homepageConfig.heroBg) : heroImg1})`,
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0D4A46]/0 to-[#156B63]/50" />
@@ -130,13 +132,22 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
           
           <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-extrabold leading-[1.15] tracking-tight">
-            Selamat Datang di <br className="hidden sm:block" />
-            <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
+            {homepageConfig.heroTitle.includes('SD Negeri 1 Mulyoagung') ? (
+              <>
+                {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim() ? (
+                  <>
+                    {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim()} <br className="hidden sm:block" />
+                  </>
+                ) : 'Selamat Datang di '}
+                <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
+              </>
+            ) : (
+              <ShinyText text={homepageConfig.heroTitle} speed={4} className="drop-shadow-sm" />
+            )}
           </h1>
 
           <p className="text-[13px] sm:text-lg lg:text-xl text-slate-100 dark:text-slate-200 max-w-2xl leading-snug sm:leading-relaxed opacity-95 mx-auto lg:mx-0">
-            Selamat datang di SD Negeri 1 Mulyoagung, sekolah yang berkomitmen menciptakan lingkungan belajar yang aman, nyaman, dan inspiratif. Kami menghadirkan pendidikan berkualitas untuk membentuk peserta didik yang beriman, 
-            berakhlak mulia, berprestasi, kreatif, serta siap menghadapi perkembangan ilmu pengetahuan dan teknologi di masa depan.
+            {homepageConfig.heroSubtitle}
           </p>
 
           {/* Buttons */}

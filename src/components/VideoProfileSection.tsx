@@ -1,8 +1,26 @@
 import React, { useState } from 'react';
 import { Play, PlayCircle, X, ExternalLink } from 'lucide-react';
+import { useHomepageConfig } from '../hooks/useHomepageConfig';
 
 export const VideoProfileSection: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const homepageConfig = useHomepageConfig();
+
+  const getYoutubeId = (url: string) => {
+    if (!url) return '5T2k922_Z8Q';
+    const trimmed = url.trim();
+    if (trimmed.length === 11 && /^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+      return trimmed;
+    }
+    const regExp = /^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/|shorts\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/;
+    const match = trimmed.match(regExp);
+    return (match && match[1].length === 11) ? match[1] : '5T2k922_Z8Q';
+  };
+
+  const videoId = getYoutubeId(homepageConfig.videoUrl);
+  const videoSection = homepageConfig.sections.find(s => s.key === 'video');
+  const sectionTitle = videoSection ? videoSection.judul : 'Video Profil Sekolah';
+  const sectionSubtitle = videoSection ? videoSection.subjudul : 'Mengenal lebih dekat lingkungan, fasilitas, dan kegiatan akademik di SD Negeri 1 Mulyoagung melalui tayangan video singkat kami.';
 
   return (
     // Padding section diperkecil untuk mobile (py-10)
@@ -12,7 +30,7 @@ export const VideoProfileSection: React.FC = () => {
         
         {/* Background Ambient Lights */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />Base path: ``
 
         {/* Text Area */}
         {/* Padding diperkecil (p-5), jarak antar elemen dirapatkan (space-y-3) */}
@@ -23,11 +41,11 @@ export const VideoProfileSection: React.FC = () => {
           </div>
 
           <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
-            Video Profil Sekolah
+            {sectionTitle}
           </h2>
 
           <p className="text-slate-200 dark:text-slate-300 text-xs sm:text-lg leading-snug sm:leading-relaxed opacity-90 max-w-md">
-            Mengenal lebih dekat lingkungan, fasilitas, dan kegiatan akademik di SD Negeri 1 Mulyoagung melalui tayangan video singkat kami.
+            {sectionSubtitle}
           </p>
 
           {/* Buttons Area: Di mobile menjadi sejajar dan proporsional */}
@@ -41,7 +59,7 @@ export const VideoProfileSection: React.FC = () => {
             </button>
 
             <a
-              href="https://www.youtube.com/watch?v=-HU-Kg20g-M"
+              href={`https://www.youtube.com/watch?v=${videoId}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 sm:flex-none bg-white/10 hover:bg-white/20 text-white font-semibold text-[10px] sm:text-sm py-2 px-3 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 border border-white/20 transition-colors"
@@ -53,13 +71,12 @@ export const VideoProfileSection: React.FC = () => {
         </div>
 
         {/* Video Player / Thumbnail Area */}
-        {/* KUNCI PERBAIKAN: Gunakan aspect-video untuk mobile, dan min-h untuk desktop */}
         <div className="lg:w-1/2 relative w-full aspect-video lg:aspect-auto lg:min-h-[420px] bg-slate-950 overflow-hidden">
           {isPlaying ? (
             <div className="w-full h-full relative">
               <iframe
-                src="https://www.youtube.com/embed/-HU-Kg20g-M?autoplay=1"
-                title="Video Profil SD Negeri 1 Mulyoagung"
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                title="Video Profil"
                 className="w-full h-full border-0 absolute inset-0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -76,12 +93,11 @@ export const VideoProfileSection: React.FC = () => {
           ) : (
             <div className="w-full h-full relative group cursor-pointer" onClick={() => setIsPlaying(true)}>
               <img
-                src="https://img.youtube.com/vi/-HU-Kg20g-M/maxresdefault.jpg"
-                alt="Video Profil Thumbnail SD Negeri Mulyoagung 1"
+                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+                alt="Video Profil Thumbnail"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-slate-950/40 group-hover:bg-slate-950/20 transition-colors flex items-center justify-center">
-                {/* Ukuran tombol play diperkecil untuk mobile */}
                 <div className="w-14 h-14 sm:w-24 sm:h-24 bg-white/25 backdrop-blur-md rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl border border-white/40">
                   <div className="w-10 h-10 sm:w-16 sm:h-16 bg-white text-[#1E3A8A] rounded-full flex items-center justify-center shadow-lg pl-0.5 sm:pl-1">
                     <Play className="w-5 h-5 sm:w-8 sm:h-8 fill-current" />

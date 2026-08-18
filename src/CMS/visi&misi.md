@@ -1,1 +1,0 @@
-buat CURD untuk sejarah dan visi misi

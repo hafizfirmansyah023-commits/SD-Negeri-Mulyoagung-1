@@ -4,6 +4,7 @@ import { NEWS_ARTICLES } from '../data/schoolData';
 import { Article } from '../types';
 import { NewsDetailModal } from './NewsDetailModal';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { useHomepageConfig } from '../hooks/useHomepageConfig';
 
 interface NewsSectionProps {
   onViewAllClick?: () => void;
@@ -15,6 +16,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
   const [articles, setArticles] = useState<Article[]>(cachedArticles || []);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
+  const homepageConfig = useHomepageConfig();
 
   const handleShare = (e: React.MouseEvent, article: Article) => {
     e.stopPropagation();
@@ -78,6 +80,10 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
       ? articles
       : articles.filter((a) => a.category === selectedCategory);
 
+  const newsSection = homepageConfig.sections.find(s => s.key === 'berita');
+  const sectionTitle = newsSection ? newsSection.judul : 'Berita & Informasi Terkini';
+  const sectionSubtitle = newsSection ? newsSection.subjudul : 'Ikuti update terbaru seputar kegiatan, kejuaraan, dan pengumuman sekolah';
+
   return (
     // Padding Y diturunkan untuk mobile (py-10)
     <section id="news-section" className="w-full bg-white py-10 sm:py-20 transition-colors">
@@ -91,10 +97,10 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
               Kabar & Pengumuman Sekolah
             </div>
             <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-[black] leading-tight">
-              Berita & Informasi Terkini
+              {sectionTitle}
             </h2>
             <p className="text-slate-600 text-xs sm:text-base mt-1.5 sm:mt-2">
-              Ikuti update terbaru seputar kegiatan, kejuaraan, dan pengumuman sekolah
+              {sectionSubtitle}
             </p>
           </div>
 

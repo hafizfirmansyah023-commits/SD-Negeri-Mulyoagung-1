@@ -35,8 +35,8 @@ import { AnnouncementPopup } from './components/AnnouncementPopup';
 
 import Dashboard from './CMS/Dashboard';
 import { LoadingProvider } from './context/LoadingContext';
-
 import { getApiBaseUrl } from './config/api';
+import { useHomepageConfig } from './hooks/useHomepageConfig';
 
 function AppContent() {
   const location = useLocation();
@@ -44,6 +44,7 @@ function AppContent() {
   const navigationType = useNavigationType();
   const [ppdbOpen, setPpdbOpen] = useState(false);
   const [linkPpdb, setLinkPpdb] = useState('');
+  const homepageConfig = useHomepageConfig();
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -130,7 +131,7 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, [location.pathname, navigationType]);
 
-  if (activeTab === 'cms') {
+  if (location.pathname.startsWith('/cms')) {
     return <Dashboard onBackToHome={() => navigate('/')} />;
   }
 
@@ -154,27 +155,56 @@ function AppContent() {
             path="/"
             element={
               <>
-                <div data-aos="fade-down">
-                  <Hero onOpenPpdb={handleOpenPpdb} setActiveTab={setActiveTab} linkPpdb={linkPpdb} />
-                </div>
-                <div data-aos="fade-up" data-aos-delay="100">
-                  <Stats />
-                </div>
-                <div data-aos="fade-up" data-aos-delay="200">
-                  <PrincipalGreeting />
-                </div>
-                <div data-aos="fade-right" data-aos-delay="100">
-                  <NewsSection onViewAllClick={() => setActiveTab('news')} />
-                </div>
-                <div data-aos="fade-left" data-aos-delay="100">
-                  <SchoolProfileSection />
-                </div>
-                <div data-aos="zoom-in" data-aos-delay="100">
-                  <VideoProfileSection />
-                </div>
-                <div data-aos="fade-up" data-aos-delay="100">
-                  <ContactSection />
-                </div>
+                {homepageConfig.sections
+                  .filter((sec) => sec.is_active)
+                  .map((sec) => {
+                    switch (sec.key) {
+                      case 'hero':
+                        return (
+                          <div data-aos="fade-down" key="hero">
+                            <Hero onOpenPpdb={handleOpenPpdb} setActiveTab={setActiveTab} linkPpdb={linkPpdb} />
+                          </div>
+                        );
+                      case 'stats':
+                        return (
+                          <div data-aos="fade-up" data-aos-delay="100" key="stats">
+                            <Stats />
+                          </div>
+                        );
+                      case 'sambutan':
+                        return (
+                          <div data-aos="fade-up" data-aos-delay="200" key="sambutan">
+                            <PrincipalGreeting />
+                          </div>
+                        );
+                      case 'berita':
+                        return (
+                          <div data-aos="fade-right" data-aos-delay="100" key="berita">
+                            <NewsSection onViewAllClick={() => setActiveTab('news')} />
+                          </div>
+                        );
+                      case 'profil':
+                        return (
+                          <div data-aos="fade-left" data-aos-delay="100" key="profil">
+                            <SchoolProfileSection />
+                          </div>
+                        );
+                      case 'video':
+                        return (
+                          <div data-aos="zoom-in" data-aos-delay="100" key="video">
+                            <VideoProfileSection />
+                          </div>
+                        );
+                      case 'kontak':
+                        return (
+                          <div data-aos="fade-up" data-aos-delay="100" key="kontak">
+                            <ContactSection />
+                          </div>
+                        );
+                      default:
+                        return null;
+                    }
+                  })}
               </>
             }
           />
