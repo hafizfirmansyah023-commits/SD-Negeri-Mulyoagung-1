@@ -18,7 +18,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
   onOpenPpdb,
   linkPpdb,
 }) => (
-  <div className="md:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-xl transition-all">
+  <div className="md:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-xl transition-all max-h-[calc(100vh-5rem)] overflow-y-auto">
     <div className="flex flex-col gap-2">
       {navItems.map((item) => {
         const isActive = activeTab === item.id;
