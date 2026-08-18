@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Calendar, ArrowRight } from 'lucide-react';
+import { X, Calendar, ArrowRight, Share2 } from 'lucide-react';
 import { GalleryItem } from '../../types';
 
 interface PhotoLightboxModalProps {
@@ -79,7 +79,26 @@ export const PhotoLightboxModal: React.FC<PhotoLightboxModalProps> = ({ photo, o
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3 sm:p-5 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex justify-end items-center shrink-0">
+        <div className="p-3 sm:p-5 bg-slate-50 dark:bg-slate-800/80 border-t border-slate-200 dark:border-slate-800 flex justify-between items-center shrink-0">
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: photo.title,
+                  text: photo.description || photo.title,
+                  url: window.location.href,
+                });
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Tautan galeri berhasil disalin!');
+              }
+            }}
+            className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300 hover:text-[#028C84] transition-colors cursor-pointer"
+          >
+            <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span>Bagikan</span>
+          </button>
+
           <button
             onClick={onClose}
             className="bg-[#1E3A8A] hover:bg-[#00236f] text-white text-[11px] sm:text-xs font-bold px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
