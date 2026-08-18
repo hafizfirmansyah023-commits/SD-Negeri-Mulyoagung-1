@@ -12,7 +12,7 @@ import FasilitasCrud from './FasilitasCrud';
 import SambutanKepsekCrud from './SambutanKepsekCrud';
 import PengumumanCrud from './PengumumanCrud';
 import StatistikCrud from './Statistikcrud';
-import PengaturanSekolah from './PengaturanSekolah';
+import PengaturanSekolah from './pengaturan';
 
 import { FileValidationModal } from './components/FileValidationModal';
 
