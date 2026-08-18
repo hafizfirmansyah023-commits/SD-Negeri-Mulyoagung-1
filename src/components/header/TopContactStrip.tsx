@@ -1,9 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Phone } from 'lucide-react';
 import { useSchoolSettings } from '../../hooks/useSchoolSettings';
+import { getApiBaseUrl } from '../../config/api';
+
+interface StatData {
+  id: number;
+  judul: string;
+  jumlah: string;
+  label: string;
+}
 
 export const TopContactStrip: React.FC = () => {
   const { emailSekolah, teleponSekolah } = useSchoolSettings();
+  const [akreditasi, setAkreditasi] = useState('A');
+
+  useEffect(() => {
+    const fetchAkreditasi = async () => {
+      try {
+        const response = await fetch(`${getApiBaseUrl()}/backend/API/statistik.php`);
+        const result = await response.json();
+
+        if (result.status === 'success' && Array.isArray(result.data)) {
+          const row = result.data.find((item: StatData) => item.judul.toLowerCase().includes('akreditasi'));
+          if (row && row.jumlah) {
+            setAkreditasi(row.jumlah);
+          }
+        }
+      } catch (err) {
+        console.error('Gagal mengambil data akreditasi:', err);
+      }
+    };
+
+    fetchAkreditasi();
+  }, []);
 
   return (
     <div className="bg-gradient-to-r from-[#0D4A46]/100 to-[#156B63]/100">
@@ -26,7 +55,7 @@ export const TopContactStrip: React.FC = () => {
         </div>
         <div className="flex items-center gap-3 shrink-0">
           <span className="bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded text-[11px] font-medium border border-teal-400/30 whitespace-nowrap">
-            Akreditasi A
+            Akreditasi {akreditasi}
           </span>
           <span className="hidden sm:inline text-slate-300 text-[11px] whitespace-nowrap">
             Kec. Dau, Kab. Malang
