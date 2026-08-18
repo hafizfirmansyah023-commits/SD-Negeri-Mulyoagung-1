@@ -130,7 +130,7 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, [location.pathname, navigationType]);
 
-  if (activeTab === 'cms') {
+  if (location.pathname.startsWith('/cms')) {
     return <Dashboard onBackToHome={() => navigate('/')} />;
   }
 
