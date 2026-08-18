@@ -147,7 +147,7 @@ function AppContent() {
       />
 
       {/* Main Page Content */}
-      <main className="flex-grow">
+      <main className="flex-grow overflow-x-hidden">
         <Routes>
 
           <Route

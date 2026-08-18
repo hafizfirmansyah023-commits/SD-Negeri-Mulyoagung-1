@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
 @layer base {
-  html,
-  body {
-    overflow-x: hidden;
-  }
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
