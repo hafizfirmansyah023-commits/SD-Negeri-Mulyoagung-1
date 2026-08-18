@@ -85,6 +85,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     setError('');
     setSuccess('');
 
+    if (password && password.length < 6) {
+      setError('Password baru harus memiliki minimal 6 karakter.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('action', 'update');
     formData.append('id', currentUser.id.toString());
@@ -124,6 +129,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (newPassword.length < 6) {
+      setError('Password harus memiliki minimal 6 karakter.');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('action', 'create');

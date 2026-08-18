@@ -1,5 +1,5 @@
-import React from 'react';
-import { Key, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Key, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession } from '../types';
 import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
@@ -27,13 +27,25 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
   setFotoSelection,
   onSubmit,
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const isPasswordInvalid = password.length > 0 && password.length < 6;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (isPasswordInvalid) {
+      e.preventDefault();
+      return;
+    }
+    onSubmit(e);
+  };
+
   return (
     <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
       <h3 className="text-base sm:text-lg font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
         <Key className="text-teal-600 shrink-0" size={18} /> Edit Profil Saya
       </h3>
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex justify-center mb-2">
           <div className="w-20 h-20 rounded-full overflow-hidden bg-slate-100 border-2 border-teal-500/30 flex items-center justify-center">
             {currentUser.foto ? (
@@ -72,13 +84,30 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
 
         <div>
           <label className="block text-slate-700 text-xs sm:text-sm font-medium mb-1">Password Baru (Opsional)</label>
-          <input
-            type="password"
-            placeholder="Kosongkan jika tidak ubah"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-xs sm:text-sm"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Kosongkan jika tidak ubah"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`w-full pl-3.5 pr-10 py-2 rounded-xl border ${
+                isPasswordInvalid ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-teal-500/20'
+              } focus:outline-none focus:ring-2 text-xs sm:text-sm`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors p-1 cursor-pointer"
+              title={showPassword ? 'Sembunyikan Password' : 'Tampilkan Password'}
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          {isPasswordInvalid && (
+            <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+              <AlertCircle size={14} className="shrink-0" /> Password harus memiliki minimal 6 karakter.
+            </p>
+          )}
         </div>
 
         <div>
@@ -103,7 +132,8 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
 
         <button
           type="submit"
-          className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-2.5 rounded-xl shadow-sm cursor-pointer transition-colors text-sm"
+          disabled={isPasswordInvalid}
+          className="w-full bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-medium py-2.5 rounded-xl shadow-sm cursor-pointer transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Perbarui Profil
         </button>

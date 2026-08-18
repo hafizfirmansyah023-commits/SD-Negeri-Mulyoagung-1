@@ -61,6 +61,12 @@ elseif ($method === 'POST') {
             exit();
         }
 
+        if (strlen($password) < 6) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Password harus memiliki minimal 6 karakter."]);
+            exit();
+        }
+
         // Check unique username
         $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
         $stmt->execute([$username]);
@@ -93,6 +99,12 @@ elseif ($method === 'POST') {
         if ($id === 0 || empty($username) || empty($nama)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Data tidak lengkap."]);
+            exit();
+        }
+
+        if (!empty($password) && strlen($password) < 6) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Password baru harus memiliki minimal 6 karakter."]);
             exit();
         }
 
