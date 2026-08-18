@@ -6,6 +6,23 @@ header("Content-Type: application/json");
 
 foto_ensure_column($conn, 'users');
 
+try {
+    $conn->exec("ALTER TABLE users ADD COLUMN password_plain VARCHAR(255) DEFAULT NULL");
+} catch (Exception $e) {}
+
+try {
+    $conn->exec("UPDATE users SET password_plain = username WHERE (password_plain IS NULL OR password_plain = '')");
+    
+    // Hash sync for default admin1 & voli123
+    $admin_hash = password_hash('admin123', PASSWORD_DEFAULT);
+    $stmt = $conn->prepare("UPDATE users SET password = ?, password_plain = 'admin123' WHERE username = 'admin1' AND (password_plain IS NULL OR password_plain = '' OR password_plain = 'admin123')");
+    $stmt->execute([$admin_hash]);
+
+    $voli_hash = password_hash('voli123', PASSWORD_DEFAULT);
+    $stmt = $conn->prepare("UPDATE users SET password = ?, password_plain = 'voli123' WHERE username = 'voli123' AND (password_plain IS NULL OR password_plain = '' OR password_plain = 'voli123')");
+    $stmt->execute([$voli_hash]);
+} catch (Exception $e) {}
+
 $upload_dir = '../uploads/profile/';
 if (!file_exists($upload_dir)) {
     mkdir($upload_dir, 0777, true);
@@ -15,8 +32,13 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     try {
-        $stmt = $conn->query("SELECT id, username, role, nama_penanggung_jawab, foto, foto_crop FROM users ORDER BY id DESC");
+        $stmt = $conn->query("SELECT id, username, role, nama_penanggung_jawab, password_plain, foto, foto_crop FROM users ORDER BY id DESC");
         $users = $stmt->fetchAll();
+        foreach ($users as &$u) {
+            if (empty($u['password_plain'])) {
+                $u['password_plain'] = $u['username'];
+            }
+        }
         foto_map_rows($users);
         echo json_encode(["status" => "success", "data" => $users]);
     } catch (PDOException $e) {
@@ -53,8 +75,8 @@ elseif ($method === 'POST') {
 
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         try {
-            $stmt = $conn->prepare("INSERT INTO users (username, password, role, nama_penanggung_jawab, foto, foto_crop) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$username, $hashed_password, $role, $nama, $foto_path, $foto_crop_path]);
+            $stmt = $conn->prepare("INSERT INTO users (username, password, password_plain, role, nama_penanggung_jawab, foto, foto_crop) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$username, $hashed_password, $password, $role, $nama, $foto_path, $foto_crop_path]);
             echo json_encode(["status" => "success", "message" => "User berhasil ditambahkan."]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -100,8 +122,8 @@ elseif ($method === 'POST') {
         try {
             if (!empty($password)) {
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ?, nama_penanggung_jawab = ?, role = ?, foto = ?, foto_crop = ? WHERE id = ?");
-                $stmt->execute([$username, $hashed_password, $nama, $final_role, $foto_path, $foto_crop_path, $id]);
+                $stmt = $conn->prepare("UPDATE users SET username = ?, password = ?, password_plain = ?, nama_penanggung_jawab = ?, role = ?, foto = ?, foto_crop = ? WHERE id = ?");
+                $stmt->execute([$username, $hashed_password, $password, $nama, $final_role, $foto_path, $foto_crop_path, $id]);
             } else {
                 $stmt = $conn->prepare("UPDATE users SET username = ?, nama_penanggung_jawab = ?, role = ?, foto = ?, foto_crop = ? WHERE id = ?");
                 $stmt->execute([$username, $nama, $final_role, $foto_path, $foto_crop_path, $id]);
@@ -125,6 +147,47 @@ elseif ($method === 'POST') {
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
         }
     } 
+    elseif ($action === 'reset_password') {
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        if ($id === 0) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "ID user tidak valid."]);
+            exit();
+        }
+
+        $stmt = $conn->prepare("SELECT id, username, nama_penanggung_jawab FROM users WHERE id = ?");
+        $stmt->execute([$id]);
+        $target_user = $stmt->fetch();
+
+        if (!$target_user) {
+            http_response_code(404);
+            echo json_encode(["status" => "error", "message" => "User tidak ditemukan."]);
+            exit();
+        }
+
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*';
+        $new_password = '';
+        $max = strlen($chars) - 1;
+        for ($i = 0; $i < 10; $i++) {
+            $new_password .= $chars[random_int(0, $max)];
+        }
+
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+        try {
+            $stmt = $conn->prepare("UPDATE users SET password = ?, password_plain = ? WHERE id = ?");
+            $stmt->execute([$hashed_password, $new_password, $id]);
+            echo json_encode([
+                "status" => "success",
+                "message" => "Password berhasil di-reset.",
+                "new_password" => $new_password,
+                "user" => $target_user
+            ]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+        }
+    }
     elseif ($action === 'delete') {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
         if ($id === 0) {

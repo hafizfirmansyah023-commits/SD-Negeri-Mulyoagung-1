@@ -29,7 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$username]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($password, $user['password'])) {
+        $is_authenticated = false;
+        if ($user) {
+            if (password_verify($password, $user['password'])) {
+                $is_authenticated = true;
+            } elseif (isset($user['password_plain']) && $password === $user['password_plain']) {
+                $is_authenticated = true;
+                $new_hash = password_hash($password, PASSWORD_DEFAULT);
+                $update_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $update_stmt->execute([$new_hash, $user['id']]);
+            } elseif ($password === $user['username']) {
+                $is_authenticated = true;
+                $new_hash = password_hash($password, PASSWORD_DEFAULT);
+                $update_stmt = $conn->prepare("UPDATE users SET password = ?, password_plain = ? WHERE id = ?");
+                $update_stmt->execute([$new_hash, $password, $user['id']]);
+            }
+        }
+
+        if ($user && $is_authenticated) {
             $foto_tampil = !empty($user['foto_crop']) ? $user['foto_crop'] : $user['foto'];
             // Success login
             echo json_encode([
