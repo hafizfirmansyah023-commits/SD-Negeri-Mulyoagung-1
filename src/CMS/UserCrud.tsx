@@ -8,6 +8,7 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { SelfProfileCard } from './user/SelfProfileCard';
 import { UserTable, UserData } from './user/UserTable';
 import { UserFormModal } from './user/UserFormModal';
+import { ResetPasswordModal } from './user/ResetPasswordModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
 
 interface UserCrudProps {
@@ -36,6 +37,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [newNama, setNewNama] = useState('');
   const [newRole, setNewRole] = useState<'ADMIN' | 'TIM'>('TIM');
   const [newFotoSelection, setNewFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
+
+  // Reset Password states
+  const [targetUserForReset, setTargetUserForReset] = useState<UserData | null>(null);
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   // Filter Hook
   const {
@@ -79,6 +85,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     setError('');
     setSuccess('');
 
+    if (password && password.length < 6) {
+      setError('Password baru harus memiliki minimal 6 karakter.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('action', 'update');
     formData.append('id', currentUser.id.toString());
@@ -118,6 +129,11 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (newPassword.length < 6) {
+      setError('Password harus memiliki minimal 6 karakter.');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('action', 'create');
@@ -180,6 +196,40 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
       }
     } catch {
       setError('Terjadi kesalahan saat menghapus pengguna.');
+    }
+  };
+
+  const handleConfirmResetPassword = async (user: UserData) => {
+    setIsResetting(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('action', 'reset_password');
+    formData.append('id', user.id.toString());
+
+    try {
+      const response = await fetch(`${API_BASE}/backend/API/users.php`, {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === 'success' && result.new_password) {
+        setGeneratedPassword(result.new_password);
+        setSuccess(`Password untuk @${user.username} berhasil di-reset.`);
+        setUsers((prevUsers) =>
+          prevUsers.map((u) =>
+            u.id === user.id ? { ...u, lastResetPassword: result.new_password } : u
+          )
+        );
+      } else {
+        setError(result.message || 'Gagal mereset password pengguna.');
+        setTargetUserForReset(null);
+      }
+    } catch {
+      setError('Terjadi kesalahan saat menghubungi server untuk reset password.');
+      setTargetUserForReset(null);
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -259,6 +309,10 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
                 currentUser={currentUser}
                 isFiltered={isFiltered}
                 onDeleteUser={handleDeleteUser}
+                onResetPassword={(u) => {
+                  setTargetUserForReset(u);
+                  setGeneratedPassword(null);
+                }}
               />
             )}
           </div>
@@ -279,6 +333,18 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
         setNewFotoSelection={setNewFotoSelection}
         onClose={() => setShowAddModal(false)}
         onSubmit={handleAddUser}
+      />
+
+      {/* Admin Reset Password Modal */}
+      <ResetPasswordModal
+        user={targetUserForReset}
+        generatedPassword={generatedPassword}
+        isLoading={isResetting}
+        onClose={() => {
+          setTargetUserForReset(null);
+          setGeneratedPassword(null);
+        }}
+        onConfirmReset={handleConfirmResetPassword}
       />
     </div>
   );
