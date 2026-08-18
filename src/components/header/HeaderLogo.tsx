@@ -22,7 +22,7 @@ export const HeaderLogo: React.FC<HeaderLogoProps> = ({ onClick }) => (
         mendorong tombol hamburger keluar layar di HP sempit. Ukuran font dasar (mobile)
         diperkecil ke text-lg khusus <sm; dari sm ke atas tetap sm:text-2xl seperti aslinya. */}
     <div className="flex flex-col min-w-0">
-      <span className="font-bold text-lg sm:text-2xl text-white tracking-tight leading-none truncate">
+      <span className="font-bold text-lg sm:text-2xl text-white tracking-tight leading-tight py-0.5 truncate">
         SD Negeri 1 Mulyoagung
       </span>
       <span className="text-[11px] text-teal-200/80 font-medium tracking-wide truncate">
