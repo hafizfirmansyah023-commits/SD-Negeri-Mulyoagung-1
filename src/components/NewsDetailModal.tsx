@@ -74,9 +74,10 @@ export const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ article, onClo
           <p className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-lg border-l-3 sm:border-l-4 border-[#028C84] pl-3 sm:pl-4 py-1.5 bg-teal-50/50 dark:bg-teal-950/30 rounded-r-xl">
             {article.summary}
           </p>
-          <div className="space-y-3 sm:space-y-4 whitespace-pre-line text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed">
-            {article.content}
-          </div>
+          <div 
+            className="space-y-3 sm:space-y-4 text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed prose prose-slate max-w-none"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
         </div>
 
         {/* Modal Footer */}
