@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowRight, Calendar, Tag } from 'lucide-react';
+import { ArrowRight, Calendar, Tag, Share2 } from 'lucide-react';
 import { NEWS_ARTICLES } from '../data/schoolData';
 import { Article } from '../types';
 import { NewsDetailModal } from './NewsDetailModal';
@@ -15,6 +15,20 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
   const [articles, setArticles] = useState<Article[]>(cachedArticles || []);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
+
+  const handleShare = (e: React.MouseEvent, article: Article) => {
+    e.stopPropagation();
+    if (navigator.share) {
+      navigator.share({
+        title: article.title,
+        text: article.summary,
+        url: window.location.href,
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Tautan berita berhasil disalin!');
+    }
+  };
 
   useEffect(() => {
     if (cachedArticles) {
@@ -94,7 +108,6 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
         </div>
 
         {/* Category Filters */}
-        {/* Gap diperkecil dan mb (margin bottom) dikurangi untuk mobile */}
         <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 sm:mb-8">
           {categories.map((cat) => (
             <button
@@ -112,12 +125,12 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
         </div>
 
         {/* Article Grid */}
-        {/* Gap dikurangi untuk mobile (gap-4) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredArticles.slice(0, 6).map((article) => (
             <article
               key={article.id}
-              className={`bg-slate-50/90 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col h-full border border-slate-200/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 ${
+              onClick={() => setActiveArticle(article)}
+              className={`group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-200/80 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer hover:-translate-y-1 ${
                 article.category === 'Prestasi'
                   ? 'border-t-[3px] sm:border-t-4 border-t-[#F9A825]'
                   : article.category === 'Pengumuman'
@@ -125,53 +138,58 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
                   : 'border-t-[3px] sm:border-t-4 border-t-[#028C84]'
               }`}
             >
-              {/* Image & Badge */}
-              {/* Tinggi gambar diturunkan di mobile (h-40) agar card tidak memanjang */}
-              <div className="relative h-40 sm:h-48 overflow-hidden group">
-                <img
-                  src={article.image}
-                  alt={article.imageAlt}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div
-                  className={`absolute top-3 left-3 sm:top-4 sm:left-4 text-white px-2.5 py-1 sm:px-3 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold shadow-md backdrop-blur-md ${
-                    article.category === 'Prestasi'
-                      ? 'bg-amber-500/95'
-                      : article.category === 'Pengumuman'
-                      ? 'bg-blue-600/95'
-                      : 'bg-[#028C84]/95'
-                  }`}
-                >
-                  {article.category}
+              <div>
+                {/* Image & Badge */}
+                <div className="relative h-44 sm:h-48 bg-slate-100 overflow-hidden">
+                  <img
+                    src={article.image}
+                    alt={article.imageAlt}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <span
+                    className={`absolute bottom-3 right-3 text-white px-2.5 py-1 rounded-full text-xs font-medium shadow-sm backdrop-blur-md ${
+                      article.category === 'Prestasi'
+                        ? 'bg-amber-500/90'
+                        : article.category === 'Pengumuman'
+                        ? 'bg-blue-600/90'
+                        : 'bg-[#028C84]/90'
+                    }`}
+                  >
+                    {article.category}
+                  </span>
+                </div>
+
+                {/* Content */}
+                <div className="p-4 sm:p-5 space-y-2">
+                  <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1 group-hover:text-[#028C84] transition-colors">
+                    {article.title}
+                  </h3>
+                  {article.summary && (
+                    <p className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed">
+                      {article.summary}
+                    </p>
+                  )}
                 </div>
               </div>
 
-              {/* Content */}
-              {/* Padding dikurangi di mobile (p-4) */}
-              <div className="p-4 sm:p-6 flex flex-col flex-grow bg-white">
-                <div className="flex items-center gap-1.5 text-[10px] sm:text-xs text-slate-500 mb-1.5 sm:mb-2 font-medium">
-                  <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-600" />
-                  <time>{article.date}</time>
+              {/* Footer Tanggal & Aksi Bagikan + Lihat Detail (Konsisten dengan Galeri) */}
+              <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-400">
+                <span className="flex items-center gap-1.5">
+                  <Calendar size={13} className="text-teal-600 shrink-0" />
+                  <span>{article.date}</span>
+                </span>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => handleShare(e, article)}
+                    className="flex items-center gap-1 text-[11px] font-semibold text-slate-500 hover:text-[#028C84] transition-colors p-1 rounded hover:bg-slate-100 cursor-pointer"
+                    title="Bagikan Berita"
+                  >
+                    <Share2 size={13} />
+                    <span>Bagikan</span>
+                  </button>
+                  <span className="text-[11px] text-teal-600 font-semibold group-hover:underline">Baca Selengkapnya</span>
                 </div>
-
-                <h3
-                  onClick={() => setActiveArticle(article)}
-                  className="text-base sm:text-lg font-bold text-[#1E3A8A] mb-2 sm:mb-3 line-clamp-2 hover:text-[#028C84] transition-colors cursor-pointer leading-tight"
-                >
-                  {article.title}
-                </h3>
-
-                <p className="text-slate-600 text-[11px] sm:text-sm mb-3 sm:mb-5 line-clamp-2 sm:line-clamp-3 flex-grow leading-snug sm:leading-relaxed">
-                  {article.summary}
-                </p>
-
-                <button
-                  onClick={() => setActiveArticle(article)}
-                  className="bg-teal-50 hover:bg-[#028C84] text-[#028C84] hover:text-white border border-teal-200/80 font-bold text-[10px] sm:text-xs py-2 px-3 sm:py-2.5 sm:px-4 rounded-lg sm:rounded-xl transition-all duration-200 w-fit flex items-center gap-1 sm:gap-1.5 cursor-pointer shadow-sm mt-auto"
-                >
-                  <span>Baca Selengkapnya</span>
-                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                </button>
               </div>
             </article>
           ))}

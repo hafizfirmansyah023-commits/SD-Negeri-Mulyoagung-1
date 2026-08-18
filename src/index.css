@@ -135,3 +135,28 @@
   animation: shinyText 5s linear infinite;
 }
 
+@keyframes gridMotionShift {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(48px, 48px);
+  }
+}
+
+@keyframes gridPulse {
+  0% {
+    opacity: 0.1;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(1.02);
+  }
+  100% {
+    opacity: 0.1;
+    transform: scale(0.98);
+  }
+}
+
+
