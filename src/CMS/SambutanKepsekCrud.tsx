@@ -3,6 +3,7 @@ import { Award, Upload, Save, User, FileText, CheckCircle2, AlertCircle, Crop } 
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { validateImageFile } from './utils/fileValidation';
 import { ImageCropModal } from './components/ImageCropModal';
+import { RichTextEditor } from './components/RichTextEditor';
 
 const API_BASE = getApiBaseUrl();
 
@@ -226,15 +227,12 @@ export default function SambutanKepsekCrud() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
                   <FileText size={16} className="text-slate-400" />
-                  Isi Sambutan
+                  Isi Sambutan *
                 </label>
-                <textarea
+                <RichTextEditor
                   value={sambutan}
-                  onChange={(e) => setSambutan(e.target.value)}
-                  rows={8}
+                  onChange={setSambutan}
                   placeholder="Ketik isi sambutan di sini..."
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white transition-all text-sm leading-relaxed"
-                  required
                 />
               </div>
 

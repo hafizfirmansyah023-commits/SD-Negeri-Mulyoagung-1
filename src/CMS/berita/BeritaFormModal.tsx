@@ -2,6 +2,7 @@ import React from 'react';
 import { getImageUrl } from '../../config/api';
 import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 import { CROP_RATIO_OPTIONS } from '../components/ImageCropModal';
+import { RichTextEditor } from '../components/RichTextEditor';
 
 interface BeritaFormModalProps {
   showModal: boolean;
@@ -104,14 +105,11 @@ export const BeritaFormModal: React.FC<BeritaFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">Isi Berita / Artikel</label>
-            <textarea
-              required
-              rows={5}
+            <label className="block text-slate-700 text-sm font-medium mb-1.5">Isi Berita / Artikel *</label>
+            <RichTextEditor
               value={isi}
-              onChange={(e) => setIsi(e.target.value)}
+              onChange={setIsi}
               placeholder="Tuliskan isi berita selengkapnya..."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
             />
           </div>
 

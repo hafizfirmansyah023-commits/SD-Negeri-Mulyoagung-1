@@ -124,9 +124,10 @@ export const AnnouncementPopup: React.FC = () => {
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">
               {data.judul}
             </h2>
-            <p className="text-slate-600 text-sm md:text-base leading-relaxed whitespace-pre-line">
-              {data.isi}
-            </p>
+            <div 
+              className="text-slate-600 text-sm md:text-base leading-relaxed prose prose-slate max-w-none"
+              dangerouslySetInnerHTML={{ __html: data.isi }}
+            />
           </div>
 
           {/* Button Action */}

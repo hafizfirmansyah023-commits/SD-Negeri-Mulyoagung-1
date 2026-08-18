@@ -160,9 +160,10 @@ export const SchoolProfileSection: React.FC = () => {
                 </div>
               </div>
               <div className="relative overflow-hidden rounded-xl p-3 sm:p-5 bg-gradient-to-r from-teal-50/90 to-teal-50/40 border border-teal-100/80">
-                <p className="text-[11px] sm:text-lg text-slate-800 font-bold leading-snug sm:leading-relaxed border-l-2 sm:border-l-4 border-[#028C84] pl-2.5 sm:pl-4">
-                  "{homepageConfig.visi}"
-                </p>
+                <div 
+                  className="text-[11px] sm:text-lg text-slate-800 font-bold leading-snug sm:leading-relaxed border-l-2 sm:border-l-4 border-[#028C84] pl-2.5 sm:pl-4 prose prose-slate max-w-none"
+                  dangerouslySetInnerHTML={{ __html: homepageConfig.visi }}
+                />
               </div>
             </div>
 
@@ -206,13 +207,10 @@ export const SchoolProfileSection: React.FC = () => {
               </div>
             </div>
 
-            <div className="prose max-w-none text-slate-700 text-[11px] sm:text-base leading-snug sm:leading-relaxed space-y-2.5 sm:space-y-4">
-              {homepageConfig.sejarah.split(/\r?\n\r?\n/).map((paragraph, idx) => (
-                <p key={idx} className={idx === 0 ? "p-2.5 sm:p-4 bg-teal-50/40 rounded-lg sm:rounded-2xl border border-teal-100/60 font-medium" : ""}>
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+            <div 
+              className="prose max-w-none text-slate-700 text-[11px] sm:text-base leading-snug sm:leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: homepageConfig.sejarah }}
+            />
           </div>
         )}
 

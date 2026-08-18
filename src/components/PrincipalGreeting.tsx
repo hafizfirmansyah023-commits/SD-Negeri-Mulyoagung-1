@@ -86,10 +86,10 @@ export const PrincipalGreeting: React.FC = () => {
               {/* Padding dalam kotak pesan diturunkan (p-4), border pinggir disesuaikan */}
               <div className="relative pl-5 sm:pl-6 p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white/40 backdrop-blur-md border border-white/70 shadow-[inset_0_2px_10px_rgba(255,255,255,0.5),0_4px_15px_-5px_rgba(0,0,0,0.05)]">
                 <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-slate-400 to-slate-200 rounded-l-xl sm:rounded-l-2xl opacity-80"></div>
-                {/* Ukuran teks diturunkan menjadi text-[12px] atau text-[13px] dengan line-height rapat di mobile */}
-                <p className="text-slate-700 text-[12px] sm:text-lg leading-snug sm:leading-relaxed whitespace-pre-line font-medium text-center lg:text-left">
-                  {data.greeting}
-                </p>
+                <div 
+                  className="text-slate-700 text-[12px] sm:text-lg leading-snug sm:leading-relaxed font-medium text-center lg:text-left prose prose-slate max-w-none"
+                  dangerouslySetInnerHTML={{ __html: data.greeting }}
+                />
               </div>
 
               {/* Footer info (Nama sekolah dan Slogan) */}

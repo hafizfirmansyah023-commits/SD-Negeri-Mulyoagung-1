@@ -1,5 +1,6 @@
 import React from 'react';
 import { getYoutubeId } from '../utils/youtube';
+import { RichTextEditor } from '../../components/RichTextEditor';
 
 interface KontenUtamaSectionProps {
   heroTitle: string;
@@ -117,12 +118,10 @@ export const KontenUtamaSection: React.FC<KontenUtamaSectionProps> = ({
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Visi Sekolah
             </label>
-            <textarea
-              rows={3}
+            <RichTextEditor
               value={profilVisi}
-              onChange={(e) => setProfilVisi(e.target.value)}
+              onChange={setProfilVisi}
               placeholder="Visi sekolah..."
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
             />
           </div>
 
@@ -143,12 +142,10 @@ export const KontenUtamaSection: React.FC<KontenUtamaSectionProps> = ({
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Sejarah Sekolah
             </label>
-            <textarea
-              rows={5}
+            <RichTextEditor
               value={profilSejarah}
-              onChange={(e) => setProfilSejarah(e.target.value)}
+              onChange={setProfilSejarah}
               placeholder="Sejarah singkat berdirinya sekolah..."
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
             />
           </div>
         </div>

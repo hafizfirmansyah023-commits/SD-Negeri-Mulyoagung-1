@@ -3,6 +3,7 @@ import { Megaphone, Save, CheckCircle2, AlertCircle, Upload, Crop, Globe, Link, 
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { validateImageFile } from './utils/fileValidation';
 import { ImageCropModal, CROP_RATIO_OPTIONS } from './components/ImageCropModal';
+import { RichTextEditor } from './components/RichTextEditor';
 
 const API_BASE = getApiBaseUrl();
 
@@ -447,15 +448,12 @@ export default function PengumumanCrud() {
 
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Isi Pengumuman
+                  Isi Pengumuman *
                 </label>
-                <textarea
+                <RichTextEditor
                   value={isi}
-                  onChange={(e) => setIsi(e.target.value)}
-                  rows={4}
+                  onChange={setIsi}
                   placeholder="Detail pengumuman di dalam pop-up..."
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white transition-all text-sm leading-relaxed"
-                  required
                 />
               </div>
 
