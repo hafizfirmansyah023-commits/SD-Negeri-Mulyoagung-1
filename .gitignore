@@ -1,10 +1,59 @@
+# ========================
+# Dependencies
+# ========================
 node_modules/
+
+# ========================
+# Build Output
+# ========================
 build/
 dist/
 coverage/
-.DS_Store
-*.log
+
+# ========================
+# Environment & Secrets
+# ========================
 .env*
 !.env.example
-AGENTS.md
 
+# ========================
+# Database Dump (SENSITIF)
+# ========================
+backend/db_sdn1mulyoagung.sql
+*.sql
+
+# ========================
+# File Upload Pengguna
+# (konten dinamis — tidak perlu di-track Git)
+# ========================
+backend/uploads/
+
+# ========================
+# OS & Editor
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/settings.json
+.idea/
+
+# ========================
+# Log & Temp
+# ========================
+*.log
+*.tmp
+*.bak
+*.swp
+
+# ========================
+# Script Sementara
+# ========================
+scratch_check.ps1
+*.ps1
+
+# ========================
+# Catatan Internal
+# (tidak perlu masuk repo publik)
+# ========================
+PRODUKSI.md
+AGENTS.md
