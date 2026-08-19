@@ -55,11 +55,6 @@ interface GaleriItem {
   deskripsi?: string;
 }
 
-interface PengumumanItem {
-  id: number;
-  judul: string;
-  is_active: number | boolean;
-}
 
 interface UserItem {
   id: number;
@@ -96,7 +91,6 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
   const [guruList, setGuruList] = useState<GuruItem[]>([]);
   const [beritaList, setBeritaList] = useState<BeritaItem[]>([]);
   const [galeriList, setGaleriList] = useState<GaleriItem[]>([]);
-  const [pengumumanList, setPengumumanList] = useState<PengumumanItem[]>([]);
   const [userList, setUserList] = useState<UserItem[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [tahunAjaran, setTahunAjaran] = useState<string>('2025/2026');
@@ -118,7 +112,6 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
       if (isAdmin) {
         promises.push(
           fetch(`${API_BASE}/backend/API/guru.php`),
-          fetch(`${API_BASE}/backend/API/pengumuman.php`),
           fetch(`${API_BASE}/backend/API/users.php`),
           fetch(`${API_BASE}/backend/API/hero_carousel.php`),
           fetch(`${API_BASE}/backend/API/pengaturan.php`),
@@ -165,17 +158,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
           }
         }
 
-        // Process pengumuman
-        if (results[3] && results[3].status === 'fulfilled' && results[3].value.ok) {
-          try {
-            const json = await results[3].value.json();
-            if (json.status === 'success' && Array.isArray(json.data)) {
-              setPengumumanList(json.data);
-            }
-          } catch {
-            /* ignore */
-          }
-        }
+        
 
         // Process users
         if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
@@ -257,9 +240,6 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
   const galeriVerifiedCount = galeriList.filter((g) => g.status_verifikasi === 'Verified').length;
   const galeriPendingCount = galeriList.filter((g) => g.status_verifikasi === 'Pending').length;
 
-  const pengumumanAktifCount = pengumumanList.filter(
-    (p) => p.is_active === 1 || p.is_active === true,
-  ).length;
 
   const totalUsersCount = userList.length;
   const adminUsersCount = userList.filter((u) => u.role === 'ADMIN').length;
@@ -335,7 +315,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         </div>
       ) : isAdmin ? (
         /* ADMIN STAT CARDS */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Card 1: Guru Aktif */}
           <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
@@ -393,24 +373,6 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             </div>
           </div>
 
-          {/* Card 4: Pengumuman Aktif */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
-                  Pengumuman
-                </p>
-                <h3 className="text-2xl font-black text-slate-800 mt-1">{pengumumanAktifCount}</h3>
-              </div>
-              <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
-                <Megaphone size={22} />
-              </div>
-            </div>
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Pengumuman Aktif</span>
-              <span className="font-semibold text-purple-600">dari {pengumumanList.length} total</span>
-            </div>
-          </div>
 
           {/* Card 5: User CMS */}
           <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
