@@ -14,7 +14,7 @@ School website (SD Negeri Mulyoagung 1). React 19 + Vite + Tailwind 4 frontend (
 - No `.env` is committed (`.gitignore` ignores `.env*`). The AI Studio boilerplate `GEMINI_API_KEY` is unused; the only real override is `VITE_API_BASE_URL`.
 
 ## Architecture
-- Public routes: `/`, `/profile`, `/directory`, `/gallery`, `/news`, `/contact`. CMS is the `/cms` path: `src/App.tsx` renders `Dashboard` when `activeTab === 'cms'`, guarded client-side via `localStorage['cms_user']`.
+- Public routes: `/`, `/profile`, `/directory`, `/gallery`, `/news`, `/contact`. CMS is the `/cms` path: `src/App.tsx` renders `Dashboard` when `location.pathname.startsWith('/cms')`, guarded client-side via `localStorage['cms_user']`.
 - Public data is fetched via hooks in `src/hooks/`; CMS CRUD lives in `src/CMS/*Crud.tsx` (plus per-entity folders `src/CMS/<entity>/`), the main CRUD pages backed by hooks in `src/CMS/hooks/`.
 - CMS login: `backend/API/auth.php` (`action=login`); user & role management: `backend/API/users.php`. Beware duplicate names: `src/hooks/useGalleryData.ts` (public) and `src/CMS/hooks/useGalleryData.ts` (CMS) are different files.
 - Static fallback data lives in `src/data/schoolData.ts` and `src/utils/*.ts`.
@@ -23,12 +23,12 @@ School website (SD Negeri Mulyoagung 1). React 19 + Vite + Tailwind 4 frontend (
 - Uploaded files go to `backend/uploads/<entity>/`; DB stores `backend/uploads/<entity>/<file>` paths and the frontend renders them via `getImageUrl()` from `src/config/api.ts`.
 
 ## Rules to preserve
-- Roles: `ADMIN` has full CRUD; `TIM` may only upload berita/galeri, which require admin verification. `TIM` must never access other CRUD. Enforced in the UI — see `src/CMS/components/RoleAccess.md` (marked IMPORTANT).
+- Roles: `ADMIN` has full CRUD; `TIM` may only upload berita/galeri, which require admin verification. `TIM` must never access other CRUD. Enforced in `src/CMS/Dashboard.tsx` (client-side redirect on login + on mount).
 - Verification: `status_verifikasi` is `Pending`/`Verified`/`Rejected`. Public endpoints only return `Verified`. Editing content as `TIM` resets it to `Pending`.
 - Backend has no auth middleware; role checks are client-side only.
 - UI copy and DB column names are Indonesian — keep new UI text in Indonesian.
 - Commit messages are in Indonesian. Branch flow: feature branches (e.g. `devhafiz`, `devp`) → PR into `dev` → `main`.
 
 ## Notes
-- Indonesian `.md` files scattered across `src/` (e.g. `src/quicklink.md`, `src/CMS/*.md`, `src/CMS/guru/crop.md`, `src/components/navbar.md`, `src/components/galeri.md`) are work notes / pending feature prompts, not docs. Exception: `src/CMS/components/RoleAccess.md` is a real rule.
+- Indonesian `.md` files scattered across `src/` (e.g. `src/CMS/guru/crop.md`, `src/CMS/user/user.md`) are work notes / pending feature prompts, not docs.
 - `README.md` and `metadata.json` are stale AI Studio boilerplate; `scratch_check.ps1` is a one-off script. Trust `package.json`/`vite.config.ts` and `src/config/api.ts` over them.
