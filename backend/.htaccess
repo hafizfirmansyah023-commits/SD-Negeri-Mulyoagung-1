@@ -1,0 +1,53 @@
+# =============================================================
+# PROTEKSI BACKEND - SD Negeri 1 Mulyoagung
+# Mencegah akses langsung browser ke file backend yang sensitif
+# =============================================================
+
+# Aktifkan engine rewrite
+Options -Indexes
+RewriteEngine On
+
+# ---------------------------------------------------------
+# 1. Blokir akses ke file sensitif secara mutlak
+# ---------------------------------------------------------
+<FilesMatch "\.(sql|env|log|bak|sh|md|json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Blokir akses ke file config PHP
+<FilesMatch "^(koneksi|config|database|settings)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ---------------------------------------------------------
+# 2. Hanya izinkan akses ke API/*.php via HTTP request
+#    (bukan akses langsung browser ke file PHP non-API)
+# ---------------------------------------------------------
+
+# Blokir akses langsung ke helper PHP (bukan endpoint API)
+<FilesMatch "^(foto_helper|rate_limiter|helper|functions|utils)\.php$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ---------------------------------------------------------
+# 3. Tambahkan header keamanan untuk semua response
+# ---------------------------------------------------------
+<IfModule mod_headers.c>
+    # Cegah browser menampilkan error detail
+    Header always set X-Content-Type-Options "nosniff"
+    # Cegah clickjacking
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # XSS Protection
+    Header always set X-XSS-Protection "1; mode=block"
+    # Sembunyikan versi server
+    Header unset Server
+    Header unset X-Powered-By
+</IfModule>
+
+# ---------------------------------------------------------
+# 4. Sembunyikan file PHP dari direktori listing
+# ---------------------------------------------------------
+Options -Indexes -ExecCGI
