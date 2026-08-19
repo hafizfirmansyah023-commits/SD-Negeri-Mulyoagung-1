@@ -38,20 +38,17 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
-      <div 
-        className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="font-bold text-slate-800 text-lg">
-            {editId ? 'Edit Fasilitas' : 'Tambah Fasilitas Baru'}
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-2xl shadow-xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col">
+        <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-4 sm:p-6 text-white flex justify-between items-center shrink-0">
+          <h3 className="text-lg sm:text-xl font-bold">
+            {editId ? 'Ubah Data Fasilitas' : 'Tambah Fasilitas Baru'}
           </h3>
-          <button 
+          <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 font-bold p-1 hover:bg-slate-50 rounded-lg cursor-pointer"
+            className="text-white hover:text-slate-200 text-2xl font-semibold cursor-pointer p-1"
           >
-            ✕
+            &times;
           </button>
         </div>
 
