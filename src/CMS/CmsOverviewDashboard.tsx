@@ -161,9 +161,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         
 
         // Process users
-        if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
+        if (results[3] && results[3].status === 'fulfilled' && results[3].value.ok) {
           try {
-            const json = await results[4].value.json();
+            const json = await results[3].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setUserList(json.data);
             }
@@ -173,9 +173,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process hero carousel
-        if (results[5] && results[5].status === 'fulfilled' && results[5].value.ok) {
+        if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
           try {
-            const json = await results[5].value.json();
+            const json = await results[4].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setHeroSlides(json.data);
             } else if (Array.isArray(json)) {
@@ -187,9 +187,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process pengaturan
-        if (results[6] && results[6].status === 'fulfilled' && results[6].value.ok) {
+        if (results[5] && results[5].status === 'fulfilled' && results[5].value.ok) {
           try {
-            const json = await results[6].value.json();
+            const json = await results[5].value.json();
             if (json.status === 'success' && json.data) {
               setTahunAjaran(json.data.tahun_ajaran || '2025/2026');
               setLinkPpdb(json.data.link_ppdb || '');
@@ -200,9 +200,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process statistik
-        if (results[7] && results[7].status === 'fulfilled' && results[7].value.ok) {
+        if (results[6] && results[6].status === 'fulfilled' && results[6].value.ok) {
           try {
-            const json = await results[7].value.json();
+            const json = await results[6].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setStatistikSekolah(json.data);
             }
