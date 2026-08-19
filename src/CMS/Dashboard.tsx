@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { UserSession, CmsTab } from './types';
 import CmsLogin from './components/CmsLogin';
 import CmsSidebar from './components/CmsSidebar';
+import { CmsOverviewDashboard } from './CmsOverviewDashboard';
 import GuruCrud from './GuruCrud';
 import GaleriCrud from './GaleriCrud';
 import BeritaCrud from './BeritaCrud';
@@ -34,7 +35,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const activeTab = (location.pathname.split('/')[2] || 'guru') as CmsTab;
+    const activeTab = (location.pathname.split('/')[2] || 'dashboard') as CmsTab;
 
     const setActiveTab = (tab: CmsTab) => {
         navigate(`/cms/${tab}`);
@@ -48,12 +49,17 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 setUser(parsed);
                 const currentTab = location.pathname.split('/')[2] || '';
                 if (parsed.role === 'TIM') {
-                    if (currentTab !== 'galeri' && currentTab !== 'berita' && currentTab !== 'user') {
-                        navigate('/cms/galeri', { replace: true });
+                    if (
+                        currentTab !== 'dashboard' &&
+                        currentTab !== 'galeri' &&
+                        currentTab !== 'berita' &&
+                        currentTab !== 'user'
+                    ) {
+                        navigate('/cms/dashboard', { replace: true });
                     }
                 } else if (parsed.role === 'ADMIN') {
                     if (!currentTab || currentTab === '' || currentTab === 'pengaturan') {
-                        navigate('/cms/guru', { replace: true });
+                        navigate('/cms/dashboard', { replace: true });
                     }
                 }
             } catch (e) {
@@ -65,11 +71,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
     const handleLoginSuccess = (loggedInUser: UserSession) => {
         setUser(loggedInUser);
         localStorage.setItem('cms_user', JSON.stringify(loggedInUser));
-        if (loggedInUser.role === 'TIM') {
-            navigate('/cms/galeri', { replace: true });
-        } else {
-            navigate('/cms/guru', { replace: true });
-        }
+        navigate('/cms/dashboard', { replace: true });
     };
 
     const handleLogout = () => {
@@ -103,6 +105,9 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
             />
 
             <main className="flex-grow p-4 sm:p-6 md:p-10 w-full overflow-x-hidden">
+                {activeTab === 'dashboard' && (
+                    <CmsOverviewDashboard currentUser={user} setActiveTab={setActiveTab} />
+                )}
                 {activeTab === 'guru' && user.role === 'ADMIN' && <GuruCrud />}
                 {activeTab === 'sambutan' && user.role === 'ADMIN' && <SambutanKepsekCrud />}
                 {activeTab === 'pengumuman' && user.role === 'ADMIN' && <PengumumanCrud />}

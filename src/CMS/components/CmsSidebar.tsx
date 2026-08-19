@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import {
   Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft,
   School, Building, Settings, Award, Megaphone, BarChart3, Menu, X,
-  BookOpen, History, Layers, Globe, GraduationCap, Sliders, Mail, Share2
+  BookOpen, History, Layers, Globe, GraduationCap, Sliders, Mail, Share2,
+  LayoutDashboard
 } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
@@ -32,6 +33,19 @@ export default function CmsSidebar({
 
   const navItems = (
     <nav className="p-4 space-y-6">
+      {/* Kategori: DASHBOARD OVERVIEW */}
+      <div className="space-y-1">
+        <button
+          onClick={() => handleSelectTab('dashboard')}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'dashboard'
+            ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-md'
+            : 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+            }`}
+        >
+          <LayoutDashboard size={18} /> Dashboard
+        </button>
+      </div>
+
       {/* Kategori: POST */}
       <div className="space-y-1">
         <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-4 block mb-1">
