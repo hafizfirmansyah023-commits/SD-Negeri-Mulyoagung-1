@@ -1,15 +1,6 @@
-Bertindaklah sebagai Senior Frontend Developer. Buatkan saya kode fungsional untuk komponen Fitur Crop Foto Profil (mirip fitur ganti foto profil WhatsApp) menggunakan react tsx dan pustaka populer seperti react-cropper atau cropperjs (atau alternatif library lain).
+Revisilah bagian Modal Ubah Guru, khususnya pada area Choose File pada cardnya tombol Simpan. Saat tampilan halaman di-zoom menggunakan browser atau ukuran layar desktop berubah, tombol Simpan saat ini dapat hilang atau tidak terlihat karena posisi elemen modal.
 
-Persyaratan teknis yang harus dipenuhi:
+Perbaiki layout modal agar responsif pada berbagai tingkat zoom dan resolusi desktop, dengan ketentuan:
 
-Tampilan antarmuka (UI) menggunakan rasio aspek tetap 1:1 (persegi) dengan panduan bingkai berbentuk lingkaran di tengah.
-
-Mendukung fitur geser (pan) dan zoom (cubit/scroll).
-
-Tombol konfirmasi (Centang/Simpan) untuk memproses potongan gambar.
-
-Fungsi output untuk menghasilkan data gambar baru (dalam format Base64 atau Blob) yang siap diunggah ke server.
-
-Desain responsif yang ramah perangkat seluler (mobile-friendly).
-
-Pastikan fitur dapat digunakan oleh semua fitur yang membutuhkan upload foto
+Tombol Simpan harus selalu terlihat dan dapat diakses.
+Modal tidak boleh terpotong ketika browser di-zoom.
