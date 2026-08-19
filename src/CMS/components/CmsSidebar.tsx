@@ -41,8 +41,8 @@ export default function CmsSidebar({
           <button
             onClick={() => handleSelectTab('pengumuman')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'pengumuman'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
             <Megaphone size={18} /> Pengumuman Penting
@@ -51,8 +51,8 @@ export default function CmsSidebar({
         <button
           onClick={() => handleSelectTab('berita')}
           className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+            ? 'bg-teal-600 text-white shadow-sm'
+            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
             }`}
         >
           <FileText size={18} /> Berita &amp; Kegiatan
@@ -60,8 +60,8 @@ export default function CmsSidebar({
         <button
           onClick={() => handleSelectTab('galeri')}
           className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+            ? 'bg-teal-600 text-white shadow-sm'
+            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
             }`}
         >
           <Image size={18} /> Galeri Foto
@@ -77,8 +77,8 @@ export default function CmsSidebar({
           <button
             onClick={() => handleSelectTab('visimisi')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'visimisi'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
             <BookOpen size={18} /> Visi &amp; Misi
@@ -86,8 +86,8 @@ export default function CmsSidebar({
           <button
             onClick={() => handleSelectTab('sejarah')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'sejarah'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
             <History size={18} /> Sejarah Sekolah
@@ -95,8 +95,8 @@ export default function CmsSidebar({
           <button
             onClick={() => handleSelectTab('guru')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'guru'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
             <Users size={18} /> Direktori Guru
@@ -104,8 +104,8 @@ export default function CmsSidebar({
           <button
             onClick={() => handleSelectTab('fasilitas')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'fasilitas'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
             <Building size={18} /> Fasilitas Pembelajaran
@@ -113,8 +113,8 @@ export default function CmsSidebar({
           <button
             onClick={() => handleSelectTab('statistik')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'statistik'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
             <BarChart3 size={18} /> Statistik Sekolah
@@ -132,8 +132,8 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('sambutan')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'sambutan'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <Award size={18} /> Sambutan Kepsek
@@ -141,17 +141,17 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('strukturorganisasi')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'strukturorganisasi'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
-              <Layers size={18} /> Struktur Halaman Utama
+              <Layers size={18} /> Struktur Halaman
             </button>
             <button
               onClick={() => handleSelectTab('kontenutama')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'kontenutama'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <Globe size={18} /> Video Profil
@@ -159,8 +159,8 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('ppdb')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'ppdb'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <GraduationCap size={18} /> Halaman PPDB
@@ -168,8 +168,8 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('hero')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'hero'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <Sliders size={18} /> Carousel Hero Header
@@ -177,8 +177,8 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('kontak')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'kontak'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <Mail size={18} /> Kontak Resmi
@@ -186,8 +186,8 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('medsos')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'medsos'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <Share2 size={18} /> Media Sosial
@@ -195,8 +195,8 @@ export default function CmsSidebar({
             <button
               onClick={() => handleSelectTab('verifikasi')}
               className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'verifikasi'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
               <ShieldAlert size={18} /> Pusat Verifikasi
@@ -206,8 +206,8 @@ export default function CmsSidebar({
         <button
           onClick={() => handleSelectTab('user')}
           className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'user'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+            ? 'bg-teal-600 text-white shadow-sm'
+            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
             }`}
         >
           <User size={18} /> Pengaturan Akun
@@ -285,8 +285,8 @@ export default function CmsSidebar({
               <p className="font-bold text-xs truncate text-slate-200">{user.nama_penanggung_jawab}</p>
               <span
                 className={`text-[10px] uppercase font-bold tracking-wide px-2 py-0.5 rounded-full inline-block mt-0.5 ${user.role === 'ADMIN'
-                    ? 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'
-                    : 'bg-amber-900/60 text-amber-300 border border-amber-700/50'
+                  ? 'bg-indigo-900/60 text-indigo-300 border border-indigo-700/50'
+                  : 'bg-amber-900/60 text-amber-300 border border-amber-700/50'
                   }`}
               >
                 {user.role}
