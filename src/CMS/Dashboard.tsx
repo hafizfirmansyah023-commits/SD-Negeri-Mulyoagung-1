@@ -14,6 +14,15 @@ import PengumumanCrud from './PengumumanCrud';
 import StatistikCrud from './Statistikcrud';
 import PengaturanSekolah from './pengaturan';
 
+import VisiMisiCrud from './VisiMisiCrud';
+import SejarahCrud from './SejarahCrud';
+import StrukturHalamanUtamaCrud from './StrukturHalamanUtamaCrud';
+import HeroCrud from './HeroCrud';
+import KontenUtamaCrud from './KontenUtamaCrud';
+import PPDBCrud from './PPDBCrud';
+import KontakCrud from './KontakCrud';
+import MedsosCrud from './MedsosCrud';
+
 import { FileValidationModal } from './components/FileValidationModal';
 
 interface DashboardProps {
@@ -39,11 +48,11 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 setUser(parsed);
                 const currentTab = location.pathname.split('/')[2] || '';
                 if (parsed.role === 'TIM') {
-                    if (currentTab !== 'galeri' && currentTab !== 'berita') {
+                    if (currentTab !== 'galeri' && currentTab !== 'berita' && currentTab !== 'user') {
                         navigate('/cms/galeri', { replace: true });
                     }
                 } else if (parsed.role === 'ADMIN') {
-                    if (!currentTab || currentTab === '') {
+                    if (!currentTab || currentTab === '' || currentTab === 'pengaturan') {
                         navigate('/cms/guru', { replace: true });
                     }
                 }
@@ -105,7 +114,15 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'user' && (
                     <UserCrud currentUser={user} onUpdateCurrentUser={handleUpdateUser} />
                 )}
-                {activeTab === 'pengaturan' && user.role === 'ADMIN' && <PengaturanSekolah />}
+                {activeTab === 'pengaturan' && user.role === 'ADMIN' && <StrukturHalamanUtamaCrud />}
+                {activeTab === 'visimisi' && user.role === 'ADMIN' && <VisiMisiCrud />}
+                {activeTab === 'sejarah' && user.role === 'ADMIN' && <SejarahCrud />}
+                {activeTab === 'strukturorganisasi' && user.role === 'ADMIN' && <StrukturHalamanUtamaCrud />}
+                {activeTab === 'hero' && user.role === 'ADMIN' && <HeroCrud />}
+                {activeTab === 'kontenutama' && user.role === 'ADMIN' && <KontenUtamaCrud />}
+                {activeTab === 'ppdb' && user.role === 'ADMIN' && <PPDBCrud />}
+                {activeTab === 'kontak' && user.role === 'ADMIN' && <KontakCrud />}
+                {activeTab === 'medsos' && user.role === 'ADMIN' && <MedsosCrud />}
             </main>
             <FileValidationModal />
         </div>
