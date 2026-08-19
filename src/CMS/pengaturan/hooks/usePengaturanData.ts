@@ -25,12 +25,10 @@ export const usePengaturanData = () => {
   const [heroFile, setHeroFile] = useState<File | null>(null);
   const [heroOriginalFile, setHeroOriginalFile] = useState<File | null>(null);
   const [heroPreview, setHeroPreview] = useState<string | null>(null);
-
   const [heroCropOpen, setHeroCropOpen] = useState(false);
   const [heroCropSrc, setHeroCropSrc] = useState<string | null>(null);
-  const [heroCropName, setHeroCropName] = useState('foto');
+  const [heroCropName, setHeroCropName] = useState('');
   const heroCropSrcRef = useRef<string | null>(null);
-  heroCropSrcRef.current = heroCropSrc;
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -316,12 +314,9 @@ export const usePengaturanData = () => {
 
   const handleOpenAddHero = () => {
     setEditingHero(null);
-    setHeroCaption('MA ONE BERGELORA!!!');
+    setHeroCaption('');
     setHeroTag('Kegiatan Utama');
     setHeroUrutan(heroSlides.length + 1);
-    setHeroFile(null);
-    setHeroOriginalFile(null);
-    setHeroPreview(null);
     setHeroModalOpen(true);
   };
 
@@ -330,9 +325,6 @@ export const usePengaturanData = () => {
     setHeroCaption(item.caption);
     setHeroTag(item.tag || 'Kegiatan Utama');
     setHeroUrutan(item.urutan || 0);
-    setHeroFile(null);
-    setHeroOriginalFile(null);
-    setHeroPreview(item.foto ? `${API_BASE}/${item.foto}` : null);
     setHeroModalOpen(true);
   };
 

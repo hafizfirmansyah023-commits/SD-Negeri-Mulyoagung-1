@@ -8,12 +8,9 @@ interface HeroCarouselModalProps {
   caption: string;
   tag: string;
   urutan: number;
-  preview: string | null;
   onChangeCaption: (val: string) => void;
   onChangeTag: (val: string) => void;
   onChangeUrutan: (val: number) => void;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onReCrop: () => void;
   onSave: (e: React.FormEvent) => void;
   onClose: () => void;
 }
