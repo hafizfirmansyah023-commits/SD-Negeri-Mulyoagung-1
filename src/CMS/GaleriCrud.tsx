@@ -9,6 +9,7 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { GaleriCard } from './galeri/GaleriCard';
 import { GaleriFormModal } from './galeri/GaleriFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
+import { CmsToast } from './components/CmsToast';
 
 interface GaleriCrudProps {
   currentUser: UserSession;
@@ -38,6 +39,7 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
   const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
   const [currentFoto, setCurrentFoto] = useState('');
   const [currentOriginalFoto, setCurrentOriginalFoto] = useState('');
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Filter Hook
   const {
@@ -117,14 +119,16 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
       });
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message);
+        setToast({ type: 'success', text: result.message || 'Foto galeri berhasil disimpan.' });
         setShowModal(false);
         resetForm();
         fetchGallery();
       } else {
         setError(result.message || 'Gagal menyimpan foto galeri.');
+        setToast({ type: 'error', text: result.message || 'Gagal menyimpan foto galeri.' });
       }
     } catch {
+      setToast({ type: 'error', text: 'Terjadi kesalahan saat menghubungi server.' });
       setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
@@ -185,7 +189,8 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
       />
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
-      {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
+
+      <CmsToast message={toast} onClose={() => setToast(null)} />
 
       {/* Grid Content */}
       {loading ? (

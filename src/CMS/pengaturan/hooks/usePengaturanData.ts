@@ -211,6 +211,120 @@ export const usePengaturanData = () => {
     }
   };
 
+  /** Simpan hanya Visi & Misi */
+  const handleSaveVisiMisi = async () => {
+    setMessage(null);
+    setSaving(true);
+    try {
+      const misiArr = profilMisiInput
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+      const form = new FormData();
+      form.append('profil_visi', profilVisi);
+      form.append('profil_misi', JSON.stringify(misiArr));
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Visi & Misi sekolah berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan Visi & Misi.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /** Simpan hanya Sejarah Sekolah */
+  const handleSaveSejarah = async () => {
+    setMessage(null);
+    setSaving(true);
+    try {
+      const form = new FormData();
+      form.append('profil_sejarah', profilSejarah);
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Sejarah sekolah berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan sejarah sekolah.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /** Simpan hanya Kontak Sekolah */
+  const handleSaveKontak = async () => {
+    setMessage(null);
+    setSaving(true);
+    try {
+      const form = new FormData();
+      form.append('email_sekolah', emailSekolah);
+      form.append('telepon_sekolah', teleponSekolah);
+      form.append('whatsapp_sekolah', whatsappSekolah);
+      form.append('alamat_sekolah', alamatSekolah);
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Kontak sekolah berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan kontak sekolah.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /** Simpan hanya Link PPDB */
+  const handleSavePpdb = async () => {
+    setMessage(null);
+    setSaving(true);
+    try {
+      const form = new FormData();
+      form.append('link_ppdb', linkPpdb);
+      form.append('tahun_ajaran', tahunAjaran);
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Pengaturan PPDB berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan pengaturan PPDB.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /** Simpan hanya Video Profil */
+  const handleSaveVideoUrl = async () => {
+    setMessage(null);
+    setSaving(true);
+    try {
+      const form = new FormData();
+      form.append('video_url', videoUrl);
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Video profil sekolah berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan video profil.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   // Medsos CRUD Handlers
   const handleOpenAddMedsos = () => {
     setMedsosEditingItem(null);
@@ -456,6 +570,7 @@ export const usePengaturanData = () => {
     // Homepage Section drag-drop
     handleSectionDragStart, handleSectionDragOver, handleSectionDrop, updateSection, draggedSectionIndex,
     // Actions
-    fetchSettings, fetchHeroSlides, handleSaveAll
+    fetchSettings, fetchHeroSlides, handleSaveAll,
+    handleSaveVisiMisi, handleSaveSejarah, handleSaveKontak, handleSavePpdb, handleSaveVideoUrl
   };
 };
