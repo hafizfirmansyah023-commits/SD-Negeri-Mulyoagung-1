@@ -73,13 +73,10 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">Deskripsi Fasilitas</label>
-              <textarea
-                required
-                rows={4}
+              <RichTextEditor
                 value={deskripsi}
-                onChange={(e) => setDeskripsi(e.target.value)}
+                onChange={setDeskripsi}
                 placeholder="Jelaskan spesifikasi dan keunggulan fasilitas..."
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
               />
             </div>
 
@@ -105,16 +102,6 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
               <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Atau Gunakan URL Gambar</label>
-              <input
-                type="url"
-                value={fotoUrl}
-                onChange={(e) => setFotoUrl(e.target.value)}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              />
-            </div>
           </div>
 
           <div className="p-4 sm:px-6 sm:py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">

@@ -1,6 +1,7 @@
 <?php
 require_once '../config/koneksi.php';
 require_once 'foto_helper.php';
+require_once 'rate_limiter.php';
 
 header("Content-Type: application/json");
 
@@ -16,6 +17,21 @@ $action = isset($input['action']) ? $input['action'] : (isset($_GET['action']) ?
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'login') {
+        $clientIp   = RateLimiter::getClientIp();
+        $limiter    = new RateLimiter($conn, 5, 10, 15);
+        $rateCheck  = $limiter->check($clientIp);
+
+        if ($rateCheck['blocked']) {
+            $retryStr = RateLimiter::formatRetry($rateCheck['retry_after']);
+            http_response_code(429);
+            echo json_encode([
+                "status"      => "error",
+                "message"     => "Terlalu banyak percobaan login. Coba lagi dalam {$retryStr}.",
+                "retry_after" => $rateCheck['retry_after'],
+            ]);
+            exit();
+        }
+
         $username = isset($input['username']) ? trim($input['username']) : '';
         $password = isset($input['password']) ? $input['password'] : '';
 
@@ -45,23 +61,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($user && $is_authenticated) {
+            $limiter->resetOnSuccess($clientIp);
             $foto_tampil = !empty($user['foto_crop']) ? $user['foto_crop'] : $user['foto'];
             // Success login
             echo json_encode([
-                "status" => "success",
+                "status"  => "success",
                 "message" => "Login berhasil.",
-                "user" => [
-                    "id" => $user['id'],
-                    "username" => $user['username'],
-                    "role" => $user['role'],
+                "user"    => [
+                    "id"                   => $user['id'],
+                    "username"             => $user['username'],
+                    "role"                 => $user['role'],
                     "nama_penanggung_jawab" => $user['nama_penanggung_jawab'],
-                    "foto" => $foto_tampil,
-                    "foto_original" => $user['foto']
+                    "foto"                 => $foto_tampil,
+                    "foto_original"        => $user['foto']
                 ]
             ]);
         } else {
-            http_response_code(401);
-            echo json_encode(["status" => "error", "message" => "Username atau password salah."]);
+            $limiter->recordFailure($clientIp, $username);
+            $rateCheck = $limiter->check($clientIp);
+            if ($rateCheck['blocked']) {
+                $retryStr = RateLimiter::formatRetry($rateCheck['retry_after']);
+                http_response_code(429);
+                echo json_encode([
+                    "status"      => "error",
+                    "message"     => "Terlalu banyak percobaan login. Akun diblokir sementara selama {$retryStr}.",
+                    "retry_after" => $rateCheck['retry_after'],
+                ]);
+            } else {
+                $remaining = max(0, 5 - $rateCheck['attempts']);
+                http_response_code(401);
+                echo json_encode([
+                    "status"    => "error",
+                    "message"   => "Username atau password salah. Sisa percobaan: {$remaining}.",
+                    "remaining" => $remaining,
+                ]);
+            }
         }
     } 
     elseif ($action === 'register') {

@@ -9,6 +9,7 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { BeritaCard } from './berita/BeritaCard';
 import { BeritaFormModal } from './berita/BeritaFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
+import { CmsToast } from './components/CmsToast';
 
 interface BeritaCrudProps {
   currentUser: UserSession;
@@ -27,6 +28,8 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     fetchArticles,
     deleteArticle,
   } = useNewsData();
+
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -117,14 +120,16 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
       });
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message);
+        setToast({ type: 'success', text: result.message || 'Berita berhasil disimpan.' });
         setShowModal(false);
         resetForm();
         fetchArticles();
       } else {
         setError(result.message || 'Gagal menyimpan berita.');
+        setToast({ type: 'error', text: result.message || 'Gagal menyimpan berita.' });
       }
     } catch {
+      setToast({ type: 'error', text: 'Terjadi kesalahan saat menghubungi server.' });
       setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
@@ -184,9 +189,10 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
         ]}
       />
 
-      {/* Alert Notifications */}
+      {/* Alert Notifications — diganti CmsToast */}
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
-      {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
+
+      <CmsToast message={toast} onClose={() => setToast(null)} />
 
       {/* Articles Grid */}
       {loading ? (

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, School, Eye, EyeOff, RotateCw } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ArrowLeft, School, Eye, EyeOff, RotateCw, ShieldAlert, Clock } from 'lucide-react';
 import { getApiBaseUrl } from '../../config/api';
 import { UserSession } from '../types';
 import heroImg1 from '../../assets/images/img2.webp';
@@ -24,6 +24,11 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
     const [authError, setAuthError] = useState('');
     const [authSuccess, setAuthSuccess] = useState('');
 
+    // Rate limiter state
+    const [isBlocked, setIsBlocked] = useState(false);
+    const [retryCountdown, setRetryCountdown] = useState(0);
+    const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
     // Generate random 5-character alphanumeric captcha
     const generateCaptcha = () => {
         const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -39,10 +44,32 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
         generateCaptcha();
     }, []);
 
+    // Countdown timer saat diblokir
+    useEffect(() => {
+        if (retryCountdown <= 0) {
+            setIsBlocked(false);
+            if (countdownRef.current) clearInterval(countdownRef.current);
+            return;
+        }
+        countdownRef.current = setInterval(() => {
+            setRetryCountdown(prev => {
+                if (prev <= 1) {
+                    setIsBlocked(false);
+                    if (countdownRef.current) clearInterval(countdownRef.current);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => { if (countdownRef.current) clearInterval(countdownRef.current); };
+    }, [retryCountdown > 0 && isBlocked]);
+
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthError('');
         setAuthSuccess('');
+
+        if (isBlocked) return;
 
         // Validate Captcha
         if (captchaInput.trim().toUpperCase() !== captchaCode.toUpperCase()) {
@@ -70,6 +97,12 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
                 setUsernameInput('');
                 setPasswordInput('');
                 setCaptchaInput('');
+            } else if (response.status === 429) {
+                // Diblokir rate limiter
+                setIsBlocked(true);
+                setRetryCountdown(result.retry_after ?? 900);
+                setAuthError(result.message || 'Terlalu banyak percobaan. Coba lagi nanti.');
+                generateCaptcha();
             } else {
                 setAuthError(result.message || 'Login gagal.');
                 generateCaptcha();
@@ -107,7 +140,21 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
                 </div>
 
                 <div className="p-8 space-y-5">
-                    {authError && (
+                    {isBlocked && retryCountdown > 0 ? (
+                        <div className="bg-red-50 border border-red-300 text-red-800 p-4 rounded-xl flex flex-col gap-2">
+                            <div className="flex items-center gap-2 font-bold text-sm">
+                                <ShieldAlert size={16} className="text-red-600 shrink-0" />
+                                Akses Sementara Diblokir
+                            </div>
+                            <p className="text-xs text-red-700">
+                                Terlalu banyak percobaan login gagal. Silakan tunggu sebelum mencoba kembali.
+                            </p>
+                            <div className="flex items-center gap-1.5 bg-red-100 rounded-lg px-3 py-2 font-mono font-bold text-red-800 text-sm">
+                                <Clock size={14} className="text-red-600" />
+                                Buka kunci dalam: {Math.floor(retryCountdown / 60).toString().padStart(2, '0')}:{(retryCountdown % 60).toString().padStart(2, '0')}
+                            </div>
+                        </div>
+                    ) : authError && (
                         <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-xs font-semibold">
                             {authError}
                         </div>
@@ -192,9 +239,14 @@ export default function CmsLogin({ onLoginSuccess, onBackToHome }: CmsLoginProps
                         {/* Login Submit Button */}
                         <button
                             type="submit"
-                            className="w-full bg-gradient-to-r from-[#0D4A46] to-[#156B63] hover:from-[#093532] hover:to-[#0f4e48] text-white font-medium py-3 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:translate-y-[-1px] cursor-pointer mt-2"
+                            disabled={isBlocked}
+                            className={`w-full font-medium py-3 rounded-xl shadow-md transition-all mt-2 ${
+                                isBlocked
+                                    ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                                    : 'bg-gradient-to-r from-[#0D4A46] to-[#156B63] hover:from-[#093532] hover:to-[#0f4e48] text-white hover:shadow-lg transform hover:translate-y-[-1px] cursor-pointer'
+                            }`}
                         >
-                            Masuk ke Dashboard
+                            {isBlocked ? 'Login Dinonaktifkan Sementara' : 'Masuk ke Dashboard'}
                         </button>
 
                         <button

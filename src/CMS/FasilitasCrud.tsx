@@ -100,7 +100,7 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     setEditId(fac.id);
     setJudul(fac.judul);
     setDeskripsi(fac.deskripsi);
-    setFotoUrl(fac.foto_original || fac.foto || '');
+    setFotoUrl('');
     setFotoSelection({ original: null, cropped: null });
     setCurrentFoto(fac.foto || '');
     setCurrentOriginalFoto(fac.foto_original || '');
