@@ -256,22 +256,22 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
       {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl text-sm">{success}</div>}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        {/* Self Profile Card */}
-        <SelfProfileCard
-          currentUser={currentUser}
-          username={username}
-          setUsername={setUsername}
-          nama={nama}
-          setNama={setNama}
-          password={password}
-          setPassword={setPassword}
-          setFotoSelection={setFotoSelection}
-          onSubmit={handleUpdateSelf}
-        />
+      {currentUser.role === 'ADMIN' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          {/* Self Profile Card */}
+          <SelfProfileCard
+            currentUser={currentUser}
+            username={username}
+            setUsername={setUsername}
+            nama={nama}
+            setNama={setNama}
+            password={password}
+            setPassword={setPassword}
+            setFotoSelection={setFotoSelection}
+            onSubmit={handleUpdateSelf}
+          />
 
-        {/* User Management List (Admin Only) */}
-        {currentUser.role === 'ADMIN' && (
+          {/* User Management List (Admin Only) */}
           <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 sm:space-y-6 lg:col-span-2">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
               <h3 className="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -316,8 +316,24 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
               />
             )}
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center w-full py-2 sm:py-6">
+          <div className="w-full max-w-xl mx-auto">
+            <SelfProfileCard
+              currentUser={currentUser}
+              username={username}
+              setUsername={setUsername}
+              nama={nama}
+              setNama={setNama}
+              password={password}
+              setPassword={setPassword}
+              setFotoSelection={setFotoSelection}
+              onSubmit={handleUpdateSelf}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Admin Add User Modal */}
       <UserFormModal
