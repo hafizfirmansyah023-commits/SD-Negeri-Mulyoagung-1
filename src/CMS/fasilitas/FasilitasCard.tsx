@@ -42,9 +42,10 @@ export const FasilitasCard: React.FC<FasilitasCardProps> = ({
 
         <div className="p-4 sm:p-5 space-y-2">
           <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1">{fac.judul}</h3>
-          <p className="text-xs sm:text-sm text-slate-500 leading-relaxed line-clamp-2">
-            {fac.deskripsi}
-          </p>
+          <p 
+            className="text-xs sm:text-sm text-slate-500 leading-relaxed line-clamp-2"
+            dangerouslySetInnerHTML={{ __html: fac.deskripsi }}
+          />
         </div>
       </div>
 

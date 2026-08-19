@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image as ImageIcon, X, Upload, Crop, Tag } from 'lucide-react';
+import { Image as ImageIcon, X, Tag } from 'lucide-react';
 import { HeroCarouselItem } from '../types';
 
 interface HeroCarouselModalProps {
@@ -24,12 +24,9 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
   caption,
   tag,
   urutan,
-  preview,
   onChangeCaption,
   onChangeTag,
   onChangeUrutan,
-  onFileChange,
-  onReCrop,
   onSave,
   onClose,
 }) => {
@@ -52,44 +49,6 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
         </div>
 
         <form onSubmit={onSave} className="space-y-4">
-          <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center gap-1.5">
-              <Upload size={14} className="text-teal-600" /> File Foto Lanskap *
-            </label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={onFileChange}
-              className="w-full text-slate-600 text-xs border border-slate-300 rounded-xl file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100 cursor-pointer"
-            />
-            <p className="text-[11px] text-slate-500 mt-1">
-              Format: Gambar (JPG, PNG, WEBP). Maksimal 10MB. Rasio lanskap disarankan.
-            </p>
-            {editing && (
-              <button
-                type="button"
-                onClick={onReCrop}
-                className="mt-1 inline-flex items-center gap-1.5 text-[11px] font-semibold text-teal-600 hover:text-teal-700 transition-colors cursor-pointer"
-              >
-                <Crop size={13} /> Potong Ulang Foto Saat Ini
-              </button>
-            )}
-          </div>
-
-          {/* Landscape Image Preview Box */}
-          {preview && (
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-900 border border-slate-200 shadow-sm">
-              <img
-                src={preview}
-                alt="Pratinjau Hero"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-md">
-                Pratinjau Lanskap
-              </div>
-            </div>
-          )}
-
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
               Caption / Keterangan Singkat *
