@@ -49,6 +49,25 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
     };
   }, []);
 
+  // Auto-close mobile menu instantly when user scrolls
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    let startY = window.scrollY;
+
+    const handleScrollClose = () => {
+      const currentY = window.scrollY;
+      if (Math.abs(currentY - startY) > 2) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollClose, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScrollClose);
+    };
+  }, [mobileMenuOpen]);
+
   const handleNavClick = (tab: NavTab) => {
     setActiveTab(tab);
     setMobileMenuOpen(false);
@@ -79,6 +98,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
             navItems={NAV_ITEMS}
             activeTab={activeTab}
             onNavClick={handleNavClick}
+            onClose={() => setMobileMenuOpen(false)}
             onOpenPpdb={() => {
               setMobileMenuOpen(false);
               onOpenPpdb();

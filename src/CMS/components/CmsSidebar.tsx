@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft,
   School, Building, Settings, Award, Megaphone, BarChart3, Menu, X,
@@ -25,6 +25,25 @@ export default function CmsSidebar({
   onLogout,
 }: CmsSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Auto-close mobile navigation drawer instantly when user scrolls
+  useEffect(() => {
+    if (!mobileOpen) return;
+
+    let startY = window.scrollY;
+
+    const handleScrollClose = () => {
+      const currentY = window.scrollY;
+      if (Math.abs(currentY - startY) > 2) {
+        setMobileOpen(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollClose, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScrollClose);
+    };
+  }, [mobileOpen]);
 
   const handleSelectTab = (tab: CmsTab) => {
     setActiveTab(tab);
