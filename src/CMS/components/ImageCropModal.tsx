@@ -194,7 +194,7 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
           </button>
         </div>
 
-        <div className="p-3 sm:p-5 flex flex-col gap-3 sm:gap-4">
+        <div className="p-3 sm:p-5 flex flex-col gap-3 sm:gap-4 flex-1 min-h-0 overflow-y-auto">
           <div
             className="relative overflow-hidden rounded-2xl bg-slate-900 mx-auto w-full"
             style={circular ? { aspectRatio: containerAspect } : { aspectRatio: containerAspect, maxHeight: '55vh' }}

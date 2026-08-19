@@ -72,135 +72,137 @@ export const GuruFormModal: React.FC<GuruFormModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-              {error}
-            </div>
-          )}
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Nama Lengkap</label>
+                <input
+                  type="text"
+                  required
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  placeholder="Nama beserta gelar"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">NIP</label>
+                <input
+                  type="text"
+                  value={nip}
+                  onChange={(e) => setNip(e.target.value)}
+                  placeholder="Contoh: 19820315..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Jabatan Utama</label>
+                <select
+                  value={jabatan}
+                  onChange={(e) => setJabatan(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                >
+                  <option value="Komite Sekolah">Komite Sekolah</option>
+                  <option value="Kepala Sekolah">Kepala Sekolah</option>
+                  <option value="Guru Wali Kelas">Guru Wali Kelas</option>
+                  <option value="Guru Mata Pelajaran">Guru Mata Pelajaran</option>
+                  <option value="Tata Usaha">Tata Usaha</option>
+                  <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Tugas Spesifik</label>
+                <input
+                  type="text"
+                  required
+                  value={tugas}
+                  onChange={(e) => setTugas(e.target.value)}
+                  placeholder="Contoh: Guru Kelas 1A, Agama Islam, PJOK, dll"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Jenis Kelamin</label>
+                <select
+                  value={jenisKelamin}
+                  onChange={(e) => setJenisKelamin(e.target.value as 'Laki-laki' | 'Perempuan')}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                >
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Status Kepegawaian</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                >
+                  <option value="Aktif">Aktif</option>
+                  <option value="Mutasi">Mutasi</option>
+                  <option value="Pensiun">Pensiun</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Riwayat Pendidikan</label>
+                <input
+                  type="text"
+                  required
+                  value={riwayatPendidikan}
+                  onChange={(e) => setRiwayatPendidikan(e.target.value)}
+                  placeholder="Contoh: S1 PGSD"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                />
+              </div>
+            </div>
+
             <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Nama Lengkap</label>
-              <input
-                type="text"
-                required
-                value={nama}
-                onChange={(e) => setNama(e.target.value)}
-                placeholder="Nama beserta gelar"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+              <label className="block text-slate-700 text-sm font-medium mb-1.5">Motto / Kutipan Pribadi</label>
+              <textarea
+                rows={2}
+                value={motto}
+                onChange={(e) => setMotto(e.target.value)}
+                placeholder="Contoh: Mendidik dengan hati, membentuk karakter mulia."
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
               />
             </div>
+
             <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">NIP</label>
-              <input
-                type="text"
-                value={nip}
-                onChange={(e) => setNip(e.target.value)}
-                placeholder="Contoh: 19820315..."
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+              <ImageUploadField
+                label="Foto Profil"
+                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis 1:1. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+                currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
+                currentOriginalImage={
+                  currentOriginalFoto
+                    ? getImageUrl(currentOriginalFoto)
+                    : currentFoto
+                      ? getImageUrl(currentFoto)
+                      : undefined
+                }
+                circular
+                previewShape="circle"
+                outputWidth={512}
+                onFileChange={setFotoSelection}
               />
+              <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. Biarkan kosong jika tidak ingin mengubah foto.</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Jabatan Utama</label>
-              <select
-                value={jabatan}
-                onChange={(e) => setJabatan(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              >
-                <option value="Komite Sekolah">Komite Sekolah</option>
-                <option value="Kepala Sekolah">Kepala Sekolah</option>
-                <option value="Guru Wali Kelas">Guru Wali Kelas</option>
-                <option value="Guru Mata Pelajaran">Guru Mata Pelajaran</option>
-                <option value="Tata Usaha">Tata Usaha</option>
-                <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Tugas Spesifik</label>
-              <input
-                type="text"
-                required
-                value={tugas}
-                onChange={(e) => setTugas(e.target.value)}
-                placeholder="Contoh: Guru Kelas 1A, Agama Islam, PJOK, dll"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Jenis Kelamin</label>
-              <select
-                value={jenisKelamin}
-                onChange={(e) => setJenisKelamin(e.target.value as 'Laki-laki' | 'Perempuan')}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              >
-                <option value="Laki-laki">Laki-laki</option>
-                <option value="Perempuan">Perempuan</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Status Kepegawaian</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              >
-                <option value="Aktif">Aktif</option>
-                <option value="Mutasi">Mutasi</option>
-                <option value="Pensiun">Pensiun</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Riwayat Pendidikan</label>
-              <input
-                type="text"
-                required
-                value={riwayatPendidikan}
-                onChange={(e) => setRiwayatPendidikan(e.target.value)}
-                placeholder="Contoh: S1 PGSD"
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">Motto / Kutipan Pribadi</label>
-            <textarea
-              rows={2}
-              value={motto}
-              onChange={(e) => setMotto(e.target.value)}
-              placeholder="Contoh: Mendidik dengan hati, membentuk karakter mulia."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
-            />
-          </div>
-
-          <div>
-            <ImageUploadField
-              label="Foto Profil"
-              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis 1:1. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
-              currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
-              currentOriginalImage={
-                currentOriginalFoto
-                  ? getImageUrl(currentOriginalFoto)
-                  : currentFoto
-                    ? getImageUrl(currentFoto)
-                    : undefined
-              }
-              circular
-              previewShape="circle"
-              outputWidth={512}
-              onFileChange={setFotoSelection}
-            />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. Biarkan kosong jika tidak ingin mengubah foto.</p>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
+          <div className="p-4 sm:px-6 sm:py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}

@@ -61,84 +61,88 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
           </button>
         </div>
 
-        {error && (
-          <div className="mx-6 mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-xs font-semibold border border-red-100">
-            {error}
-          </div>
-        )}
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
 
-        <form onSubmit={onSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-          <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">Judul Dokumentasi</label>
-            <input
-              type="text"
-              required
-              value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              placeholder="Contoh: Upacara Bendera HUT RI ke-79"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Kategori</label>
-              <select
-                value={kategori}
-                onChange={(e) => setKategori(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              >
-                <option value="Kegiatan">Kegiatan</option>
-                <option value="Sarana & Prasarana">Sarana & Prasarana</option>
-                <option value="Prestasi">Prestasi</option>
-                <option value="Pembelajaran">Pembelajaran</option>
-                <option value="Acara Khusus">Acara Khusus</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Tanggal Kegiatan</label>
+              <label className="block text-slate-700 text-sm font-medium mb-1.5">Judul Foto / Kegiatan</label>
               <input
-                type="date"
+                type="text"
                 required
-                value={tanggal}
-                onChange={(e) => setTanggal(e.target.value)}
+                value={judul}
+                onChange={(e) => setJudul(e.target.value)}
+                placeholder="Judul dokumentasi kegiatan"
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
               />
             </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Kategori</label>
+                <select
+                  value={kategori}
+                  onChange={(e) => setKategori(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                >
+                  <option value="Kegiatan Sekolah">Kegiatan Sekolah</option>
+                  <option value="Ekstrakurikuler">Ekstrakurikuler</option>
+                  <option value="Prestasi">Prestasi</option>
+                  <option value="Pembelajaran">Pembelajaran</option>
+                  <option value="Acara Khusus">Acara Khusus</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">Tanggal Kegiatan</label>
+                <input
+                  type="date"
+                  required
+                  value={tanggal}
+                  onChange={(e) => setTanggal(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-slate-700 text-sm font-medium mb-1.5">Deskripsi Singkat</label>
+              <textarea
+                rows={3}
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
+                placeholder="Keterangan singkat seputar kegiatan ini..."
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
+              />
+            </div>
+
+            <div>
+              <ImageUploadField
+                label="File Foto"
+                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+                currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
+                currentOriginalImage={
+                  currentOriginalFoto
+                    ? getImageUrl(currentOriginalFoto)
+                    : currentFoto
+                      ? getImageUrl(currentFoto)
+                      : undefined
+                }
+                circular={false}
+                previewShape="rounded"
+                aspectRatio={4 / 3}
+                outputWidth={1024}
+                ratioOptions={CROP_RATIO_OPTIONS}
+                onFileChange={setFotoSelection}
+              />
+              <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">Deskripsi Singkat</label>
-            <RichTextEditor
-              value={deskripsi}
-              onChange={setDeskripsi}
-              placeholder="Keterangan seputar kegiatan ini..."
-            />
-          </div>
-
-          <div>
-            <ImageUploadField
-              label="File Foto"
-              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
-              currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
-              currentOriginalImage={
-                currentOriginalFoto
-                  ? getImageUrl(currentOriginalFoto)
-                  : currentFoto
-                    ? getImageUrl(currentFoto)
-                    : undefined
-              }
-              circular={false}
-              previewShape="rounded"
-              aspectRatio={4 / 3}
-              outputWidth={1024}
-              ratioOptions={CROP_RATIO_OPTIONS}
-              onFileChange={setFotoSelection}
-            />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. {editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}</p>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
+          <div className="p-4 sm:px-6 sm:py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}

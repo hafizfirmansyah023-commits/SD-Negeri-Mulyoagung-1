@@ -55,64 +55,69 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Nama Fasilitas / Ruangan
-            </label>
-            <input
-              type="text"
-              required
-              value={judul}
-              onChange={(e) => setJudul(e.target.value)}
-              placeholder="Contoh: Laboratorium Komputer & TIK"
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-            />
+        <form onSubmit={onSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-4 sm:p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                Nama Fasilitas / Ruangan
+              </label>
+              <input
+                type="text"
+                required
+                value={judul}
+                onChange={(e) => setJudul(e.target.value)}
+                placeholder="Contoh: Laboratorium Komputer & TIK"
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Deskripsi Fasilitas</label>
+              <textarea
+                required
+                rows={4}
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
+                placeholder="Jelaskan spesifikasi dan keunggulan fasilitas..."
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
+              />
+            </div>
+
+            <div>
+              <ImageUploadField
+                label="Unggah Foto Fasilitas"
+                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+                currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
+                currentOriginalImage={
+                  currentOriginalFoto
+                    ? getImageUrl(currentOriginalFoto)
+                    : currentFoto
+                      ? getImageUrl(currentFoto)
+                      : undefined
+                }
+                circular={false}
+                previewShape="rounded"
+                aspectRatio={4 / 3}
+                outputWidth={1024}
+                ratioOptions={CROP_RATIO_OPTIONS}
+                onFileChange={setFotoSelection}
+              />
+              <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Atau Gunakan URL Gambar</label>
+              <input
+                type="url"
+                value={fotoUrl}
+                onChange={(e) => setFotoUrl(e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Deskripsi Fasilitas</label>
-            <RichTextEditor
-              value={deskripsi}
-              onChange={setDeskripsi}
-              placeholder="Jelaskan spesifikasi dan keunggulan fasilitas..."
-            />
-          </div>
-
-          <div>
-            <ImageUploadField
-              label="Unggah Foto Fasilitas"
-              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
-              currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
-              currentOriginalImage={
-                currentOriginalFoto
-                  ? getImageUrl(currentOriginalFoto)
-                  : currentFoto
-                    ? getImageUrl(currentFoto)
-                    : undefined
-              }
-              circular={false}
-              previewShape="rounded"
-              aspectRatio={4 / 3}
-              outputWidth={1024}
-              ratioOptions={CROP_RATIO_OPTIONS}
-              onFileChange={setFotoSelection}
-            />
-            <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">Atau Gunakan URL Gambar</label>
-            <input
-              type="url"
-              value={fotoUrl}
-              onChange={(e) => setFotoUrl(e.target.value)}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-            />
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
+          <div className="p-4 sm:px-6 sm:py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
             <button
               type="button"
               onClick={onClose}
