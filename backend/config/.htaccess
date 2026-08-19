@@ -1,0 +1,5 @@
+# Blokir total akses ke folder config/ dari browser
+# File di sini hanya boleh di-require dari PHP internal, bukan diakses langsung
+
+Order Allow,Deny
+Deny from all
