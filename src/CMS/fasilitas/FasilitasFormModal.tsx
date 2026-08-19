@@ -2,6 +2,7 @@ import React from 'react';
 import { getImageUrl } from '../../config/api';
 import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 import { CROP_RATIO_OPTIONS } from '../components/ImageCropModal';
+import { RichTextEditor } from '../components/RichTextEditor';
 
 interface FasilitasFormModalProps {
   showModal: boolean;
@@ -37,21 +38,24 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-lg shadow-xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col">
-        <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-4 sm:p-6 text-white flex justify-between items-center shrink-0">
-          <h3 className="text-lg sm:text-xl font-bold">
-            {editId ? 'Ubah Fasilitas Pembelajaran' : 'Tambah Fasilitas Baru'}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
+      <div 
+        className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="font-bold text-slate-800 text-lg">
+            {editId ? 'Edit Fasilitas' : 'Tambah Fasilitas Baru'}
           </h3>
-          <button
+          <button 
             onClick={onClose}
-            className="text-white hover:text-slate-200 text-2xl font-bold cursor-pointer p-1"
+            className="text-slate-400 hover:text-slate-600 font-bold p-1 hover:bg-slate-50 rounded-lg cursor-pointer"
           >
-            &times;
+            ✕
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto">
+        <form onSubmit={onSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1.5">
               Nama Fasilitas / Ruangan
@@ -68,13 +72,10 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
 
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1.5">Deskripsi Fasilitas</label>
-            <textarea
-              required
-              rows={4}
+            <RichTextEditor
               value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
+              onChange={setDeskripsi}
               placeholder="Jelaskan spesifikasi dan keunggulan fasilitas..."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
             />
           </div>
 

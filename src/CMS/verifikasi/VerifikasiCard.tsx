@@ -37,7 +37,10 @@ export const VerifikasiCard: React.FC<VerifikasiCardProps> = ({
             <span className="text-xs text-slate-400">{tanggal}</span>
           </div>
           <h3 className="font-bold text-slate-800 text-base sm:text-lg">{judul}</h3>
-          <p className="text-slate-500 text-xs sm:text-sm line-clamp-2">{deskripsiAtauIsi}</p>
+          <p 
+            className="text-slate-500 text-xs sm:text-sm line-clamp-2"
+            dangerouslySetInnerHTML={{ __html: deskripsiAtauIsi }}
+          />
           <p className="text-xs text-slate-400">
             Pengirim: <strong className="text-slate-600">{uploader}</strong>
           </p>

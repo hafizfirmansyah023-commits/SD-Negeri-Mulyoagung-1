@@ -2,6 +2,7 @@ import React from 'react';
 import { getImageUrl } from '../../config/api';
 import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 import { CROP_RATIO_OPTIONS } from '../components/ImageCropModal';
+import { RichTextEditor } from '../components/RichTextEditor';
 
 interface GaleriFormModalProps {
   showModal: boolean;
@@ -43,40 +44,43 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
   if (!showModal) return null;
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
-      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-2xl shadow-xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col">
-        <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-4 sm:p-6 text-white flex justify-between items-center shrink-0">
-          <h3 className="text-lg sm:text-xl font-bold">
-            {editId ? 'Ubah Foto Galeri' : 'Unggah Foto Galeri Baru'}
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-sm">
+      <div 
+        className="bg-white rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="font-bold text-slate-800 text-lg">
+            {editId ? 'Edit Galeri Foto' : 'Tambah Foto Galeri Baru'}
           </h3>
-          <button
+          <button 
             onClick={onClose}
-            className="text-white hover:text-slate-200 text-2xl font-semibold cursor-pointer p-1"
+            className="text-slate-400 hover:text-slate-600 font-bold p-1 hover:bg-slate-50 rounded-lg cursor-pointer"
           >
-            &times;
+            ✕
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="mx-6 mt-4 p-3 bg-red-50 text-red-600 rounded-xl text-xs font-semibold border border-red-100">
+            {error}
+          </div>
+        )}
 
+        <form onSubmit={onSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
           <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">Judul Foto / Kegiatan</label>
+            <label className="block text-slate-700 text-sm font-medium mb-1.5">Judul Dokumentasi</label>
             <input
               type="text"
               required
               value={judul}
               onChange={(e) => setJudul(e.target.value)}
-              placeholder="Judul dokumentasi kegiatan"
+              placeholder="Contoh: Upacara Bendera HUT RI ke-79"
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-slate-700 text-sm font-medium mb-1.5">Kategori</label>
               <select
@@ -84,8 +88,8 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
                 onChange={(e) => setKategori(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
               >
-                <option value="Kegiatan Sekolah">Kegiatan Sekolah</option>
-                <option value="Ekstrakurikuler">Ekstrakurikuler</option>
+                <option value="Kegiatan">Kegiatan</option>
+                <option value="Sarana & Prasarana">Sarana & Prasarana</option>
                 <option value="Prestasi">Prestasi</option>
                 <option value="Pembelajaran">Pembelajaran</option>
                 <option value="Acara Khusus">Acara Khusus</option>
@@ -105,12 +109,10 @@ export const GaleriFormModal: React.FC<GaleriFormModalProps> = ({
 
           <div>
             <label className="block text-slate-700 text-sm font-medium mb-1.5">Deskripsi Singkat</label>
-            <textarea
-              rows={3}
+            <RichTextEditor
               value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              placeholder="Keterangan singkat seputar kegiatan ini..."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm resize-none"
+              onChange={setDeskripsi}
+              placeholder="Keterangan seputar kegiatan ini..."
             />
           </div>
 

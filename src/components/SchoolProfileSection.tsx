@@ -240,9 +240,10 @@ export const SchoolProfileSection: React.FC = () => {
                     <h4 className="font-bold text-[13px] sm:text-lg text-[#1E3A8A] leading-tight line-clamp-1 sm:line-clamp-none">
                       {fac.judul}
                     </h4>
-                    <p className="text-[11px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3">
-                      {fac.deskripsi}
-                    </p>
+                    <p 
+                      className="text-[11px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3"
+                      dangerouslySetInnerHTML={{ __html: fac.deskripsi }}
+                    />
                   </div>
                 </div>
               );
@@ -289,9 +290,10 @@ export const SchoolProfileSection: React.FC = () => {
                   {selectedFacility.judul}
                 </h3>
               </div>
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                {selectedFacility.deskripsi}
-              </p>
+              <div 
+                className="text-sm sm:text-base text-slate-600 leading-relaxed prose prose-slate max-w-none"
+                dangerouslySetInnerHTML={{ __html: selectedFacility.deskripsi }}
+              />
             </div>
           </div>
         </div>,

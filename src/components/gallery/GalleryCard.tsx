@@ -49,9 +49,10 @@ export const GalleryCard: React.FC<GalleryCardProps> = ({ item, onClick }) => {
             {item.title}
           </h3>
           {item.description && (
-            <p className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed">
-              {item.description}
-            </p>
+            <p 
+              className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: item.description }}
+            />
           )}
         </div>
       </div>

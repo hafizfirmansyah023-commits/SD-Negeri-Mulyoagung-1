@@ -60,7 +60,10 @@ export const BeritaCard: React.FC<BeritaCardProps> = ({
               <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1">
                 {article.judul}
               </h3>
-              <p className="text-slate-500 text-xs sm:text-sm line-clamp-2">{article.isi}</p>
+              <p 
+                className="text-slate-500 text-xs sm:text-sm line-clamp-2"
+                dangerouslySetInnerHTML={{ __html: article.isi }}
+              />
     
               <div className="flex justify-between items-center text-xs text-slate-400 pt-3 border-t border-slate-50">
                 <span className="flex items-center gap-1">

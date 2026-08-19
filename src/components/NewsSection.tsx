@@ -5,6 +5,7 @@ import { Article } from '../types';
 import { NewsDetailModal } from './NewsDetailModal';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { useHomepageConfig } from '../hooks/useHomepageConfig';
+import { stripHtml } from '../utils/helpers';
 
 interface NewsSectionProps {
   onViewAllClick?: () => void;
@@ -43,19 +44,21 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
         const response = await fetch(`${getApiBaseUrl()}/backend/API/newsAPI.php`);
         const result = await response.json();
         if (result.status === 'success' && result.data && result.data.length > 0) {
-          const mapped: Article[] = result.data.map((art: any) => ({
-            id: art.id.toString(),
-            title: art.judul,
-            category: art.kategori as 'Kegiatan' | 'Prestasi' | 'Edukasi' | 'Pengumuman',
-            date: art.tanggal,
-            summary: art.isi.length > 120 ? art.isi.substring(0, 120) + '...' : art.isi,
-            content: art.isi,
-            image: art.foto ? getImageUrl(art.foto) : 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
-            imageAlt: art.judul,
-            author: art.uploader || 'Admin Sekolah',
-            readTime: '3 menit',
-            featured: true
-          }));
+          const mapped: Article[] = result.data.map((art: any) => {
+            return {
+              id: art.id.toString(),
+              title: art.judul,
+              category: art.kategori as 'Kegiatan' | 'Prestasi' | 'Edukasi' | 'Pengumuman',
+              date: art.tanggal,
+              summary: art.isi,
+              content: art.isi,
+              image: art.foto ? getImageUrl(art.foto) : 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80&w=800',
+              imageAlt: art.judul,
+              author: art.uploader || 'Admin Sekolah',
+              readTime: '3 menit',
+              featured: true
+            };
+          });
           cachedArticles = mapped;
           setArticles(mapped);
         } else {
@@ -171,9 +174,10 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
                     {article.title}
                   </h3>
                   {article.summary && (
-                    <p className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed">
-                      {article.summary}
-                    </p>
+                    <p 
+                      className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: article.summary }}
+                    />
                   )}
                 </div>
               </div>
