@@ -1,10 +1,13 @@
 # =============================================================
+
 # Proteksi folder API - SD Negeri 1 Mulyoagung
+
 # =============================================================
 
 Options -Indexes -ExecCGI
 
 # Sembunyikan informasi server
+
 <IfModule mod_headers.c>
     Header always unset X-Powered-By
     Header always unset Server
@@ -12,19 +15,23 @@ Options -Indexes -ExecCGI
 </IfModule>
 
 # Hanya izinkan file .php diakses, blokir file lainnya
-<FilesMatch "^(?!.*\.php$).*$">
-    Order Allow,Deny
-    Deny from all
+
+<FilesMatch "^(?!._\.php$)._$">
+Order Allow,Deny
+Deny from all
 </FilesMatch>
 
 # Blokir akses ke file helper (hanya boleh di-include via PHP, bukan HTTP)
+
 <FilesMatch "^(foto_helper|rate_limiter|helper|functions|utils)\.php$">
-    Order Allow,Deny
-    Deny from all
+Order Allow,Deny
+Deny from all
 </FilesMatch>
 
 # Izinkan akses dari localhost (XAMPP development)
+
 # Untuk produksi: hapus/sesuaikan bagian ini
+
 <RequireAny>
     Require ip 127.0.0.1
     Require ip ::1
