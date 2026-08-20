@@ -3,6 +3,8 @@ require_once '../config/koneksi.php';
 require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
 
 foto_ensure_column($conn, 'galeri');
 

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Check, Crop, X } from 'lucide-react';
 import { validateImageFile } from '../utils/fileValidation';
 import { ImageCropModal, type CropRatioOption } from './ImageCropModal';
+import { getImageUrl } from '../../config/api';
 
 export interface ImageUploadPayload {
   original: File | null;
@@ -81,14 +82,27 @@ export const ImageUploadField: React.FC<ImageUploadFieldProps> = ({
     setCropOpen(true);
   };
 
-  const startReCrop = () => {
-    const source = currentOriginalImage || currentImage;
-    if (!source) return;
+  const startReCrop = async () => {
+    const rawSource = currentOriginalImage || currentImage;
+    if (!rawSource) return;
+    const fullUrl = getImageUrl(rawSource);
     if (cropSrcRef.current) closeCrop();
     setOriginalFile(null);
-    setCropName(source.split('/').pop() || 'foto');
-    setCropSrc(source);
-    setCropOpen(true);
+    setCropName(rawSource.split('/').pop() || 'foto');
+
+    try {
+      // Ambil file sebagai Blob lokal agar canvas bebas dari pembatasan CORS / tainted canvas
+      const response = await fetch(fullUrl, { cache: 'no-cache' });
+      if (!response.ok) throw new Error('Fetch failed');
+      const blob = await response.blob();
+      const localBlobUrl = URL.createObjectURL(blob);
+      setCropSrc(localBlobUrl);
+      setCropOpen(true);
+    } catch {
+      // Fallback menggunakan full URL
+      setCropSrc(fullUrl);
+      setCropOpen(true);
+    }
   };
 
   const handleCropConfirm = (blob: Blob) => {

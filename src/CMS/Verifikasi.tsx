@@ -83,7 +83,9 @@ export default function Verifikasi() {
 
   const activeFilter = activeSubTab === 'berita' ? newsFilter : galleryFilter;
   const currentItems = activeSubTab === 'berita' ? pendingNews : pendingGallery;
-  const availableCategories = getUniqueValues(currentItems, 'kategori');
+  const availableCategories = activeSubTab === 'berita'
+    ? getUniqueValues(pendingNews, 'kategori')
+    : getUniqueValues(pendingGallery, 'kategori');
 
   const handleVerifyNews = async (id: number, decision: 'Verified' | 'Rejected') => {
     setError('');

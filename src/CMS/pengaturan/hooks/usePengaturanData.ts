@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MedsosItem, HeroCarouselItem, HomepageSection } from '../types';
 import { getApiBaseUrl } from '../../../config/api';
 import { validateImageFile } from '../../utils/fileValidation';
+import { ImageUploadPayload } from '../../components/ImageUploadField';
 
 const API_BASE = getApiBaseUrl();
 
@@ -22,6 +23,7 @@ export const usePengaturanData = () => {
   const [heroCaption, setHeroCaption] = useState('');
   const [heroTag, setHeroTag] = useState('Kegiatan Utama');
   const [heroUrutan, setHeroUrutan] = useState(0);
+  const [heroFotoPayload, setHeroFotoPayload] = useState<ImageUploadPayload>({ original: null, cropped: null });
   const [heroFile, setHeroFile] = useState<File | null>(null);
   const [heroOriginalFile, setHeroOriginalFile] = useState<File | null>(null);
   const [heroPreview, setHeroPreview] = useState<string | null>(null);
@@ -325,6 +327,49 @@ export const usePengaturanData = () => {
     }
   };
 
+  /** Simpan hanya Struktur Halaman Utama */
+  const handleSaveStrukturHalamanUtama = async () => {
+    setMessage(null);
+    setSaving(true);
+    try {
+      const form = new FormData();
+      form.append('homepage_sections', JSON.stringify(homepageSections));
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Struktur halaman utama berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan struktur halaman utama.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  /** Simpan hanya Media Sosial */
+  const handleSaveMedsos = async (customList?: MedsosItem[]) => {
+    setMessage(null);
+    setSaving(true);
+    const targetMedsos = customList || medsosList;
+    try {
+      const form = new FormData();
+      form.append('medsos_links', JSON.stringify(targetMedsos));
+      const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
+      const result = await res.json();
+      if (result.status === 'success') {
+        setMessage({ type: 'success', text: 'Media sosial sekolah berhasil disimpan!' });
+      } else {
+        setMessage({ type: 'error', text: result.message || 'Gagal menyimpan media sosial.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Terjadi kesalahan koneksi ke server.' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   // Medsos CRUD Handlers
   const handleOpenAddMedsos = () => {
     setMedsosEditingItem(null);
@@ -342,7 +387,7 @@ export const usePengaturanData = () => {
     if (confirm('Apakah Anda yakin ingin menghapus media sosial ini?')) {
       const newList = medsosList.filter((m) => m.id !== id);
       setMedsosList(newList);
-      handleSaveAll(newList);
+      handleSaveMedsos(newList);
     }
   };
 
@@ -372,7 +417,7 @@ export const usePengaturanData = () => {
 
     setMedsosList(newList);
     setMedsosModalOpen(false);
-    handleSaveAll(newList);
+    handleSaveMedsos(newList);
   };
 
   const handleHeroDragStart = (e: React.DragEvent, index: number) => {
@@ -431,6 +476,7 @@ export const usePengaturanData = () => {
     setHeroCaption('');
     setHeroTag('Kegiatan Utama');
     setHeroUrutan(heroSlides.length + 1);
+    setHeroFotoPayload({ original: null, cropped: null });
     setHeroModalOpen(true);
   };
 
@@ -439,6 +485,7 @@ export const usePengaturanData = () => {
     setHeroCaption(item.caption);
     setHeroTag(item.tag || 'Kegiatan Utama');
     setHeroUrutan(item.urutan || 0);
+    setHeroFotoPayload({ original: null, cropped: null });
     setHeroModalOpen(true);
   };
 
@@ -509,6 +556,11 @@ export const usePengaturanData = () => {
       return;
     }
 
+    if (!editingHero && !heroFotoPayload.original && !heroFotoPayload.cropped) {
+      setMessage({ type: 'error', text: 'Foto carousel hero wajib diunggah.' });
+      return;
+    }
+
     try {
       const form = new FormData();
       if (editingHero) {
@@ -517,11 +569,11 @@ export const usePengaturanData = () => {
       form.append('caption', heroCaption);
       form.append('tag', heroTag);
       form.append('urutan', heroUrutan.toString());
-      if (heroOriginalFile) {
-        form.append('foto_original', heroOriginalFile);
+      if (heroFotoPayload.original) {
+        form.append('foto_original', heroFotoPayload.original);
       }
-      if (heroFile) {
-        form.append('foto', heroFile);
+      if (heroFotoPayload.cropped) {
+        form.append('foto', heroFotoPayload.cropped);
       }
 
       const res = await fetch(`${API_BASE}/backend/API/hero_carousel.php`, {
@@ -533,6 +585,7 @@ export const usePengaturanData = () => {
       if (result.status === 'success') {
         setMessage({ type: 'success', text: result.message || 'Foto carousel hero berhasil disimpan.' });
         setHeroModalOpen(false);
+        setHeroFotoPayload({ original: null, cropped: null });
         fetchHeroSlides();
       } else {
         setMessage({ type: 'error', text: result.message || 'Gagal menyimpan foto carousel.' });
@@ -561,6 +614,7 @@ export const usePengaturanData = () => {
     // Hero Carousel Modal
     heroModalOpen, setHeroModalOpen, editingHero, heroCaption, heroTag, heroUrutan,
     heroPreview, heroCropOpen, heroCropSrc,
+    heroFotoPayload, setHeroFotoPayload,
     setHeroCaption, setHeroTag, setHeroUrutan,
     handleHeroFileChange, handleHeroReCrop, handleHeroCropConfirm, handleHeroCropCancel,
     handleOpenAddHero, handleOpenEditHero, handleDeleteHero, handleSaveHero,
@@ -571,6 +625,7 @@ export const usePengaturanData = () => {
     handleSectionDragStart, handleSectionDragOver, handleSectionDrop, updateSection, draggedSectionIndex,
     // Actions
     fetchSettings, fetchHeroSlides, handleSaveAll,
+    handleSaveStrukturHalamanUtama, handleSaveMedsos,
     handleSaveVisiMisi, handleSaveSejarah, handleSaveKontak, handleSavePpdb, handleSaveVideoUrl
   };
 };

@@ -9,23 +9,25 @@ interface TeacherProfileModalProps {
 }
 
 export const TeacherProfileModal: React.FC<TeacherProfileModalProps> = ({ teacher, onClose }) => {
-  // Mengunci scroll pada body website saat modal terbuka
+  // Mengunci scroll pada body & html website saat modal terbuka
   useEffect(() => {
     if (teacher) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [teacher]);
 
   if (!teacher) return null;
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-md overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-900/60 backdrop-blur-md overflow-y-auto overscroll-contain animate-fade-in"
       onClick={onClose}
     >
       <div 

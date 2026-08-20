@@ -136,7 +136,12 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
-    await deleteArticle(id);
+    const ok = await deleteArticle(id);
+    if (ok) {
+      setToast({ type: 'success', text: 'Berita berhasil dihapus.' });
+    } else {
+      setToast({ type: 'error', text: 'Gagal menghapus berita.' });
+    }
   };
 
   return (

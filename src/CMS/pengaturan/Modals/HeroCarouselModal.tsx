@@ -1,6 +1,8 @@
 import React from 'react';
 import { Image as ImageIcon, X, Tag } from 'lucide-react';
 import { HeroCarouselItem } from '../types';
+import { ImageUploadField, ImageUploadPayload } from '../../components/ImageUploadField';
+import { getImageUrl } from '../../../config/api';
 
 interface HeroCarouselModalProps {
   open: boolean;
@@ -11,6 +13,7 @@ interface HeroCarouselModalProps {
   onChangeCaption: (val: string) => void;
   onChangeTag: (val: string) => void;
   onChangeUrutan: (val: number) => void;
+  onFotoSelectionChange: (payload: ImageUploadPayload) => void;
   onSave: (e: React.FormEvent) => void;
   onClose: () => void;
 }
@@ -24,6 +27,7 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
   onChangeCaption,
   onChangeTag,
   onChangeUrutan,
+  onFotoSelectionChange,
   onSave,
   onClose,
 }) => {
@@ -46,6 +50,26 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
         </div>
 
         <form onSubmit={onSave} className="space-y-4">
+          <div>
+            <ImageUploadField
+              label="Foto Carousel Hero (Landscape 16:9) *"
+              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. ${editing ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+              currentImage={editing?.foto ? getImageUrl(editing.foto) : undefined}
+              currentOriginalImage={
+                editing?.foto_original
+                  ? getImageUrl(editing.foto_original)
+                  : editing?.foto
+                    ? getImageUrl(editing.foto)
+                    : undefined
+              }
+              circular={false}
+              previewShape="rounded"
+              aspectRatio={16 / 9}
+              outputWidth={1280}
+              onFileChange={onFotoSelectionChange}
+            />
+          </div>
+
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
               Caption / Keterangan Singkat *
