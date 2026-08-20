@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, Suspense, lazy } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -33,7 +33,7 @@ import { BackToTop } from './components/BackToTop';
 import { AnnouncementBar } from './components/AnnouncementBar';
 import { AnnouncementPopup } from './components/AnnouncementPopup';
 
-import Dashboard from './CMS/Dashboard';
+const Dashboard = lazy(() => import('./CMS/Dashboard'));
 import { LoadingProvider } from './context/LoadingContext';
 import { getApiBaseUrl } from './config/api';
 import { useHomepageConfig } from './hooks/useHomepageConfig';
@@ -132,7 +132,11 @@ function AppContent() {
   }, [location.pathname, navigationType]);
 
   if (location.pathname.startsWith('/cms')) {
-    return <Dashboard onBackToHome={() => navigate('/')} />;
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-[#f8f9fa]" />}>
+        <Dashboard onBackToHome={() => navigate('/')} />
+      </Suspense>
+    );
   }
 
   return (

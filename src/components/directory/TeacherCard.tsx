@@ -18,7 +18,7 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({ teacher, onClick }) =>
     <div className="space-y-4">
       <div className="flex flex-col min-[420px]:flex-row gap-4 sm:gap-5 items-center min-[420px]:items-start sm:items-center text-center min-[420px]:text-left">
         <div className="relative w-28 h-28 min-[420px]:w-24 min-[420px]:h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border-2 border-teal-500/30 shadow-md group-hover:scale-105 transition-transform duration-300">
-          <img src={teacher.image} alt={teacher.name} className="w-full h-full object-cover" />
+          <img src={teacher.image} alt={teacher.name} loading="lazy" className="w-full h-full object-cover" />
         </div>
         <div className="min-w-0 flex-1">
           <span className="inline-block bg-teal-50/90 border border-teal-200/80 text-[#028C84] text-[11px] font-bold px-3 py-0.5 rounded-full mb-1 shadow-xs truncate max-w-full">

@@ -147,6 +147,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
                   <img
                     src={article.image}
                     alt={article.imageAlt}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <span
