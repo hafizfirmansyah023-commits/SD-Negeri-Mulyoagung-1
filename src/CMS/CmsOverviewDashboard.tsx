@@ -308,86 +308,85 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
 
       {/* SECTION 1: KARTU STATISTIK UTAMA */}
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-2xl" />
           ))}
         </div>
       ) : isAdmin ? (
         /* ADMIN STAT CARDS */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {/* Card 1: Guru Aktif */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
                   Guru &amp; Tendik
                 </p>
-                <h3 className="text-2xl font-black text-slate-800 mt-1">{guruAktifCount}</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mt-1">{guruAktifCount}</h3>
               </div>
-              <div className="p-3 bg-teal-50 text-teal-600 rounded-xl">
-                <Users size={22} />
+              <div className="p-2 sm:p-3 bg-teal-50 text-teal-600 rounded-xl">
+                <Users size={18} className="sm:w-[22px] sm:h-[22px]" />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
               <span>Status Aktif</span>
-              <span className="font-semibold text-teal-600">dari {totalGuruCount} total</span>
+              <span className="font-semibold text-teal-600 truncate ml-1">dari {totalGuruCount} total</span>
             </div>
           </div>
 
           {/* Card 2: Total Berita */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
                   Total Berita
                 </p>
-                <h3 className="text-2xl font-black text-slate-800 mt-1">{beritaList.length}</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mt-1">{beritaList.length}</h3>
               </div>
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                <FileText size={22} />
+              <div className="p-2 sm:p-3 bg-blue-50 text-blue-600 rounded-xl">
+                <FileText size={18} className="sm:w-[22px] sm:h-[22px]" />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-600 font-semibold">{beritaVerifiedCount} Published</span>
-              <span className="text-amber-600 font-semibold">{beritaPendingCount} Pending</span>
+            <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] flex-wrap gap-1">
+              <span className="text-emerald-600 font-semibold">{beritaVerifiedCount} Pub.</span>
+              <span className="text-amber-600 font-semibold">{beritaPendingCount} Pend.</span>
             </div>
           </div>
 
           {/* Card 3: Total Galeri */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
                   Foto Galeri
                 </p>
-                <h3 className="text-2xl font-black text-slate-800 mt-1">{galeriList.length}</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mt-1">{galeriList.length}</h3>
               </div>
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                <ImageIcon size={22} />
+              <div className="p-2 sm:p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                <ImageIcon size={18} className="sm:w-[22px] sm:h-[22px]" />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
-              <span className="text-emerald-600 font-semibold">{galeriVerifiedCount} Verified</span>
-              <span className="text-amber-600 font-semibold">{galeriPendingCount} Pending</span>
+            <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] flex-wrap gap-1">
+              <span className="text-emerald-600 font-semibold">{galeriVerifiedCount} Ver.</span>
+              <span className="text-amber-600 font-semibold">{galeriPendingCount} Pend.</span>
             </div>
           </div>
 
-
-          {/* Card 5: User CMS */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+          {/* Card 4: User CMS */}
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider">
+                <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
                   User CMS
                 </p>
-                <h3 className="text-2xl font-black text-slate-800 mt-1">{totalUsersCount}</h3>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mt-1">{totalUsersCount}</h3>
               </div>
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                <UserCheck size={22} />
+              <div className="p-2 sm:p-3 bg-amber-50 text-amber-600 rounded-xl">
+                <UserCheck size={18} className="sm:w-[22px] sm:h-[22px]" />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+            <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] flex-wrap gap-1">
               <span className="text-indigo-600 font-semibold">{adminUsersCount} Admin</span>
               <span className="text-teal-600 font-semibold">{timUsersCount} Tim</span>
             </div>
@@ -395,44 +394,44 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         </div>
       ) : (
         /* TIM STAT CARDS */
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="p-3.5 bg-blue-50 text-blue-600 rounded-2xl">
-              <FileText size={24} />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4">
+            <div className="p-2.5 sm:p-3.5 bg-blue-50 text-blue-600 rounded-2xl shrink-0">
+              <FileText size={20} className="sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <p className="text-slate-500 text-xs font-semibold uppercase">Berita Diunggah</p>
-              <h3 className="text-2xl font-extrabold text-slate-800">{myBeritaList.length}</h3>
-            </div>
-          </div>
-
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="p-3.5 bg-indigo-50 text-indigo-600 rounded-2xl">
-              <ImageIcon size={24} />
-            </div>
-            <div>
-              <p className="text-slate-500 text-xs font-semibold uppercase">Galeri Diunggah</p>
-              <h3 className="text-2xl font-extrabold text-slate-800">{myGaleriList.length}</h3>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">Berita Diunggah</p>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">{myBeritaList.length}</h3>
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="p-3.5 bg-amber-50 text-amber-600 rounded-2xl">
-              <Clock size={24} />
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4">
+            <div className="p-2.5 sm:p-3.5 bg-indigo-50 text-indigo-600 rounded-2xl shrink-0">
+              <ImageIcon size={20} className="sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <p className="text-slate-500 text-xs font-semibold uppercase">Menunggu Verifikasi</p>
-              <h3 className="text-2xl font-extrabold text-amber-600">{myTotalPending}</h3>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">Galeri Diunggah</p>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">{myGaleriList.length}</h3>
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
-            <div className="p-3.5 bg-emerald-50 text-emerald-600 rounded-2xl">
-              <CheckCircle2 size={24} />
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4">
+            <div className="p-2.5 sm:p-3.5 bg-amber-50 text-amber-600 rounded-2xl shrink-0">
+              <Clock size={20} className="sm:w-6 sm:h-6" />
             </div>
-            <div>
-              <p className="text-slate-500 text-xs font-semibold uppercase">Telah Disetujui</p>
-              <h3 className="text-2xl font-extrabold text-emerald-600">{myTotalVerified}</h3>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">Menunggu Verifikasi</p>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-amber-600">{myTotalPending}</h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4">
+            <div className="p-2.5 sm:p-3.5 bg-emerald-50 text-emerald-600 rounded-2xl shrink-0">
+              <CheckCircle2 size={20} className="sm:w-6 sm:h-6" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">Telah Disetujui</p>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-emerald-600">{myTotalVerified}</h3>
             </div>
           </div>
         </div>

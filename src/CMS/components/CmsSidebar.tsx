@@ -26,22 +26,15 @@ export default function CmsSidebar({
 }: CmsSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Auto-close mobile navigation drawer instantly when user scrolls
+  // Lock body scroll when mobile menu drawer is open
   useEffect(() => {
-    if (!mobileOpen) return;
-
-    let startY = window.scrollY;
-
-    const handleScrollClose = () => {
-      const currentY = window.scrollY;
-      if (Math.abs(currentY - startY) > 2) {
-        setMobileOpen(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScrollClose, { passive: true });
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
     return () => {
-      window.removeEventListener('scroll', handleScrollClose);
+      document.body.style.overflow = 'unset';
     };
   }, [mobileOpen]);
 
