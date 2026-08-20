@@ -107,13 +107,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
             </p>
           </div>
 
-          <button
-            onClick={onViewAllClick}
-            className="hidden md:flex items-center gap-2 text-[#028C84] font-bold text-sm hover:text-[#006a64] transition-colors cursor-pointer group"
-          >
-            <span>Lihat Semua Berita</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
+
         </div>
 
         {/* Category Filters */}
@@ -205,17 +199,7 @@ export const NewsSection: React.FC<NewsSectionProps> = ({ onViewAllClick }) => {
           ))}
         </div>
 
-        {/* Mobile View All Button */}
-        {/* Margin atas dikurangi untuk mobile */}
-        <div className="mt-6 sm:mt-10 flex justify-center md:hidden">
-          <button
-            onClick={onViewAllClick}
-            className="flex items-center justify-center gap-1.5 text-[#028C84] font-bold text-xs sm:text-sm bg-slate-100 py-2.5 px-5 rounded-full shadow-sm border border-slate-200 w-full sm:w-auto"
-          >
-            <span>Lihat Semua Berita</span>
-            <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          </button>
-        </div>
+
       </div>
 
       {/* Modal View */}
