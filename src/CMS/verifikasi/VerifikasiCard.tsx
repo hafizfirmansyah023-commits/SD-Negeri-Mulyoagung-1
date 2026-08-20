@@ -29,7 +29,7 @@ export const VerifikasiCard: React.FC<VerifikasiCardProps> = ({
         <div className="w-full sm:w-44 h-36 sm:h-28 bg-slate-100 rounded-xl overflow-hidden shrink-0">
           <img src={getImageUrl(foto)} alt={judul} className="w-full h-full object-cover" />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-2 min-w-0 flex-1">
           <div className="flex gap-2 items-center flex-wrap">
             <span className="bg-teal-50 text-teal-700 border border-teal-200 text-[11px] px-2.5 py-0.5 rounded-full font-bold">
               {kategori}

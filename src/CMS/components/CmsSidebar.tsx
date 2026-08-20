@@ -26,22 +26,15 @@ export default function CmsSidebar({
 }: CmsSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Auto-close mobile navigation drawer instantly when user scrolls
+  // Lock body scroll when mobile menu drawer is open
   useEffect(() => {
-    if (!mobileOpen) return;
-
-    let startY = window.scrollY;
-
-    const handleScrollClose = () => {
-      const currentY = window.scrollY;
-      if (Math.abs(currentY - startY) > 2) {
-        setMobileOpen(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScrollClose, { passive: true });
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
     return () => {
-      window.removeEventListener('scroll', handleScrollClose);
+      document.body.style.overflow = 'unset';
     };
   }, [mobileOpen]);
 
@@ -278,10 +271,11 @@ export default function CmsSidebar({
         />
       )}
 
-      {/* Sidebar Content container (Drawer on mobile, Sticky on desktop) */}
+      {/* Sidebar Content container (Fixed 100vh drawer on mobile & fixed 100vh sidebar on desktop) */}
       <aside
-        className={`fixed md:sticky top-0 left-0 bottom-0 z-50 md:z-auto w-72 md:w-64 bg-slate-900 text-white flex flex-col h-screen max-h-screen shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-          }`}
+        className={`fixed top-0 left-0 bottom-0 z-50 md:z-30 w-72 md:w-64 bg-slate-900 text-white flex flex-col h-screen max-h-screen shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
       >
         <div className="flex-grow">
           {/* Logo Section */}
