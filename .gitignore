@@ -55,3 +55,8 @@ scratch_check.ps1
 # Catatan Internal
 # (tidak perlu masuk repo publik)
 # ========================
+
+# ========================
+# OpenCode
+# ========================
+.opencode/

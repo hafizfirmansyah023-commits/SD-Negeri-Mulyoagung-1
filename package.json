@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "sdn1-mulyoagung-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -23,8 +23,7 @@
     "motion": "^12.23.24",
     "react": "^19.2.8",
     "react-dom": "^19.0.1",
-    "react-router-dom": "^7.18.2",
-    "vite": "^6.2.3"
+    "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
     "@types/aos": "^3.0.8",
@@ -36,6 +35,6 @@
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3"
+    "vite": "^8.2.1"
   }
 }

@@ -3,7 +3,7 @@
  * Rate Limiter untuk Login CMS
  *
  * - Maks 5 percobaan login gagal dalam 10 menit per IP
- * - Setelah itu diblokir selama 15 menit
+ * - Setelah itu diblokir selama 5 menit
  * - Percobaan sukses mereset hitungan
  */
 
@@ -59,31 +59,38 @@ class RateLimiter
     }
 
     public function check(string $ip): array
-    {
-        $windowStart = date('Y-m-d H:i:s', time() - $this->windowSeconds);
-        $stmt = $this->conn->prepare(
-            "SELECT COUNT(*) AS cnt, MIN(attempted_at) AS oldest FROM login_attempts WHERE ip_address = ? AND attempted_at >= ?"
-        );
-        $stmt->execute([$ip, $windowStart]);
-        $row = $stmt->fetch();
-        $attempts = (int) $row['cnt'];
+{
+    $windowStart = date('Y-m-d H:i:s', time() - $this->windowSeconds);
+    
+    // Menggunakan MAX(attempted_at) untuk mengambil waktu percobaan terbaru
+    $stmt = $this->conn->prepare(
+        "SELECT COUNT(*) AS cnt, MAX(attempted_at) AS latest FROM login_attempts WHERE ip_address = ? AND attempted_at >= ?"
+    );
+    $stmt->execute([$ip, $windowStart]);
+    $row = $stmt->fetch();
+    $attempts = (int) $row['cnt'];
 
-        if ($attempts >= $this->maxAttempts) {
-            $oldestTs    = strtotime($row['oldest']);
-            $blockedUntil = $oldestTs + $this->lockSeconds;
-            $retryAfter  = max(0, $blockedUntil - time());
+    if ($attempts >= $this->maxAttempts) {
+        $latestTs     = strtotime($row['latest']);
+        $blockedUntil = $latestTs + $this->lockSeconds;
+        $retryAfter   = max(0, $blockedUntil - time());
+
+        // Jika sisa waktu tunggu masih ada, kembalikan status terblokir
+        if ($retryAfter > 0) {
             return ['blocked' => true, 'retry_after' => $retryAfter, 'attempts' => $attempts];
         }
-
-        return ['blocked' => false, 'retry_after' => 0, 'attempts' => $attempts];
     }
+
+    return ['blocked' => false, 'retry_after' => 0, 'attempts' => $attempts];
+}
 
     public function recordFailure(string $ip, string $username = ''): void
     {
+        $now = date('Y-m-d H:i:s');
         $stmt = $this->conn->prepare(
-            "INSERT INTO login_attempts (ip_address, username, attempted_at) VALUES (?, ?, NOW())"
+            "INSERT INTO login_attempts (ip_address, username, attempted_at) VALUES (?, ?, ?)"
         );
-        $stmt->execute([$ip, $username]);
+        $stmt->execute([$ip, $username, $now]);
     }
 
     public function resetOnSuccess(string $ip): void

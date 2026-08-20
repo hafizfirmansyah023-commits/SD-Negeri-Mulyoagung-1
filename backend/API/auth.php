@@ -18,7 +18,7 @@ $action = isset($input['action']) ? $input['action'] : (isset($_GET['action']) ?
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'login') {
         $clientIp   = RateLimiter::getClientIp();
-        $limiter    = new RateLimiter($conn, 5, 10, 15);
+        $limiter    = new RateLimiter($conn, 5, 10, 5);
         $rateCheck  = $limiter->check($clientIp);
 
         if ($rateCheck['blocked']) {
