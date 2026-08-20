@@ -19,7 +19,7 @@ coverage/
 # ========================
 # Database Dump (SENSITIF)
 # ========================
-backend/db_sdn1mulyoagung.sql
+#backend/db_sdn1mulyoagung.sql
 *.sql
 
 # ========================
