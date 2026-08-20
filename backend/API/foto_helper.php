@@ -73,16 +73,55 @@ function foto_unlink($path) {
     }
 }
 
+// Konversi PNG ke WebP (runtime optimization).
+function foto_convert_to_webp($filepath) {
+    if (empty($filepath)) return $filepath;
+    $ext = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
+    if ($ext !== 'png' && $ext !== 'jpg' && $ext !== 'jpeg') return $filepath;
+    
+    $fullpath = '../' . str_replace('backend/', '', $filepath);
+    if (!file_exists($fullpath)) return $filepath;
+    
+    try {
+        $img = null;
+        if ($ext === 'png') {
+            $img = @imagecreatefrompng($fullpath);
+        } elseif ($ext === 'jpg' || $ext === 'jpeg') {
+            $img = @imagecreatefromjpeg($fullpath);
+        }
+        
+        if (!$img) return $filepath;
+        
+        $webpPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $fullpath);
+        imageinterlace($img, 0);
+        imagewebp($img, $webpPath, 82);
+        imagedestroy($img);
+        
+        if (file_exists($webpPath) && filesize($webpPath) < filesize($fullpath)) {
+            @unlink($fullpath);
+            return str_replace(basename($filepath), basename($webpPath), $filepath);
+        } else {
+            @unlink($webpPath);
+        }
+    } catch (Exception $e) {
+        // Ignore conversion errors, keep original
+    }
+    
+    return $filepath;
+}
+
 // Upload untuk CREATE: kembalikan [foto_asli, foto_crop].
 // Jika tidak ada `foto_original`, fallback kompatibilitas: `foto` disimpan sebagai asli.
 function foto_handle_create($upload_dir, $prefix) {
     if (foto_has_upload('foto_original')) {
         $original = foto_save_file('foto_original', $upload_dir, $prefix);
+        $original = foto_convert_to_webp($original);
         $crop = foto_save_file('foto', $upload_dir, $prefix);
+        $crop = foto_convert_to_webp($crop);
         return [$original, $crop];
     }
     $legacy = foto_save_file('foto', $upload_dir, $prefix);
-    return [$legacy, ''];
+    return [foto_convert_to_webp($legacy), ''];
 }
 
 // Upload untuk UPDATE: kembalikan [foto_asli, foto_crop] terbaru.
@@ -94,13 +133,15 @@ function foto_handle_update($upload_dir, $prefix, $old_original, $old_crop) {
         foto_unlink($old_original);
         foto_unlink($old_crop);
         $original = foto_save_file('foto_original', $upload_dir, $prefix);
+        $original = foto_convert_to_webp($original);
         $crop = foto_save_file('foto', $upload_dir, $prefix);
+        $crop = foto_convert_to_webp($crop);
         return [$original, $crop];
     }
     if (foto_has_upload('foto')) {
         foto_unlink($old_crop);
         $crop = foto_save_file('foto', $upload_dir, $prefix);
-        return [$old_original, $crop];
+        return [$old_original, foto_convert_to_webp($crop)];
     }
     return [$old_original, $old_crop];
 }

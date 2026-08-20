@@ -47,6 +47,7 @@ export const BeritaCard: React.FC<BeritaCardProps> = ({
               <img
                 src={getImageUrl(article.foto)}
                 alt={article.judul}
+                loading="lazy"
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-3 left-3">

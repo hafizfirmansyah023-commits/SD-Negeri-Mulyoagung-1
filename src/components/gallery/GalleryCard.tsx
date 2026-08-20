@@ -33,6 +33,7 @@ export const GalleryCard: React.FC<GalleryCardProps> = ({ item, onClick }) => {
           <img
             src={item.image}
             alt={item.title}
+            loading="lazy"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <span className="absolute bottom-3 right-3 bg-slate-900/75 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-full font-medium shadow-sm">

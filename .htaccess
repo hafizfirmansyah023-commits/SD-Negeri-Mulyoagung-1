@@ -1,0 +1,41 @@
+# =============================================================
+# PERFORMANCE - SD Negeri 1 Mulyoagung
+# Caching & kompresi aset statis (Vite build + uploads)
+# =============================================================
+
+# Kompresi teks
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+# Caching browser
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 hour"
+
+    # Aset Vite (nama file ber-hash -> immutable, cache lama)
+    <FilesMatch "\.(js|css)$">
+        ExpiresByType application/javascript "access plus 1 year"
+        ExpiresByType text/css "access plus 1 year"
+    </FilesMatch>
+
+    # Gambar stabil
+    <FilesMatch "\.(png|jpe?g|gif|webp|svg|ico)$">
+        ExpiresByType image/png "access plus 1 month"
+        ExpiresByType image/jpeg "access plus 1 month"
+        ExpiresByType image/gif "access plus 1 month"
+        ExpiresByType image/webp "access plus 1 month"
+        ExpiresByType image/svg+xml "access plus 1 month"
+        ExpiresByType image/x-icon "access plus 1 month"
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+    # File ber-hash tidak perlu divalidasi ulang setiap load
+    <FilesMatch "\.(js|css)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.(png|jpe?g|gif|webp|svg|ico)$">
+        Header set Cache-Control "public, max-age=2592000"
+    </FilesMatch>
+</IfModule>

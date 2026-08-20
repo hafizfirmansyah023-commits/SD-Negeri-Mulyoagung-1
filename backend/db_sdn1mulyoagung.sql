@@ -261,7 +261,7 @@ CREATE TABLE `sambutan_kepsek` (
 --
 
 INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`, `foto_crop`) VALUES
-(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamu\'alaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg', 'backend/uploads/sambutan/1786509156_de5c5ca1_1786426193_Amalia_Dyah_Erviana.png');
+(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamualaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg', 'backend/uploads/sambutan/1786509156_de5c5ca1_1786426193_Amalia_Dyah_Erviana.png');
 
 -- --------------------------------------------------------
 
@@ -318,7 +318,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawa
 --
 ALTER TABLE `berita`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `uploaded_by` (`uploaded_by`);
+  ADD KEY `uploaded_by` (`uploaded_by`),
+  ADD KEY `idx_berita_status_tgl` (`status_verifikasi`,`tanggal` DESC,`id` DESC);
 
 --
 -- Indexes for table `fasilitas`
@@ -331,7 +332,8 @@ ALTER TABLE `fasilitas`
 --
 ALTER TABLE `galeri`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `uploaded_by` (`uploaded_by`);
+  ADD KEY `uploaded_by` (`uploaded_by`),
+  ADD KEY `idx_galeri_status_tgl` (`status_verifikasi`,`tanggal` DESC,`id` DESC);
 
 --
 -- Indexes for table `guru_tendik`
