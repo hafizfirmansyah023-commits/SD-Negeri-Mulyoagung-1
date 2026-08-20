@@ -59,4 +59,4 @@ scratch_check.ps1
 # ========================
 # OpenCode
 # ========================
-.opencode/
+#.opencode/
