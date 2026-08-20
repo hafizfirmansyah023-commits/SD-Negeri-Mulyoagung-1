@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, ExternalLink } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 
@@ -16,6 +17,20 @@ export const AnnouncementPopup: React.FC = () => {
     photo_link: string;
     is_active: boolean;
   } | null>(null);
+
+  // Lock body & html scroll when popup is open
+  useEffect(() => {
+    if (isOpen) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     const fetchAnnouncement = async () => {
@@ -64,8 +79,8 @@ export const AnnouncementPopup: React.FC = () => {
 
   if (!isOpen || !data) return null;
 
-  return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto overscroll-contain">
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity duration-300"
@@ -147,6 +162,7 @@ export const AnnouncementPopup: React.FC = () => {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

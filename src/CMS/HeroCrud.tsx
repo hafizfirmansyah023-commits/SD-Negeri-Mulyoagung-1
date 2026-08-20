@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { CmsToast } from './components/CmsToast';
 import { Sliders, Save, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
@@ -15,9 +15,8 @@ export default function HeroCrud() {
     heroSubtitle, setHeroSubtitle,
     loading, saving, message, setMessage,
     heroModalOpen, setHeroModalOpen, editingHero, heroCaption, heroTag, heroUrutan,
-    heroPreview, heroCropOpen, heroCropSrc,
     setHeroCaption, setHeroTag, setHeroUrutan,
-    handleHeroFileChange, handleHeroReCrop, handleHeroCropConfirm, handleHeroCropCancel,
+    setHeroFotoPayload,
     handleOpenAddHero, handleOpenEditHero, handleDeleteHero, handleSaveHero,
     handleHeroDragStart, handleHeroDragOver, handleHeroDrop, draggedHeroIndex,
     fetchSettings, fetchHeroSlides, handleSaveAll
@@ -52,18 +51,7 @@ export default function HeroCrud() {
         </button>
       </div>
 
-      {message && (
-        <div
-          className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${
-            message.type === 'success'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
-        >
-          {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-          <span>{message.text}</span>
-        </div>
-      )}
+      <CmsToast message={message} onClose={() => setMessage(null)} />
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
@@ -123,26 +111,12 @@ export default function HeroCrud() {
         caption={heroCaption}
         tag={heroTag}
         urutan={heroUrutan}
-        preview={heroPreview}
         onChangeCaption={setHeroCaption}
         onChangeTag={setHeroTag}
         onChangeUrutan={setHeroUrutan}
-        onFileChange={handleHeroFileChange}
-        onReCrop={handleHeroReCrop}
+        onFotoSelectionChange={setHeroFotoPayload}
         onSave={handleSaveHero}
         onClose={() => setHeroModalOpen(false)}
-      />
-
-      <ImageCropModal
-        open={heroCropOpen}
-        imageSrc={heroCropSrc}
-        aspectRatio={16 / 9}
-        circular={false}
-        title="Potong Foto Carousel Hero"
-        outputWidth={1920}
-        outputHeight={1080}
-        onCancel={handleHeroCropCancel}
-        onConfirm={handleHeroCropConfirm}
       />
     </div>
   );

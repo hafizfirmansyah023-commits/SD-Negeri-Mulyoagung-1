@@ -164,7 +164,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         onInput={handleInput}
         onBlur={handleBlur}
         className="p-4 min-h-[200px] max-h-[400px] overflow-y-auto outline-none prose prose-slate max-w-none text-sm text-slate-800 focus:outline-none"
-        placeholder={placeholder}
+        data-placeholder={placeholder}
         style={{
           whiteSpace: 'pre-wrap',
           wordBreak: 'break-word',

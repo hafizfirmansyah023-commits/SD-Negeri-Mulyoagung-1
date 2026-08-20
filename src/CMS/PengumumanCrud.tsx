@@ -4,6 +4,7 @@ import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { validateImageFile } from './utils/fileValidation';
 import { ImageCropModal, CROP_RATIO_OPTIONS } from './components/ImageCropModal';
 import { RichTextEditor } from './components/RichTextEditor';
+import { CmsToast, ToastType } from './components/CmsToast';
 
 const API_BASE = getApiBaseUrl();
 
@@ -61,12 +62,10 @@ export default function PengumumanCrud() {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
 
   const fetchPengumuman = async () => {
     setLoading(true);
-    setError('');
     try {
       const response = await fetch(`${API_BASE}/backend/API/pengumuman.php`);
       const result = await response.json();
@@ -96,10 +95,10 @@ export default function PengumumanCrud() {
           setDurasiHari(7);
         }
       } else {
-        setError(result.message || 'Gagal memuat data pengumuman.');
+        setToast({ type: 'error', text: result.message || 'Gagal memuat data pengumuman.' });
       }
     } catch (err) {
-      setError('Gagal menghubungkan ke backend API.');
+      setToast({ type: 'error', text: 'Gagal menghubungkan ke backend API.' });
     } finally {
       setLoading(false);
     }
@@ -146,6 +145,7 @@ export default function PengumumanCrud() {
   const handleReCrop = () => {
     const source = photoOriginalUrl || photoUrl;
     if (!source) return;
+    setOriginalFile(null);
     if (cropSrcRef.current) URL.revokeObjectURL(cropSrcRef.current);
     setCropName(source.split('/').pop() || 'foto');
     setCropSrc(getImageUrl(source));
@@ -171,8 +171,6 @@ export default function PengumumanCrud() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
     setSaving(true);
 
     const formData = new FormData();
@@ -202,16 +200,16 @@ export default function PengumumanCrud() {
       });
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message || 'Pengumuman berhasil diperbarui.');
+        setToast({ type: 'success', text: result.message || 'Pengumuman berhasil diperbarui.' });
         setFotoFile(null);
         setOriginalFile(null);
         setPreviewUrl(null);
         fetchPengumuman();
       } else {
-        setError(result.message || 'Gagal menyimpan perubahan.');
+        setToast({ type: 'error', text: result.message || 'Gagal menyimpan perubahan.' });
       }
     } catch (err) {
-      setError('Terjadi kesalahan saat menghubungi server.');
+      setToast({ type: 'error', text: 'Terjadi kesalahan saat menghubungi server.' });
     } finally {
       setSaving(false);
     }
@@ -232,19 +230,7 @@ export default function PengumumanCrud() {
         </div>
       </div>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-center gap-3">
-          <AlertCircle className="shrink-0" size={18} />
-          <span className="text-sm">{error}</span>
-        </div>
-      )}
-
-      {success && (
-        <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-xl flex items-center gap-3">
-          <CheckCircle2 className="shrink-0" size={18} />
-          <span className="text-sm">{success}</span>
-        </div>
-      )}
+      <CmsToast message={toast} onClose={() => setToast(null)} />
 
       {loading ? (
         <div className="flex justify-center items-center py-12">

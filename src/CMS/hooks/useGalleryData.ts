@@ -6,6 +6,7 @@ export interface GalleryItem {
   judul: string;
   deskripsi: string;
   foto: string;
+  foto_crop?: string;
   foto_original?: string;
   kategori: string;
   tanggal: string;
@@ -25,7 +26,9 @@ export function useGalleryData() {
   const fetchGallery = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/backend/API/galeri.php?status=all`);
+      const response = await fetch(`${API_BASE}/backend/API/galeri.php?status=all&_t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       const result = await response.json();
       if (result.status === 'success') {
         setItems(result.data || []);

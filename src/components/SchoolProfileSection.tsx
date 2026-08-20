@@ -45,16 +45,18 @@ export const SchoolProfileSection: React.FC = () => {
     fetchFacilities();
   }, []);
 
-  // Lock body scroll when modal is open
+  // Lock body & html scroll when modal is open
   useEffect(() => {
     if (selectedFacility) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [selectedFacility]);
 
   const getFacilityIconByTitle = (title: string) => {
@@ -255,7 +257,7 @@ export const SchoolProfileSection: React.FC = () => {
       {/* === MODAL POPUP FASILITAS (DENGAN CREATE-PORTAL) === */}
       {selectedFacility && createPortal(
         <div 
-          className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto animate-fade-in"
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto overscroll-contain animate-fade-in"
           onClick={() => setSelectedFacility(null)}
         >
           <div 

@@ -1,32 +1,6 @@
-# Folder uploads: izinkan akses ke file gambar saja
-
-# Blokir semua file PHP, script, dan file berbahaya
-
-Options -Indexes -ExecCGI
-
-# Blokir eksekusi PHP di dalam folder uploads
-
-<FilesMatch "\.php[s0-9]?$">
-Order Allow,Deny
-Deny from all
-</FilesMatch>
-
-# Blokir script lainnya
-
-<FilesMatch "\.(cgi|pl|py|jsp|asp|aspx|sh|bat|exe|js|html|htm|svg)$">
-Order Allow,Deny
-Deny from all
-</FilesMatch>
-
-# Hanya izinkan file gambar yang valid
-
-<FilesMatch "\.(jpg|jpeg|png|gif|webp|ico|bmp|tiff)$">
-Order Deny,Allow
-Allow from all
-</FilesMatch>
-
-# Tambahkan header keamanan untuk gambar
-
+# Izinkan akses CORS untuk file upload (gambar) agar dapat dimuat di canvas/cropper
 <IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "*"
 </IfModule>
