@@ -308,14 +308,14 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
 
       {/* SECTION 1: KARTU STATISTIK UTAMA */}
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-2xl" />
           ))}
         </div>
       ) : isAdmin ? (
         /* ADMIN STAT CARDS */
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           {/* Card 1: Guru Aktif */}
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
@@ -394,7 +394,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         </div>
       ) : (
         /* TIM STAT CARDS */
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4">
             <div className="p-2.5 sm:p-3.5 bg-blue-50 text-blue-600 rounded-2xl shrink-0">
               <FileText size={20} className="sm:w-6 sm:h-6" />
@@ -484,15 +484,15 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-200/60">
-            <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100">
-              <div className="flex items-center gap-3">
-                <FileText size={18} className="text-blue-600" />
-                <span className="text-xs sm:text-sm font-medium text-slate-700">
+            <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100 gap-2">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <FileText size={18} className="text-blue-600 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">
                   Berita Pending Verifikasi
                 </span>
               </div>
               <span
-                className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
                   beritaPendingCount > 0
                     ? 'bg-amber-100 text-amber-800'
                     : 'bg-slate-100 text-slate-500'
@@ -502,15 +502,15 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
               </span>
             </div>
 
-            <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100">
-              <div className="flex items-center gap-3">
-                <ImageIcon size={18} className="text-indigo-600" />
-                <span className="text-xs sm:text-sm font-medium text-slate-700">
+            <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100 gap-2">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <ImageIcon size={18} className="text-indigo-600 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">
                   Galeri Pending Verifikasi
                 </span>
               </div>
               <span
-                className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
                   galeriPendingCount > 0
                     ? 'bg-amber-100 text-amber-800'
                     : 'bg-slate-100 text-slate-500'
@@ -671,7 +671,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Hero Carousel */}
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-between space-y-3">
                 <div>

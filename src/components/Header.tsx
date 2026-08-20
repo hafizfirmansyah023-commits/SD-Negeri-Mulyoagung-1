@@ -49,22 +49,15 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
     };
   }, []);
 
-  // Auto-close mobile menu instantly when user scrolls
+  // Lock body scroll when mobile navigation menu is open
   useEffect(() => {
-    if (!mobileMenuOpen) return;
-
-    let startY = window.scrollY;
-
-    const handleScrollClose = () => {
-      const currentY = window.scrollY;
-      if (Math.abs(currentY - startY) > 2) {
-        setMobileMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScrollClose, { passive: true });
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
     return () => {
-      window.removeEventListener('scroll', handleScrollClose);
+      document.body.style.overflow = 'unset';
     };
   }, [mobileMenuOpen]);
 
@@ -79,9 +72,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
 
       {/* Main Top Header */}
       <header
-        className={`sticky top-0 z-50 shadow-lg bg-gradient-to-r from-[#073632]/100 to-[#103632]/100 transition-all duration-300 ${
-          isScrollingDown ? 'opacity-75 hover:opacity-100' : 'opacity-100'
-        }`}
+        className="sticky top-0 z-50 shadow-lg bg-gradient-to-r from-[#073632] to-[#103632] transition-all duration-300"
       >
         <div className="flex justify-between items-center px-4 sm:px-8 lg:px-12 w-full h-20 max-w-7xl mx-auto">
           <HeaderLogo onClick={handleNavClick} />

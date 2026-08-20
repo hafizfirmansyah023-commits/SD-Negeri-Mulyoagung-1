@@ -65,11 +65,11 @@ export const BeritaCard: React.FC<BeritaCardProps> = ({
                 dangerouslySetInnerHTML={{ __html: article.isi }}
               />
     
-              <div className="flex justify-between items-center text-xs text-slate-400 pt-3 border-t border-slate-50">
-                <span className="flex items-center gap-1">
+              <div className="flex justify-between items-center text-xs text-slate-400 pt-3 border-t border-slate-50 gap-2">
+                <span className="flex items-center gap-1 shrink-0">
                   <Calendar size={12} /> {article.tanggal}
                 </span>
-                <span>Pengunggah: {article.uploader || 'Sistem'}</span>
+                <span className="truncate">Pengunggah: {article.uploader || 'Sistem'}</span>
               </div>
             </div>
           </div>

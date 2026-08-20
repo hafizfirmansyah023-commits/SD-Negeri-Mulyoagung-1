@@ -271,10 +271,11 @@ export default function CmsSidebar({
         />
       )}
 
-      {/* Sidebar Content container (Drawer on mobile, Sticky on desktop) */}
+      {/* Sidebar Content container (Fixed 100vh drawer on mobile & fixed 100vh sidebar on desktop) */}
       <aside
-        className={`fixed md:sticky top-0 left-0 bottom-0 z-50 md:z-auto w-72 md:w-64 bg-slate-900 text-white flex flex-col h-screen max-h-screen shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-          }`}
+        className={`fixed top-0 left-0 bottom-0 z-50 md:z-30 w-72 md:w-64 bg-slate-900 text-white flex flex-col h-screen max-h-screen shrink-0 overflow-y-auto transition-transform duration-300 ease-in-out ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
       >
         <div className="flex-grow">
           {/* Logo Section */}
