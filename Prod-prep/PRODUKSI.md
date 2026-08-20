@@ -145,4 +145,4 @@ Ini agar route seperti `/cms`, `/berita`, `/galeri` tidak 404 saat di-refresh.
 
 ---
 
-*Terakhir diperbarui: 2026-08-19*
+*Terakhir diperbarui: 2026-08-20*

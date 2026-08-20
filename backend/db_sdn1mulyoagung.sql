@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 18, 2026 at 05:30 AM
+-- Generation Time: Aug 20, 2026 at 08:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,11 +68,8 @@ CREATE TABLE `fasilitas` (
 
 INSERT INTO `fasilitas` (`id`, `judul`, `deskripsi`, `foto`, `foto_crop`) VALUES
 (1, 'Laboratorium Komputer & TIK Interaktif', 'Dilengkapi 30 unit komputer terkini, jaringan Wi-Fi sekolah, dan Smart Display untuk pembelajaran coding dasar & literasi digital.', 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600', NULL),
-(2, 'Perpustakaan', 'Koleksi ribuan buku cerita, modul pembelajaran, koleksi literasi digital e-book, dan sudut baca ramah anak yang nyaman.', 'backend/uploads/fasilitas/1786413887_perpus1.jpeg', NULL),
-(3, 'Lapangan Olahraga & Upacara', 'Areal seluas 800m² dilapisi plester berkualitas untuk upacara bendera, senam bersama, bulutangkis, basket, dan futsal.', 'backend/uploads/fasilitas/1786416364_lapangan.jpeg', NULL),
-(4, 'Ruang UKS & Poliklinik Sekolah', 'Fasilitas pertolongan pertama kesehatan dengan tempat tidur bersih, pengukuran TB/BB rutin, dan kerja sama Puskesmas Dau.', 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=600', NULL),
-(5, 'Kantin Sehat Bergizi', 'Menyediakan makanan dan minuman sehat yang higienis, bebas bahan pengawet berbahaya, dan diawasi oleh tim gizi sekolah.', 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=600', NULL),
-(7, 'Ruangan fasilitas drumband', 'Ruangan fasilitas drumb band merupakan ruang yang digunakan untuk menyimpan, merawat, dan mendukung kegiatan latihan drumb band siswa. Ruangan ini dilengkapi dengan berbagai peralatan drumb band yang tertata dengan baik sehingga mudah digunakan dan disimpan kembali setelah kegiatan. Fasilitas ini mendukung pengembangan bakat, kreativitas, kedisiplinan, kekompakan, serta keterampilan siswa dalam bidang seni musik.', 'https://cdn.pixabay.com/blog/preview/2026/08/10/09-05-30-338_960_720.jpg', '');
+(2, 'Perpustakaan', 'Koleksi ribuan buku cerita, modul pembelajaran, koleksi literasi digital e-book, dan sudut baca ramah anak yang nyaman.', 'backend/uploads/fasilitas/1786413887_perpus1.jpeg', ''),
+(3, 'Lapangan Olahraga & Upacara', 'Areal seluas 800m² dilapisi plester berkualitas untuk upacara bendera, senam bersama, bulutangkis, basket, dan <b>futsal.</b>', 'backend/uploads/fasilitas/1787113686_aa191515_20260329193210_1.jpg', 'backend/uploads/fasilitas/1787113686_88421805_20260329193210_1.png');
 
 -- --------------------------------------------------------
 
@@ -105,7 +102,7 @@ INSERT INTO `galeri` (`id`, `judul`, `deskripsi`, `foto`, `kategori`, `tanggal`,
 (9, 'Acara Studi Tiru Inovasi Sekolah', 'Dokumentasi kegiatan \"Studi Tiru Inovasi Sekolah\" yang bertujuan untuk memperluas wawasan, berbagi pengalaman, serta mempelajari berbagai program dan inovasi pendidikan guna meningkatkan kualitas pembelajaran dan pengelolaan sekolah.', 'backend/uploads/galeri/1786501375_Screenshot 2026-08-06 120707.png', 'Acara Khusus', '2026-08-12', 'Verified', 2, ''),
 (10, 'Pramuka', 'Dokumentasi kegiatan Pramuka yang menampilkan semangat, kedisiplinan, kerja sama, dan kreativitas siswa dalam berbagai aktivitas kepramukaan.', 'backend/uploads/galeri/1786504109_20251023_101114.jpg', 'Ekstrakurikuler', '2026-08-12', 'Verified', 2, ''),
 (11, 'Karate', 'Menampilkan berbagai kegiatan ekstrakurikuler yang tersedia dan dapat diikuti oleh siswa sebagai bagian dari pengembangan bakat, minat, dan keterampilan.', 'backend/uploads/galeri/1786593452_88637573_20251023_090144.jpg', 'Ekstrakurikuler', '2026-08-12', 'Verified', 2, 'backend/uploads/galeri/1786593452_fd9da29e_20251023_090144.png'),
-(12, 'Lomba Seni dan Sastra', 'Dokumentasi kegiatan Lomba Seni dan Sastra yang menjadi wadah bagi siswa untuk menyalurkan kreativitas, mengembangkan bakat, serta mengekspresikan kemampuan dalam bidang seni dan sastra dengan penuh percaya diri.', 'backend/uploads/galeri/1786504127_20260414_141705.jpg', 'Prestasi', '2026-08-12', 'Verified', 2, '');
+(12, 'Lomba Seni dan Sastra', 'Dokumenta<b>kegiatan </b>Lomba Seni dan Sastra yang menjadi wadah bagi siswa untuk menyalurkan kreativitdsas, mengembangkan bakat, serta mengekspresikan kemampuan dalam bidang seni dan sastra dengan penuh percaya diri.', 'backend/uploads/galeri/1786504127_20260414_141705.jpg', 'Prestasi', '2026-08-12', 'Verified', 2, '');
 
 -- --------------------------------------------------------
 
@@ -133,7 +130,7 @@ CREATE TABLE `guru_tendik` (
 
 INSERT INTO `guru_tendik` (`id`, `nama`, `nip`, `jabatan`, `tugas`, `foto`, `riwayat_pendidikan`, `jenis_kelamin`, `status`, `motto`, `foto_crop`) VALUES
 (3, 'Soleh', NULL, 'Komite Sekolah', 'Komite Sekolah', 'backend/uploads/guru/1786069668_logoma.jpg', 'S1', 'Laki-laki', 'Aktif', '\"Bersama Maju, Bergandengan Tangan Menuju Sekolah Unggul.\"', ''),
-(4, 'AMALIA DYAH ERVIANA, S.Pd.', '198507172006042012', 'Kepala Sekolah', 'Kepala Sekolah', 'backend/uploads/guru/1786506232_Amalia_Dyah_Erviana.jpg', 'S1 (Sarjana Pendidikan)', 'Perempuan', 'Aktif', 'Berani berinovasi untuk pendidikan yang lebih bermakna.', 'backend/uploads/guru/1786506232_Amalia_Dyah_Erviana.png'),
+(4, 'AMALIA DYAH ERVIANA, S.Pd.', '198507172006042012', 'Kepala Sekolah', 'Kepala Sekolah', 'backend/uploads/guru/1786506232_Amalia_Dyah_Erviana.jpg', 'S1 (Sarjana Pendidikan)', 'Perempuan', 'Aktif', 'Berani berinovasi untuk pendidikan yang ledsasadbih bermakna.', 'backend/uploads/guru/1786506232_Amalia_Dyah_Erviana.png'),
 (5, 'ANISA CHOIRINA, S.Pd.', '-', 'Tata Usaha', 'Tata Usaha & Unit Perpustakaan', 'backend/uploads/guru/1786583610_07be63f3_Screenshot_2026-08-07_094553.png', 'S1 (Sarjana Pendidikan)', 'Perempuan', 'Aktif', 'p', 'backend/uploads/guru/1786583620_06139f89_1786583610_07be63f3_Screenshot_2026-08-07_094553.png'),
 (6, 'ZAINURI, M.Pd.', 'null', 'Guru Mata Pelajaran', 'Pendidikan Agama Islam', 'backend/uploads/guru/1786506315_zainuri.png', 'S2  (Magister Pendidikan)', 'Laki-laki', 'Aktif', 'p', ''),
 (7, 'WEGA BAGUS SETIAWAN, S.Or., M.Pd., Gr.', '199503302024211015', 'Guru Mata Pelajaran', 'Pendidikan Jasmani Dan Rohani', 'backend/uploads/guru/1786506303_wega_bagus.png', 'S1 (Sarjana Olahraga), S2 (Magister Pendidikan), (Guru Profesional)', 'Laki-laki', 'Aktif', 'p', ''),
@@ -175,8 +172,8 @@ CREATE TABLE `hero_carousel` (
 --
 
 INSERT INTO `hero_carousel` (`id`, `foto`, `caption`, `tag`, `urutan`, `is_active`, `created_at`, `foto_crop`) VALUES
-(1, 'backend/uploads/hero/1786422448_img2.webp', 'MA ONE BERGELORAA!!', 'Galeri Sekolah', 1, 1, '2026-08-11 04:27:28', NULL),
-(4, 'backend/uploads/hero/1786425871_lapangan.jpeg', 'MA ONE BERGELORA!!!', 'Fasilitas Sekolah', 2, 1, '2026-08-11 05:24:31', NULL),
+(1, 'backend/uploads/hero/1786422448_img2.webp', 'MA ONE BERGELORAA!!', 'Galeri Sekolah', 2, 1, '2026-08-11 04:27:28', NULL),
+(4, 'backend/uploads/hero/1786425871_lapangan.jpeg', 'MA ONE BERGELORA!!!1', 'Fasilitas Sekolah', 1, 1, '2026-08-11 05:24:31', ''),
 (5, 'backend/uploads/hero/1786498698_Dokumen dari Anisa Choirina(1).jpg', 'MA ONE BERGELORA!!!', 'Kegiatan Utama', 3, 1, '2026-08-12 01:38:18', NULL),
 (6, 'backend/uploads/hero/1786498779_Dokumen dari Anisa Choirina(4).jpg', 'MA ONE BERGELORA!!!', 'Kegiatan Utama', 4, 1, '2026-08-12 01:39:39', NULL),
 (7, 'backend/uploads/hero/1786498788_Dokumen dari Anisa Choirina(5).jpg', 'MA ONE BERGELORA!!!', 'Kegiatan Utama', 5, 1, '2026-08-12 01:39:48', NULL),
@@ -185,6 +182,19 @@ INSERT INTO `hero_carousel` (`id`, `foto`, `caption`, `tag`, `urutan`, `is_activ
 (10, 'backend/uploads/hero/1786498825_Dokumen dari Anisa Choirina(3).jpg', 'MA ONE BERGELORA!!!', 'Kegiatan Utama', 8, 1, '2026-08-12 01:40:25', NULL),
 (11, 'backend/uploads/hero/1786498834_Dokumen dari Anisa Choirina(7).jpg', 'MA ONE BERGELORA!!!', 'Kegiatan Utama', 9, 1, '2026-08-12 01:40:34', NULL),
 (12, 'backend/uploads/hero/1786498842_Dokumen dari Anisa Choirina(8).jpg', 'MA ONE BERGELORA!!!', 'Kegiatan Utama', 10, 1, '2026-08-12 01:40:42', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `login_attempts`
+--
+
+CREATE TABLE `login_attempts` (
+  `id` int(11) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `username` varchar(100) NOT NULL DEFAULT '',
+  `attempted_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -205,11 +215,19 @@ CREATE TABLE `pengaturan_sekolah` (
 INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`, `updated_at`) VALUES
 ('alamat_sekolah', 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur', '2026-08-11 03:54:01'),
 ('email_sekolah', 'sdnmulyoagung01@gmail.com', '2026-08-11 03:54:01'),
+('hero_bg', '', '2026-08-18 05:16:54'),
+('hero_subtitle', 'subjuduldsadas', '2026-08-19 02:04:57'),
+('hero_title', 'djasdjashdhas dsahdjasjd aahdhashjd aj', '2026-08-19 02:32:31'),
+('homepage_sections', '[{\"key\":\"hero\",\"judul\":\"Hero\",\"subjudul\":\"\",\"is_active\":true},{\"key\":\"stats\",\"judul\":\"Statistik Sekolah\",\"subjudul\":\"\",\"is_active\":true},{\"key\":\"sambutan\",\"judul\":\"Sambutan Kepala Sekolah\",\"subjudul\":\"\",\"is_active\":true},{\"key\":\"profil\",\"judul\":\"Profil Sekolahhhh\",\"subjudul\":\"Mengenal lebih dekat visi, misi, dan sejarah panjang SD Negeri 1 Mulyoagung.\",\"is_active\":true},{\"key\":\"video\",\"judul\":\"Profil Video Sekolahhh\",\"subjudul\":\"Tonton video profil sekolah kami untuk mengenal lingkungan belajar, fasilitas, dan kegiatan siswa secara visual.\",\"is_active\":true},{\"key\":\"berita\",\"judul\":\"Berita & Kegiatan Terbaruuuu\",\"subjudul\":\"Ikuti terus perkembangan informasi dan aktivitas menarik di sekolah kami.\",\"is_active\":true},{\"key\":\"kontak\",\"judul\":\"Kontak Kamiiii\",\"subjudul\":\"Hubungi kami atau kunjungi lokasi sekolah dasar kami melalui detail kontak di bawah ini.\",\"is_active\":true}]', '2026-08-18 05:58:49'),
 ('link_ppdb', 'https://sd-spmbmalangkab.id/', '2026-08-11 03:31:06'),
-('medsos_links', '[{\"id\":\"1\",\"name\":\"YouTube\",\"url\":\"https:\\/\\/www.youtube.com\\/@mulyoagungsatu3851\",\"icon\":\"auto\"},{\"id\":\"2\",\"name\":\"Instagram\",\"url\":\"https:\\/\\/www.instagram.com\\/mulyoagung1_dau\",\"icon\":\"auto\"},{\"id\":\"3\",\"name\":\"Facebook\",\"url\":\"https:\\/\\/www.facebook.com\\/profile.php?id=100085140035121\",\"icon\":\"auto\"},{\"id\":\"4\",\"name\":\"TikTok\",\"url\":\"https:\\/\\/www.tiktok.com\\/@mulyoagung.1\",\"icon\":\"auto\"}]', '2026-08-11 03:54:01'),
-('tahun_ajaran', '2026/2027', '2026-08-07 01:59:45'),
+('medsos_links', '[{\"id\":\"1\",\"name\":\"YouTube\",\"url\":\"https://www.youtube.com/@mulyoagungsatu3851\",\"icon\":\"auto\"},{\"id\":\"2\",\"name\":\"Instagram\",\"url\":\"https://www.instagram.com/mulyoagung1_dau\",\"icon\":\"auto\"},{\"id\":\"3\",\"name\":\"Facebook\",\"url\":\"https://www.facebook.com/profile.php?id=100085140035121\",\"icon\":\"auto\"},{\"id\":\"4\",\"name\":\"TikTok\",\"url\":\"https://www.tiktok.com/@mulyoagung.1\",\"icon\":\"auto\"},{\"id\":\"medsos-1787195831314\",\"name\":\"Ilhamartar_\",\"url\":\"https://www.instagram.com/ilhamartar_\",\"icon\":\"Instagram\"}]', '2026-08-20 03:17:11'),
+('profil_misi', '[\"ini misi\"]', '2026-08-18 05:32:51'),
+('profil_sejarah', '<u>ini sejarahdsa d</u>', '2026-08-19 04:24:17'),
+('profil_visi', '<b>ini visi dsajdasjdjasjdjasd dsadsa</b>', '2026-08-19 04:24:11'),
+('tahun_ajaran', '2026/2027', '2026-08-19 01:40:41'),
 ('telepon_sekolah', '(0341) 466-730', '2026-08-11 03:54:01'),
-('whatsapp_sekolah', '08123456789', '2026-08-11 03:54:01');
+('video_url', 'https://www.youtube.com/watch?v=-HU-Kg20g-M', '2026-08-18 05:43:38'),
+('whatsapp_sekolah', '08123456789a', '2026-08-18 05:38:06');
 
 -- --------------------------------------------------------
 
@@ -240,7 +258,7 @@ CREATE TABLE `pengumuman_penting` (
 --
 
 INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`, `tanggal_mulai`, `tanggal_selesai`, `foto_crop`) VALUES
-(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 1, 1, 'SPMB', 'https://sd-spmbmalangkab.id/', 0, 'backend/uploads/pengumuman/1786411305_Screenshot 2026-08-11 082132.png', '', 1, '2026-08-11', '2026-08-18', '');
+(1, 'Pengumuman Penting', 'Sistem Penerimaan Murid Baru (SPMB) Tahun Ajaran Baru telah dibuka! Jangan lewatkan kesempatan untuk bergabung dengan sekolah dasar terbaik di Kota Malang. Kuota terbatas untuk gelombang pertama.', 'Pendaftaran Siswa Baru (PPDB) Tahun Ajaran Baru Resmi Dibuka! Segera Daftarkan Putra-Putri Anda.', 0, 0, 'SPMB', 'https://sd-spmbmalangkab.id/', 0, 'backend/uploads/pengumuman/1786411305_Screenshot 2026-08-11 082132.png', '', 1, '2026-08-11', '2026-09-10', '');
 
 -- --------------------------------------------------------
 
@@ -261,7 +279,7 @@ CREATE TABLE `sambutan_kepsek` (
 --
 
 INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`, `foto_crop`) VALUES
-(1, 'Amalia Dyah Erviana, S.Pd.', 'Assalamualaikum Wr. Wb.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg', 'backend/uploads/sambutan/1786509156_de5c5ca1_1786426193_Amalia_Dyah_Erviana.png');
+(1, 'Amalia Dyah Erviana, S.Pd.', '<u>Assalamualaikum Wr. Wb</u>.\r\n\r\nSelamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \r\n\r\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.', 'backend/uploads/sambutan/1786426193_Amalia Dyah Erviana.jpg', 'backend/uploads/sambutan/1786509156_de5c5ca1_1786426193_Amalia_Dyah_Erviana.png');
 
 -- --------------------------------------------------------
 
@@ -307,7 +325,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawab`, `foto`, `foto_crop`) VALUES
 (2, 'admin1', 'admin123', 'ADMIN', 'Muhammad Hafiz F', 'backend/uploads/profile/1786509294_698c79dc_19ae3379-8cec-409d-806f-c148c1811c2b.jpg', 'backend/uploads/profile/1786509294_1b387f9d_19ae3379-8cec-409d-806f-c148c1811c2b.png'),
-(13, 'ilhamzainuri', 'ilham123', 'ADMIN', 'Ilham Zainuri', NULL, NULL);
+(13, 'ilhamzainuri', 'ilham123', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1787114585_50fd7237_20260419172708_1.jpg', 'backend/uploads/profile/1787114602_e4b6a032_1787114585_50fd7237_20260419172708_1.png'),
+(14, 'daniel', 'daniel123', 'TIM', 'Daniel', '', NULL);
 
 --
 -- Indexes for dumped tables
@@ -319,7 +338,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawa
 ALTER TABLE `berita`
   ADD PRIMARY KEY (`id`),
   ADD KEY `uploaded_by` (`uploaded_by`),
-  ADD KEY `idx_berita_status_tgl` (`status_verifikasi`,`tanggal` DESC,`id` DESC);
+  ADD KEY `idx_berita_status_tgl` (`status_verifikasi`,`tanggal`,`id`);
 
 --
 -- Indexes for table `fasilitas`
@@ -333,19 +352,27 @@ ALTER TABLE `fasilitas`
 ALTER TABLE `galeri`
   ADD PRIMARY KEY (`id`),
   ADD KEY `uploaded_by` (`uploaded_by`),
-  ADD KEY `idx_galeri_status_tgl` (`status_verifikasi`,`tanggal` DESC,`id` DESC);
+  ADD KEY `idx_galeri_status_tgl` (`status_verifikasi`,`tanggal`,`id`);
 
 --
 -- Indexes for table `guru_tendik`
 --
 ALTER TABLE `guru_tendik`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_guru_nip` (`nip`);
 
 --
 -- Indexes for table `hero_carousel`
 --
 ALTER TABLE `hero_carousel`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `login_attempts`
+--
+ALTER TABLE `login_attempts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_ip_time` (`ip_address`,`attempted_at`);
 
 --
 -- Indexes for table `pengaturan_sekolah`
@@ -381,7 +408,7 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
---
+
 --
 -- AUTO_INCREMENT for table `berita`
 --
@@ -392,7 +419,7 @@ ALTER TABLE `berita`
 -- AUTO_INCREMENT for table `fasilitas`
 --
 ALTER TABLE `fasilitas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `galeri`
@@ -411,6 +438,12 @@ ALTER TABLE `guru_tendik`
 --
 ALTER TABLE `hero_carousel`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `login_attempts`
+--
+ALTER TABLE `login_attempts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `pengumuman_penting`
@@ -434,7 +467,7 @@ ALTER TABLE `statistik_sekolah`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- Constraints for dumped tables
