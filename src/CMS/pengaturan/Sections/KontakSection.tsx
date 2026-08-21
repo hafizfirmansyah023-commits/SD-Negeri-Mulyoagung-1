@@ -65,7 +65,7 @@ export const KontakSection: React.FC<KontakSectionProps> = ({
               WhatsApp Pengaduan
             </label>
             <input
-              type="text"
+              type="number"
               value={whatsappSekolah}
               onChange={(e) => setWhatsappSekolah(e.target.value)}
               placeholder="08123456789"
