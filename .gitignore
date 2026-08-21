@@ -60,4 +60,4 @@ scratch_check.ps1
 # OpenCode
 # ========================
 #.opencode/
-opencode.json
+.opencode.json

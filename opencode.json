@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["@dietrichgebert/ponytail"],
+  "provider": {
+    "9router": {
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "http://127.0.0.1:20128/v1",
+        "apiKey": "sk-cc194e158e272164-r0vjsx-4c72b4f6"
+      },
+      "models": {
+        "combo": {
+          "name": "combo",
+          "modalities": {
+            "input": ["text", "image"],
+            "output": ["text"]
+          }
+        }
+      }
+    }
+  },
+  "model": "9router/combo",
+  "agent": {
+    "explorer": {
+      "description": "Fast explorer subagent for codebase exploration",
+      "mode": "subagent",
+      "model": "9router/combo"
+    }
+  }
+}
