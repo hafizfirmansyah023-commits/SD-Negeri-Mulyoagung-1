@@ -16,12 +16,27 @@
  *   - Update tanpa `foto_original` berarti hanya crop ulang (foto asli dipertahankan).
  */
 
-// Tambahkan kolom foto_crop jika belum ada (migrasi otomatis).
+// Tambahkan kolom foto_crop, status_verifikasi, dan uploaded_by jika belum ada (migrasi otomatis).
 function foto_ensure_column($conn, $table) {
     try {
         $conn->exec("ALTER TABLE `$table` ADD COLUMN foto_crop VARCHAR(255) NULL");
     } catch (Exception $e) {
         // Kolom sudah ada.
+    }
+    try {
+        $conn->exec("ALTER TABLE `$table` ADD COLUMN status_verifikasi VARCHAR(50) DEFAULT 'Verified'");
+    } catch (Exception $e) {
+        // Kolom sudah ada.
+    }
+    try {
+        $conn->exec("ALTER TABLE `$table` ADD COLUMN uploaded_by INT NULL");
+    } catch (Exception $e) {
+        // Kolom sudah ada.
+    }
+    try {
+        $conn->exec("UPDATE `$table` SET status_verifikasi = 'Verified' WHERE status_verifikasi IS NULL OR status_verifikasi = ''");
+    } catch (Exception $e) {
+        // Ignore
     }
     try {
         // Perbaiki baris lama yang korup (nama file foto_crop sama dengan foto karena
