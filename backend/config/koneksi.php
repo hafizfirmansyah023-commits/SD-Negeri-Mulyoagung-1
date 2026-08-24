@@ -31,7 +31,11 @@ if ($fetchMode === 'navigate' || $fetchDest === 'document') {
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
 if (!empty($origin)) {
-    if (in_array($origin, $allowedOrigins, true)) {
+    $isAllowed = in_array($origin, $allowedOrigins, true) ||
+                 preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$/i', $origin) ||
+                 preg_match('/^https?:\/\/[a-z0-9.-]+\.sch\.id$/i', $origin);
+
+    if ($isAllowed) {
         header("Access-Control-Allow-Origin: $origin");
         header("Vary: Origin");
     } else {
@@ -52,7 +56,7 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Credentials: true");
 
 // Preflight request (OPTIONS) — jawab dan hentikan
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
     http_response_code(204);
     exit();
 }
