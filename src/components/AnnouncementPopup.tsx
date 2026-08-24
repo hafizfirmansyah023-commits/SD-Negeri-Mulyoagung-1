@@ -79,81 +79,85 @@ export const AnnouncementPopup: React.FC = () => {
 
   if (!isOpen || !data) return null;
 
+  const photoSrc = data.foto ? getImageUrl(data.foto) : '';
+
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto overscroll-contain">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-4 md:p-6 overflow-y-auto overscroll-contain">
       {/* Backdrop */}
       <div 
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity duration-300"
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity duration-300"
         onClick={handleClose}
       />
 
-      {/* Modal Card */}
-      <div className="relative bg-white rounded-[2rem] shadow-2xl border border-slate-100 max-w-4xl w-full overflow-hidden transform transition-all duration-300 flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 duration-200">
+      {/* Modal Card Pengumuman */}
+      <div className="relative bg-white rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-md sm:max-w-xl md:max-w-2xl lg:max-w-3xl w-full max-h-[88vh] overflow-hidden transform transition-all duration-300 flex flex-col md:flex-row z-10 animate-in fade-in zoom-in-95 my-auto">
         
         {/* Close Button Top Right */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 z-20 p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-black rounded-full transition-all cursor-pointer shadow-sm"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 p-2 bg-white/80 hover:bg-slate-100 text-slate-600 hover:text-slate-900 rounded-full transition-all cursor-pointer shadow-md backdrop-blur-sm border border-slate-200/50"
           aria-label="Tutup"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
-        {/* Photo Column */}
-        {data.show_photo && data.foto && (
-          <div className="md:w-1/2 bg-slate-50 relative flex items-center justify-center min-h-[250px] md:min-h-[400px]">
+        {/* Photo Column / Container */}
+        {data.show_photo && photoSrc && (
+          <div className="md:w-1/2 p-4 sm:p-5 bg-gradient-to-br from-slate-50 via-teal-50/20 to-slate-50 flex items-center justify-center shrink-0 border-b md:border-b-0 md:border-r border-slate-100/80">
             {data.photo_link ? (
               <a 
                 href={data.photo_link} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="w-full h-full block group relative overflow-hidden"
+                className="w-full flex items-center justify-center group relative overflow-hidden rounded-2xl"
               >
                 <img
-                  src={getImageUrl(data.foto)}
+                  src={photoSrc}
                   alt={data.judul}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-auto max-h-[250px] sm:max-h-[320px] md:max-h-[380px] object-contain rounded-2xl shadow-sm border border-slate-200/60 group-hover:scale-[1.02] transition-transform duration-300"
                 />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors flex items-center justify-center">
-                  <div className="bg-black/60 text-white text-xs font-bold px-3 py-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                    <ExternalLink size={12} /> Buka Tautan
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
+                  <div className="bg-black/75 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-md">
+                    <ExternalLink size={13} /> Buka Tautan
                   </div>
                 </div>
               </a>
             ) : (
-              <img
-                src={getImageUrl(data.foto)}
-                alt={data.judul}
-                className="w-full h-full object-cover"
-              />
+              <div className="w-full flex items-center justify-center">
+                <img
+                  src={photoSrc}
+                  alt={data.judul}
+                  className="w-full h-auto max-h-[250px] sm:max-h-[320px] md:max-h-[380px] object-contain rounded-2xl shadow-sm border border-slate-200/60"
+                />
+              </div>
             )}
           </div>
         )}
 
         {/* Content Column */}
-        <div className={`p-8 md:p-12 flex flex-col justify-center ${data.show_photo && data.foto ? 'md:w-1/2' : 'w-full'}`}>
-          <div className="space-y-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold tracking-wider bg-rose-50 text-rose-600 border border-rose-100 uppercase">
-              Pemberitahuan
+        <div className={`p-5 sm:p-6 md:p-8 flex flex-col justify-between overflow-y-auto space-y-4 ${data.show_photo && photoSrc ? 'md:w-1/2' : 'w-full'}`}>
+          <div className="space-y-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-extrabold tracking-wider bg-teal-50 text-teal-700 border border-teal-200/60 uppercase">
+              Pengumuman Penting
             </span>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold text-slate-800 tracking-tight leading-snug">
               {data.judul}
             </h2>
             <div 
-              className="text-slate-600 text-sm md:text-base leading-relaxed prose prose-slate max-w-none"
+              className="text-slate-600 text-xs sm:text-sm leading-relaxed prose prose-slate max-w-none break-words"
               dangerouslySetInnerHTML={{ __html: data.isi }}
             />
           </div>
 
           {/* Button Action */}
           {data.show_button && data.button_link && (
-            <div className="mt-8">
+            <div className="pt-2">
               <a
                 href={data.button_link}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={handleClose}
-                className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-extrabold rounded-xl shadow-lg shadow-teal-700/20 hover:shadow-xl hover:scale-[1.02] transition-all text-sm text-center"
+                className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white font-extrabold rounded-xl shadow-md shadow-teal-700/20 hover:shadow-lg hover:scale-[1.01] transition-all text-xs sm:text-sm text-center"
               >
                 {data.button_text || 'Lihat Selengkapnya'}
               </a>
