@@ -75,22 +75,20 @@ export const BeritaCard: React.FC<BeritaCardProps> = ({
             </div>
           </div>
 
-      {currentUser.role === 'ADMIN' && (
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-          <button
-            onClick={() => onEdit(article)}
-            className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
-          >
-            <Edit2 size={14} /> Ubah
-          </button>
-          <button
-            onClick={() => onDelete(article.id)}
-            className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
-          >
-            <Trash2 size={14} /> Hapus
-          </button>
-        </div>
-      )}
+      <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+        <button
+          onClick={() => onEdit(article)}
+          className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+        >
+          <Edit2 size={14} /> Ubah
+        </button>
+        <button
+          onClick={() => onDelete(article.id)}
+          className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+        >
+          <Trash2 size={14} /> Hapus
+        </button>
+      </div>
     </div>
   );
 };

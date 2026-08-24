@@ -43,7 +43,7 @@ elseif ($method === 'POST') {
         $deskripsi = $deskripsi_raw === '' ? null : $deskripsi_raw;
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
-        $uploaded_by = isset($_POST['uploaded_by']) ? intval($_POST['uploaded_by']) : null;
+        $uploaded_by = (isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : null;
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
         if (empty($judul) || empty($kategori) || empty($tanggal)) {
