@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 21, 2026 at 05:51 AM
+-- Generation Time: Aug 24, 2026 at 05:15 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,8 +45,7 @@ CREATE TABLE `berita` (
 
 INSERT INTO `berita` (`id`, `judul`, `isi`, `foto`, `kategori`, `tanggal`, `status_verifikasi`, `uploaded_by`, `foto_crop`) VALUES
 (1, 'Kemeriahan \"KARNAMUDA\": SDN 1 Mulyoagung Unjuk Kreativitas di Karnaval Mulyoagung Satu Dau', '<p data-path-to-node=\"3\" style=\"text-align: justify;\"><b data-path-to-node=\"3\" data-index-in-node=\"0\">DAU, OKTOBER 2025</b> – Suasana Desa Mulyoagung mendadak riuh dan penuh warna saat puluhan siswa SDN 1 Mulyoagung turun ke jalan mengikuti gelaran \"KARNAMUDA\" (Karnaval Mulyoagung Satu Dau).</p><p data-path-to-node=\"3\" style=\"text-align: justify;\"><br></p><p data-path-to-node=\"4\" style=\"text-align: justify;\">Mengusung keberagaman budaya dan semangat kebersamaan, para siswa tampil memukau dengan balutan busana adat, kostum daur ulang, serta kreasi seni khas Nusantara. Rute karnaval yang melintasi kawasan Dau penuh sesak oleh masyarakat sekitar yang antusias menyaksikan aksi dan yel-yel kreatif dari setiap barisan.</p><p data-path-to-node=\"4\" style=\"text-align: justify;\"><br></p><p data-path-to-node=\"5\" style=\"text-align: justify;\">Kepala SDN 1 Mulyoagung menyampaikan bahwa KARNAMUDA bukan sekadar perayaan tahunan, melainkan wadah untuk mengasah rasa percaya diri, kreativitas, dan cinta budaya sejak dini bagi para siswa.</p>', 'backend/uploads/berita/1787278194_e44c01ed_20251023_073011.webp', 'Kegiatan Sekolah', '2025-10-25', 'Verified', 1, 'backend/uploads/berita/1787278196_bafba2ef_20251023_073011.webp'),
-(2, 'test', 'tesst', 'backend/uploads/berita/1787282666_9e26c26a_20251023_074756.webp', 'Kegiatan Sekolah', '2026-08-21', 'Verified', 2, 'backend/uploads/berita/1787282667_79a19e44_20251023_074756.webp'),
-(3, 'test', 'test', 'backend/uploads/berita/1787283031_e305ee46_LOGO_HIMSI-removebg-preview.webp', 'Kegiatan Sekolah', '2026-08-21', 'Rejected', 2, 'backend/uploads/berita/1787283031_04f01eba_LOGO_HIMSI-removebg-preview.webp');
+(9, 'Festival Lomba seni dan sastra', '<div style=\"text-align: justify;\">Seni dan sastra bukan sekadar kompetisi, melainkan ruang ekspresi dan apresiasi. Melalui Festival Lomba Seni dan Sastra, generasi muda diajak untuk merayakan keberagaman budaya dan menyuarakan gagasan lewat karya. Baca selengkapnya ulasan mendalam mengenai perjalanan para peserta dan keindahan karya yang tercipta di panggung FLS2N.</div>', 'backend/uploads/berita/1787538849_f4f2ba33_20260414_141705.jpg', 'Prestasi', '2026-08-24', 'Verified', 1, 'backend/uploads/berita/1787538849_f6d48ddf_20260414_141705.png');
 
 -- --------------------------------------------------------
 
@@ -98,8 +97,7 @@ CREATE TABLE `galeri` (
 --
 
 INSERT INTO `galeri` (`id`, `judul`, `deskripsi`, `foto`, `kategori`, `tanggal`, `status_verifikasi`, `uploaded_by`, `foto_crop`) VALUES
-(1, 'Menyatukan irama, menggemakan semangat di KARNAMUDA 2025.', '<div>Derap langkah dan dentuman irama kontingen Drumband SDN 1 Mulyoagung siap menguncang KARNAMUDA 2025!</div>', 'backend/uploads/galeri/1787278354_72fb565f_20251023_074756.webp', 'Ekstrakurikuler', '2025-10-22', 'Verified', 1, 'backend/uploads/galeri/1787278356_c883453b_20251023_074756.webp'),
-(2, 'test', 'test', 'backend/uploads/galeri/1787282695_dcedb89b_LOGO_HIMSI-removebg-preview.webp', 'Kegiatan Sekolah', '2026-08-21', 'Pending', 2, 'backend/uploads/galeri/1787282695_017a87ca_LOGO_HIMSI-removebg-preview.webp');
+(1, 'Menyatukan irama, menggemakan semangat di KARNAMUDA 2025.', '<div>Derap langkah dan dentuman irama kontingen Drumband SDN 1 Mulyoagung siap menguncang KARNAMUDA 2025!</div>', 'backend/uploads/galeri/1787278354_72fb565f_20251023_074756.webp', 'Ekstrakurikuler', '2025-10-22', 'Verified', 1, 'backend/uploads/galeri/1787278356_c883453b_20251023_074756.webp');
 
 -- --------------------------------------------------------
 
@@ -120,6 +118,32 @@ CREATE TABLE `guru_tendik` (
   `motto` text DEFAULT NULL,
   `foto_crop` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `guru_tendik`
+--
+
+INSERT INTO `guru_tendik` (`id`, `nama`, `nip`, `jabatan`, `tugas`, `foto`, `riwayat_pendidikan`, `jenis_kelamin`, `status`, `motto`, `foto_crop`) VALUES
+(1, 'Bpk. Soleh', NULL, 'Komite Sekolah', 'Komite Sekolah', '', '-', 'Laki-laki', 'Aktif', 'p', NULL),
+(2, 'Amalia Dyah Erviana, S.Pd.', '198507172006042012', 'Kepala Sekolah', 'Kepala Sekolah', 'backend/uploads/guru/1787540662_308c43c6_Amalia_Dyah_Erviana.jpg', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', 'Mewujudkan sekolah unggul, berkarakter, dan berprestasi.', 'backend/uploads/guru/1787540662_bf4498b4_Amalia_Dyah_Erviana.png'),
+(4, 'ANISA CHOIRINA, S.Pd.', NULL, 'Tata Usaha', 'Unit Perpustakaan & Tata Usaha', '', 'S1', 'Perempuan', 'Aktif', '', NULL),
+(5, 'Zainuri, M.Pd.', '1608080101930003', 'Guru Mata Pelajaran', 'Guru PAI', '', 'S2 PGMI (Pendidikan Guru Madrasah Ibtidaiyah)', 'Laki-laki', 'Aktif', '', NULL),
+(8, 'Sunu Hayutama, S.Pd.', '198209042022212010', 'Guru Wali Kelas', 'Guru Kelas 1A', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(9, 'FANDI ARI WIJAYA, S.Or., Gr.', NULL, 'Guru Mata Pelajaran', 'Guru PJOK', '', 'S1 Sarjana OLahraga', 'Laki-laki', 'Aktif', '', NULL),
+(10, 'WEGA BAGUS SETIAWAN, S.Or., M.Pd., Gr.', '199503302024211015', 'Guru Mata Pelajaran', 'Guru PJOK', '', 'S2 PJOK (Pendidikan Jasmani, Olahraga, dan Kesehatan)', 'Laki-laki', 'Aktif', '', NULL),
+(11, 'Putri Anggun Liarta, S.Pd.', '199501162025212010', 'Guru Wali Kelas', 'Guru Kelas 1B', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(12, 'Ratna Yuliya Kirnawati S,Pd', '199201072023212033', 'Guru Wali Kelas', 'Guru Kelas 2A', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(13, 'Adi Kurniawan, S.Pd.', '198802282023211006', 'Guru Wali Kelas', 'Guru Kelas 3A & 3B', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Laki-laki', 'Aktif', '', NULL),
+(14, 'Siti Maisaroh, S.Ag., S.Pd.', '19770525 201408 2 003', 'Guru Wali Kelas', 'Guru Kelas 5A', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(15, 'Sri Hartatik, S.Pd.', '197501052021212004', 'Guru Wali Kelas', 'Guru Kelas 4B', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(16, 'Vivin Nohtahfiah, S.Pd.', '19790319 202221 2 006', 'Guru Wali Kelas', 'Guru Kelas 6A', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(17, 'Yulida Ariani, S.Pd.', '19810203 2023212011', 'Guru Wali Kelas', 'Guru Kelas 6B', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(18, 'YUNI TRI HARIANTI, S.IP., S.Pd.', '198206102022212038', 'Guru Wali Kelas', 'Guru Kelas 5B', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(19, 'YUNIA NUR AFIYAH, S.Pd.', NULL, 'Guru Wali Kelas', 'Guru Kelas 2B', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(20, 'Nur Aini Farida, S.Pd.', '198904292020122009', 'Guru Wali Kelas', 'Guru Kelas 4A', '', 'S1 PGSD (Pendidikan Guru Sekolah Dasar)', 'Perempuan', 'Aktif', '', NULL),
+(21, 'Marsudi', NULL, 'Tenaga Kependidikan', 'Tenaga Kebersihan', '', 'SMA', 'Laki-laki', 'Aktif', '', NULL),
+(22, 'Abdul Mujib', NULL, 'Tenaga Kependidikan', 'Penjaga', '', 'SMA', 'Laki-laki', 'Aktif', '', NULL),
+(23, 'Agus Sukoco', NULL, 'Tenaga Kependidikan', 'Tenaga Keamanan', '', 'SMA', 'Laki-laki', 'Aktif', '', NULL);
 
 -- --------------------------------------------------------
 
@@ -266,7 +290,12 @@ INSERT INTO `pengaturan_sekolah` (`setting_key`, `setting_value`, `updated_at`) 
 ('email_sekolah', 'sdnmulyoagung01@gmail.com', '2026-08-21 02:55:48'),
 ('telepon_sekolah', '(0341) 466-730', '2026-08-21 02:55:48'),
 ('whatsapp_sekolah', '08123456789(BLM ADA)', '2026-08-21 02:55:48'),
-('alamat_sekolah', 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur', '2026-08-21 02:55:48');
+('alamat_sekolah', 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur', '2026-08-21 02:55:48'),
+('profil_sejarah', '<div style=\"text-align: justify;\">SD Negeri 1 Mulyoagung didirikan pada tahun <b>1970-an</b> di pusat Kecamatan Dau, Kabupaten Malang. Terletak di kawasan strategis yang dekat dengan wilayah wisata, industri, dan lembaga pemerintahan, sekolah ini hadir untuk memenuhi kebutuhan pendidikan masyarakat dengan latar belakang siswa yang beragam.\r\n\r\nPada bulan <b>Desember 2018</b>, sekolah mengalami babak penting dalam perjalanannya melalui proses <i>merger</i>(penggabungan) dua lembaga, yaitu SD Negeri 1 Mulyoagung dan SD Negeri 3 Mulyoagung.&nbsp;</div><div style=\"text-align: justify;\">Penggabungan ini semakin memperkuat sinergi fasilitas, tenaga pendidik, dan manajemen sekolah dalam menghadirkan layanan pendidikan dasar yang makin berkualitas.\r\n\r\nCiri khas lain yang menjadi kebanggaan sekolah adalah keberadaan <b>Ikon Patung Semar </b>di area sekolah, yang menyimbolkan komitmen kuat SDN 1 Mulyoagung dalam melestarikan nilai-nilai budaya dan kearifan lokal Jawa.&nbsp;</div><div style=\"text-align: justify;\">&nbsp;Kini, di bawah kepemimpinan yang berdedikasi serta didukung fasilitator dan Guru Penggerak, SD Negeri 1 Mulyoagung terus bertransformasi menerapkan Kurikulum Merdeka. Sekolah berkomitmen membentuk generasi unggul yang beriman dan bertakwa, berakhlak mulia, bernalar kritis, mandiri, kreatif, serta berkebinekaan global sesuai nilai-nilai Profil Pelajar Pancasila.</div>', '2026-08-24 01:16:34'),
+('profil_visi', '<p class=\"MsoNormal\" style=\"margin-top:12.0pt;text-align:justify;text-indent:\r\n-1.35pt;line-height:150%;tab-stops:13.5pt 27.0pt\"><span lang=\"EN-ID\" style=\"font-size:12.0pt;line-height:150%;font-family:&quot;Arial&quot;,sans-serif;\r\nmso-fareast-font-family:Aptos;mso-ligatures:none\">\"Terwujudnya murid yang\r\nberiman dan bertakwa, bernalar kritis, berkarakter mulia, sehat jasmani, dan\r\nunggul dalam digitalisasi.\"<o:p></o:p></span></p>', '2026-08-24 01:49:11'),
+('profil_misi', '[\"1.\\tMelaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.\",\"2.\\tMenyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah, proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis, berpikir reflektif, serta memecahkan masalah.\",\"3.\\tMenumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin, tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati sesuai nilai-nilai Profil Lulusan.\",\"4.\\tMewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar untuk meningkatkan kesehatan jasmani.\",\"5.\\tMengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.\"]', '2026-08-24 01:49:11'),
+('profil_visi', '<p class=\"MsoNormal\" style=\"margin-top:12.0pt;text-align:justify;text-indent:\r\n-1.35pt;line-height:150%;tab-stops:13.5pt 27.0pt\"><span lang=\"EN-ID\" style=\"font-size:12.0pt;line-height:150%;font-family:&quot;Arial&quot;,sans-serif;\r\nmso-fareast-font-family:Aptos;mso-ligatures:none\">\"Terwujudnya murid yang\r\nberiman dan bertakwa, bernalar kritis, berkarakter mulia, sehat jasmani, dan\r\nunggul dalam digitalisasi.\"<o:p></o:p></span></p>', '2026-08-24 01:49:28'),
+('profil_misi', '[\"1.\\tMelaksanakan pembiasaan keagamaan serta menanamkan nilai-nilai keimanan, ketakwaan, dan akhlak mulia melalui kegiatan intrakurikuler, kokurikuler, dan ekstrakurikuler dalam kehidupan sehari-hari.\",\"2.\\tMenyelenggarakan pembelajaran yang berpusat pada murid melalui pendekatan berbasis masalah, proyek, dan pembelajaran mendalam (deep learning) untuk mengembangkan kemampuan bernalar kritis, berpikir reflektif, serta memecahkan masalah.\",\"3.\\tMenumbuhkan karakter mulia murid melalui pembiasaan budaya positif, penguatan disiplin, tanggung jawab, kepedulian, gotong royong, integritas, dan sikap saling menghormati sesuai nilai-nilai Profil Lulusan.\",\"4.\\tMewujudkan lingkungan sekolah yang sehat, aman, nyaman, dan ramah anak melalui pembiasaan hidup bersih dan sehat, kegiatan olahraga, serta pemanfaatan lingkungan sebagai sumber belajar untuk meningkatkan kesehatan jasmani.\",\"5.\\tMengembangkan budaya digital di lingkungan sekolah melalui pemanfaatan teknologi informasi dan komunikasi dalam pembelajaran, pengelolaan sekolah, serta penguatan literasi digital secara bijaksana, kreatif, dan bertanggung jawab dengan dukungan kemitraan berbagai pihak.\"]', '2026-08-24 01:49:28');
 
 -- --------------------------------------------------------
 
@@ -297,7 +326,7 @@ CREATE TABLE `pengumuman_penting` (
 --
 
 INSERT INTO `pengumuman_penting` (`id`, `judul`, `isi`, `running_text`, `show_popup`, `show_button`, `button_text`, `button_link`, `show_photo`, `foto`, `photo_link`, `is_active`, `tanggal_mulai`, `tanggal_selesai`, `foto_crop`) VALUES
-(1, 'Dirgahayu Indonesia', 'DIRGAHAYU INDONESIA', '', 1, 1, 'youtube.com', 'Merdeka', 1, 'backend/uploads/pengumuman/1787277384_688aef18_17_Agustus_2026.png', '', 1, '2026-08-21', '2026-08-28', 'backend/uploads/pengumuman/1787277384_679d16ed_17_Agustus_2026.png');
+(1, 'Dirgahayu Indonesia', 'DIRGAHAYU INDONESIA', '', 1, 1, 'youtube.com', 'Merdeka', 1, 'backend/uploads/pengumuman/1787535239_be8b566c_hq720.jpg', '', 1, '2026-08-21', '2026-08-28', 'backend/uploads/pengumuman/1787535239_d422bb83_hq720.png');
 
 -- --------------------------------------------------------
 
@@ -318,7 +347,7 @@ CREATE TABLE `sambutan_kepsek` (
 --
 
 INSERT INTO `sambutan_kepsek` (`id`, `nama`, `sambutan`, `foto`, `foto_crop`) VALUES
-(1, 'Amalia Dyah Erviana, S.Pd.', '<b>Assalamualaikum Wr. Wb</b><div>Selamat datang di website resmi SD Negeri Mulyoagung 1. Kami berkomitmen memberikan pendidikan terbaik bagi putra-putri Anda, membimbing mereka menjadi generasi yang tidak hanya cerdas secara akademik, namun juga memiliki karakter dan budi pekerti yang luhur. \\r\\n\\r\\nMelalui semangat kebersamaan, inovasi pembelajaran berbasis digital, dan penguatan Profil Pelajar Pancasila, kami yakin dapat membentuk peserta didik yang siap menghadapi tantangan masa depan dengan tetap memegang teguh nilai-nilai keagamaan dan budaya bangsa. Melalui website ini, kami berharap dapat menjalin komunikasi yang lebih erat dengan seluruh masyarakat dan orang tua wali murid.\r\n<div><br></div></div>', 'backend/uploads/sambutan/1787279072_89ecf9e7_Amalia_Dyah_Erviana.jpg', 'backend/uploads/sambutan/1787279072_f8520b37_Amalia_Dyah_Erviana.png');
+(1, 'Amalia Dyah Erviana, S.Pd.', '<p data-path-to-node=\"0\" style=\"text-align: justify;\"><b data-path-to-node=\"0\" data-index-in-node=\"0\">Selamat Datang di Website Resmi SD Negeri 1 Mulyoagung</b></p><p data-path-to-node=\"0\" style=\"text-align: justify;\"><b data-path-to-node=\"0\" data-index-in-node=\"0\"><br></b></p><p data-path-to-node=\"1\" style=\"text-align: justify;\"><i data-path-to-node=\"1\" data-index-in-node=\"0\">Assalamu’alaikum Warahmatullahi Wabarakatuh</i><i data-path-to-node=\"1\" data-index-in-node=\"0\">,</i></p><p data-path-to-node=\"1\" style=\"text-align: justify;\"><i data-path-to-node=\"1\" data-index-in-node=\"0\"><br></i></p><p data-path-to-node=\"2\" style=\"text-align: justify;\">Puji dan syukur kita panjatkan ke hadirat Tuhan Yang Maha Esa. Selamat datang di <i data-path-to-node=\"2\" data-index-in-node=\"81\">website</i> resmi SD Negeri 1 Mulyoagung, wadah informasi dan media komunikasi digital bagi seluruh warga sekolah, orang tua siswa, dan masyarakat.</p><p data-path-to-node=\"2\" style=\"text-align: justify;\"><br></p><p data-path-to-node=\"3\" style=\"text-align: justify;\">SD Negeri 1 Mulyoagung berkomitmen untuk menghadirkan pendidikan dasar yang berkualitas menyeimbangkan prestasi akademik, pembentukan karakter, dan perkembangan potensi anak. Kami percaya bahwa pendidikan yang berhasil lahir dari sinergi yang kuat antara sekolah, orang tua, dan lingkungan.</p><p data-path-to-node=\"3\" style=\"text-align: justify;\"><br></p><p data-path-to-node=\"4\" style=\"text-align: justify;\">Terima kasih atas kepercayaan dan dukungan Bapak/Ibu sekalian dalam mendidik generasi penerus yang cerdas, berkarakter, dan berakhlak mulia. Selamat menjelajahi <i data-path-to-node=\"4\" data-index-in-node=\"161\">website</i> kami.</p><p data-path-to-node=\"4\" style=\"text-align: justify;\"><br></p><p data-path-to-node=\"5\" style=\"text-align: justify;\"><i data-path-to-node=\"5\" data-index-in-node=\"0\">Wassalamu’alaikum Warahmatullahi Wabarakatuh.</i></p><p data-path-to-node=\"5\" style=\"text-align: justify;\"><i data-path-to-node=\"5\" data-index-in-node=\"0\"><br></i></p><p data-path-to-node=\"6\" style=\"text-align: justify;\"><b data-path-to-node=\"6\" data-index-in-node=\"0\">Kepala SD Negeri 1 Mulyoagung</b></p><p data-path-to-node=\"7\" style=\"text-align: justify;\"><b data-path-to-node=\"7\" data-index-in-node=\"0\">Amalia Dyah Erviana, S.Pd.</b></p>', 'backend/uploads/sambutan/1787279072_89ecf9e7_Amalia_Dyah_Erviana.jpg', 'backend/uploads/sambutan/1787279072_f8520b37_Amalia_Dyah_Erviana.png');
 
 -- --------------------------------------------------------
 
@@ -363,7 +392,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawab`, `foto`, `foto_crop`) VALUES
-(1, 'ilhamzainuri', 'ilham123', 'ADMIN', 'Ilham Zainuri', 'backend/uploads/profile/1787279607_92fc7528_20260409233815_1.webp', 'backend/uploads/profile/1787279607_ef61477b_20260409233815_1.webp'),
+(1, 'hafiz', 'hafiz123', 'ADMIN', 'M HAFIZ F', 'backend/uploads/profile/1787536893_d68b1e43_19ae3379-8cec-409d-806f-c148c1811c2b.jpg', 'backend/uploads/profile/1787536893_ae701038_19ae3379-8cec-409d-806f-c148c1811c2b.png'),
 (2, 'pramukajaya', 'pramukajaya', 'TIM', 'Tim Pramuka', '', NULL);
 
 --
@@ -438,7 +467,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `berita`
 --
 ALTER TABLE `berita`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `fasilitas`
@@ -456,7 +485,7 @@ ALTER TABLE `galeri`
 -- AUTO_INCREMENT for table `guru_tendik`
 --
 ALTER TABLE `guru_tendik`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `hero_carousel`
@@ -468,7 +497,7 @@ ALTER TABLE `hero_carousel`
 -- AUTO_INCREMENT for table `login_attempts`
 --
 ALTER TABLE `login_attempts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pengumuman_penting`

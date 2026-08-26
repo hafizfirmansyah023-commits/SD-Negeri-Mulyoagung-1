@@ -1,8 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { ComplaintFormData, DEFAULT_COMPLAINT_FORM, buildWhatsAppUrl } from '../utils/contactHelpers.ts';
+import { ComplaintFormData, DEFAULT_COMPLAINT_FORM, buildWhatsAppUrl } from '../utils/contactHelpers';
+import { useSchoolSettings } from './useSchoolSettings';
 
 export const useComplaintForm = () => {
   const [formData, setFormData] = useState<ComplaintFormData>(DEFAULT_COMPLAINT_FORM);
+  const { whatsappSekolah } = useSchoolSettings();
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -15,7 +17,7 @@ export const useComplaintForm = () => {
     e.preventDefault();
     if (!formData.nama.trim() || !formData.pesan.trim()) return;
 
-    window.open(buildWhatsAppUrl(formData), '_blank');
+    window.open(buildWhatsAppUrl(formData, whatsappSekolah), '_blank');
   };
 
   return { formData, handleChange, handleSubmit };
