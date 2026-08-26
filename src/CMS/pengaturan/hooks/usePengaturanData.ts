@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MedsosItem, HeroCarouselItem, HomepageSection } from '../types';
 import { getApiBaseUrl } from '../../../config/api';
+import { ToastType } from '../../components/CmsToast';
 import { validateImageFile } from '../../utils/fileValidation';
 import { ImageUploadPayload } from '../../components/ImageUploadField';
+import {
+  MedsosItem,
+  HomepageSection,
+  HeroCarouselItem
+} from '../types';
 
 const API_BASE = getApiBaseUrl();
 
@@ -20,7 +25,7 @@ export const usePengaturanData = () => {
   const [heroSlides, setHeroSlides] = useState<HeroCarouselItem[]>([]);
   const [heroModalOpen, setHeroModalOpen] = useState(false);
   const [editingHero, setEditingHero] = useState<HeroCarouselItem | null>(null);
-  const [heroCaption, setHeroCaption] = useState('');
+  const [heroCaption, setHeroCaption] = useState('MA ONE BERGELORAA!!!');
   const [heroTag, setHeroTag] = useState('Kegiatan Utama');
   const [heroUrutan, setHeroUrutan] = useState(0);
   const [heroFotoPayload, setHeroFotoPayload] = useState<ImageUploadPayload>({ original: null, cropped: null });
@@ -34,7 +39,7 @@ export const usePengaturanData = () => {
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [message, setMessage] = useState<{ type: ToastType; text: string } | null>(null);
 
   // Homepage Sections State
   const [homepageSections, setHomepageSections] = useState<HomepageSection[]>([]);
@@ -384,11 +389,10 @@ export const usePengaturanData = () => {
   };
 
   const handleDeleteMedsos = (id: string) => {
-    if (confirm('Apakah Anda yakin ingin menghapus media sosial ini?')) {
-      const newList = medsosList.filter((m) => m.id !== id);
-      setMedsosList(newList);
-      handleSaveMedsos(newList);
-    }
+    const newList = medsosList.filter((m) => m.id !== id);
+    setMedsosList(newList);
+    handleSaveMedsos(newList);
+    setMessage({ type: 'delete', text: 'Media sosial berhasil dihapus.' });
   };
 
   const handleMedsosFormChange = (fields: Partial<{ name: string; url: string; icon: string }>) => {
@@ -473,7 +477,7 @@ export const usePengaturanData = () => {
 
   const handleOpenAddHero = () => {
     setEditingHero(null);
-    setHeroCaption('');
+    setHeroCaption('MA ONE BERGELORAA!!!');
     setHeroTag('Kegiatan Utama');
     setHeroUrutan(heroSlides.length + 1);
     setHeroFotoPayload({ original: null, cropped: null });
@@ -527,7 +531,6 @@ export const usePengaturanData = () => {
   };
 
   const handleDeleteHero = async (id: number) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus foto carousel ini?')) return;
     try {
       const form = new FormData();
       form.append('action', 'delete');
@@ -539,13 +542,16 @@ export const usePengaturanData = () => {
       });
       const result = await res.json();
       if (result.status === 'success') {
-        setMessage({ type: 'success', text: 'Foto carousel hero berhasil dihapus.' });
+        setMessage({ type: 'delete', text: 'Foto carousel hero berhasil dihapus.' });
         fetchHeroSlides();
+        return true;
       } else {
         setMessage({ type: 'error', text: result.message || 'Gagal menghapus foto carousel.' });
+        return false;
       }
     } catch (e) {
       setMessage({ type: 'error', text: 'Gagal menghubungkan ke server.' });
+      return false;
     }
   };
 

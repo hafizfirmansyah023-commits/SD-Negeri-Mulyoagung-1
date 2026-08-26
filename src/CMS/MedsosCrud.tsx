@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { CmsToast } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 import { Share2, Save, CheckCircle2, AlertCircle } from 'lucide-react';
 import { usePengaturanData } from './pengaturan/hooks/usePengaturanData';
 import { MedsosSection } from './pengaturan/Sections/MedsosSection';
@@ -14,6 +15,43 @@ export default function MedsosCrud() {
     handleDeleteMedsos, handleSaveMedsosItem,
     loading, saving, message, setMessage, fetchSettings, handleSaveMedsos
   } = usePengaturanData();
+
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
+
+  const onDeleteMedsosRequest = (id: string) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Media Sosial',
+      message: 'Apakah Anda yakin ingin menghapus media sosial ini?',
+      onConfirm: () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        handleDeleteMedsos(id);
+      },
+    });
+  };
+
+  const onSaveMedsosSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (medsosEditingItem) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Media Sosial',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan media sosial ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          handleSaveMedsosItem(e);
+        },
+      });
+    } else {
+      handleSaveMedsosItem(e);
+    }
+  };
 
   useEffect(() => {
     fetchSettings();
@@ -53,7 +91,7 @@ export default function MedsosCrud() {
           medsosList={medsosList}
           onAdd={handleOpenAddMedsos}
           onEdit={handleOpenEditMedsos}
-          onDelete={handleDeleteMedsos}
+          onDelete={onDeleteMedsosRequest}
         />
       )}
 
@@ -62,8 +100,17 @@ export default function MedsosCrud() {
         editing={medsosEditingItem}
         formData={medsosFormData}
         onChange={handleMedsosFormChange}
-        onSave={handleSaveMedsosItem}
+        onSave={onSaveMedsosSubmit}
         onClose={() => setMedsosModalOpen(false)}
+      />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

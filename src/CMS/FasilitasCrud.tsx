@@ -9,8 +9,9 @@ import { useCmsFilter } from './hooks/useCmsFilter';
 import CmsFilterBar from './components/CmsFilterBar';
 import { FasilitasCard } from './fasilitas/FasilitasCard';
 import { FasilitasFormModal } from './fasilitas/FasilitasFormModal';
-import { FasilitasDeleteModal } from './fasilitas/FasilitasDeleteModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
+import { CmsToast, ToastType } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 
 interface FasilitasCrudProps {
   currentUser: UserSession;
@@ -55,6 +56,16 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     fetchFacilities,
     deleteFacility,
   } = useFacilityData();
+
+  // Toast state
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Confirm Modal state
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
 
   // Modal & Form States
   const [showModal, setShowModal] = useState(false);
@@ -107,8 +118,7 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const processSubmit = async () => {
     setError('');
     setSuccess('');
 
@@ -124,8 +134,6 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     }
     if (fotoSelection.cropped) {
       formData.append('foto', fotoSelection.cropped);
-    } else if (!fotoSelection.original && fotoUrl && fotoUrl !== (currentOriginalFoto || currentFoto)) {
-      formData.append('foto_url', fotoUrl);
     }
 
     try {
@@ -136,23 +144,54 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
 
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message || (editId ? 'Fasilitas berhasil diperbarui.' : 'Fasilitas berhasil ditambahkan.'));
+        setToast({ type: 'success', text: result.message || (editId ? 'Fasilitas berhasil diperbarui.' : 'Fasilitas berhasil ditambahkan.') });
         setShowModal(false);
         resetForm();
         fetchFacilities();
       } else {
         setError(result.message || 'Gagal menyimpan fasilitas.');
+        setToast({ type: 'error', text: result.message || 'Gagal menyimpan fasilitas.' });
       }
     } catch {
+      setToast({ type: 'error', text: 'Terjadi kesalahan saat menghubungi server.' });
       setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
 
-  const handleDeleteConfirm = async (id: number) => {
-    const isSuccess = await deleteFacility(id);
-    if (isSuccess) {
-      setDeleteModalId(null);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Fasilitas',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan fasilitas ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          processSubmit();
+        },
+      });
+    } else {
+      processSubmit();
     }
+  };
+
+  const handleDeleteRequest = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Fasilitas',
+      message: 'Apakah Anda yakin ingin menghapus data fasilitas ini?',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        const isSuccess = await deleteFacility(id);
+        if (isSuccess) {
+          setToast({ type: 'delete', text: 'Fasilitas berhasil dihapus.' });
+        } else {
+          setToast({ type: 'error', text: 'Gagal menghapus fasilitas.' });
+        }
+      },
+    });
   };
 
   return (
@@ -233,11 +272,14 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
               fac={fac}
               currentUser={currentUser}
               onEdit={handleOpenEdit}
-              onDelete={(id) => setDeleteModalId(id)}
+              onDelete={handleDeleteRequest}
             />
           ))}
         </div>
       )}
+
+      {/* CmsToast */}
+      <CmsToast message={toast} onClose={() => setToast(null)} />
 
       {/* Form Modal */}
       <FasilitasFormModal
@@ -256,11 +298,14 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
         onSubmit={handleSubmit}
       />
 
-      {/* Delete Confirmation Modal */}
-      <FasilitasDeleteModal
-        deleteModalId={deleteModalId}
-        onClose={() => setDeleteModalId(null)}
-        onConfirm={handleDeleteConfirm}
+      {/* Delete & Edit Confirmation Modal */}
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

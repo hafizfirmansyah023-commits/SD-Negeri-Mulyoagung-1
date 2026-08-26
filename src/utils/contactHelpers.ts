@@ -47,8 +47,19 @@ export const buildComplaintMessage = (formData: ComplaintFormData): string => {
   );
 };
 
+// Format nomor WhatsApp agar valid untuk URL wa.me (mengubah 08... menjadi 628...)
+export const formatWaNumber = (number: string): string => {
+  if (!number) return WHATSAPP_NUMBER;
+  let clean = number.replace(/[^0-9]/g, '');
+  if (clean.startsWith('0')) {
+    clean = '62' + clean.slice(1);
+  }
+  return clean || WHATSAPP_NUMBER;
+};
+
 // Bangun URL wa.me lengkap dengan pesan yang sudah di-encode
-export const buildWhatsAppUrl = (formData: ComplaintFormData): string => {
+export const buildWhatsAppUrl = (formData: ComplaintFormData, targetNumber?: string): string => {
   const text = buildComplaintMessage(formData);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  const waNum = targetNumber ? formatWaNumber(targetNumber) : WHATSAPP_NUMBER;
+  return `https://wa.me/${waNum}?text=${encodeURIComponent(text)}`;
 };
