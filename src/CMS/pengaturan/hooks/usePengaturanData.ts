@@ -20,7 +20,7 @@ export const usePengaturanData = () => {
   const [heroSlides, setHeroSlides] = useState<HeroCarouselItem[]>([]);
   const [heroModalOpen, setHeroModalOpen] = useState(false);
   const [editingHero, setEditingHero] = useState<HeroCarouselItem | null>(null);
-  const [heroCaption, setHeroCaption] = useState('');
+  const [heroCaption, setHeroCaption] = useState('MA ONE BERGELORAA!!!');
   const [heroTag, setHeroTag] = useState('Kegiatan Utama');
   const [heroUrutan, setHeroUrutan] = useState(0);
   const [heroFotoPayload, setHeroFotoPayload] = useState<ImageUploadPayload>({ original: null, cropped: null });
@@ -473,7 +473,7 @@ export const usePengaturanData = () => {
 
   const handleOpenAddHero = () => {
     setEditingHero(null);
-    setHeroCaption('');
+    setHeroCaption('MA ONE BERGELORAA!!!');
     setHeroTag('Kegiatan Utama');
     setHeroUrutan(heroSlides.length + 1);
     setHeroFotoPayload({ original: null, cropped: null });
