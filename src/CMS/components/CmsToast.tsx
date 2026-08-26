@@ -1,7 +1,7 @@
-﻿import React, { useEffect, useState } from "react";
-import { CheckCircle2, AlertCircle, X, Info } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { CheckCircle2, AlertCircle, X, Info, Trash2 } from "lucide-react";
 
-export type ToastType = "success" | "error" | "info";
+export type ToastType = "success" | "error" | "info" | "delete";
 
 interface CmsToastProps {
   message: { type: ToastType; text: string } | null;
@@ -70,6 +70,14 @@ export const CmsToast: React.FC<CmsToastProps> = ({
       bg: "bg-white border-l-4 border-blue-500",
       title: "Informasi",
       titleColor: "text-blue-700",
+      textColor: "text-slate-700",
+    },
+    delete: {
+      icon: <Trash2 size={20} className="shrink-0 text-rose-500" />,
+      bar: "bg-rose-500",
+      bg: "bg-white border-l-4 border-rose-500",
+      title: "Berhasil Dihapus",
+      titleColor: "text-rose-700",
       textColor: "text-slate-700",
     },
   };

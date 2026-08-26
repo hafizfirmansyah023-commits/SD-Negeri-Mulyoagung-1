@@ -9,7 +9,8 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { BeritaCard } from './berita/BeritaCard';
 import { BeritaFormModal } from './berita/BeritaFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
-import { CmsToast } from './components/CmsToast';
+import { CmsToast, ToastType } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 
 interface BeritaCrudProps {
   currentUser: UserSession;
@@ -29,7 +30,14 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     deleteArticle,
   } = useNewsData();
 
-  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Confirm Modal state
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -61,6 +69,7 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
   const availableStatuses = getUniqueValues(articles, 'status_verifikasi');
 
   const resetForm = () => {
+    setEditId(null);
     setJudul('');
     setIsi('');
     setKategori('Kegiatan Sekolah');
@@ -68,7 +77,6 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     setFotoSelection({ original: null, cropped: null });
     setCurrentFoto('');
     setCurrentOriginalFoto('');
-    setEditId(null);
     setError('');
   };
 
@@ -77,21 +85,19 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     setShowModal(true);
   };
 
-  const handleOpenEdit = (article: NewsArticle) => {
-    setError('');
-    setEditId(article.id);
-    setJudul(article.judul);
-    setIsi(article.isi);
-    setKategori(article.kategori);
-    setTanggal(article.tanggal);
+  const handleOpenEdit = (art: NewsArticle) => {
+    setEditId(art.id);
+    setJudul(art.judul);
+    setIsi(art.isi);
+    setKategori(art.kategori);
+    setTanggal(art.tanggal);
     setFotoSelection({ original: null, cropped: null });
-    setCurrentFoto(article.foto || '');
-    setCurrentOriginalFoto(article.foto_original || '');
+    setCurrentFoto(art.foto || '');
+    setCurrentOriginalFoto(art.foto_original || '');
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const processSubmit = async () => {
     setError('');
     setSuccess('');
 
@@ -134,14 +140,42 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus berita ini?')) return;
-    const ok = await deleteArticle(id);
-    if (ok) {
-      setToast({ type: 'success', text: 'Berita berhasil dihapus.' });
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      // Edit validation confirmation
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Berita',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan pada berita ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          processSubmit();
+        },
+      });
     } else {
-      setToast({ type: 'error', text: 'Gagal menghapus berita.' });
+      // Insert directly without confirmation
+      processSubmit();
     }
+  };
+
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Berita',
+      message: 'Apakah Anda yakin ingin menghapus berita ini? Data berita yang dihapus tidak dapat dikembalikan.',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        const ok = await deleteArticle(id);
+        if (ok) {
+          setToast({ type: 'delete', text: 'Berita berhasil dihapus.' });
+        } else {
+          setToast({ type: 'error', text: 'Gagal menghapus berita.' });
+        }
+      },
+    });
   };
 
   return (
@@ -253,6 +287,15 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
+      />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

@@ -9,7 +9,8 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { GaleriCard } from './galeri/GaleriCard';
 import { GaleriFormModal } from './galeri/GaleriFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
-import { CmsToast } from './components/CmsToast';
+import { CmsToast, ToastType } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 
 interface GaleriCrudProps {
   currentUser: UserSession;
@@ -39,7 +40,14 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
   const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
   const [currentFoto, setCurrentFoto] = useState('');
   const [currentOriginalFoto, setCurrentOriginalFoto] = useState('');
-  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Confirm Modal state
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
 
   // Filter Hook
   const {
@@ -89,8 +97,7 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const processSubmit = async () => {
     setError('');
     setSuccess('');
 
@@ -133,9 +140,40 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus foto galeri ini?')) return;
-    await deleteGalleryItem(id);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Galeri',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan foto galeri ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          processSubmit();
+        },
+      });
+    } else {
+      processSubmit();
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Galeri',
+      message: 'Apakah Anda yakin ingin menghapus foto galeri ini?',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        const ok = await deleteGalleryItem(id);
+        if (ok) {
+          setToast({ type: 'delete', text: 'Foto galeri berhasil dihapus.' });
+        } else {
+          setToast({ type: 'error', text: 'Gagal menghapus foto galeri.' });
+        }
+      },
+    });
   };
 
   return (
@@ -246,6 +284,15 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
+      />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

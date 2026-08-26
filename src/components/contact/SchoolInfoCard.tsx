@@ -1,13 +1,13 @@
 import React from 'react';
 import { Clock, ExternalLink, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
-import { GOOGLE_MAPS_URL, SCHOOL_CONTACT_INFO } from '../../utils/contactHelpers';
+import { GOOGLE_MAPS_URL, SCHOOL_CONTACT_INFO, formatWaNumber } from '../../utils/contactHelpers';
 import { useSchoolSettings } from '../../hooks/useSchoolSettings';
 import { SocialMediaIcon } from '../common/SocialMediaIcon';
 
 export const SchoolInfoCard: React.FC = () => {
   const { emailSekolah, teleponSekolah, whatsappSekolah, alamatSekolah, medsosLinks } = useSchoolSettings();
 
-  const cleanWa = whatsappSekolah.replace(/[^0-9]/g, '');
+  const cleanWa = formatWaNumber(whatsappSekolah);
 
   return (
     <div className="bg-white/95 backdrop-blur-md rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl border border-white/60 flex flex-col justify-between h-full">
