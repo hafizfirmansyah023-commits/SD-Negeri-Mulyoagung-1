@@ -74,24 +74,28 @@ export default function CmsSidebar({
             <Megaphone size={18} /> Pengumuman Penting
           </button>
         )}
-        <button
-          onClick={() => handleSelectTab('berita')}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
-            ? 'bg-teal-600 text-white shadow-sm'
-            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
-        >
-          <FileText size={18} /> Berita &amp; Kegiatan
-        </button>
-        <button
-          onClick={() => handleSelectTab('galeri')}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
-            ? 'bg-teal-600 text-white shadow-sm'
-            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
-        >
-          <Image size={18} /> Galeri Foto
-        </button>
+        {user.role !== 'GURU' && (
+          <>
+            <button
+              onClick={() => handleSelectTab('berita')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+            >
+              <FileText size={18} /> Berita &amp; Kegiatan
+            </button>
+            <button
+              onClick={() => handleSelectTab('galeri')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+            >
+              <Image size={18} /> Galeri Foto
+            </button>
+          </>
+        )}
         <button
           onClick={() => handleSelectTab('modul')}
           className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'modul'

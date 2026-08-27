@@ -99,8 +99,7 @@ export const Hero: React.FC<HeroProps> = ({
   const activePpdbUrl = linkPpdb || customLinkPpdb;
 
   return (
-    // min-h diperkecil untuk mobile agar tidak terlalu kosong ke bawah
-    <section className="relative w-full min-h-[480px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0D4A46]">
+    <section className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0D4A46]">
 
       {/* Background */}
       <div className="absolute inset-0 z-0">
@@ -118,20 +117,20 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="absolute bottom-0 right-0 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] bg-[#79EEDE]/10 rounded-full blur-3xl"></div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 pt-20 sm:pt-24 lg:pt-16 pb-16 sm:pb-28 lg:pb-32 flex flex-col lg:flex-row items-center gap-8 sm:gap-12">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-16 sm:pt-20 lg:pt-16 pb-14 sm:pb-20 lg:pb-24 flex flex-col lg:flex-row items-center gap-8 sm:gap-10 lg:gap-12">
 
         {/* LEFT */}
-        <div className="lg:w-3/5 text-center lg:text-left space-y-4 sm:space-y-6">
+        <div className="w-full lg:w-3/5 text-center lg:text-left space-y-4 sm:space-y-6">
 
           {/* Badge */}
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#20C997]/15 border border-[#20C997]/40 text-[#E8F3F2] px-3 py-1.5 sm:px-5 sm:py-2 rounded-full backdrop-blur-md shadow-lg">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#20C997]/15 border border-[#20C997]/40 text-[#E8F3F2] px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full backdrop-blur-md shadow-lg">
             <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#79EEDE]" />
-            <span className="text-[10px] sm:text-sm font-semibold">
+            <span className="text-[11px] sm:text-sm font-semibold">
               Tahun Ajaran {tahunAjaran}
             </span>
           </div>
           
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-extrabold leading-[1.15] tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-[1.18] tracking-tight">
             {homepageConfig.heroTitle.includes('SD Negeri 1 Mulyoagung') ? (
               <>
                 {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim() ? (
@@ -146,12 +145,12 @@ export const Hero: React.FC<HeroProps> = ({
             )}
           </h1>
 
-          <p className="text-[13px] sm:text-lg lg:text-xl text-slate-100 dark:text-slate-200 max-w-2xl leading-snug sm:leading-relaxed opacity-95 mx-auto lg:mx-0">
+          <p className="text-xs sm:text-base lg:text-lg text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95 mx-auto lg:mx-0">
             {homepageConfig.heroSubtitle}
           </p>
 
           {/* Buttons */}
-          <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center lg:justify-start">
+          <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
 
             {/* PPDB */}
             {activePpdbUrl ? (
