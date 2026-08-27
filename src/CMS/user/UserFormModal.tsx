@@ -10,8 +10,8 @@ interface UserFormModalProps {
   setNewUsername: (val: string) => void;
   newPassword: string;
   setNewPassword: (val: string) => void;
-  newRole: 'ADMIN' | 'TIM';
-  setNewRole: (val: 'ADMIN' | 'TIM') => void;
+  newRole: 'ADMIN' | 'TIM' | 'GURU';
+  setNewRole: (val: 'ADMIN' | 'TIM' | 'GURU') => void;
   setNewFotoSelection: (payload: ImageUploadPayload) => void;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -113,14 +113,15 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1">Role / Hak Akses</label>
+            <label className="block text-slate-700 text-sm font-medium mb-1.5">Peran / Hak Akses</label>
             <select
               value={newRole}
-              onChange={(e) => setNewRole(e.target.value as 'ADMIN' | 'TIM')}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-sm"
+              onChange={(e) => setNewRole(e.target.value as 'ADMIN' | 'TIM' | 'GURU')}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
             >
-              <option value="TIM">TIM (Kesiswaan / Kontributor)</option>
-              <option value="ADMIN">ADMIN (Akses Penuh)</option>
+              <option value="TIM">Tim Kesiswaan / Kontributor (Perlu Verifikasi Admin)</option>
+              <option value="GURU">Guru Pengajar (Upload Modul Pembelajaran)</option>
+              <option value="ADMIN">Administrator Utama (Akses Penuh)</option>
             </select>
           </div>
 

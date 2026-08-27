@@ -45,7 +45,7 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
   const [newUsername, setNewUsername] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newNama, setNewNama] = useState('');
-  const [newRole, setNewRole] = useState<'ADMIN' | 'TIM'>('TIM');
+  const [newRole, setNewRole] = useState<'ADMIN' | 'TIM' | 'GURU'>('GURU');
   const [newFotoSelection, setNewFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
 
   // Reset Password states

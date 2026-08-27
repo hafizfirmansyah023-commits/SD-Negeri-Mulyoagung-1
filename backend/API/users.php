@@ -38,7 +38,7 @@ elseif ($method === 'POST') {
     if ($action === 'create') {
         $username = isset($_POST['username']) ? trim($_POST['username']) : '';
         $password = isset($_POST['password']) ? $_POST['password'] : '';
-        $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
+        $role = isset($_POST['role']) ? trim($_POST['role']) : 'GURU';
         $nama = isset($_POST['nama_penanggung_jawab']) ? trim($_POST['nama_penanggung_jawab']) : '';
 
         if (empty($username) || empty($password) || empty($nama)) {

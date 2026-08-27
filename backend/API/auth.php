@@ -111,8 +111,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Validate role
-        if (!in_array($role, ['ADMIN', 'TIM'])) {
-            $role = 'TIM';
+        if (!in_array($role, ['ADMIN', 'TIM', 'GURU'])) {
+            $role = 'GURU';
         }
 
         // Check if username exists

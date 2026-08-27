@@ -92,6 +92,15 @@ export default function CmsSidebar({
         >
           <Image size={18} /> Galeri Foto
         </button>
+        <button
+          onClick={() => handleSelectTab('modul')}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'modul'
+            ? 'bg-teal-600 text-white shadow-sm'
+            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+            }`}
+        >
+          <BookOpen size={18} /> Modul Pembelajaran
+        </button>
       </div>
 
       {/* Kategori: DATA SEKOLAH */}

@@ -24,11 +24,11 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
     {/* Backdrop Overlay to close drawer when tapping outside */}
     <div
       onClick={onClose}
-      className="fixed inset-0 top-20 bg-slate-950/60 backdrop-blur-sm z-40 md:hidden transition-opacity"
+      className="fixed inset-0 top-20 bg-slate-950/60 backdrop-blur-sm z-40 xl:hidden transition-opacity"
     />
 
     {/* Drawer Container */}
-    <div className="fixed top-20 left-0 right-0 z-50 md:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-2xl max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-200">
+    <div className="fixed top-20 left-0 right-0 z-50 xl:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-2xl max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-200">
       <div className="flex flex-col gap-2">
         {navItems.map((item) => {
           const isActive = activeTab === item.id;

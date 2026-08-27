@@ -1,4 +1,4 @@
-  import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { useCmsFilter } from './hooks/useCmsFilter';
@@ -28,12 +28,27 @@ interface NewsArticle {
   uploader: string;
 }
 
+interface ModulItem {
+  id: number;
+  judul: string;
+  deskripsi: string;
+  foto?: string;
+  foto_cover?: string;
+  kategori: string;
+  mata_pelajaran: string;
+  kelas: string;
+  tahun_ajaran: string;
+  status_verifikasi: 'Pending' | 'Verified' | 'Rejected';
+  uploader: string;
+}
+
 const API_BASE = getApiBaseUrl();
 
 export default function Verifikasi() {
   const [pendingGallery, setPendingGallery] = useState<GalleryItem[]>([]);
   const [pendingNews, setPendingNews] = useState<NewsArticle[]>([]);
-  const [activeSubTab, setActiveSubTab] = useState<'berita' | 'galeri'>('berita');
+  const [pendingModules, setPendingModules] = useState<ModulItem[]>([]);
+  const [activeSubTab, setActiveSubTab] = useState<'berita' | 'galeri' | 'modul'>('berita');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -55,6 +70,14 @@ export default function Verifikasi() {
       if (galResult.status === 'success') {
         const pendingItems = galResult.data.filter((item: GalleryItem) => item.status_verifikasi === 'Pending');
         setPendingGallery(pendingItems);
+      }
+
+      // Fetch modules
+      const resModul = await fetch(`${API_BASE}/backend/API/modul_pembelajaran.php?status=all`);
+      const modResult = await resModul.json();
+      if (modResult.status === 'success') {
+        const pendingMods = modResult.data.filter((item: ModulItem) => item.status_verifikasi === 'Pending');
+        setPendingModules(pendingMods);
       }
     } catch {
       setError('Gagal memuat data verifikasi.');
@@ -81,11 +104,26 @@ export default function Verifikasi() {
     initialFilters: { kategori: 'ALL' },
   });
 
-  const activeFilter = activeSubTab === 'berita' ? newsFilter : galleryFilter;
-  const currentItems = activeSubTab === 'berita' ? pendingNews : pendingGallery;
-  const availableCategories = activeSubTab === 'berita'
-    ? getUniqueValues(pendingNews, 'kategori')
-    : getUniqueValues(pendingGallery, 'kategori');
+  // Filters for Modules
+  const modulFilter = useCmsFilter<ModulItem>({
+    items: pendingModules,
+    searchFields: ['judul', 'deskripsi', 'mata_pelajaran', 'uploader'],
+    initialFilters: { kategori: 'ALL' },
+  });
+
+  const activeFilter =
+    activeSubTab === 'berita'
+      ? newsFilter
+      : activeSubTab === 'galeri'
+      ? galleryFilter
+      : modulFilter;
+
+  const availableCategories =
+    activeSubTab === 'berita'
+      ? getUniqueValues(pendingNews, 'kategori')
+      : activeSubTab === 'galeri'
+      ? getUniqueValues(pendingGallery, 'kategori')
+      : getUniqueValues(pendingModules, 'kategori');
 
   const handleVerifyNews = async (id: number, decision: 'Verified' | 'Rejected') => {
     setError('');
@@ -137,6 +175,31 @@ export default function Verifikasi() {
     }
   };
 
+  const handleVerifyModule = async (id: number, decision: 'Verified' | 'Rejected') => {
+    setError('');
+    setSuccess('');
+    const formData = new FormData();
+    formData.append('action', 'verify');
+    formData.append('id', id.toString());
+    formData.append('status_verifikasi', decision);
+
+    try {
+      const response = await fetch(`${API_BASE}/backend/API/modul_pembelajaran.php`, {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        setSuccess(result.message);
+        fetchPendingData();
+      } else {
+        setError(result.message);
+      }
+    } catch {
+      setError('Gagal memproses verifikasi modul.');
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
@@ -144,7 +207,9 @@ export default function Verifikasi() {
         <h2 className="text-xl sm:text-2xl font-bold text-slate-800 flex items-center gap-2">
           <ShieldAlert className="text-teal-600 shrink-0" /> Pusat Verifikasi Konten
         </h2>
-        <p className="text-slate-500 text-xs sm:text-sm mt-0.5">Verifikasi konten berita atau foto galeri yang diunggah oleh Tim Kesiswaan.</p>
+        <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
+          Verifikasi berita, foto galeri, dan modul pembelajaran yang diunggah oleh Tim &amp; Guru.
+        </p>
 
         {/* Sub Navigation Tabs */}
         <div className="flex gap-4 mt-4 sm:mt-6 border-b border-slate-100 pb-px overflow-x-auto">
@@ -173,6 +238,20 @@ export default function Verifikasi() {
           >
             Antrean Galeri ({pendingGallery.length})
             {activeSubTab === 'galeri' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 rounded-full"></span>
+            )}
+          </button>
+          <button
+            onClick={() => {
+              setActiveSubTab('modul');
+              activeFilter.resetFilter();
+            }}
+            className={`pb-3 font-semibold text-xs sm:text-sm transition-all relative cursor-pointer whitespace-nowrap ${
+              activeSubTab === 'modul' ? 'text-teal-600 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            Antrean Modul ({pendingModules.length})
+            {activeSubTab === 'modul' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 rounded-full"></span>
             )}
           </button>
@@ -263,8 +342,37 @@ export default function Verifikasi() {
               )}
             </div>
           )}
+
+          {/* Modules Verification Queue */}
+          {activeSubTab === 'modul' && (
+            <div className="space-y-4">
+              {modulFilter.filteredItems.map((mod) => (
+                <VerifikasiCard
+                  key={mod.id}
+                  id={mod.id}
+                  judul={mod.judul}
+                  deskripsiAtauIsi={`${mod.mata_pelajaran} • ${mod.kelas} • ${mod.deskripsi || ''}`}
+                  foto={mod.foto || mod.foto_cover || ''}
+                  kategori={mod.kategori}
+                  tanggal={mod.tahun_ajaran}
+                  uploader={mod.uploader}
+                  onVerify={handleVerifyModule}
+                />
+              ))}
+
+              {modulFilter.filteredItems.length === 0 && (
+                <div className="bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
+                  <CheckCircle2 size={48} className="mx-auto text-slate-300 mb-3" />
+                  <p className="text-slate-500 font-medium text-sm">
+                    {modulFilter.isFiltered ? 'Tidak ada antrean modul yang sesuai dengan filter.' : 'Tidak ada antrean verifikasi modul pembelajaran.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 }
+

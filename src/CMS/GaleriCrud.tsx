@@ -194,6 +194,56 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
         </button>
       </div>
 
+      {/* Status Filter Tabs */}
+      <div className="bg-white p-2 sm:p-2.5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-1.5 overflow-x-auto">
+        {[
+          { key: 'ALL', label: 'Semua Status', count: items.length },
+          {
+            key: 'Verified',
+            label: 'Diterbitkan',
+            count: items.filter((a) => a.status_verifikasi === 'Verified').length,
+            color: 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100',
+            activeColor: 'bg-emerald-600 text-white shadow-sm',
+          },
+          {
+            key: 'Pending',
+            label: 'Menunggu Verifikasi',
+            count: items.filter((a) => a.status_verifikasi === 'Pending').length,
+            color: 'text-amber-700 bg-amber-50 hover:bg-amber-100',
+            activeColor: 'bg-amber-600 text-white shadow-sm',
+          },
+          {
+            key: 'Rejected',
+            label: 'Ditolak',
+            count: items.filter((a) => a.status_verifikasi === 'Rejected').length,
+            color: 'text-red-700 bg-red-50 hover:bg-red-100',
+            activeColor: 'bg-red-600 text-white shadow-sm',
+          },
+        ].map((tab) => {
+          const isActive = (filters.status_verifikasi || 'ALL') === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setFilter('status_verifikasi', tab.key)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                isActive
+                  ? tab.activeColor || 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Filter Bar Component */}
       <CmsFilterBar
         searchTerm={searchTerm}
@@ -209,18 +259,6 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
             options: [
               { value: 'ALL', label: 'Semua Kategori' },
               ...availableCategories.map((c) => ({ value: c, label: c })),
-            ],
-          },
-          {
-            key: 'status_verifikasi',
-            value: filters.status_verifikasi || 'ALL',
-            onChange: (val) => setFilter('status_verifikasi', val),
-            options: [
-              { value: 'ALL', label: 'Semua Status' },
-              ...availableStatuses.map((st) => ({
-                value: st,
-                label: st === 'Verified' ? 'Terverifikasi' : st === 'Rejected' ? 'Ditolak' : 'Menunggu Verifikasi',
-              })),
             ],
           },
         ]}
