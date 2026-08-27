@@ -101,3 +101,7 @@ Izin Embedding File Upload (
 backend/uploads/.htaccess
 ):
 Menghapus pembatasan X-Frame-Options SAMEORIGIN pada folder upload statis dan mengizinkan ALLOWALL agar file PDF dapat di-embed langsung ke aplikasi web tanpa penolakan koneksi browser.
+
+
+Perbaikan
+Masi ada bug di bagian titik 3 saat pergantian tampilan hp ke mode landscape pada header
