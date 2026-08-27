@@ -167,20 +167,20 @@ export const NativePdfViewer: React.FC<NativePdfViewerProps> = ({ pdfUrl, title 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-900 overflow-hidden select-none">
       {/* Viewer Toolbar */}
-      <div className="bg-slate-950/90 border-b border-slate-800 px-4 py-2 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300 shrink-0 z-10">
+      <div className="bg-slate-950/90 border-b border-slate-800 px-3 sm:px-4 py-2 flex items-center justify-between gap-2 sm:gap-3 text-xs text-slate-300 shrink-0 z-10">
         
         {/* Pagination Navigation */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           <button
             onClick={handlePrevPage}
             disabled={pageNum <= 1}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+            className="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             title="Halaman Sebelumnya"
           >
             <ChevronLeft size={16} />
           </button>
           
-          <div className="flex items-center gap-1 px-2 font-mono font-medium">
+          <div className="flex items-center gap-1 px-1 sm:px-2 font-mono font-medium text-[11px] sm:text-xs">
             <span className="text-teal-400 font-bold">{pageNum}</span>
             <span className="text-slate-500">/</span>
             <span>{numPages}</span>
@@ -189,7 +189,7 @@ export const NativePdfViewer: React.FC<NativePdfViewerProps> = ({ pdfUrl, title 
           <button
             onClick={handleNextPage}
             disabled={pageNum >= numPages}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+            className="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             title="Halaman Berikutnya"
           >
             <ChevronRight size={16} />
@@ -197,32 +197,32 @@ export const NativePdfViewer: React.FC<NativePdfViewerProps> = ({ pdfUrl, title 
         </div>
 
         {/* Zoom Controls */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           <button
             onClick={handleZoomOut}
-            disabled={scale <= 0.6}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+            disabled={scale <= 0.5}
+            className="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             title="Perkecil Tampilan"
           >
-            <ZoomOut size={15} />
+            <ZoomOut size={14} />
           </button>
 
-          <span className="px-1.5 text-[11px] font-mono text-slate-400 min-w-[45px] text-center">
+          <span className="px-1 text-[10px] sm:text-[11px] font-mono text-slate-400 min-w-[36px] sm:min-w-[45px] text-center">
             {Math.round(scale * 100)}%
           </span>
 
           <button
             onClick={handleZoomIn}
             disabled={scale >= 2.5}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+            className="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
             title="Perbesar Tampilan"
           >
-            <ZoomIn size={15} />
+            <ZoomIn size={14} />
           </button>
 
           <button
             onClick={handleResetZoom}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer transition-colors ml-1"
+            className="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 cursor-pointer transition-colors ml-0.5 sm:ml-1"
             title="Atur Ulang Zoom"
           >
             <RotateCw size={13} />
@@ -231,18 +231,18 @@ export const NativePdfViewer: React.FC<NativePdfViewerProps> = ({ pdfUrl, title 
       </div>
 
       {/* Canvas Viewport */}
-      <div className="flex-1 overflow-auto p-4 sm:p-8 flex items-center justify-center relative bg-slate-950/95 scrollbar-thin scrollbar-thumb-slate-700">
+      <div className="flex-1 overflow-auto p-2 sm:p-6 md:p-8 flex items-center justify-center relative bg-slate-950/95 scrollbar-thin scrollbar-thumb-slate-700">
         {renderLoading && (
           <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px] flex items-center justify-center z-20">
-            <div className="bg-slate-900/90 text-teal-300 px-4 py-2 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 text-xs font-semibold">
-              <Loader2 size={18} className="animate-spin text-teal-400" />
+            <div className="bg-slate-900/90 text-teal-300 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg border border-slate-700 flex items-center gap-2 text-xs font-semibold">
+              <Loader2 size={16} className="animate-spin text-teal-400" />
               <span>Memuat halaman {pageNum}...</span>
             </div>
           </div>
         )}
-        <div className="m-auto flex items-center justify-center py-2">
+        <div className="m-auto flex items-center justify-center py-1 sm:py-2">
           <div className="shadow-2xl ring-1 ring-slate-700/50 rounded-lg overflow-hidden bg-white max-w-full transition-all duration-200">
-            <canvas ref={canvasRef} className="block mx-auto max-w-full" />
+            <canvas ref={canvasRef} className="block mx-auto max-w-full h-auto" />
           </div>
         </div>
       </div>
