@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Plus, Monitor, BookOpen, Activity, HeartPulse, Coffee, Trees, Building, Sparkles, X, RotateCcw
 } from 'lucide-react';
@@ -12,12 +12,14 @@ import { FasilitasFormModal } from './fasilitas/FasilitasFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
+import { Pagination } from '../components/common/Pagination';
 
 interface FasilitasCrudProps {
   currentUser: UserSession;
 }
 
 const API_BASE = getApiBaseUrl();
+const ITEMS_PER_PAGE = 6;
 
 export const getFacilityIconByTitle = (title: string, className = "w-5 h-5 text-[#028C84]") => {
   const t = title.toLowerCase();
@@ -89,6 +91,26 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
     items,
     searchFields: ['judul', 'deskripsi'],
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  // Adjust page if data is deleted and current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredItems.length, currentPage]);
+
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
 
   const resetForm = () => {
     setJudul('');
@@ -265,16 +287,29 @@ export default function FasilitasCrud({ currentUser }: FasilitasCrudProps) {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {filteredItems.map((fac) => (
-            <FasilitasCard
-              key={fac.id}
-              fac={fac}
-              currentUser={currentUser}
-              onEdit={handleOpenEdit}
-              onDelete={handleDeleteRequest}
-            />
-          ))}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {paginatedItems.map((fac) => (
+              <FasilitasCard
+                key={fac.id}
+                fac={fac}
+                currentUser={currentUser}
+                onEdit={handleOpenEdit}
+                onDelete={handleDeleteRequest}
+              />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredItems.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={(p) => {
+              setCurrentPage(p);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       )}
 

@@ -38,7 +38,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
     <nav
       ref={navRef}
       onMouseLeave={() => setHoveredTab(null)}
-      className="hidden md:flex relative items-center bg-slate-950/30 backdrop-blur-md p-1.5 rounded-full border border-teal-500/20 shadow-inner"
+      className="hidden xl:flex relative items-center bg-slate-950/35 backdrop-blur-md p-1.5 rounded-full border border-teal-500/25 shadow-inner gap-0.5"
     >
       {/* Sliding Pill Background Indicator */}
       <div
@@ -61,10 +61,10 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
             data-tab-id={item.id}
             onClick={() => onNavClick(item.id)}
             onMouseEnter={() => setHoveredTab(item.id)}
-            className={`relative z-10 px-5 py-2 rounded-full font-medium text-sm transition-colors duration-200 cursor-pointer ${
+            className={`relative z-10 px-3.5 2xl:px-4 py-2 rounded-full font-medium text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap ${
               isHighlighted
-                ? 'text-white font-semibold'
-                : 'text-slate-300 hover:text-white'
+                ? 'text-white font-bold'
+                : 'text-slate-200 hover:text-white'
             }`}
           >
             {item.label}
@@ -74,4 +74,5 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
     </nav>
   );
 };
+
 

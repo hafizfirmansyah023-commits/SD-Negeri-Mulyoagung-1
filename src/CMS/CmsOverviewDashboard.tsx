@@ -55,11 +55,25 @@ interface GaleriItem {
   deskripsi?: string;
 }
 
+interface ModulItem {
+  id: number;
+  judul: string;
+  mata_pelajaran: string;
+  kelas: string;
+  semester: string;
+  tahun_ajaran: string;
+  kategori: string;
+  status_verifikasi: 'Pending' | 'Verified' | 'Rejected';
+  uploaded_by?: number;
+  uploader?: string;
+  foto?: string;
+  foto_cover?: string;
+}
 
 interface UserItem {
   id: number;
   username: string;
-  role: 'ADMIN' | 'TIM';
+  role: 'ADMIN' | 'TIM' | 'GURU';
   nama_penanggung_jawab: string;
 }
 
@@ -91,6 +105,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
   const [guruList, setGuruList] = useState<GuruItem[]>([]);
   const [beritaList, setBeritaList] = useState<BeritaItem[]>([]);
   const [galeriList, setGaleriList] = useState<GaleriItem[]>([]);
+  const [modulList, setModulList] = useState<ModulItem[]>([]);
   const [userList, setUserList] = useState<UserItem[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [tahunAjaran, setTahunAjaran] = useState<string>('2025/2026');
@@ -107,6 +122,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
       const promises: Promise<Response>[] = [
         fetch(`${API_BASE}/backend/API/newsAPI.php?status=all`),
         fetch(`${API_BASE}/backend/API/galeri.php?status=all`),
+        fetch(`${API_BASE}/backend/API/modul_pembelajaran.php?status=all`),
       ];
 
       if (isAdmin) {
@@ -145,11 +161,23 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
       }
 
+      // Process modul
+      if (results[2].status === 'fulfilled' && results[2].value.ok) {
+        try {
+          const json = await results[2].value.json();
+          if (json.status === 'success' && Array.isArray(json.data)) {
+            setModulList(json.data);
+          }
+        } catch {
+          /* ignore parse error */
+        }
+      }
+
       if (isAdmin) {
         // Process guru
-        if (results[2] && results[2].status === 'fulfilled' && results[2].value.ok) {
+        if (results[3] && results[3].status === 'fulfilled' && results[3].value.ok) {
           try {
-            const json = await results[2].value.json();
+            const json = await results[3].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setGuruList(json.data);
             }
@@ -158,12 +186,10 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
           }
         }
 
-        
-
         // Process users
-        if (results[3] && results[3].status === 'fulfilled' && results[3].value.ok) {
+        if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
           try {
-            const json = await results[3].value.json();
+            const json = await results[4].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setUserList(json.data);
             }
@@ -173,9 +199,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process hero carousel
-        if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
+        if (results[5] && results[5].status === 'fulfilled' && results[5].value.ok) {
           try {
-            const json = await results[4].value.json();
+            const json = await results[5].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setHeroSlides(json.data);
             } else if (Array.isArray(json)) {
@@ -187,9 +213,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process pengaturan
-        if (results[5] && results[5].status === 'fulfilled' && results[5].value.ok) {
+        if (results[6] && results[6].status === 'fulfilled' && results[6].value.ok) {
           try {
-            const json = await results[5].value.json();
+            const json = await results[6].value.json();
             if (json.status === 'success' && json.data) {
               setTahunAjaran(json.data.tahun_ajaran || '2025/2026');
               setLinkPpdb(json.data.link_ppdb || '');
@@ -200,9 +226,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process statistik
-        if (results[6] && results[6].status === 'fulfilled' && results[6].value.ok) {
+        if (results[7] && results[7].status === 'fulfilled' && results[7].value.ok) {
           try {
-            const json = await results[6].value.json();
+            const json = await results[7].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setStatistikSekolah(json.data);
             }
@@ -240,28 +266,36 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
   const galeriVerifiedCount = galeriList.filter((g) => g.status_verifikasi === 'Verified').length;
   const galeriPendingCount = galeriList.filter((g) => g.status_verifikasi === 'Pending').length;
 
+  const modulVerifiedCount = modulList.filter((m) => m.status_verifikasi === 'Verified').length;
+  const modulPendingCount = modulList.filter((m) => m.status_verifikasi === 'Pending').length;
+  const modulRejectedCount = modulList.filter((m) => m.status_verifikasi === 'Rejected').length;
 
   const totalUsersCount = userList.length;
   const adminUsersCount = userList.filter((u) => u.role === 'ADMIN').length;
   const timUsersCount = userList.filter((u) => u.role === 'TIM').length;
+  const guruUsersCount = userList.filter((u) => u.role === 'GURU').length;
 
-  const totalPendingAction = beritaPendingCount + galeriPendingCount;
+  const totalPendingAction = beritaPendingCount + galeriPendingCount + modulPendingCount;
 
-  // Calculations for TIM
+  // Calculations for Non-Admin (TIM / GURU)
   const myBeritaList = beritaList.filter(isUploadedBySelf);
   const myGaleriList = galeriList.filter(isUploadedBySelf);
+  const myModulList = modulList.filter(isUploadedBySelf);
 
   const myBeritaPending = myBeritaList.filter((b) => b.status_verifikasi === 'Pending').length;
   const myGaleriPending = myGaleriList.filter((g) => g.status_verifikasi === 'Pending').length;
-  const myTotalPending = myBeritaPending + myGaleriPending;
+  const myModulPending = myModulList.filter((m) => m.status_verifikasi === 'Pending').length;
+  const myTotalPending = myBeritaPending + myGaleriPending + myModulPending;
 
   const myBeritaVerified = myBeritaList.filter((b) => b.status_verifikasi === 'Verified').length;
   const myGaleriVerified = myGaleriList.filter((g) => g.status_verifikasi === 'Verified').length;
-  const myTotalVerified = myBeritaVerified + myGaleriVerified;
+  const myModulVerified = myModulList.filter((m) => m.status_verifikasi === 'Verified').length;
+  const myTotalVerified = myBeritaVerified + myGaleriVerified + myModulVerified;
 
-  // Recent 5 News & Recent 5 Gallery (Filtered if TIM)
+  // Recent items
   const recentBerita = (isAdmin ? beritaList : myBeritaList).slice(0, 5);
   const recentGaleri = (isAdmin ? galeriList : myGaleriList).slice(0, 5);
+  const recentModul = (isAdmin ? modulList : myModulList).slice(0, 5);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -284,6 +318,8 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             <p className="text-teal-100 text-xs sm:text-sm mt-1 max-w-xl">
               {isAdmin
                 ? 'Kelola informasi sekolah, statistik publik, verifikasi postingan tim, serta konfigurasi website SD Negeri 1 Mulyoagung.'
+                : currentUser.role === 'GURU'
+                ? 'Kelola dan unggah modul ajar, materi pembelajaran, serta pantau status verifikasinya.'
                 : 'Pantau status postingan berita dan dokumentasi foto galeri yang Anda unggah.'}
             </p>
           </div>
@@ -308,14 +344,14 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
 
       {/* SECTION 1: KARTU STATISTIK UTAMA */}
       {loading ? (
-        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-2xl" />
           ))}
         </div>
       ) : isAdmin ? (
         /* ADMIN STAT CARDS */
-        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           {/* Card 1: Guru Aktif */}
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
@@ -373,7 +409,26 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             </div>
           </div>
 
-          {/* Card 4: User CMS */}
+          {/* Card 4: Modul Pembelajaran */}
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+                  Modul Ajar
+                </p>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mt-1">{modulList.length}</h3>
+              </div>
+              <div className="p-2 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                <GraduationCap size={18} className="sm:w-[22px] sm:h-[22px]" />
+              </div>
+            </div>
+            <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] flex-wrap gap-1">
+              <span className="text-emerald-600 font-semibold">{modulVerifiedCount} Ver.</span>
+              <span className="text-amber-600 font-semibold">{modulPendingCount} Pend.</span>
+            </div>
+          </div>
+
+          {/* Card 5: User CMS */}
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
@@ -387,21 +442,58 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
               </div>
             </div>
             <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] flex-wrap gap-1">
-              <span className="text-indigo-600 font-semibold">{adminUsersCount} Admin</span>
-              <span className="text-teal-600 font-semibold">{timUsersCount} Tim</span>
+              <span className="text-indigo-600 font-semibold">{adminUsersCount} Adm</span>
+              <span className="text-teal-600 font-semibold">{guruUsersCount} Guru</span>
+            </div>
+          </div>
+        </div>
+      ) : currentUser.role === 'GURU' ? (
+        /* GURU STAT CARDS - Focused solely on Modul Pembelajaran */
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl shrink-0">
+              <GraduationCap size={24} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide">Total Modul Ajar Saya</p>
+              <h3 className="text-2xl font-extrabold text-slate-800 mt-0.5">{myModulList.length}</h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+            <div className="p-3 bg-amber-50 text-amber-600 rounded-2xl shrink-0">
+              <Clock size={24} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide">Menunggu Verifikasi</p>
+              <h3 className="text-2xl font-extrabold text-amber-600 mt-0.5">{myModulPending}</h3>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4">
+            <div className="p-3 bg-teal-50 text-teal-600 rounded-2xl shrink-0">
+              <CheckCircle2 size={24} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-slate-500 text-xs font-semibold uppercase tracking-wide">Telah Terverifikasi</p>
+              <h3 className="text-2xl font-extrabold text-teal-600 mt-0.5">{myModulVerified}</h3>
             </div>
           </div>
         </div>
       ) : (
-        /* TIM STAT CARDS */
+        /* TIM STAT CARDS - Focused on Berita & Galeri */
         <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3 sm:gap-4">
             <div className="p-2.5 sm:p-3.5 bg-blue-50 text-blue-600 rounded-2xl shrink-0">
               <FileText size={20} className="sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">Berita Diunggah</p>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">{myBeritaList.length}</h3>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">
+                Berita Diunggah
+              </p>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">
+                {myBeritaList.length}
+              </h3>
             </div>
           </div>
 
@@ -410,8 +502,12 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
               <ImageIcon size={20} className="sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">Galeri Diunggah</p>
-              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">{myGaleriList.length}</h3>
+              <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase truncate">
+                Galeri Diunggah
+              </p>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800">
+                {myGaleriList.length}
+              </h3>
             </div>
           </div>
 
@@ -468,8 +564,8 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
                 </div>
                 <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
                   {totalPendingAction > 0
-                    ? 'Terdapat konten dari Tim Penulis yang memerlukan verifikasi Admin sebelum dipublikasikan ke publik.'
-                    : 'Semua pengajuan berita dan galeri telah diverifikasi. Tidak ada antrean pending.'}
+                    ? 'Terdapat konten berita, galeri, atau modul ajar dari Tim/Guru yang memerlukan verifikasi Admin sebelum dipublikasikan.'
+                    : 'Semua pengajuan berita, galeri, dan modul pembelajaran telah diverifikasi. Tidak ada antrean pending.'}
                 </p>
               </div>
             </div>
@@ -483,12 +579,12 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-200/60">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-5 pt-4 border-t border-slate-200/60">
             <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100 gap-2">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <FileText size={18} className="text-blue-600 shrink-0" />
                 <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">
-                  Berita Pending Verifikasi
+                  Berita Pending
                 </span>
               </div>
               <span
@@ -506,7 +602,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <ImageIcon size={18} className="text-indigo-600 shrink-0" />
                 <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">
-                  Galeri Pending Verifikasi
+                  Galeri Pending
                 </span>
               </div>
               <span
@@ -519,8 +615,46 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
                 {galeriPendingCount} Foto
               </span>
             </div>
+
+            <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100 gap-2">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <GraduationCap size={18} className="text-emerald-600 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">
+                  Modul Ajar Pending
+                </span>
+              </div>
+              <span
+                className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                  modulPendingCount > 0
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-slate-100 text-slate-500'
+                }`}
+              >
+                {modulPendingCount} Modul
+              </span>
+            </div>
           </div>
         </div>
+      ) : currentUser.role === 'GURU' ? (
+        myModulPending > 0 ? (
+          <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Clock size={22} className="text-amber-600 shrink-0 text-amber-600" />
+              <div>
+                <h4 className="font-bold text-slate-800 text-sm">Modul Ajar Menunggu Verifikasi</h4>
+                <p className="text-slate-600 text-xs mt-0.5">
+                  Anda memiliki {myModulPending} modul ajar yang sedang menunggu persetujuan dari Admin.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setActiveTab('modul')}
+              className="hidden sm:inline-flex items-center gap-1 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-3 py-1.5 rounded-xl transition-all cursor-pointer shrink-0"
+            >
+              Lihat Modul <ArrowRight size={12} />
+            </button>
+          </div>
+        ) : null
       ) : myTotalPending > 0 ? (
         /* TIM PENDING NOTICE */
         <div className="bg-amber-50 border border-amber-200 p-5 rounded-2xl flex items-center justify-between gap-4">
@@ -538,43 +672,55 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
       ) : null}
 
       {/* SECTION 3: AKTIVITAS TERBARU */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 5 Berita Terakhir */}
-        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
-              <FileText size={18} className="text-teal-600" />
-              {isAdmin ? '5 Berita Terakhir' : 'Berita Terakhir Saya'}
+      {currentUser.role === 'GURU' ? (
+        /* GURU SINGLE WIDE CARD: Modul Ajar Terakhir Saya */
+        <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+          <div className="flex justify-between items-center border-b border-slate-100 pb-3.5">
+            <h3 className="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2.5">
+              <GraduationCap size={20} className="text-emerald-600" />
+              Modul Ajar Terakhir Saya
             </h3>
             <button
-              onClick={() => setActiveTab('berita')}
-              className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
+              onClick={() => setActiveTab('modul')}
+              className="text-xs sm:text-sm font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
             >
-              Lihat Semua <ArrowRight size={12} />
+              Kelola Semua Modul <ArrowRight size={14} />
             </button>
           </div>
 
-          {recentBerita.length === 0 ? (
-            <p className="text-slate-400 text-xs py-4 text-center">Belum ada data berita.</p>
+          {recentModul.length === 0 ? (
+            <div className="py-8 text-center text-slate-400 space-y-2">
+              <GraduationCap size={36} className="mx-auto text-slate-300" />
+              <p className="text-xs sm:text-sm">Anda belum mengunggah modul ajar.</p>
+              <button
+                onClick={() => setActiveTab('modul')}
+                className="mt-2 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
+              >
+                Unggah Modul Baru
+              </button>
+            </div>
           ) : (
-            <div className="space-y-3">
-              {recentBerita.map((item) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+              {recentModul.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100/80 transition-colors"
+                  className="flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-50 border border-slate-100/90 transition-colors"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
+                    <p className="text-sm font-bold text-slate-800 truncate">
                       {item.judul}
                     </p>
-                    <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
-                      <span className="flex items-center gap-1">
-                        <Calendar size={12} /> {item.tanggal}
+                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
+                      <span className="font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
+                        {item.kelas}
                       </span>
                       <span>&bull;</span>
-                      <span>Oleh: {item.uploader || 'Admin'}</span>
+                      <span className="truncate">{item.mata_pelajaran}</span>
+                      <span>&bull;</span>
+                      <span>TA {item.tahun_ajaran}</span>
                     </div>
                   </div>
+
                   <span
                     className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
                       item.status_verifikasi === 'Verified'
@@ -591,74 +737,188 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             </div>
           )}
         </div>
+      ) : (
+        /* ADMIN / TIM 3-COLUMN OR 2-COLUMN ACTIVITY GRID */
+        <div className={`grid grid-cols-1 ${isAdmin ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-6`}>
+          {/* 5 Berita Terakhir */}
+          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                <FileText size={18} className="text-teal-600" />
+                {isAdmin ? '5 Berita Terakhir' : 'Berita Terakhir Saya'}
+              </h3>
+              <button
+                onClick={() => setActiveTab('berita')}
+                className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
+              >
+                Lihat <ArrowRight size={12} />
+              </button>
+            </div>
 
-        {/* 5 Foto Galeri Terakhir */}
-        <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-            <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
-              <ImageIcon size={18} className="text-indigo-600" />
-              {isAdmin ? '5 Galeri Terakhir' : 'Galeri Terakhir Saya'}
-            </h3>
-            <button
-              onClick={() => setActiveTab('galeri')}
-              className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
-            >
-              Lihat Semua <ArrowRight size={12} />
-            </button>
-          </div>
-
-          {recentGaleri.length === 0 ? (
-            <p className="text-slate-400 text-xs py-4 text-center">
-              Belum ada data dokumentasi foto.
-            </p>
-          ) : (
-            <div className="space-y-3">
-              {recentGaleri.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100/80 transition-colors"
-                >
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
-                      {item.foto_crop || item.foto ? (
-                        <img
-                          src={getImageUrl(item.foto_crop || item.foto || '')}
-                          alt={item.judul}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <ImageIcon size={20} className="m-auto text-slate-400" />
-                      )}
-                    </div>
+            {recentBerita.length === 0 ? (
+              <p className="text-slate-400 text-xs py-4 text-center">Belum ada data berita.</p>
+            ) : (
+              <div className="space-y-3">
+                {recentBerita.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100/80 transition-colors"
+                  >
                     <div className="min-w-0 flex-1">
                       <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
                         {item.judul}
                       </p>
-                      <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
-                        <span>{item.tanggal}</span>
+                      <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                        <span className="flex items-center gap-1">
+                          <Calendar size={12} /> {item.tanggal}
+                        </span>
                         <span>&bull;</span>
                         <span className="truncate">Oleh: {item.uploader || 'Admin'}</span>
                       </div>
                     </div>
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                        item.status_verifikasi === 'Verified'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : item.status_verifikasi === 'Pending'
+                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}
+                    >
+                      {item.status_verifikasi}
+                    </span>
                   </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-                  <span
-                    className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
-                      item.status_verifikasi === 'Verified'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : item.status_verifikasi === 'Pending'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}
+          {/* 5 Foto Galeri Terakhir */}
+          <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                <ImageIcon size={18} className="text-indigo-600" />
+                {isAdmin ? '5 Galeri Terakhir' : 'Galeri Terakhir Saya'}
+              </h3>
+              <button
+                onClick={() => setActiveTab('galeri')}
+                className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
+              >
+                Lihat <ArrowRight size={12} />
+              </button>
+            </div>
+
+            {recentGaleri.length === 0 ? (
+              <p className="text-slate-400 text-xs py-4 text-center">
+                Belum ada data dokumentasi foto.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentGaleri.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100/80 transition-colors"
                   >
-                    {item.status_verifikasi}
-                  </span>
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
+                        {item.foto_crop || item.foto ? (
+                          <img
+                            src={getImageUrl(item.foto_crop || item.foto || '')}
+                            alt={item.judul}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <ImageIcon size={18} className="m-auto text-slate-400" />
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
+                          {item.judul}
+                        </p>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-0.5">
+                          <span>{item.tanggal}</span>
+                          <span>&bull;</span>
+                          <span className="truncate">Oleh: {item.uploader || 'Admin'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                        item.status_verifikasi === 'Verified'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : item.status_verifikasi === 'Pending'
+                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}
+                    >
+                      {item.status_verifikasi}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* 5 Modul Ajar Terakhir (Only shown here if Admin) */}
+          {isAdmin && (
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                  <GraduationCap size={18} className="text-emerald-600" />
+                  5 Modul Ajar Terakhir
+                </h3>
+                <button
+                  onClick={() => setActiveTab('modul')}
+                  className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
+                >
+                  Lihat <ArrowRight size={12} />
+                </button>
+              </div>
+
+              {recentModul.length === 0 ? (
+                <p className="text-slate-400 text-xs py-4 text-center">
+                  Belum ada data modul pembelajaran.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {recentModul.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100/80 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
+                          {item.judul}
+                        </p>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+                          <span className="font-semibold text-teal-600">{item.kelas}</span>
+                          <span>&bull;</span>
+                          <span className="truncate">{item.mata_pelajaran}</span>
+                          <span>&bull;</span>
+                          <span className="truncate">Oleh: {item.uploader || 'Guru'}</span>
+                        </div>
+                      </div>
+
+                      <span
+                        className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                          item.status_verifikasi === 'Verified'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : item.status_verifikasi === 'Pending'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-red-50 text-red-700 border border-red-200'
+                        }`}
+                      >
+                        {item.status_verifikasi}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>
-      </div>
+      )}
 
       {/* SECTION 4 & 5: RINGKASAN HOMEPAGE & USER MANAGEMENT (ADMIN ONLY) */}
       {isAdmin && (
@@ -778,6 +1038,19 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
                     </div>
                   </div>
                   <span className="text-xl font-black text-indigo-700">{adminUsersCount}</span>
+                </div>
+
+                <div className="flex items-center justify-between p-3.5 bg-emerald-50/70 border border-emerald-100 rounded-2xl">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-600 text-white rounded-xl">
+                      <GraduationCap size={16} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-emerald-950">Role GURU</p>
+                      <p className="text-[11px] text-emerald-600">Pengunggah modul ajar</p>
+                    </div>
+                  </div>
+                  <span className="text-xl font-black text-emerald-700">{guruUsersCount}</span>
                 </div>
 
                 <div className="flex items-center justify-between p-3.5 bg-teal-50/70 border border-teal-100 rounded-2xl">

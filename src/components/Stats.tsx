@@ -191,22 +191,22 @@ export const Stats: React.FC = () => {
               return (
                 <div
                   key={stat.id}
-                  className="apple-glass-card rounded-2xl sm:rounded-3xl p-3 sm:p-6 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer"
+                  className="apple-glass-card rounded-2xl sm:rounded-3xl p-2.5 sm:p-5 lg:p-6 flex flex-col items-center justify-center relative overflow-hidden group cursor-pointer"
                 >
                   <div className="absolute top-0 left-0 right-0 h-8 sm:h-10 bg-gradient-to-b from-white/80 to-transparent pointer-events-none rounded-t-2xl sm:rounded-t-3xl" />
 
                   <div
-                    className={`w-10 h-10 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl ${style.bgClass} flex items-center justify-center mb-1.5 sm:mb-4 ${style.colorClass} transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}
+                    className={`w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl ${style.bgClass} flex items-center justify-center mb-1.5 sm:mb-3.5 ${style.colorClass} transition-all duration-300 group-hover:scale-110 group-hover:rotate-3`}
                   >
                     {getIcon(style.icon, "w-4 h-4 sm:w-6 sm:h-6")}
                   </div>
 
-                  <span className="text-2xl sm:text-4xl lg:text-5xl font-black bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent tracking-tight drop-shadow-sm leading-tight">
+                  <span className="text-xl sm:text-3xl lg:text-4xl xl:text-5xl font-black bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 bg-clip-text text-transparent tracking-tight drop-shadow-sm leading-tight">
                     {/* Menggunakan Komponen AnimatedCounter di sini */}
                     <AnimatedCounter value={stat.jumlah} />
                   </span>
 
-                  <span className="text-[10px] sm:text-sm font-bold text-slate-600 mt-0.5 sm:mt-1.5 tracking-wide leading-tight">
+                  <span className="text-[10px] sm:text-xs lg:text-sm font-bold text-slate-600 mt-1 tracking-wide leading-tight line-clamp-2">
                     {stat.judul} {stat.label !== stat.judul ? stat.label : ''}
                   </span>
                 </div>

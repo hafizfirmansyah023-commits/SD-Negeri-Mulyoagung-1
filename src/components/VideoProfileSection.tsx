@@ -24,23 +24,23 @@ export const VideoProfileSection: React.FC = () => {
 
   return (
     // Padding section diperkecil untuk mobile (py-10)
-    <section className="w-full py-10 sm:py-20 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12">
+    <section className="w-full py-10 sm:py-20 max-w-7xl mx-auto px-3 sm:px-8 lg:px-12">
       {/* Sudut border diubah ke rounded-2xl untuk mobile agar tidak terlalu melengkung */}
       <div className="bg-[#1E3A8A] dark:bg-slate-900 rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col lg:flex-row relative shadow-xl border border-blue-900/40">
         
         {/* Background Ambient Lights */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />Base path: ``
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
         {/* Text Area */}
         {/* Padding diperkecil (p-5), jarak antar elemen dirapatkan (space-y-3) */}
-        <div className="lg:w-1/2 p-5 sm:p-12 lg:p-14 flex flex-col justify-center z-10 space-y-3 sm:space-y-6">
+        <div className="lg:w-1/2 p-4 sm:p-12 lg:p-14 flex flex-col justify-center z-10 space-y-3 sm:space-y-6">
           <div className="inline-flex items-center gap-1.5 sm:gap-2 text-amber-400 font-bold text-[10px] sm:text-xs uppercase tracking-wider">
             <PlayCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             Dokumentasi Resmi
           </div>
 
-          <h2 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
+          <h2 className="text-lg sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight">
             {sectionTitle}
           </h2>
 
@@ -52,20 +52,20 @@ export const VideoProfileSection: React.FC = () => {
           <div className="pt-2 flex flex-row flex-wrap sm:flex-nowrap gap-2 sm:gap-3 w-full">
             <button
               onClick={() => setIsPlaying(true)}
-              className="flex-1 sm:flex-none bg-[#F9A825] hover:bg-amber-500 text-[#1E3A8A] font-bold text-[10px] sm:text-sm py-2 px-3 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2.5 shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
+              className="flex-1 sm:flex-none bg-[#F9A825] hover:bg-amber-500 text-[#1E3A8A] font-bold text-[11px] sm:text-sm py-2.5 px-3 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2.5 shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
             >
               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current shrink-0" />
-              <span className="line-clamp-1">{isPlaying ? 'Memutar...' : 'Putar Video'}</span>
+              <span className="truncate">{isPlaying ? 'Memutar...' : 'Putar Video'}</span>
             </button>
 
             <a
               href={`https://www.youtube.com/watch?v=${videoId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none bg-white/10 hover:bg-white/20 text-white font-semibold text-[10px] sm:text-sm py-2 px-3 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 border border-white/20 transition-colors"
+              className="flex-1 sm:flex-none bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px] sm:text-sm py-2.5 px-3 sm:py-3 sm:px-6 rounded-lg sm:rounded-xl flex items-center justify-center gap-1.5 sm:gap-2 border border-white/20 transition-colors"
             >
               <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-              <span className="line-clamp-1">Di YouTube</span>
+              <span className="truncate">Di YouTube</span>
             </a>
           </div>
         </div>

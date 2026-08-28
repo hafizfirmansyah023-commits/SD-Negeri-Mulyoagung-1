@@ -26,8 +26,10 @@ import { DirectorySection } from './components/DirectorySection';
 
 import { GallerySection } from './components/GallerySection';
 import { SchoolProfileSection } from './components/SchoolProfileSection';
+import { ModulPembelajaranSection } from './components/ModulPembelajaranSection';
 import { ContactSection } from './components/ContactSection';
 import { PpdbModal } from './components/PpdbModal';
+import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { Footer } from './components/Footer';
 import { BackToTop } from './components/BackToTop';
 import { AnnouncementBar } from './components/AnnouncementBar';
@@ -43,6 +45,7 @@ function AppContent() {
   const navigate = useNavigate();
   const navigationType = useNavigationType();
   const [ppdbOpen, setPpdbOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [linkPpdb, setLinkPpdb] = useState('');
   const homepageConfig = useHomepageConfig();
 
@@ -93,11 +96,22 @@ function AppContent() {
     localStorage.removeItem('theme');
 
     AOS.init({
-      duration: 800,
+      duration: 700,
       easing: 'ease-in-out',
       once: true,
-      offset: 50,
+      offset: 30,
+      debounceDelay: 50,
+      throttleDelay: 99,
     });
+
+    const handleWindowResize = () => {
+      AOS.refresh();
+    };
+
+    window.addEventListener('resize', handleWindowResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   // Simpan posisi scroll secara real-time untuk halaman yang sedang aktif
@@ -131,6 +145,18 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, [location.pathname, navigationType]);
 
+  // Global keyboard shortcut for search (Ctrl + K / Cmd + K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   if (location.pathname.startsWith('/cms')) {
     return (
       <Suspense fallback={<div className="min-h-screen bg-[#f8f9fa]" />}>
@@ -148,11 +174,12 @@ function AppContent() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenPpdb={handleOpenPpdb}
+        onOpenSearch={() => setSearchOpen(true)}
         linkPpdb={linkPpdb}
       />
 
       {/* Main Page Content */}
-      <main className="flex-grow overflow-x-hidden">
+      <main className="flex-grow overflow-x-clip">
         <Routes>
 
           <Route
@@ -177,25 +204,25 @@ function AppContent() {
                         );
                       case 'sambutan':
                         return (
-                          <div data-aos="fade-up" data-aos-delay="200" key="sambutan">
+                          <div data-aos="fade-up" data-aos-delay="150" key="sambutan">
                             <PrincipalGreeting />
                           </div>
                         );
                       case 'berita':
                         return (
-                          <div data-aos="fade-right" data-aos-delay="100" key="berita">
+                          <div data-aos="fade-up" data-aos-delay="100" key="berita">
                             <NewsSection onViewAllClick={() => setActiveTab('news')} />
                           </div>
                         );
                       case 'profil':
                         return (
-                          <div data-aos="fade-left" data-aos-delay="100" key="profil">
+                          <div data-aos="fade-up" data-aos-delay="100" key="profil">
                             <SchoolProfileSection />
                           </div>
                         );
                       case 'video':
                         return (
-                          <div data-aos="zoom-in" data-aos-delay="100" key="video">
+                          <div data-aos="fade-up" data-aos-delay="100" key="video">
                             <VideoProfileSection />
                           </div>
                         );
@@ -217,10 +244,10 @@ function AppContent() {
             path="/profile"
             element={
               <div className="pt-4" data-aos="fade-in">
-                <div data-aos="fade-right">
+                <div data-aos="fade-up">
                   <SchoolProfileSection />
                 </div>
-                <div data-aos="zoom-in" data-aos-delay="200">
+                <div data-aos="fade-up" data-aos-delay="100">
                   <VideoProfileSection />
                 </div>
               </div>
@@ -239,7 +266,7 @@ function AppContent() {
           <Route
             path="/gallery"
             element={
-              <div className="pt-4" data-aos="zoom-in">
+              <div className="pt-4" data-aos="fade-up">
                 <GallerySection />
               </div>
             }
@@ -248,8 +275,17 @@ function AppContent() {
           <Route
             path="/news"
             element={
-              <div className="pt-4" data-aos="fade-right">
+              <div className="pt-4" data-aos="fade-up">
                 <NewsSection />
+              </div>
+            }
+          />
+
+          <Route
+            path="/modul"
+            element={
+              <div className="pt-4" data-aos="fade-up">
+                <ModulPembelajaranSection />
               </div>
             }
           />
@@ -275,9 +311,9 @@ function AppContent() {
         />
       </div>
 
-
-
       <PpdbModal isOpen={ppdbOpen} onClose={() => setPpdbOpen(false)} />
+
+      <GlobalSearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <BackToTop />
 

@@ -25,9 +25,19 @@ export const AnnouncementPopup: React.FC = () => {
       const prevHtml = document.documentElement.style.overflow;
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          handleClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
       return () => {
         document.body.style.overflow = prevBody;
         document.documentElement.style.overflow = prevHtml;
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
   }, [isOpen]);

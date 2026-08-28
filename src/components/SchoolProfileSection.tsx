@@ -163,7 +163,7 @@ export const SchoolProfileSection: React.FC = () => {
               </div>
               <div className="relative overflow-hidden rounded-xl p-3 sm:p-5 bg-gradient-to-r from-teal-50/90 to-teal-50/40 border border-teal-100/80">
                 <div 
-                  className="text-[11px] sm:text-lg text-slate-800 font-bold leading-snug sm:leading-relaxed border-l-2 sm:border-l-4 border-[#028C84] pl-2.5 sm:pl-4 prose prose-slate max-w-none"
+                  className="text-[11px] sm:text-lg text-slate-800 font-bold leading-snug sm:leading-relaxed border-l-2 sm:border-l-4 border-[#028C84] pl-2.5 sm:pl-4 prose prose-slate max-w-none break-words"
                   dangerouslySetInnerHTML={{ __html: homepageConfig.visi }}
                 />
               </div>
@@ -184,7 +184,7 @@ export const SchoolProfileSection: React.FC = () => {
               </div>
               <ul className="space-y-1.5 sm:space-y-3.5 text-[11px] sm:text-base text-slate-700 leading-snug">
                 {homepageConfig.misi.map((misiItem, idx) => (
-                  <li key={idx} className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60">
+                  <li key={idx} className="flex items-start gap-2 sm:gap-3 p-1.5 sm:p-2.5 rounded-lg hover:bg-teal-50/60 break-words">
                     <CheckCircle2 className="w-3.5 h-3.5 sm:w-5 sm:h-5 text-[#028C84] shrink-0 mt-0.5" />
                     <span>{misiItem}</span>
                   </li>
@@ -210,7 +210,7 @@ export const SchoolProfileSection: React.FC = () => {
             </div>
 
             <div 
-              className="prose max-w-none text-slate-700 text-[11px] sm:text-base leading-snug sm:leading-relaxed"
+              className="prose max-w-none text-slate-700 text-[11px] sm:text-base leading-snug sm:leading-relaxed break-words"
               dangerouslySetInnerHTML={{ __html: homepageConfig.sejarah }}
             />
           </div>
@@ -218,7 +218,7 @@ export const SchoolProfileSection: React.FC = () => {
 
         {/* Tab 3: Fasilitas */}
         {activeTab === 'fasilitas' && (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 animate-fade-in">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 animate-fade-in">
             {facilities.map((fac) => {
               const imageSrc = fac.foto ? getImageUrl(fac.foto) : (fac.image || 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=600');
               return (
@@ -227,7 +227,7 @@ export const SchoolProfileSection: React.FC = () => {
                   onClick={() => setSelectedFacility(fac)} 
                   className="group relative bg-white/75 backdrop-blur-xl rounded-xl sm:rounded-3xl overflow-hidden border border-white/80 shadow-sm flex flex-col cursor-pointer hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="h-32 sm:h-52 w-full overflow-hidden relative">
+                  <div className="h-28 xs:h-32 sm:h-52 w-full overflow-hidden relative">
                     <img
                       src={imageSrc}
                       alt={fac.judul}
@@ -238,12 +238,12 @@ export const SchoolProfileSection: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="p-3 sm:p-6 flex-grow flex flex-col">
-                    <h4 className="font-bold text-[13px] sm:text-lg text-[#1E3A8A] leading-tight line-clamp-1 sm:line-clamp-none">
+                  <div className="p-2.5 xs:p-3 sm:p-6 flex-grow flex flex-col">
+                    <h4 className="font-bold text-xs xs:text-[13px] sm:text-lg text-[#1E3A8A] leading-tight line-clamp-1 sm:line-clamp-none">
                       {fac.judul}
                     </h4>
                     <p 
-                      className="text-[11px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3"
+                      className="text-[10px] xs:text-[11px] sm:text-sm text-slate-600 leading-snug mt-1 sm:mt-2 line-clamp-2 sm:line-clamp-3 break-words"
                       dangerouslySetInnerHTML={{ __html: fac.deskripsi }}
                     />
                   </div>

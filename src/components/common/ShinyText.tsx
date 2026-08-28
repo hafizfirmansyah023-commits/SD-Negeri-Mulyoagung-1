@@ -18,7 +18,7 @@ export const ShinyText: React.FC<ShinyTextProps> = ({
 
   return (
     <span
-      className={`inline-block bg-clip-text text-transparent bg-[linear-gradient(110deg,#8cf4ea,45%,#ffffff,55%,#8cf4ea)] bg-[length:200%_100%] ${
+      className={`inline bg-clip-text text-transparent bg-[linear-gradient(110deg,#8cf4ea,45%,#ffffff,55%,#8cf4ea)] bg-[length:200%_100%] max-w-full break-words ${
         disabled ? '' : 'animate-shiny-text'
       } ${className}`}
       style={{
