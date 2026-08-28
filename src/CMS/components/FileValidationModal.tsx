@@ -70,7 +70,7 @@ export const FileValidationModal: React.FC = () => {
             <ShieldAlert size={16} className="text-red-600 shrink-0 mt-0.5" />
             <div>
               <span className="font-semibold block text-red-900">Ketentuan Foto Upload:</span>
-              <span className="text-red-700">Maksimal ukuran file: <strong>5MB</strong> &bull; Format wajib: <strong>Gambar (JPG, PNG, WEBP, GIF)</strong></span>
+              <span className="text-red-700">Maksimal ukuran file: <strong>10MB</strong> &bull; Format wajib: <strong>Gambar (JPG, PNG, WEBP, GIF)</strong></span>
             </div>
           </div>
 

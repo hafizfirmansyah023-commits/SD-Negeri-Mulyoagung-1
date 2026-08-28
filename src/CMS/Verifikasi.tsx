@@ -39,6 +39,7 @@ interface ModulItem {
   mata_pelajaran: string;
   kelas: string;
   tahun_ajaran: string;
+  status?: 'Draft' | 'Published';
   status_verifikasi: 'Pending' | 'Verified' | 'Rejected';
   uploader: string;
 }
@@ -377,7 +378,18 @@ export default function Verifikasi() {
                   foto={mod.foto || mod.foto_cover || ''}
                   kategori={mod.kategori}
                   tanggal={mod.tahun_ajaran}
-                  uploader={mod.uploader}
+                  uploader={mod.uploader || 'Guru'}
+                  statusBadge={
+                    mod.status === 'Draft' ? (
+                      <span className="bg-slate-800 text-amber-300 border border-amber-400/40 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        Draft
+                      </span>
+                    ) : (
+                      <span className="bg-teal-600 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                        Published
+                      </span>
+                    )
+                  }
                   onVerify={handleVerifyModule}
                 />
               ))}

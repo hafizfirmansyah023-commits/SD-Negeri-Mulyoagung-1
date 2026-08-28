@@ -31,6 +31,12 @@ try {
 
     // Ensure columns exist if table was previously created
     foto_ensure_column($conn, 'modul_pembelajaran', 'foto_cover', 'foto_cover_crop');
+
+    // Ensure status column exists
+    $checkCol = $conn->query("SHOW COLUMNS FROM `modul_pembelajaran` LIKE 'status'");
+    if ($checkCol && $checkCol->rowCount() === 0) {
+        $conn->exec("ALTER TABLE `modul_pembelajaran` ADD COLUMN `status` ENUM('Draft', 'Published') DEFAULT 'Published' AFTER `foto_cover_crop`");
+    }
 } catch (PDOException $e) {
     // Continue
 }
@@ -283,6 +289,25 @@ elseif ($method === 'POST') {
             $stmt = $conn->prepare("UPDATE modul_pembelajaran SET status_verifikasi = ? WHERE id = ?");
             $stmt->execute([$status_verifikasi, $id]);
             echo json_encode(["status" => "success", "message" => "Status verifikasi modul berhasil diperbarui menjadi $status_verifikasi."]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+        }
+    }
+    elseif ($action === 'toggle_status') {
+        $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $status = isset($_POST['status']) && in_array(trim($_POST['status']), ['Draft', 'Published']) ? trim($_POST['status']) : 'Published';
+
+        if ($id === 0) {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "ID modul tidak valid."]);
+            exit();
+        }
+
+        try {
+            $stmt = $conn->prepare("UPDATE modul_pembelajaran SET status = ? WHERE id = ?");
+            $stmt->execute([$status, $id]);
+            echo json_encode(["status" => "success", "message" => "Status modul berhasil diubah menjadi $status."]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);

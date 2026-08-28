@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload, Link as LinkIcon, FileText, X } from 'lucide-react';
+import React from 'react';
+import { Upload, Link as LinkIcon, FileText, X, Globe, FileEdit } from 'lucide-react';
 import { ImageUploadField, ImageUploadPayload } from '../components/ImageUploadField';
 import { CROP_RATIO_OPTIONS } from '../components/ImageCropModal';
 import { getImageUrl } from '../../config/api';
@@ -327,16 +327,55 @@ export const ModulFormModal: React.FC<ModulFormModalProps> = ({
             </div>
 
             {/* Status (Draft / Published) */}
-            <div>
-              <label className="block text-slate-700 text-sm font-medium mb-1.5">Status Publikasi</label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as 'Draft' | 'Published')}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm bg-white"
-              >
-                <option value="Published">Published (Diterbitkan ke publik jika terverifikasi)</option>
-                <option value="Draft">Draft (Simpan sebagai draf pribadi)</option>
-              </select>
+            <div className="space-y-2">
+              <label className="block text-slate-700 text-sm font-semibold">Status Publikasi Modul *</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setStatus('Published')}
+                  className={`flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    status === 'Published'
+                      ? 'border-teal-500 bg-teal-50/50 ring-2 ring-teal-500/20'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
+                >
+                  <div className={`p-2 rounded-xl shrink-0 ${status === 'Published' ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                    <Globe size={18} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-slate-800">Published</span>
+                      <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded">Publik</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                      Diterbitkan ke publik di website setelah terverifikasi admin.
+                    </p>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setStatus('Draft')}
+                  className={`flex items-start gap-3 p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                    status === 'Draft'
+                      ? 'border-amber-500 bg-amber-50/50 ring-2 ring-amber-500/20'
+                      : 'border-slate-200 bg-white hover:bg-slate-50'
+                  }`}
+                >
+                  <div className={`p-2 rounded-xl shrink-0 ${status === 'Draft' ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                    <FileEdit size={18} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-sm font-bold text-slate-800">Draft</span>
+                      <span className="text-[10px] font-semibold bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded">Draf Pribadi</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
+                      Simpan draf di CMS, tidak akan tampil di halaman publik website.
+                    </p>
+                  </div>
+                </button>
+              </div>
             </div>
 
           </div>

@@ -80,7 +80,7 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
             <div>
               <ImageUploadField
                 label="Unggah Foto Fasilitas"
-                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. Pilih rasio potong yang diinginkan. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
                 currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
                 currentOriginalImage={
                   currentOriginalFoto
@@ -96,7 +96,6 @@ export const FasilitasFormModal: React.FC<FasilitasFormModalProps> = ({
                 ratioOptions={CROP_RATIO_OPTIONS}
                 onFileChange={setFotoSelection}
               />
-              <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
             </div>
 
           </div>
