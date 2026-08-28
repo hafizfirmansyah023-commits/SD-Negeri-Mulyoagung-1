@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X, ExternalLink, Download, FileText, BookOpen } from 'lucide-react';
 import { ModulItem } from '../hooks/useModulData';
@@ -71,21 +71,21 @@ export const ModulPreviewModal: React.FC<ModulPreviewModalProps> = ({ module, on
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl w-full max-w-5xl h-[94vh] sm:h-[92vh] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden text-left my-auto animate-in zoom-in-95 duration-200"
+        className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl w-full max-w-5xl h-[88vh] sm:h-[92vh] max-h-[920px] shadow-2xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden text-left my-auto animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-teal-800 via-teal-900 to-slate-950 p-3 sm:p-4 md:p-5 text-white flex justify-between items-center shrink-0 border-b border-teal-700/50">
-          <div className="flex items-center gap-2.5 sm:gap-3 overflow-hidden min-w-0">
-            <div className="p-2 sm:p-2.5 rounded-xl bg-teal-500/20 border border-teal-400/30 shrink-0 text-teal-300">
+        <div className="bg-gradient-to-r from-teal-800 via-teal-900 to-slate-950 p-2.5 sm:p-4 md:p-5 text-white flex justify-between items-center shrink-0 border-b border-teal-700/50">
+          <div className="flex items-center gap-2 sm:gap-3 overflow-hidden min-w-0 flex-1 mr-2">
+            <div className="p-1.5 sm:p-2.5 rounded-xl bg-teal-500/20 border border-teal-400/30 shrink-0 text-teal-300">
               <BookOpen size={18} className="sm:w-5 sm:h-5" />
             </div>
-            <div className="overflow-hidden min-w-0">
-              <h3 className="font-bold text-xs sm:text-base lg:text-lg leading-tight truncate text-white">
+            <div className="overflow-hidden min-w-0 flex-1">
+              <h3 className="font-bold text-xs sm:text-base lg:text-lg leading-tight truncate text-white" title={module.judul}>
                 {module.judul}
               </h3>
-              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-teal-200/90 mt-0.5 sm:mt-1">
-                <span className="font-semibold text-teal-300 truncate">{module.mata_pelajaran}</span>
+              <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-[10px] sm:text-xs text-teal-200/90 mt-0.5 sm:mt-1">
+                <span className="font-semibold text-teal-300 truncate max-w-[130px] sm:max-w-none">{module.mata_pelajaran}</span>
                 <span>•</span>
                 <span>{module.kelas}</span>
                 <span>•</span>
@@ -94,7 +94,7 @@ export const ModulPreviewModal: React.FC<ModulPreviewModalProps> = ({ module, on
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {directUrl && (
               <a
                 href={directUrl}
@@ -132,7 +132,7 @@ export const ModulPreviewModal: React.FC<ModulPreviewModalProps> = ({ module, on
           ) : module.sumber_tipe === 'upload' && directUrl ? (
             <NativePdfViewer pdfUrl={directUrl} title={module.judul} />
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-3 bg-slate-900">
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center text-slate-400 space-y-3 bg-slate-900 min-h-[300px]">
               <FileText size={48} className="text-slate-600" />
               <p className="font-semibold text-sm text-slate-200">
                 File dokumen PDF belum tersedia atau tautan tidak valid.
@@ -152,7 +152,7 @@ export const ModulPreviewModal: React.FC<ModulPreviewModalProps> = ({ module, on
         </div>
 
         {/* Footer Info & Close Action */}
-        <div className="p-2.5 sm:p-3.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-[11px] sm:text-xs text-slate-500 shrink-0">
+        <div className="p-2 sm:p-3 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-[11px] sm:text-xs text-slate-500 shrink-0">
           <div className="flex items-center gap-2 overflow-hidden min-w-0">
             <span className="bg-teal-50 text-teal-700 border border-teal-200 dark:bg-teal-950/60 dark:text-teal-300 dark:border-teal-800 font-bold px-2 py-0.5 rounded-full shrink-0">
               {module.kategori}
@@ -164,7 +164,7 @@ export const ModulPreviewModal: React.FC<ModulPreviewModalProps> = ({ module, on
 
           <button
             onClick={onClose}
-            className="px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold transition-colors cursor-pointer shrink-0"
+            className="px-3 py-1 sm:px-4 sm:py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold transition-colors cursor-pointer shrink-0"
           >
             Tutup
           </button>
