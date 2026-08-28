@@ -321,6 +321,7 @@ export default function Verifikasi() {
                   deskripsiAtauIsi={art.isi}
                   foto={art.foto}
                   kategori={art.kategori}
+                  fallbackLabel={art.kategori}
                   tanggal={art.tanggal}
                   uploader={art.uploader}
                   onVerify={handleVerifyNews}
@@ -349,6 +350,7 @@ export default function Verifikasi() {
                   deskripsiAtauIsi={item.deskripsi}
                   foto={item.foto}
                   kategori={item.kategori}
+                  fallbackLabel={item.kategori}
                   tanggal={item.tanggal}
                   uploader={item.uploader}
                   onVerify={handleVerifyGallery}
@@ -377,6 +379,8 @@ export default function Verifikasi() {
                   deskripsiAtauIsi={`${mod.mata_pelajaran} • ${mod.kelas} • ${mod.deskripsi || ''}`}
                   foto={mod.foto || mod.foto_cover || ''}
                   kategori={mod.kategori}
+                  fallbackLabel={mod.mata_pelajaran}
+                  isModule={true}
                   tanggal={mod.tahun_ajaran}
                   uploader={mod.uploader || 'Guru'}
                   statusBadge={
