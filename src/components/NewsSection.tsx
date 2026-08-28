@@ -149,10 +149,10 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
         </div>
 
         {/* Filter, Search, and Sort Toolbar */}
-        <div className="bg-slate-50/80 p-3.5 sm:p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4 shadow-sm">
+        <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4 shadow-sm">
           
           {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-w-md w-full">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input
               type="text"
@@ -173,15 +173,15 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
           </div>
 
           {/* Sort Order Selector */}
-          <div className="flex items-center gap-2 self-end md:self-center">
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+          <div className="flex items-center justify-between sm:justify-start gap-2 self-stretch md:self-center">
+            <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium shrink-0">
               <ArrowUpDown size={14} className="text-teal-600" />
               <span>Urutan:</span>
             </div>
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as 'terbaru' | 'terlama')}
-              className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer shadow-sm"
+              className="px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs sm:text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer shadow-sm flex-1 sm:flex-none"
             >
               <option value="terbaru">Terbaru Dahulu</option>
               <option value="terlama">Terlama Dahulu</option>
@@ -249,7 +249,7 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
                   </h3>
                   {article.summary && (
                     <p 
-                      className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed"
+                      className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed break-words"
                       dangerouslySetInnerHTML={{ __html: article.summary }}
                     />
                   )}
@@ -257,12 +257,12 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
               </div>
 
               {/* Footer Tanggal & Aksi Bagikan + Lihat Detail */}
-              <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-400">
-                <span className="flex items-center gap-1.5">
+              <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-50 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+                <span className="flex items-center gap-1.5 shrink-0">
                   <Calendar size={13} className="text-teal-600 shrink-0" />
-                  <span>{article.date}</span>
+                  <span className="text-[11px] sm:text-xs">{article.date}</span>
                 </span>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 sm:gap-3 shrink-0">
                   <button
                     type="button"
                     onClick={(e) => handleShare(e, article)}

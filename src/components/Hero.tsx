@@ -117,7 +117,7 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="absolute bottom-0 right-0 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] bg-[#79EEDE]/10 rounded-full blur-3xl"></div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-16 sm:pt-20 lg:pt-16 pb-14 sm:pb-20 lg:pb-24 flex flex-col lg:flex-row items-center gap-8 sm:gap-10 lg:gap-12">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-10 sm:pt-16 lg:pt-20 pb-12 sm:pb-16 lg:pb-24 flex flex-col lg:flex-row items-center gap-8 sm:gap-10 lg:gap-12">
 
         {/* LEFT */}
         <div className="w-full lg:w-3/5 text-center lg:text-left space-y-4 sm:space-y-6">

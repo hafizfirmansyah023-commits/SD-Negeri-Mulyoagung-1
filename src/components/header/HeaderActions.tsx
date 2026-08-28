@@ -17,7 +17,7 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
   onOpenSearch,
   linkPpdb,
 }) => (
-  <div className="hidden lg:flex items-center gap-3 xl:gap-3.5 shrink-0">
+  <div className="hidden xl:flex items-center gap-3 xl:gap-3.5 shrink-0">
     {onOpenSearch && (
       <button
         onClick={onOpenSearch}

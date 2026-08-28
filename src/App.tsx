@@ -96,11 +96,22 @@ function AppContent() {
     localStorage.removeItem('theme');
 
     AOS.init({
-      duration: 800,
+      duration: 700,
       easing: 'ease-in-out',
       once: true,
-      offset: 50,
+      offset: 30,
+      debounceDelay: 50,
+      throttleDelay: 99,
     });
+
+    const handleWindowResize = () => {
+      AOS.refresh();
+    };
+
+    window.addEventListener('resize', handleWindowResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
   }, []);
 
   // Simpan posisi scroll secara real-time untuk halaman yang sedang aktif
@@ -168,7 +179,7 @@ function AppContent() {
       />
 
       {/* Main Page Content */}
-      <main className="flex-grow overflow-x-hidden">
+      <main className="flex-grow overflow-x-clip">
         <Routes>
 
           <Route
@@ -193,25 +204,25 @@ function AppContent() {
                         );
                       case 'sambutan':
                         return (
-                          <div data-aos="fade-up" data-aos-delay="200" key="sambutan">
+                          <div data-aos="fade-up" data-aos-delay="150" key="sambutan">
                             <PrincipalGreeting />
                           </div>
                         );
                       case 'berita':
                         return (
-                          <div data-aos="fade-right" data-aos-delay="100" key="berita">
+                          <div data-aos="fade-up" data-aos-delay="100" key="berita">
                             <NewsSection onViewAllClick={() => setActiveTab('news')} />
                           </div>
                         );
                       case 'profil':
                         return (
-                          <div data-aos="fade-left" data-aos-delay="100" key="profil">
+                          <div data-aos="fade-up" data-aos-delay="100" key="profil">
                             <SchoolProfileSection />
                           </div>
                         );
                       case 'video':
                         return (
-                          <div data-aos="zoom-in" data-aos-delay="100" key="video">
+                          <div data-aos="fade-up" data-aos-delay="100" key="video">
                             <VideoProfileSection />
                           </div>
                         );
@@ -233,10 +244,10 @@ function AppContent() {
             path="/profile"
             element={
               <div className="pt-4" data-aos="fade-in">
-                <div data-aos="fade-right">
+                <div data-aos="fade-up">
                   <SchoolProfileSection />
                 </div>
-                <div data-aos="zoom-in" data-aos-delay="200">
+                <div data-aos="fade-up" data-aos-delay="100">
                   <VideoProfileSection />
                 </div>
               </div>
@@ -255,7 +266,7 @@ function AppContent() {
           <Route
             path="/gallery"
             element={
-              <div className="pt-4" data-aos="zoom-in">
+              <div className="pt-4" data-aos="fade-up">
                 <GallerySection />
               </div>
             }
@@ -264,7 +275,7 @@ function AppContent() {
           <Route
             path="/news"
             element={
-              <div className="pt-4" data-aos="fade-right">
+              <div className="pt-4" data-aos="fade-up">
                 <NewsSection />
               </div>
             }

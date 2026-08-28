@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { Search, X, FileText, Image as ImageIcon, BookOpen, User, ArrowRight, CornerDownLeft, Sparkles } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Search, X, FileText, Image as ImageIcon, BookOpen, User, Sparkles, Loader2 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { Article, Teacher, GalleryItem } from '../types';
 import { ModulItem } from '../CMS/hooks/useModulData';
@@ -16,7 +17,9 @@ interface GlobalSearchModalProps {
 type SearchCategory = 'all' | 'berita' | 'galeri' | 'modul' | 'guru';
 
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, onClose }) => {
-  const [query, setQuery] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [isDebouncing, setIsDebouncing] = useState(false);
   const [activeTab, setActiveTab] = useState<SearchCategory>('all');
   const [loading, setLoading] = useState(false);
 
@@ -34,14 +37,35 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Focus on input when opened
+  // Debounce search: tunggu user selesai mengetik 300ms
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setDebouncedQuery('');
+      setIsDebouncing(false);
+      return;
+    }
+
+    setIsDebouncing(true);
+    const handler = setTimeout(() => {
+      setDebouncedQuery(searchTerm.trim());
+      setIsDebouncing(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  // Focus on input when opened and reset on close
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
     } else {
-      setQuery('');
+      setSearchTerm('');
+      setDebouncedQuery('');
+      setIsDebouncing(false);
       setActiveTab('all');
     }
   }, [isOpen]);
@@ -133,16 +157,20 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     fetchAllData();
   }, [isOpen]);
 
-  // Lock body scroll
+  // Lock body and html scroll when search modal is open
   useEffect(() => {
     if (isOpen) {
+      const prevBodyOverflow = document.body.style.overflow;
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'hidden';
+
+      return () => {
+        document.body.style.overflow = prevBodyOverflow;
+        document.documentElement.style.overflow = prevHtmlOverflow;
+      };
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [isOpen]);
 
   // Escape key listener to close modal reliably
@@ -158,9 +186,9 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Filter items based on query
+  // Filter items based on debounced query
   const searchResults = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = debouncedQuery.toLowerCase();
     if (!q) return { news: [], gallery: [], modules: [], teachers: [], total: 0 };
 
     const filteredNews = news.filter(
@@ -197,32 +225,51 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
       teachers: filteredTeachers,
       total,
     };
-  }, [query, news, gallery, modules, teachers]);
+  }, [debouncedQuery, news, gallery, modules, teachers]);
+
+  const handleClear = () => {
+    setSearchTerm('');
+    setDebouncedQuery('');
+    setIsDebouncing(false);
+    inputRef.current?.focus();
+  };
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <>
-      <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-start justify-center p-3 sm:p-6 sm:pt-16 overflow-y-auto">
+      <div className="fixed inset-0 z-[9999] flex items-start justify-center p-3 sm:p-6 sm:pt-16 overflow-y-auto overscroll-contain">
+        {/* Backdrop overlay */}
         <div
-          className="bg-white rounded-3xl w-full max-w-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col my-auto sm:my-0 max-h-[85vh] animate-in fade-in zoom-in-95 duration-200"
+          className="fixed inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity"
+          onClick={onClose}
+        />
+
+        {/* Modal Dialog */}
+        <div
+          className="relative bg-white rounded-3xl w-full max-w-3xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col my-auto sm:my-0 max-h-[85vh] animate-in fade-in zoom-in-95 duration-200 z-10"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Search Header Bar */}
           <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
-            <Search className="text-[#028C84] shrink-0" size={22} />
+            {isDebouncing || loading ? (
+              <Loader2 className="text-[#028C84] shrink-0 animate-spin" size={22} />
+            ) : (
+              <Search className="text-[#028C84] shrink-0" size={22} />
+            )}
             <input
               ref={inputRef}
               type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Cari berita, galeri foto, modul pembelajaran, atau guru..."
               className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder-slate-400 focus:outline-none font-medium"
             />
-            {query && (
+            {searchTerm && (
               <button
-                onClick={() => setQuery('')}
+                onClick={handleClear}
                 className="p-1 rounded-full text-slate-400 hover:text-slate-600 cursor-pointer"
+                title="Hapus input"
               >
                 <X size={18} />
               </button>
@@ -237,7 +284,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
           </div>
 
           {/* Category Tabs */}
-          {query.trim() && (
+          {debouncedQuery && (
             <div className="px-4 sm:px-6 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center gap-1.5 overflow-x-auto">
               {[
                 { key: 'all', label: 'Semua Hasil', count: searchResults.total },
@@ -251,17 +298,15 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                   <button
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key as SearchCategory)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                      isActive
-                        ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm'
-                        : 'text-slate-600 hover:bg-slate-200/60'
-                    }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${isActive
+                      ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-200/60'
+                      }`}
                   >
                     <span>{tab.label}</span>
                     <span
-                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                        isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
-                      }`}
+                      className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                        }`}
                     >
                       {tab.count}
                     </span>
@@ -273,7 +318,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
 
           {/* Results List */}
           <div className="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6">
-            {!query.trim() ? (
+            {!searchTerm.trim() ? (
               <div className="py-12 text-center text-slate-400 space-y-2">
                 <Sparkles size={36} className="mx-auto text-teal-500/50" />
                 <p className="text-sm font-medium text-slate-600">Pencarian Cepat SDN 1 Mulyoagung</p>
@@ -281,10 +326,15 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                   Ketik kata kunci untuk mencari materi modul, kabar sekolah, dokumentasi kegiatan, atau guru.
                 </p>
               </div>
+            ) : isDebouncing ? (
+              <div className="py-12 text-center text-slate-400 space-y-3">
+                <Loader2 size={36} className="mx-auto text-teal-600 animate-spin" />
+                <p className="text-sm font-medium text-slate-600">Sedang mencari...</p>
+              </div>
             ) : searchResults.total === 0 ? (
               <div className="py-12 text-center text-slate-400 space-y-2">
                 <Search size={36} className="mx-auto text-slate-300" />
-                <p className="text-sm font-semibold text-slate-700">Tidak ada hasil untuk &quot;{query}&quot;</p>
+                <p className="text-sm font-semibold text-slate-700">Tidak ada hasil untuk &quot;{debouncedQuery}&quot;</p>
                 <p className="text-xs text-slate-400">Coba gunakan kata kunci lain yang lebih umum.</p>
               </div>
             ) : (
@@ -451,6 +501,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
       <PhotoLightboxModal photo={activePhoto} onClose={() => setActivePhoto(null)} />
       <TeacherProfileModal teacher={activeTeacher} onClose={() => setActiveTeacher(null)} />
       <ModulPreviewModal module={activeModule} onClose={() => setActiveModule(null)} />
-    </>
+    </>,
+    document.body
   );
 };
