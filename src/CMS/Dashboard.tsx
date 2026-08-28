@@ -54,7 +54,6 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                         currentTab !== 'dashboard' &&
                         currentTab !== 'galeri' &&
                         currentTab !== 'berita' &&
-                        currentTab !== 'modul' &&
                         currentTab !== 'user'
                     ) {
                         navigate('/cms/dashboard', { replace: true });
@@ -123,9 +122,9 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'pengumuman' && user.role === 'ADMIN' && <PengumumanCrud />}
                 {activeTab === 'statistik' && user.role === 'ADMIN' && <StatistikCrud currentUser={user} />}
                 {activeTab === 'fasilitas' && user.role === 'ADMIN' && <FasilitasCrud currentUser={user} />}
-                {activeTab === 'galeri' && <GaleriCrud currentUser={user} />}
-                {activeTab === 'berita' && <BeritaCrud currentUser={user} />}
-                {activeTab === 'modul' && <ModulPembelajaranCrud currentUser={user} />}
+                {activeTab === 'galeri' && user.role !== 'GURU' && <GaleriCrud currentUser={user} />}
+                {activeTab === 'berita' && user.role !== 'GURU' && <BeritaCrud currentUser={user} />}
+                {activeTab === 'modul' && user.role !== 'TIM' && <ModulPembelajaranCrud currentUser={user} />}
                 {activeTab === 'verifikasi' && user.role === 'ADMIN' && <Verifikasi />}
                 {activeTab === 'user' && (
                     <UserCrud currentUser={user} onUpdateCurrentUser={handleUpdateUser} />

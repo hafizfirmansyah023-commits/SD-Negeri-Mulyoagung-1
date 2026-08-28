@@ -133,6 +133,7 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     formData.append('kategori', kategori);
     formData.append('tanggal', tanggal);
     formData.append('uploaded_by', currentUser.id.toString());
+    formData.append('user_id', currentUser.id.toString());
     formData.append('role', currentUser.role);
     if (fotoSelection.original) {
       formData.append('foto_original', fotoSelection.original);
@@ -169,7 +170,9 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
         isOpen: true,
         variant: 'edit',
         title: 'Konfirmasi Edit Galeri',
-        message: 'Apakah Anda yakin ingin menyimpan perubahan foto galeri ini?',
+        message: currentUser.role === 'ADMIN'
+          ? 'Apakah Anda yakin ingin menyimpan perubahan foto galeri ini?'
+          : 'Menyimpan perubahan akan mengembalikan status foto galeri ke "Menunggu Verifikasi" (Pending) agar ditinjau ulang oleh Admin. Lanjutkan?',
         onConfirm: () => {
           setConfirmState((prev) => ({ ...prev, isOpen: false }));
           processSubmit();
@@ -185,10 +188,10 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
       isOpen: true,
       variant: 'delete',
       title: 'Konfirmasi Hapus Galeri',
-      message: 'Apakah Anda yakin ingin menghapus foto galeri ini?',
+      message: 'Apakah Anda yakin ingin menghapus foto galeri ini? Data foto yang dihapus tidak dapat dikembalikan.',
       onConfirm: async () => {
         setConfirmState((prev) => ({ ...prev, isOpen: false }));
-        const ok = await deleteGalleryItem(id);
+        const ok = await deleteGalleryItem(id, currentUser.id, currentUser.role);
         if (ok) {
           setToast({ type: 'delete', text: 'Foto galeri berhasil dihapus.' });
         } else {

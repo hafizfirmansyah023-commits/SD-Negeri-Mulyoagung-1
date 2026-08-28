@@ -6,7 +6,6 @@ import heroImg1 from '../assets/images/img2.webp';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { ShinyText } from './common/ShinyText';
 import { useHomepageConfig } from '../hooks/useHomepageConfig';
-import { h1 } from 'motion/react-client';
 
 interface HeroProps {
   onOpenPpdb: () => void;

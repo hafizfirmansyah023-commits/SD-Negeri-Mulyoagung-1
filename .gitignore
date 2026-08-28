@@ -1,0 +1,63 @@
+# ========================
+# Dependencies
+# ========================
+node_modules/
+
+# ========================
+# Build Output
+# ========================
+build/
+dist/
+coverage/
+
+# ========================
+# Environment & Secrets
+# ========================
+env*
+env.example
+
+# ========================
+# Database Dump (SENSITIF)
+# ========================
+# #backend/db_sdn1mulyoagung.sql
+# *.sql
+
+# ========================
+# File Upload Pengguna
+# (konten dinamis — tidak perlu di-track Git)
+# ========================
+backend/uploads/
+
+# ========================
+# OS & Editor
+# ========================
+# .DS_Store
+# Thumbs.db
+# desktop.ini
+# .vscode/settings.json
+# .idea/
+
+# ========================
+# Log & Temp
+# ========================
+# *.log
+# *.tmp
+# *.bak
+# *.swp
+
+# ========================
+# Script Sementara
+# ========================
+# scratch_check.ps1
+# *.ps1
+
+# ========================
+# Catatan Internal
+# (tidak perlu masuk repo publik)
+# ========================
+
+# ========================
+# OpenCode
+# ========================
+.opencode/
+.opencode.json

@@ -45,12 +45,14 @@ export function useNewsData() {
     fetchArticles();
   }, [fetchArticles]);
 
-  const deleteArticle = async (id: number) => {
+  const deleteArticle = async (id: number, userId?: number, role?: string) => {
     setError('');
     setSuccess('');
     const formData = new FormData();
     formData.append('action', 'delete');
     formData.append('id', id.toString());
+    if (userId) formData.append('user_id', userId.toString());
+    if (role) formData.append('role', role);
 
     try {
       const response = await fetch(`${API_BASE}/backend/API/newsAPI.php`, {

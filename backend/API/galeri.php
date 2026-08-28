@@ -46,6 +46,12 @@ elseif ($method === 'POST') {
         $uploaded_by = (isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : null;
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
+        if ($role === 'GURU') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role GURU tidak memiliki izin untuk mengunggah foto galeri."]);
+            exit();
+        }
+
         if (empty($judul) || empty($kategori) || empty($tanggal)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Kolom judul, kategori, dan tanggal wajib diisi."]);
@@ -82,7 +88,14 @@ elseif ($method === 'POST') {
         $deskripsi = $deskripsi_raw === '' ? null : $deskripsi_raw;
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
+        $user_id = (isset($_POST['user_id']) && intval($_POST['user_id']) > 0) ? intval($_POST['user_id']) : ((isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : 0);
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
+
+        if ($role === 'GURU') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role GURU tidak memiliki izin untuk mengubah foto galeri."]);
+            exit();
+        }
 
         if ($id === 0 || empty($judul) || empty($kategori) || empty($tanggal)) {
             http_response_code(400);
@@ -90,7 +103,7 @@ elseif ($method === 'POST') {
             exit();
         }
 
-        $stmt = $conn->prepare("SELECT foto, foto_crop, status_verifikasi FROM galeri WHERE id = ?");
+        $stmt = $conn->prepare("SELECT foto, foto_crop, status_verifikasi, uploaded_by FROM galeri WHERE id = ?");
         $stmt->execute([$id]);
         $item = $stmt->fetch();
         if (!$item) {
@@ -99,15 +112,24 @@ elseif ($method === 'POST') {
             exit();
         }
 
+        // Ownership enforcement for non-admin
+        if ($role !== 'ADMIN') {
+            if ($item['uploaded_by'] && intval($item['uploaded_by']) !== $user_id) {
+                http_response_code(403);
+                echo json_encode(["status" => "error", "message" => "Anda tidak memiliki izin untuk mengedit foto galeri yang diunggah oleh akun lain."]);
+                exit();
+            }
+        }
+
         [$foto_path, $foto_crop_path] = foto_handle_update($upload_dir, 'backend/uploads/galeri/', $item['foto'], $item['foto_crop'] ?? '');
 
-        // If updated by TIM, revert back to Pending verification
+        // If updated by TIM / non-admin, revert back to Pending verification
         $status_verifikasi = ($role === 'ADMIN') ? $item['status_verifikasi'] : 'Pending';
 
         try {
             $stmt = $conn->prepare("UPDATE galeri SET judul = ?, deskripsi = ?, foto = ?, foto_crop = ?, kategori = ?, tanggal = ?, status_verifikasi = ? WHERE id = ?");
             $stmt->execute([$judul, $deskripsi, $foto_path, $foto_crop_path, $kategori, $tanggal, $status_verifikasi, $id]);
-            echo json_encode(["status" => "success", "message" => "Item galeri berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")]);
+            echo json_encode(["status" => "success", "message" => "Item galeri berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan memerlukan verifikasi ulang oleh admin." : ".")]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
@@ -115,6 +137,14 @@ elseif ($method === 'POST') {
     } 
     elseif ($action === 'delete') {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $user_id = (isset($_POST['user_id']) && intval($_POST['user_id']) > 0) ? intval($_POST['user_id']) : ((isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : 0);
+        $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
+
+        if ($role === 'GURU') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role GURU tidak memiliki izin untuk menghapus foto galeri."]);
+            exit();
+        }
 
         if ($id === 0) {
             http_response_code(400);
@@ -123,13 +153,27 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("SELECT foto, foto_crop FROM galeri WHERE id = ?");
+            $stmt = $conn->prepare("SELECT foto, foto_crop, uploaded_by FROM galeri WHERE id = ?");
             $stmt->execute([$id]);
             $item = $stmt->fetch();
-            if ($item) {
-                foto_unlink($item['foto']);
-                foto_unlink($item['foto_crop'] ?? '');
+
+            if (!$item) {
+                http_response_code(404);
+                echo json_encode(["status" => "error", "message" => "Item galeri tidak ditemukan."]);
+                exit();
             }
+
+            // Ownership enforcement for non-admin
+            if ($role !== 'ADMIN') {
+                if ($item['uploaded_by'] && intval($item['uploaded_by']) !== $user_id) {
+                    http_response_code(403);
+                    echo json_encode(["status" => "error", "message" => "Anda tidak memiliki izin untuk menghapus foto galeri yang diunggah oleh akun lain."]);
+                    exit();
+                }
+            }
+
+            foto_unlink($item['foto']);
+            foto_unlink($item['foto_crop'] ?? '');
 
             $stmt = $conn->prepare("DELETE FROM galeri WHERE id = ?");
             $stmt->execute([$id]);

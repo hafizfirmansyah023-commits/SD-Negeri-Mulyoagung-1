@@ -92,6 +92,12 @@ elseif ($method === 'POST') {
         $uploaded_by = (isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : null;
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'GURU';
 
+        if ($role === 'TIM') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role TIM tidak memiliki izin untuk mengunggah modul pembelajaran."]);
+            exit();
+        }
+
         if (empty($judul) || empty($mata_pelajaran) || empty($kelas) || empty($semester) || empty($tahun_ajaran) || empty($kategori)) {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Harap lengkapi semua field wajib modul."]);
@@ -140,7 +146,7 @@ elseif ($method === 'POST') {
         // Handle Cover Image
         [$foto_cover_path, $foto_cover_crop_path] = foto_handle_create($upload_cover_dir, 'backend/uploads/modul/cover/');
 
-        // Verification status (Admin -> Verified, Guru / TIM -> Pending)
+        // Verification status (Admin -> Verified, Guru -> Pending)
         $status_verifikasi = ($role === 'ADMIN') ? 'Verified' : 'Pending';
 
         try {
@@ -171,7 +177,14 @@ elseif ($method === 'POST') {
         $sumber_tipe = isset($_POST['sumber_tipe']) ? trim($_POST['sumber_tipe']) : 'upload';
         $link_gdrive = isset($_POST['link_gdrive']) ? trim($_POST['link_gdrive']) : '';
         $status = isset($_POST['status']) ? trim($_POST['status']) : 'Published';
+        $user_id = (isset($_POST['user_id']) && intval($_POST['user_id']) > 0) ? intval($_POST['user_id']) : ((isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : 0);
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'GURU';
+
+        if ($role === 'TIM') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role TIM tidak memiliki izin untuk mengedit modul pembelajaran."]);
+            exit();
+        }
 
         if ($id === 0 || empty($judul) || empty($mata_pelajaran) || empty($kelas) || empty($semester) || empty($tahun_ajaran) || empty($kategori)) {
             http_response_code(400);
@@ -186,6 +199,15 @@ elseif ($method === 'POST') {
             http_response_code(404);
             echo json_encode(["status" => "error", "message" => "Modul pembelajaran tidak ditemukan."]);
             exit();
+        }
+
+        // Ownership enforcement for non-admin
+        if ($role !== 'ADMIN') {
+            if ($module['uploaded_by'] && intval($module['uploaded_by']) !== $user_id) {
+                http_response_code(403);
+                echo json_encode(["status" => "error", "message" => "Anda tidak memiliki izin untuk mengedit modul pembelajaran yang diunggah oleh akun lain."]);
+                exit();
+            }
         }
 
         $file_pdf_path = $module['file_pdf'];
@@ -227,7 +249,7 @@ elseif ($method === 'POST') {
             $module['foto_cover_crop'] ?? ''
         );
 
-        // If updated by GURU / TIM, reset status to Pending
+        // If updated by GURU / non-admin, reset status to Pending for re-verification
         $status_verifikasi = ($role === 'ADMIN') ? $module['status_verifikasi'] : 'Pending';
 
         try {
@@ -239,7 +261,7 @@ elseif ($method === 'POST') {
             ]);
             echo json_encode([
                 "status" => "success",
-                "message" => "Modul pembelajaran berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan menunggu verifikasi admin." : ".")
+                "message" => "Modul pembelajaran berhasil diperbarui" . ($status_verifikasi === 'Pending' ? " dan memerlukan verifikasi ulang oleh admin." : ".")
             ]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -248,6 +270,14 @@ elseif ($method === 'POST') {
     }
     elseif ($action === 'delete') {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+        $user_id = (isset($_POST['user_id']) && intval($_POST['user_id']) > 0) ? intval($_POST['user_id']) : ((isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : 0);
+        $role = isset($_POST['role']) ? trim($_POST['role']) : 'GURU';
+
+        if ($role === 'TIM') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role TIM tidak memiliki izin untuk menghapus modul pembelajaran."]);
+            exit();
+        }
 
         if ($id === 0) {
             http_response_code(400);
@@ -256,16 +286,30 @@ elseif ($method === 'POST') {
         }
 
         try {
-            $stmt = $conn->prepare("SELECT file_pdf, foto_cover, foto_cover_crop FROM modul_pembelajaran WHERE id = ?");
+            $stmt = $conn->prepare("SELECT file_pdf, foto_cover, foto_cover_crop, uploaded_by FROM modul_pembelajaran WHERE id = ?");
             $stmt->execute([$id]);
             $mod = $stmt->fetch();
-            if ($mod) {
-                if (!empty($mod['file_pdf']) && file_exists('../' . str_replace('backend/', '', $mod['file_pdf']))) {
-                    unlink('../' . str_replace('backend/', '', $mod['file_pdf']));
-                }
-                foto_unlink($mod['foto_cover']);
-                foto_unlink($mod['foto_cover_crop'] ?? '');
+
+            if (!$mod) {
+                http_response_code(404);
+                echo json_encode(["status" => "error", "message" => "Modul pembelajaran tidak ditemukan."]);
+                exit();
             }
+
+            // Ownership enforcement for non-admin
+            if ($role !== 'ADMIN') {
+                if ($mod['uploaded_by'] && intval($mod['uploaded_by']) !== $user_id) {
+                    http_response_code(403);
+                    echo json_encode(["status" => "error", "message" => "Anda tidak memiliki izin untuk menghapus modul pembelajaran yang diunggah oleh akun lain."]);
+                    exit();
+                }
+            }
+
+            if (!empty($mod['file_pdf']) && file_exists('../' . str_replace('backend/', '', $mod['file_pdf']))) {
+                unlink('../' . str_replace('backend/', '', $mod['file_pdf']));
+            }
+            foto_unlink($mod['foto_cover']);
+            foto_unlink($mod['foto_cover_crop'] ?? '');
 
             $stmt = $conn->prepare("DELETE FROM modul_pembelajaran WHERE id = ?");
             $stmt->execute([$id]);
@@ -297,6 +341,14 @@ elseif ($method === 'POST') {
     elseif ($action === 'toggle_status') {
         $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
         $status = isset($_POST['status']) && in_array(trim($_POST['status']), ['Draft', 'Published']) ? trim($_POST['status']) : 'Published';
+        $user_id = (isset($_POST['user_id']) && intval($_POST['user_id']) > 0) ? intval($_POST['user_id']) : ((isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : 0);
+        $role = isset($_POST['role']) ? trim($_POST['role']) : 'GURU';
+
+        if ($role === 'TIM') {
+            http_response_code(403);
+            echo json_encode(["status" => "error", "message" => "Role TIM tidak memiliki izin untuk mengubah status modul."]);
+            exit();
+        }
 
         if ($id === 0) {
             http_response_code(400);
@@ -305,6 +357,24 @@ elseif ($method === 'POST') {
         }
 
         try {
+            $stmt = $conn->prepare("SELECT uploaded_by FROM modul_pembelajaran WHERE id = ?");
+            $stmt->execute([$id]);
+            $mod = $stmt->fetch();
+
+            if (!$mod) {
+                http_response_code(404);
+                echo json_encode(["status" => "error", "message" => "Modul tidak ditemukan."]);
+                exit();
+            }
+
+            if ($role !== 'ADMIN') {
+                if ($mod['uploaded_by'] && intval($mod['uploaded_by']) !== $user_id) {
+                    http_response_code(403);
+                    echo json_encode(["status" => "error", "message" => "Anda tidak memiliki izin untuk mengubah status modul yang diunggah oleh akun lain."]);
+                    exit();
+                }
+            }
+
             $stmt = $conn->prepare("UPDATE modul_pembelajaran SET status = ? WHERE id = ?");
             $stmt->execute([$status, $id]);
             echo json_encode(["status" => "success", "message" => "Status modul berhasil diubah menjadi $status."]);

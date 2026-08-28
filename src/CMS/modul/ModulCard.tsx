@@ -23,7 +23,9 @@ export const ModulCard: React.FC<ModulCardProps> = ({
 }) => {
   const isRejected = module.status_verifikasi === 'Rejected';
   const isDraft = module.status === 'Draft';
-  const canModify = currentUser.role === 'ADMIN' || currentUser.id === module.uploaded_by;
+  const isOwner = (module.uploaded_by && Number(module.uploaded_by) === Number(currentUser.id)) ||
+    (module.uploader && module.uploader === currentUser.nama_penanggung_jawab);
+  const canModify = currentUser.role === 'ADMIN' || (currentUser.role === 'GURU' && isOwner);
 
   const getStatusVerifikasiBadge = (status: 'Pending' | 'Verified' | 'Rejected') => {
     switch (status) {
@@ -181,7 +183,7 @@ export const ModulCard: React.FC<ModulCardProps> = ({
         </button>
 
         <div className="flex items-center gap-1.5">
-          {canModify && (
+          {canModify ? (
             <>
               {/* Quick toggle draft / published button if verified */}
               {onToggleStatus && !isRejected && (
@@ -222,6 +224,10 @@ export const ModulCard: React.FC<ModulCardProps> = ({
                 <Trash2 size={13} /> Hapus
               </button>
             </>
+          ) : (
+            <span className="text-[11px] font-medium text-slate-400 italic">
+              Hanya dapat diedit oleh akun pengunggah
+            </span>
           )}
         </div>
       </div>

@@ -56,12 +56,14 @@ export function useModulData() {
     fetchModules();
   }, [fetchModules]);
 
-  const deleteModule = async (id: number) => {
+  const deleteModule = async (id: number, userId?: number, role?: string) => {
     setError('');
     setSuccess('');
     const formData = new FormData();
     formData.append('action', 'delete');
     formData.append('id', id.toString());
+    if (userId) formData.append('user_id', userId.toString());
+    if (role) formData.append('role', role);
 
     try {
       const response = await fetch(`${API_BASE}/backend/API/modul_pembelajaran.php`, {
@@ -83,13 +85,15 @@ export function useModulData() {
     }
   };
 
-  const updateModulStatus = async (id: number, newStatus: 'Draft' | 'Published') => {
+  const updateModulStatus = async (id: number, newStatus: 'Draft' | 'Published', userId?: number, role?: string) => {
     setError('');
     setSuccess('');
     const formData = new FormData();
     formData.append('action', 'toggle_status');
     formData.append('id', id.toString());
     formData.append('status', newStatus);
+    if (userId) formData.append('user_id', userId.toString());
+    if (role) formData.append('role', role);
 
     try {
       const response = await fetch(`${API_BASE}/backend/API/modul_pembelajaran.php`, {

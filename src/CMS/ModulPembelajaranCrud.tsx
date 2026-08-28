@@ -153,7 +153,7 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
   };
 
   const handleToggleStatus = async (id: number, newStatus: 'Draft' | 'Published') => {
-    const ok = await updateModulStatus(id, newStatus);
+    const ok = await updateModulStatus(id, newStatus, currentUser.id, currentUser.role);
     if (ok) {
       setToast({
         type: 'success',
@@ -192,6 +192,7 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
     formData.append('sumber_tipe', sumberTipe);
     formData.append('status', status);
     formData.append('uploaded_by', currentUser.id.toString());
+    formData.append('user_id', currentUser.id.toString());
     formData.append('role', currentUser.role);
 
     if (sumberTipe === 'upload' && pdfFile) {
@@ -235,7 +236,9 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
         isOpen: true,
         variant: 'edit',
         title: 'Konfirmasi Edit Modul',
-        message: 'Apakah Anda yakin ingin menyimpan perubahan pada modul pembelajaran ini?',
+        message: currentUser.role === 'ADMIN'
+          ? 'Apakah Anda yakin ingin menyimpan perubahan pada modul pembelajaran ini?'
+          : 'Menyimpan perubahan akan mengembalikan status modul ke "Menunggu Verifikasi" (Pending) agar ditinjau ulang oleh Admin. Lanjutkan?',
         onConfirm: () => {
           setConfirmState((prev) => ({ ...prev, isOpen: false }));
           processSubmit();
@@ -254,7 +257,7 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
       message: 'Apakah Anda yakin ingin menghapus modul pembelajaran ini? File PDF atau link terkait akan dihapus secara permanen.',
       onConfirm: async () => {
         setConfirmState((prev) => ({ ...prev, isOpen: false }));
-        const ok = await deleteModule(id);
+        const ok = await deleteModule(id, currentUser.id, currentUser.role);
         if (ok) {
           setToast({ type: 'delete', text: 'Modul pembelajaran berhasil dihapus.' });
         } else {

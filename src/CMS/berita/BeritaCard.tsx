@@ -18,6 +18,9 @@ export const BeritaCard: React.FC<BeritaCardProps> = ({
   onDelete,
 }) => {
   const isRejected = article.status_verifikasi === 'Rejected';
+  const isOwner = (article.uploaded_by && Number(article.uploaded_by) === Number(currentUser.id)) ||
+    (article.uploader && article.uploader === currentUser.nama_penanggung_jawab);
+  const canModify = currentUser.role === 'ADMIN' || (currentUser.role === 'TIM' && isOwner);
 
   const getStatusBadge = (status: 'Pending' | 'Verified' | 'Rejected') => {
     switch (status) {
@@ -90,28 +93,36 @@ export const BeritaCard: React.FC<BeritaCardProps> = ({
         </div>
       </div>
 
-      <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-2.5">
-        {isRejected ? (
-          <button
-            onClick={() => onEdit(article)}
-            className="flex items-center gap-1.5 text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm cursor-pointer"
-          >
-            <RefreshCw size={14} /> Edit &amp; Ajukan Ulang
-          </button>
+      <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-100 flex justify-end items-center gap-2.5">
+        {canModify ? (
+          <>
+            {isRejected ? (
+              <button
+                onClick={() => onEdit(article)}
+                className="flex items-center gap-1.5 text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm cursor-pointer"
+              >
+                <RefreshCw size={14} /> Edit &amp; Ajukan Ulang
+              </button>
+            ) : (
+              <button
+                onClick={() => onEdit(article)}
+                className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+              >
+                <Edit2 size={14} /> Ubah
+              </button>
+            )}
+            <button
+              onClick={() => onDelete(article.id)}
+              className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
+            >
+              <Trash2 size={14} /> Hapus
+            </button>
+          </>
         ) : (
-          <button
-            onClick={() => onEdit(article)}
-            className="flex items-center gap-1.5 text-teal-700 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
-          >
-            <Edit2 size={14} /> Ubah
-          </button>
+          <span className="text-[11px] font-medium text-slate-400 italic">
+            Hanya dapat diedit oleh akun pengunggah
+          </span>
         )}
-        <button
-          onClick={() => onDelete(article.id)}
-          className="flex items-center gap-1.5 text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors cursor-pointer"
-        >
-          <Trash2 size={14} /> Hapus
-        </button>
       </div>
     </div>
   );

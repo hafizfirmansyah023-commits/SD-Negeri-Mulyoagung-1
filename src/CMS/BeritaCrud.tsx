@@ -133,6 +133,7 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     formData.append('kategori', kategori);
     formData.append('tanggal', tanggal);
     formData.append('uploaded_by', currentUser.id.toString());
+    formData.append('user_id', currentUser.id.toString());
     formData.append('role', currentUser.role);
     if (fotoSelection.original) {
       formData.append('foto_original', fotoSelection.original);
@@ -170,7 +171,9 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
         isOpen: true,
         variant: 'edit',
         title: 'Konfirmasi Edit Berita',
-        message: 'Apakah Anda yakin ingin menyimpan perubahan pada berita ini?',
+        message: currentUser.role === 'ADMIN'
+          ? 'Apakah Anda yakin ingin menyimpan perubahan pada berita ini?'
+          : 'Menyimpan perubahan akan mengembalikan status berita ke "Menunggu Verifikasi" (Pending) agar ditinjau ulang oleh Admin. Lanjutkan?',
         onConfirm: () => {
           setConfirmState((prev) => ({ ...prev, isOpen: false }));
           processSubmit();
@@ -190,7 +193,7 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
       message: 'Apakah Anda yakin ingin menghapus berita ini? Data berita yang dihapus tidak dapat dikembalikan.',
       onConfirm: async () => {
         setConfirmState((prev) => ({ ...prev, isOpen: false }));
-        const ok = await deleteArticle(id);
+        const ok = await deleteArticle(id, currentUser.id, currentUser.role);
         if (ok) {
           setToast({ type: 'delete', text: 'Berita berhasil dihapus.' });
         } else {
