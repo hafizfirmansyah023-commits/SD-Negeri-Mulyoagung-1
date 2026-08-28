@@ -93,6 +93,7 @@ Berita, Galeri, Modul pembelajaran, Nama Guru
 Penting: Jangan melakukan perubahan pada halaman, komponen, desain UI, Navigasi Halaman Utama website.
 
 Terjadi error di karenakan izin embedding file uploud itu saya hilangkan 
+
 Penyebab pesan "localhost menolak untuk terhubung" terjadi karena header keamanan Apache (X-Frame-Options SAMEORIGIN) di backend memblokir dokumen saat di-embed ke dalam iframe pada port frontend yang berbeda (misalnya Vite dev port 3000/5173 memanggil Apache port 80), serta browser modern memerlukan tag <object type="application/pdf"> untuk merender PDF bawaan dengan lancar.
 
 Perubahan & Solusi yang Diterapkan:
