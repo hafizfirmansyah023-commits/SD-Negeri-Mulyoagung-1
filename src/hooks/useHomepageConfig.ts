@@ -51,7 +51,7 @@ export const DEFAULT_HOMEPAGE_SECTIONS: HomepageSection[] = [
 
 export const DEFAULT_HOMEPAGE_CONFIG: HomepageConfig = {
   sections: DEFAULT_HOMEPAGE_SECTIONS,
-  heroTitle: 'Selamat Datang di SD Negeri 1 Mulyoagung',
+  heroTitle: 'SD Negeri 1 Mulyoagung',
   heroSubtitle:
     'Selamat datang di SD Negeri 1 Mulyoagung, sekolah yang berkomitmen menciptakan lingkungan belajar yang aman, nyaman, dan inspiratif. Kami menghadirkan pendidikan berkualitas untuk membentuk peserta didik yang beriman, berakhlak mulia, berprestasi, kreatif, serta siap menghadapi perkembangan ilmu pengetahuan dan teknologi di masa depan.',
   heroBg: '',

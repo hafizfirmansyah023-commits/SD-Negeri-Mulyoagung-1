@@ -131,18 +131,23 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
           
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-[1.18] tracking-tight">
-            {homepageConfig.heroTitle.includes('SD Negeri 1 Mulyoagung') ? (
-              <>
-                {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim() ? (
+            {(() => {
+              const cleanTitle = homepageConfig.heroTitle.replace(/selamat datang di\s*/i, '').trim();
+              if (cleanTitle.includes('SD Negeri 1 Mulyoagung')) {
+                const prefix = cleanTitle.replace('SD Negeri 1 Mulyoagung', '').trim();
+                return (
                   <>
-                    {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim()} <br className="hidden sm:block" />
+                    {prefix && (
+                      <>
+                        {prefix} <br className="hidden sm:block" />
+                      </>
+                    )}
+                    <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
                   </>
-                ) : 'Selamat Datang di '}
-                <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
-              </>
-            ) : (
-              <ShinyText text={homepageConfig.heroTitle} speed={4} className="drop-shadow-sm" />
-            )}
+                );
+              }
+              return <ShinyText text={cleanTitle || 'SD Negeri 1 Mulyoagung'} speed={4} className="drop-shadow-sm" />;
+            })()}
           </h1>
 
           <p className="text-xs sm:text-base lg:text-lg text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95 mx-auto lg:mx-0">
