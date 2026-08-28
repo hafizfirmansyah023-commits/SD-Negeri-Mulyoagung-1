@@ -17,12 +17,22 @@ export const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ article, onClo
       const prevHtml = document.documentElement.style.overflow;
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
       return () => {
         document.body.style.overflow = prevBody;
         document.documentElement.style.overflow = prevHtml;
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [article]);
+  }, [article, onClose]);
 
   if (!article) return null;
 
@@ -72,13 +82,12 @@ export const NewsDetailModal: React.FC<NewsDetailModalProps> = ({ article, onClo
         </div>
 
         {/* Modal Content Body */}
-        {/* Padding dan ukuran teks dirampingkan untuk mobile */}
         <div className="p-4 sm:p-8 overflow-y-auto space-y-3 sm:space-y-4 text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed">
-          <p className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-lg border-l-3 sm:border-l-4 border-[#028C84] pl-3 sm:pl-4 py-1.5 bg-teal-50/50 dark:bg-teal-950/30 rounded-r-xl line-clamp-2 sm:line-clamp-3">
+          <p className="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-lg border-l-3 sm:border-l-4 border-[#028C84] pl-3 sm:pl-4 py-1.5 bg-teal-50/50 dark:bg-teal-950/30 rounded-r-xl">
             {stripHtml(article.summary)}
           </p>
           <div 
-            className="space-y-3 sm:space-y-4 text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed prose prose-slate max-w-none line-clamp-4 sm:line-clamp-6"
+            className="space-y-3 sm:space-y-4 text-slate-700 dark:text-slate-300 text-xs sm:text-base leading-relaxed prose prose-slate max-w-none break-words"
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>

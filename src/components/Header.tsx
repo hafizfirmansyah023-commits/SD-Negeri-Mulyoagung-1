@@ -50,16 +50,38 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
     };
   }, []);
 
-  // Lock body scroll when mobile navigation menu is open
+  // Lock body scroll when mobile navigation menu is open, and clean up on resize/rotation
   useEffect(() => {
     if (mobileMenuOpen) {
+      const prevBody = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      const handleResize = () => {
+        if (window.innerWidth >= 1280) {
+          setMobileMenuOpen(false);
+        }
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setMobileMenuOpen(false);
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('orientationchange', handleResize);
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevBody;
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [mobileMenuOpen]);
 
   const handleNavClick = (tab: NavTab) => {
@@ -88,7 +110,11 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
             linkPpdb={linkPpdb}
           />
 
-          <MobileMenuButton isOpen={mobileMenuOpen} onToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+          <MobileMenuButton
+            isOpen={mobileMenuOpen}
+            onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onOpenSearch={onOpenSearch}
+          />
         </div>
 
         {mobileMenuOpen && (
@@ -101,6 +127,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
               setMobileMenuOpen(false);
               onOpenPpdb();
             }}
+            onOpenSearch={onOpenSearch}
             linkPpdb={linkPpdb}
           />
         )}

@@ -29,13 +29,35 @@ export default function CmsSidebar({
   // Lock body scroll when mobile menu drawer is open
   useEffect(() => {
     if (mobileOpen) {
+      const prevBody = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      const handleResize = () => {
+        if (window.innerWidth >= 768) {
+          setMobileOpen(false);
+        }
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setMobileOpen(false);
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('orientationchange', handleResize);
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevBody;
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [mobileOpen]);
 
   const handleSelectTab = (tab: CmsTab) => {

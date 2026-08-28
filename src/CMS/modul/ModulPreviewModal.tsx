@@ -18,12 +18,22 @@ export const ModulPreviewModal: React.FC<ModulPreviewModalProps> = ({ module, on
       const prevHtml = document.documentElement.style.overflow;
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
       return () => {
         document.body.style.overflow = prevBody;
         document.documentElement.style.overflow = prevHtml;
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }
-  }, [module]);
+  }, [module, onClose]);
 
   if (!module) return null;
 
