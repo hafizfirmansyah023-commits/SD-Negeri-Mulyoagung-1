@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, Image, RotateCcw } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { UserSession } from './types';
@@ -11,12 +11,14 @@ import { GaleriFormModal } from './galeri/GaleriFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
+import { Pagination } from '../components/common/Pagination';
 
 interface GaleriCrudProps {
   currentUser: UserSession;
 }
 
 const API_BASE = getApiBaseUrl();
+const ITEMS_PER_PAGE = 6;
 
 export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
   const {
@@ -63,6 +65,26 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     searchFields: ['judul', 'deskripsi', 'uploader'],
     initialFilters: { kategori: 'ALL', status_verifikasi: 'ALL' },
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters]);
+
+  // Adjust page if data is deleted and current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredItems.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredItems.length, currentPage]);
+
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
 
   const availableCategories = getUniqueValues(items, 'kategori');
   const availableStatuses = getUniqueValues(items, 'status_verifikasi');
@@ -274,33 +296,46 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {filteredItems.map((item) => (
-            <GaleriCard
-              key={item.id}
-              item={item}
-              currentUser={currentUser}
-              onEdit={handleOpenEdit}
-              onDelete={handleDelete}
-            />
-          ))}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {paginatedItems.map((item) => (
+              <GaleriCard
+                key={item.id}
+                item={item}
+                currentUser={currentUser}
+                onEdit={handleOpenEdit}
+                onDelete={handleDelete}
+              />
+            ))}
 
-          {filteredItems.length === 0 && (
-            <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
-              <Image size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium text-sm">
-                {isFiltered ? 'Tidak ada item galeri yang sesuai dengan filter atau pencarian.' : 'Belum ada foto galeri.'}
-              </p>
-              {isFiltered && (
-                <button
-                  onClick={resetFilter}
-                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
-                >
-                  <RotateCcw size={14} /> Reset Filter
-                </button>
-              )}
-            </div>
-          )}
+            {filteredItems.length === 0 && (
+              <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
+                <Image size={48} className="mx-auto text-slate-300 mb-3" />
+                <p className="text-slate-500 font-medium text-sm">
+                  {isFiltered ? 'Tidak ada item galeri yang sesuai dengan filter atau pencarian.' : 'Belum ada foto galeri.'}
+                </p>
+                {isFiltered && (
+                  <button
+                    onClick={resetFilter}
+                    className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <RotateCcw size={14} /> Reset Filter
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredItems.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={(p) => {
+              setCurrentPage(p);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       )}
 

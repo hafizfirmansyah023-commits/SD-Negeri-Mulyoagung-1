@@ -12,7 +12,7 @@ interface NewsSectionProps {
 }
 
 let cachedArticles: Article[] | null = null;
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 6;
 
 export const NewsSection: React.FC<NewsSectionProps> = () => {
   const [articles, setArticles] = useState<Article[]>(cachedArticles || []);
@@ -117,6 +117,14 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory, searchTerm, sortOrder]);
+
+  // Adjust page if current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredAndSortedArticles.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredAndSortedArticles.length, currentPage]);
 
   // Paginated Slice
   const paginatedArticles = useMemo(() => {

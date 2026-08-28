@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, BookOpen, RotateCcw } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { UserSession } from './types';
@@ -12,12 +12,14 @@ import { ImageUploadPayload } from './components/ImageUploadField';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 import { ModulPreviewModal } from './modul/ModulPreviewModal';
+import { Pagination } from '../components/common/Pagination';
 
 interface ModulPembelajaranCrudProps {
   currentUser: UserSession;
 }
 
 const API_BASE = getApiBaseUrl();
+const ITEMS_PER_PAGE = 6;
 
 export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaranCrudProps) {
   const {
@@ -74,6 +76,26 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
     searchFields: ['judul', 'deskripsi', 'mata_pelajaran', 'kelas', 'kategori', 'uploader'],
     initialFilters: { mata_pelajaran: 'ALL', kelas: 'ALL', status_verifikasi: 'ALL' },
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters]);
+
+  // Adjust page if data is deleted and current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredModules.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredModules.length, currentPage]);
+
+  const paginatedModules = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredModules.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredModules, currentPage]);
 
   const availableMapel = getUniqueValues(modules, 'mata_pelajaran');
   const availableKelas = getUniqueValues(modules, 'kelas');
@@ -330,34 +352,47 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {filteredModules.map((mod) => (
-            <ModulCard
-              key={mod.id}
-              module={mod}
-              currentUser={currentUser}
-              onEdit={handleOpenEdit}
-              onDelete={handleDelete}
-              onPreview={(m) => setPreviewModule(m)}
-            />
-          ))}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {paginatedModules.map((mod) => (
+              <ModulCard
+                key={mod.id}
+                module={mod}
+                currentUser={currentUser}
+                onEdit={handleOpenEdit}
+                onDelete={handleDelete}
+                onPreview={(m) => setPreviewModule(m)}
+              />
+            ))}
 
-          {filteredModules.length === 0 && (
-            <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
-              <BookOpen size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium text-sm">
-                {isFiltered ? 'Tidak ada modul yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada modul pembelajaran diunggah.'}
-              </p>
-              {isFiltered && (
-                <button
-                  onClick={resetFilter}
-                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
-                >
-                  <RotateCcw size={14} /> Reset Filter
-                </button>
-              )}
-            </div>
-          )}
+            {filteredModules.length === 0 && (
+              <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
+                <BookOpen size={48} className="mx-auto text-slate-300 mb-3" />
+                <p className="text-slate-500 font-medium text-sm">
+                  {isFiltered ? 'Tidak ada modul yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada modul pembelajaran diunggah.'}
+                </p>
+                {isFiltered && (
+                  <button
+                    onClick={resetFilter}
+                    className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <RotateCcw size={14} /> Reset Filter
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredModules.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={(p) => {
+              setCurrentPage(p);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       )}
 

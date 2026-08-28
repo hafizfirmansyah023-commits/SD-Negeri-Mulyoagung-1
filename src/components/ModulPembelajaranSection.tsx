@@ -5,7 +5,7 @@ import { Pagination } from './common/Pagination';
 import { ModulPreviewModal } from '../CMS/modul/ModulPreviewModal';
 import { ModulItem } from '../CMS/hooks/useModulData';
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 6;
 
 export const ModulPembelajaranSection: React.FC = () => {
   const [modules, setModules] = useState<ModulItem[]>([]);
@@ -70,6 +70,14 @@ export const ModulPembelajaranSection: React.FC = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedKategori, selectedKelas, selectedSemester, selectedTahunAjaran, selectedMapel, searchTerm]);
+
+  // Adjust page if current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredModules.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredModules.length, currentPage]);
 
   const paginatedModules = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
