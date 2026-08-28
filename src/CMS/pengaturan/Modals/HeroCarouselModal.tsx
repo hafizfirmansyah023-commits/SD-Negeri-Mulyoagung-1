@@ -53,7 +53,7 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
           <div>
             <ImageUploadField
               label="Foto Carousel Hero (Landscape 16:9) *"
-              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. ${editing ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. ${editing ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
               currentImage={editing?.foto ? getImageUrl(editing.foto) : undefined}
               currentOriginalImage={
                 editing?.foto_original

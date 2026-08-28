@@ -184,7 +184,7 @@ export const GuruFormModal: React.FC<GuruFormModalProps> = ({
             <div>
               <ImageUploadField
                 label="Foto Profil"
-                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis 1:1. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+                hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. Foto akan dipotong otomatis 1:1. ${editId ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
                 currentImage={currentFoto ? getImageUrl(currentFoto) : undefined}
                 currentOriginalImage={
                   currentOriginalFoto
@@ -198,7 +198,6 @@ export const GuruFormModal: React.FC<GuruFormModalProps> = ({
                 outputWidth={512}
                 onFileChange={setFotoSelection}
               />
-              <p className="text-slate-400 text-xs mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. Biarkan kosong jika tidak ingin mengubah foto.</p>
             </div>
           </div>
 

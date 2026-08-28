@@ -11,7 +11,7 @@ export function setFileValidationErrorListener(listener: ErrorListener | null) {
 }
 
 /**
- * Validates selected image file for format (image/*) and size (max 5MB).
+ * Validates selected image file for format (image/*) and size (max 10MB).
  * Displays a custom alert modal if validation fails and clears the input element.
  */
 export function validateImageFile(

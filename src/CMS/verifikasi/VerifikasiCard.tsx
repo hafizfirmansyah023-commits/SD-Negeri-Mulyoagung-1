@@ -10,6 +10,7 @@ interface VerifikasiCardProps {
   kategori: string;
   tanggal: string;
   uploader: string;
+  statusBadge?: React.ReactNode;
   onVerify: (id: number, decision: 'Verified' | 'Rejected') => void;
 }
 
@@ -21,6 +22,7 @@ export const VerifikasiCard: React.FC<VerifikasiCardProps> = ({
   kategori,
   tanggal,
   uploader,
+  statusBadge,
   onVerify,
 }) => {
   return (
@@ -34,6 +36,7 @@ export const VerifikasiCard: React.FC<VerifikasiCardProps> = ({
             <span className="bg-teal-50 text-teal-700 border border-teal-200 text-[11px] px-2.5 py-0.5 rounded-full font-bold">
               {kategori}
             </span>
+            {statusBadge}
             <span className="text-xs text-slate-400">{tanggal}</span>
           </div>
           <h3 className="font-bold text-slate-800 text-base sm:text-lg">{judul}</h3>

@@ -83,6 +83,34 @@ export function useModulData() {
     }
   };
 
+  const updateModulStatus = async (id: number, newStatus: 'Draft' | 'Published') => {
+    setError('');
+    setSuccess('');
+    const formData = new FormData();
+    formData.append('action', 'toggle_status');
+    formData.append('id', id.toString());
+    formData.append('status', newStatus);
+
+    try {
+      const response = await fetch(`${API_BASE}/backend/API/modul_pembelajaran.php`, {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        setSuccess(result.message);
+        fetchModules();
+        return true;
+      } else {
+        setError(result.message || 'Gagal mengubah status modul.');
+        return false;
+      }
+    } catch {
+      setError('Terjadi kesalahan saat mengubah status.');
+      return false;
+    }
+  };
+
   return {
     modules,
     loading,
@@ -92,5 +120,6 @@ export function useModulData() {
     setSuccess,
     fetchModules,
     deleteModule,
+    updateModulStatus,
   };
 }

@@ -29,6 +29,7 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
     setError,
     fetchModules,
     deleteModule,
+    updateModulStatus,
   } = useModulData();
 
   const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
@@ -74,7 +75,12 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
   } = useCmsFilter<ModulItem>({
     items: modules,
     searchFields: ['judul', 'deskripsi', 'mata_pelajaran', 'kelas', 'kategori', 'uploader'],
-    initialFilters: { mata_pelajaran: 'ALL', kelas: 'ALL', status_verifikasi: 'ALL' },
+    initialFilters: {
+      mata_pelajaran: 'ALL',
+      kelas: 'ALL',
+      status: 'ALL',
+      status_verifikasi: 'ALL',
+    },
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -139,11 +145,23 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
     setPdfFile(null);
     setCurrentPdfPath(mod.file_pdf || '');
     setLinkGdrive(mod.link_gdrive || '');
-    setStatus(mod.status);
+    setStatus(mod.status || 'Published');
     setFotoSelection({ original: null, cropped: null });
     setCurrentFoto(mod.foto_cover_crop || mod.foto_cover || '');
     setCurrentOriginalFoto(mod.foto_cover || '');
     setShowModal(true);
+  };
+
+  const handleToggleStatus = async (id: number, newStatus: 'Draft' | 'Published') => {
+    const ok = await updateModulStatus(id, newStatus);
+    if (ok) {
+      setToast({
+        type: 'success',
+        text: `Status modul berhasil diubah menjadi ${newStatus === 'Published' ? 'Diterbitkan (Published)' : 'Draf (Draft)'}.`,
+      });
+    } else {
+      setToast({ type: 'error', text: 'Gagal mengubah status modul.' });
+    }
   };
 
   const processSubmit = async () => {
@@ -246,6 +264,34 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
     });
   };
 
+  // Determine active tab key based on filters
+  const currentTab = useMemo(() => {
+    if (filters.status === 'Published') return 'Published';
+    if (filters.status === 'Draft') return 'Draft';
+    if (filters.status_verifikasi === 'Pending') return 'Pending';
+    if (filters.status_verifikasi === 'Rejected') return 'Rejected';
+    return 'ALL';
+  }, [filters]);
+
+  const handleTabClick = (tabKey: string) => {
+    if (tabKey === 'ALL') {
+      setFilter('status', 'ALL');
+      setFilter('status_verifikasi', 'ALL');
+    } else if (tabKey === 'Published') {
+      setFilter('status', 'Published');
+      setFilter('status_verifikasi', 'ALL');
+    } else if (tabKey === 'Draft') {
+      setFilter('status', 'Draft');
+      setFilter('status_verifikasi', 'ALL');
+    } else if (tabKey === 'Pending') {
+      setFilter('status', 'ALL');
+      setFilter('status_verifikasi', 'Pending');
+    } else if (tabKey === 'Rejected') {
+      setFilter('status', 'ALL');
+      setFilter('status_verifikasi', 'Rejected');
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
@@ -255,7 +301,7 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
             <BookOpen className="text-teal-600 shrink-0" /> Modul &amp; Bahan Pembelajaran
           </h2>
           <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-            Kelola modul ajar, LKPD, bahan ajar digital, dan buku kurikulum sekolah.
+            Kelola modul ajar, LKPD, bahan ajar digital, dan status publikasi (Draft &amp; Published).
           </p>
         </div>
         <button
@@ -269,12 +315,18 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
       {/* Status Filter Tabs */}
       <div className="bg-white p-2 sm:p-2.5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-1.5 overflow-x-auto">
         {[
-          { key: 'ALL', label: 'Semua Status', count: modules.length },
+          { key: 'ALL', label: 'Semua Modul', count: modules.length },
           {
-            key: 'Verified',
-            label: 'Diterbitkan',
-            count: modules.filter((m) => m.status_verifikasi === 'Verified').length,
-            activeColor: 'bg-emerald-600 text-white shadow-sm',
+            key: 'Published',
+            label: 'Published (Terbit)',
+            count: modules.filter((m) => m.status === 'Published').length,
+            activeColor: 'bg-teal-600 text-white shadow-sm',
+          },
+          {
+            key: 'Draft',
+            label: 'Draft (Draf)',
+            count: modules.filter((m) => m.status === 'Draft').length,
+            activeColor: 'bg-slate-800 text-amber-300 shadow-sm',
           },
           {
             key: 'Pending',
@@ -289,11 +341,11 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
             activeColor: 'bg-red-600 text-white shadow-sm',
           },
         ].map((tab) => {
-          const isActive = (filters.status_verifikasi || 'ALL') === tab.key;
+          const isActive = currentTab === tab.key;
           return (
             <button
               key={tab.key}
-              onClick={() => setFilter('status_verifikasi', tab.key)}
+              onClick={() => handleTabClick(tab.key)}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
                 isActive
                   ? tab.activeColor || 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm'
@@ -321,6 +373,27 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
         isFiltered={isFiltered}
         onReset={resetFilter}
         selectFilters={[
+          {
+            key: 'status',
+            value: filters.status || 'ALL',
+            onChange: (val) => setFilter('status', val),
+            options: [
+              { value: 'ALL', label: 'Semua Publikasi' },
+              { value: 'Published', label: 'Published (Terbit)' },
+              { value: 'Draft', label: 'Draft (Draf)' },
+            ],
+          },
+          {
+            key: 'status_verifikasi',
+            value: filters.status_verifikasi || 'ALL',
+            onChange: (val) => setFilter('status_verifikasi', val),
+            options: [
+              { value: 'ALL', label: 'Semua Verifikasi' },
+              { value: 'Verified', label: 'Terverifikasi' },
+              { value: 'Pending', label: 'Menunggu Verifikasi' },
+              { value: 'Rejected', label: 'Ditolak' },
+            ],
+          },
           {
             key: 'mata_pelajaran',
             value: filters.mata_pelajaran || 'ALL',
@@ -362,6 +435,7 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
                 onEdit={handleOpenEdit}
                 onDelete={handleDelete}
                 onPreview={(m) => setPreviewModule(m)}
+                onToggleStatus={handleToggleStatus}
               />
             ))}
 

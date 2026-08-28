@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ArrowRight, BookOpen, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { NavTab } from '../types';
 import heroImg from '../assets/images/img1.webp';
@@ -49,6 +49,38 @@ export const Hero: React.FC<HeroProps> = ({
   const [slides, setSlides] = useState(defaultSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Swipe Gesture Handling for Hero Slider
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    const deltaX = touchEndX - touchStartX.current;
+    const deltaY = touchEndY - touchStartY.current;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 40) {
+      if (deltaX < 0) {
+        // Swiped Left -> Next slide
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+      } else {
+        // Swiped Right -> Previous slide
+        setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
 
   useEffect(() => {
     const fetchTahunAjaran = async () => {
@@ -129,7 +161,7 @@ export const Hero: React.FC<HeroProps> = ({
               Tahun Ajaran {tahunAjaran}
             </span>
           </div>
-          
+
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-[1.18] tracking-tight">
             {(() => {
               const cleanTitle = homepageConfig.heroTitle.replace(/selamat datang di\s*/i, '').trim();
@@ -144,10 +176,14 @@ export const Hero: React.FC<HeroProps> = ({
                     )}
                     <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
                   </>
-                );
-              }
-              return <ShinyText text={cleanTitle || 'SD Negeri 1 Mulyoagung'} speed={4} className="drop-shadow-sm" />;
-            })()}
+                ) : (<>
+                  Selamat Datang di <br />
+                </>)}
+                <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
+              </>
+            ) : (
+              <ShinyText text={homepageConfig.heroTitle} speed={4} className="drop-shadow-sm" />
+            )}
           </h1>
 
           <p className="text-xs sm:text-base lg:text-lg text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95 mx-auto lg:mx-0">
@@ -199,34 +235,34 @@ export const Hero: React.FC<HeroProps> = ({
 
         </div>
 
-        {/* RIGHT - Auto Playing Landscape Photo Slider */}
-        <div className="hidden lg:flex lg:w-1/2 justify-center">
+        {/* RIGHT - Auto Playing Landscape Photo Slider with Touch Swipe Gesture */}
+        <div className="flex w-full lg:w-1/2 justify-center">
           <div
-            className="relative max-w-[540px] w-full group"
+            className="relative max-w-[540px] w-full group touch-pan-y"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             {/* Glow */}
             <div className="absolute inset-0 bg-[#79EEDE]/15 rounded-3xl blur-3xl"></div>
 
             {/* Card Outer */}
-            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-3 shadow-2xl rotate-1 group-hover:rotate-0 transition-all duration-500 overflow-hidden">
-              
+            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-2.5 sm:p-3 shadow-2xl rotate-1 group-hover:rotate-0 transition-all duration-500 overflow-hidden">
+
               {/* Slide Image Container (Landscape Aspect Ratio) */}
-              <div className="relative w-full aspect-video h-[300px] sm:h-[340px] rounded-2xl overflow-hidden bg-slate-950">
+              <div className="relative w-full aspect-video h-[230px] sm:h-[300px] md:h-[340px] rounded-2xl overflow-hidden bg-slate-950">
                 {slides.map((slide, index) => (
                   <div
                     key={index}
-                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                      index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                    }`}
+                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                      }`}
                   >
                     <img
                       src={slide.image}
                       alt={slide.caption}
-                      className={`w-full h-full object-cover rounded-2xl transform transition-transform duration-[6000ms] ease-out ${
-                        index === currentSlide ? 'scale-110' : 'scale-100'
-                      }`}
+                      className={`w-full h-full object-cover rounded-2xl transform transition-transform duration-[6000ms] ease-out ${index === currentSlide ? 'scale-110' : 'scale-100'
+                        }`}
                     />
                     {/* Gradient Overlay for Text Readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/20" />
@@ -236,30 +272,29 @@ export const Hero: React.FC<HeroProps> = ({
                 {/* Prev / Next Navigation Arrows */}
                 <button
                   onClick={() => setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))}
-                  className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer shadow-lg"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 z-20 p-1.5 sm:p-2 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-md border border-white/20 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 cursor-pointer shadow-lg"
                   aria-label="Previous slide"
                 >
-                  <ChevronLeft size={18} />
+                  <ChevronLeft size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
                 <button
                   onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-md border border-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer shadow-lg"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 z-20 p-1.5 sm:p-2 rounded-full bg-slate-900/60 hover:bg-slate-900/90 text-white backdrop-blur-md border border-white/20 opacity-80 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 cursor-pointer shadow-lg"
                   aria-label="Next slide"
                 >
-                  <ChevronRight size={18} />
+                  <ChevronRight size={16} className="sm:w-[18px] sm:h-[18px]" />
                 </button>
 
                 {/* Dot Navigation Indicators */}
-                <div className="absolute bottom-4 right-4 z-20 flex items-center gap-1.5 bg-slate-950/50 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-20 flex items-center gap-1.5 bg-slate-950/50 backdrop-blur-md px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-white/20">
                   {slides.map((_, idx) => (
                     <button
                       key={idx}
                       onClick={() => setCurrentSlide(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                        idx === currentSlide
-                          ? 'w-6 bg-[#79EEDE]'
-                          : 'w-2 bg-white/40 hover:bg-white/70'
-                      }`}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === currentSlide
+                        ? 'w-5 sm:w-6 bg-[#79EEDE]'
+                        : 'w-2 bg-white/40 hover:bg-white/70'
+                        }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
                   ))}
@@ -267,10 +302,10 @@ export const Hero: React.FC<HeroProps> = ({
               </div>
 
               {/* Sleek Glassmorphic Caption Badge */}
-              <div className="absolute bottom-3.5 left-3.5 sm:bottom-4 sm:left-4 z-20 bg-slate-950/75 dark:bg-slate-900/85 backdrop-blur-md text-white p-2.5 px-3.5 rounded-xl shadow-lg border border-white/20 flex items-center gap-2.5 transition-all duration-300 max-w-[calc(100%-7.5rem)] sm:max-w-xs md:max-w-sm">
+              <div className="absolute bottom-2.5 left-2.5 sm:bottom-4 sm:left-4 z-20 bg-slate-950/75 dark:bg-slate-900/85 backdrop-blur-md text-white p-2 sm:p-2.5 px-3 sm:px-3.5 rounded-xl shadow-lg border border-white/20 flex items-center gap-2 sm:gap-2.5 transition-all duration-300 max-w-[calc(100%-6.5rem)] sm:max-w-xs md:max-w-sm">
                 <div className="w-2 h-2 rounded-full bg-[#79EEDE] animate-pulse shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <span className="text-xs font-semibold block leading-tight text-slate-100 break-words tracking-wide">
+                  <span className="text-[11px] sm:text-xs font-semibold block leading-tight text-slate-100 truncate tracking-wide">
                     {slides[currentSlide]?.caption}
                   </span>
                 </div>

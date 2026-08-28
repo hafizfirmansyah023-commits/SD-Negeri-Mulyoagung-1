@@ -133,7 +133,7 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
         <div>
           <ImageUploadField
             label="Ganti Foto Profil"
-            hint="Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. Foto akan dipotong otomatis 1:1."
+            hint="Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB. Foto akan dipotong otomatis 1:1."
             currentImage={currentUser.foto ? getImageUrl(currentUser.foto) : undefined}
             currentOriginalImage={
               currentUser.foto_original
@@ -147,7 +147,6 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
             outputWidth={512}
             onFileChange={setFotoSelection}
           />
-          <p className="text-slate-400 text-[11px] mt-1">Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB.</p>
         </div>
 
         <button
