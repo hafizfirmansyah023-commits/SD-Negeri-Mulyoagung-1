@@ -47,15 +47,7 @@ elseif ($method === 'POST') {
     $foto_crop_path = $existing ? ($existing['foto_crop'] ?? '') : '';
 
     // Handle file upload
-    if (foto_has_upload('foto_original')) {
-        foto_unlink($foto_path);
-        foto_unlink($foto_crop_path);
-        $foto_path = foto_save_file('foto_original', $upload_dir, 'backend/uploads/sambutan/');
-        $foto_crop_path = foto_save_file('foto', $upload_dir, 'backend/uploads/sambutan/');
-    } elseif (foto_has_upload('foto')) {
-        foto_unlink($foto_crop_path);
-        $foto_crop_path = foto_save_file('foto', $upload_dir, 'backend/uploads/sambutan/');
-    }
+    [$foto_path, $foto_crop_path] = foto_handle_update($upload_dir, 'backend/uploads/sambutan/', $foto_path, $foto_crop_path);
 
     try {
         if ($existing) {

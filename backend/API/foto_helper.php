@@ -91,7 +91,7 @@ function foto_unlink($path) {
     }
 }
 
-// Konversi PNG ke WebP (runtime optimization).
+// Konversi PNG / JPG ke WebP (runtime optimization).
 function foto_convert_to_webp($filepath) {
     if (empty($filepath)) return $filepath;
 
@@ -110,6 +110,13 @@ function foto_convert_to_webp($filepath) {
         $img = null;
         if ($ext === 'png' && function_exists('imagecreatefrompng')) {
             $img = @imagecreatefrompng($fullpath);
+            if ($img) {
+                if (function_exists('imagepalettetotruecolor')) {
+                    @imagepalettetotruecolor($img);
+                }
+                @imagealphablending($img, true);
+                @imagesavealpha($img, true);
+            }
         } elseif (($ext === 'jpg' || $ext === 'jpeg') && function_exists('imagecreatefromjpeg')) {
             $img = @imagecreatefromjpeg($fullpath);
         }
@@ -117,21 +124,14 @@ function foto_convert_to_webp($filepath) {
         if (!$img) return $filepath;
         
         $webpPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $fullpath);
-        if (function_exists('imageinterlace')) {
-            @imageinterlace($img, 0);
-        }
-        @imagewebp($img, $webpPath, 82);
+        $saved = @imagewebp($img, $webpPath, 85);
         if (function_exists('imagedestroy')) {
             @imagedestroy($img);
         }
         
-        if (file_exists($webpPath) && filesize($webpPath) < filesize($fullpath)) {
+        if ($saved && file_exists($webpPath) && filesize($webpPath) > 0) {
             @unlink($fullpath);
             return str_replace(basename($filepath), basename($webpPath), $filepath);
-        } else {
-            if (file_exists($webpPath)) {
-                @unlink($webpPath);
-            }
         }
     } catch (Throwable $e) {
         // Ignore conversion errors, keep original
