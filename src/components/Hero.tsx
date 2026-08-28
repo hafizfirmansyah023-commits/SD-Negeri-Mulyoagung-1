@@ -6,6 +6,7 @@ import heroImg1 from '../assets/images/img2.webp';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { ShinyText } from './common/ShinyText';
 import { useHomepageConfig } from '../hooks/useHomepageConfig';
+import { h1 } from 'motion/react-client';
 
 interface HeroProps {
   onOpenPpdb: () => void;
@@ -163,18 +164,11 @@ export const Hero: React.FC<HeroProps> = ({
           </div>
 
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-[1.18] tracking-tight">
-            {(() => {
-              const cleanTitle = homepageConfig.heroTitle.replace(/selamat datang di\s*/i, '').trim();
-              if (cleanTitle.includes('SD Negeri 1 Mulyoagung')) {
-                const prefix = cleanTitle.replace('SD Negeri 1 Mulyoagung', '').trim();
-                return (
+            {homepageConfig.heroTitle.includes('SD Negeri 1 Mulyoagung') ? (
+              <>
+                {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim() ? (
                   <>
-                    {prefix && (
-                      <>
-                        {prefix} <br className="hidden sm:block" />
-                      </>
-                    )}
-                    <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
+                    {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim()} <br className="hidden sm:block" />
                   </>
                 ) : (<>
                   Selamat Datang di <br />
@@ -185,6 +179,7 @@ export const Hero: React.FC<HeroProps> = ({
               <ShinyText text={homepageConfig.heroTitle} speed={4} className="drop-shadow-sm" />
             )}
           </h1>
+              
 
           <p className="text-xs sm:text-base lg:text-lg text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95 mx-auto lg:mx-0">
             {homepageConfig.heroSubtitle}
