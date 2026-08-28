@@ -6,7 +6,7 @@ import { UserSession } from '../types';
 export interface UserData {
   id: number;
   username: string;
-  role: 'ADMIN' | 'TIM';
+  role: 'ADMIN' | 'TIM' | 'GURU';
   nama_penanggung_jawab: string;
   foto: string;
   foto_original?: string;
@@ -80,6 +80,8 @@ export const UserTable: React.FC<UserTableProps> = ({
                     className={`text-[10px] sm:text-xs px-2.5 py-0.5 rounded-full font-bold ${
                       u.role === 'ADMIN'
                         ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                        : u.role === 'GURU'
+                        ? 'bg-teal-50 text-teal-700 border border-teal-200'
                         : 'bg-amber-50 text-amber-700 border border-amber-200'
                     }`}
                   >

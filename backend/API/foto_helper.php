@@ -16,12 +16,27 @@
  *   - Update tanpa `foto_original` berarti hanya crop ulang (foto asli dipertahankan).
  */
 
-// Tambahkan kolom foto_crop jika belum ada (migrasi otomatis).
+// Tambahkan kolom foto_crop, status_verifikasi, dan uploaded_by jika belum ada (migrasi otomatis).
 function foto_ensure_column($conn, $table) {
     try {
         $conn->exec("ALTER TABLE `$table` ADD COLUMN foto_crop VARCHAR(255) NULL");
     } catch (Exception $e) {
         // Kolom sudah ada.
+    }
+    try {
+        $conn->exec("ALTER TABLE `$table` ADD COLUMN status_verifikasi VARCHAR(50) DEFAULT 'Verified'");
+    } catch (Exception $e) {
+        // Kolom sudah ada.
+    }
+    try {
+        $conn->exec("ALTER TABLE `$table` ADD COLUMN uploaded_by INT NULL");
+    } catch (Exception $e) {
+        // Kolom sudah ada.
+    }
+    try {
+        $conn->exec("UPDATE `$table` SET status_verifikasi = 'Verified' WHERE status_verifikasi IS NULL OR status_verifikasi = ''");
+    } catch (Exception $e) {
+        // Ignore
     }
     try {
         // Perbaiki baris lama yang korup (nama file foto_crop sama dengan foto karena
@@ -56,6 +71,9 @@ function foto_has_upload($field) {
 // Simpan satu file dari form ke direktori upload, kembalikan path DB (atau '').
 function foto_save_file($field, $upload_dir, $prefix) {
     if (!foto_has_upload($field)) return '';
+    if (!file_exists($upload_dir)) {
+        @mkdir($upload_dir, 0777, true);
+    }
     // Nama unik: timestamp + acak, mencegah tabrakan nama (mis. foto asli vs foto crop
     // yang diunggah dalam detik yang sama dengan nama dasar identik).
     $base = preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($_FILES[$field]['name']));
@@ -76,6 +94,12 @@ function foto_unlink($path) {
 // Konversi PNG ke WebP (runtime optimization).
 function foto_convert_to_webp($filepath) {
     if (empty($filepath)) return $filepath;
+
+    // Pengecekan modul & fungsi GD agar tidak menyebabkan Fatal Error jika GD mati
+    if (!extension_loaded('gd') || !function_exists('imagewebp')) {
+        return $filepath;
+    }
+
     $ext = strtolower(pathinfo($filepath, PATHINFO_EXTENSION));
     if ($ext !== 'png' && $ext !== 'jpg' && $ext !== 'jpeg') return $filepath;
     
@@ -84,26 +108,32 @@ function foto_convert_to_webp($filepath) {
     
     try {
         $img = null;
-        if ($ext === 'png') {
+        if ($ext === 'png' && function_exists('imagecreatefrompng')) {
             $img = @imagecreatefrompng($fullpath);
-        } elseif ($ext === 'jpg' || $ext === 'jpeg') {
+        } elseif (($ext === 'jpg' || $ext === 'jpeg') && function_exists('imagecreatefromjpeg')) {
             $img = @imagecreatefromjpeg($fullpath);
         }
         
         if (!$img) return $filepath;
         
         $webpPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $fullpath);
-        imageinterlace($img, 0);
-        imagewebp($img, $webpPath, 82);
-        imagedestroy($img);
+        if (function_exists('imageinterlace')) {
+            @imageinterlace($img, 0);
+        }
+        @imagewebp($img, $webpPath, 82);
+        if (function_exists('imagedestroy')) {
+            @imagedestroy($img);
+        }
         
         if (file_exists($webpPath) && filesize($webpPath) < filesize($fullpath)) {
             @unlink($fullpath);
             return str_replace(basename($filepath), basename($webpPath), $filepath);
         } else {
-            @unlink($webpPath);
+            if (file_exists($webpPath)) {
+                @unlink($webpPath);
+            }
         }
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
         // Ignore conversion errors, keep original
     }
     

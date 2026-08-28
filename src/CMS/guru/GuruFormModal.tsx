@@ -95,7 +95,7 @@ export const GuruFormModal: React.FC<GuruFormModalProps> = ({
               <div>
                 <label className="block text-slate-700 text-sm font-medium mb-1.5">NIP</label>
                 <input
-                  type="text"
+                  type="number"
                   value={nip}
                   onChange={(e) => setNip(e.target.value)}
                   placeholder="Contoh: 19820315..."

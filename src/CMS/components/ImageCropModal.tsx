@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { Check, RotateCw, ZoomIn, ZoomOut } from 'lucide-react';
+import { getImageUrl } from '../../config/api';
 
 export interface CropRatioOption {
   label: string;
@@ -65,8 +66,50 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
   const [loadFailed, setLoadFailed] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const [currentRatio, setCurrentRatio] = useState<number | null>(null);
+  const [resolvedSrc, setResolvedSrc] = useState<string | null>(null);
 
   circularRef.current = circular;
+
+  // Resolusi sumber gambar: jika remote URL, fetch sebagai Blob agar canvas tidak tainted
+  useEffect(() => {
+    let active = true;
+    let createdBlobUrl: string | null = null;
+
+    if (!open || !imageSrc) {
+      setResolvedSrc(null);
+      return;
+    }
+
+    if (imageSrc.startsWith('blob:') || imageSrc.startsWith('data:')) {
+      setResolvedSrc(imageSrc);
+      return;
+    }
+
+    const fullUrl = imageSrc.startsWith('http') ? imageSrc : getImageUrl(imageSrc);
+    fetch(fullUrl, { cache: 'no-cache' })
+      .then((res) => {
+        if (!res.ok) throw new Error('Fetch failed');
+        return res.blob();
+      })
+      .then((blob) => {
+        if (active) {
+          createdBlobUrl = URL.createObjectURL(blob);
+          setResolvedSrc(createdBlobUrl);
+        }
+      })
+      .catch(() => {
+        if (active) {
+          setResolvedSrc(fullUrl);
+        }
+      });
+
+    return () => {
+      active = false;
+      if (createdBlobUrl) {
+        URL.revokeObjectURL(createdBlobUrl);
+      }
+    };
+  }, [open, imageSrc]);
 
   // Reset status ketika sumber gambar / modal / rasio default berubah.
   useEffect(() => {
@@ -76,11 +119,11 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
     const initial = Number.isFinite(aspectRatio) ? aspectRatio : null;
     ratioRef.current = initial;
     setCurrentRatio(initial);
-  }, [open, imageSrc, aspectRatio]);
+  }, [open, resolvedSrc, aspectRatio]);
 
   // Inisialisasi Cropper hanya setelah gambar benar-benar selesai dimuat.
   useEffect(() => {
-    if (!open || !imageSrc || !imgLoaded) return;
+    if (!open || !resolvedSrc || !imgLoaded) return;
 
     const image = imageRef.current;
     if (!image || image.naturalWidth === 0) return;
@@ -119,7 +162,7 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
       cropper.destroy();
       cropperRef.current = null;
     };
-  }, [open, imageSrc, imgLoaded, aspectRatio, circular]);
+  }, [open, resolvedSrc, imgLoaded, aspectRatio, circular]);
 
   useEffect(() => {
     if (!open) return;
@@ -199,22 +242,24 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
             className="relative overflow-hidden rounded-2xl bg-slate-900 mx-auto w-full"
             style={circular ? { aspectRatio: containerAspect } : { aspectRatio: containerAspect, maxHeight: '55vh' }}
           >
-            <img
-              key={imageSrc}
-              ref={imageRef}
-              src={imageSrc}
-              crossOrigin="anonymous"
-              alt="Pratinjau foto"
-              className="block max-w-none w-full h-full object-contain"
-              onLoad={() => {
-                setLoadFailed(false);
-                setImgLoaded(true);
-              }}
-              onError={() => {
-                setLoadFailed(true);
-                setImgLoaded(false);
-              }}
-            />
+            {resolvedSrc && (
+              <img
+                key={resolvedSrc}
+                ref={imageRef}
+                src={resolvedSrc}
+                crossOrigin="anonymous"
+                alt="Pratinjau foto"
+                className="block max-w-none w-full h-full object-contain"
+                onLoad={() => {
+                  setLoadFailed(false);
+                  setImgLoaded(true);
+                }}
+                onError={() => {
+                  setLoadFailed(true);
+                  setImgLoaded(false);
+                }}
+              />
+            )}
             {loadFailed && (
               <div className="absolute inset-0 flex items-center justify-center text-slate-300 text-sm px-6 text-center">
                 Gagal memuat gambar. Coba lagi atau pilih foto baru.

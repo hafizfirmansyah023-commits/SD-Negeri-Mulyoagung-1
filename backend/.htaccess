@@ -36,6 +36,8 @@ RewriteEngine On
 # 3. Tambahkan header keamanan untuk semua response
 # ---------------------------------------------------------
 <IfModule mod_headers.c>
+    # Izinkan CORS untuk aset static backend
+    Header set Access-Control-Allow-Origin "*"
     # Cegah browser menampilkan error detail
     Header always set X-Content-Type-Options "nosniff"
     # Cegah clickjacking

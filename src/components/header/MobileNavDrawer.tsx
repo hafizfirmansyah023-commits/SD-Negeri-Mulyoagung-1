@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Search } from 'lucide-react';
 import { NavTab } from '../../types';
 import { NavItem } from '../../utils/headerData';
 
@@ -8,6 +8,7 @@ interface MobileNavDrawerProps {
   activeTab: NavTab;
   onNavClick: (tab: NavTab) => void;
   onOpenPpdb: () => void;
+  onOpenSearch?: () => void;
   onClose?: () => void;
   linkPpdb?: string;
 }
@@ -17,6 +18,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
   activeTab,
   onNavClick,
   onOpenPpdb,
+  onOpenSearch,
   onClose,
   linkPpdb,
 }) => (
@@ -24,12 +26,25 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
     {/* Backdrop Overlay to close drawer when tapping outside */}
     <div
       onClick={onClose}
-      className="fixed inset-0 top-20 bg-slate-950/60 backdrop-blur-sm z-40 md:hidden transition-opacity"
+      className="fixed inset-0 top-20 bg-slate-950/60 backdrop-blur-sm z-40 xl:hidden transition-opacity"
     />
 
     {/* Drawer Container */}
-    <div className="fixed top-20 left-0 right-0 z-50 md:hidden bg-slate-900 border-b border-slate-800 px-6 py-5 shadow-2xl max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-200">
+    <div className="fixed top-20 left-0 right-0 z-50 xl:hidden bg-slate-900 border-b border-slate-800 px-5 sm:px-6 py-5 shadow-2xl max-h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-2 duration-200">
       <div className="flex flex-col gap-2">
+        {onOpenSearch && (
+          <button
+            onClick={() => {
+              if (onClose) onClose();
+              onOpenSearch();
+            }}
+            className="text-left py-2.5 px-4 mb-1 rounded-xl text-sm font-semibold bg-slate-800/80 hover:bg-slate-800 text-teal-300 border border-teal-500/30 transition-colors flex items-center gap-2.5 cursor-pointer shadow-sm"
+          >
+            <Search size={16} className="text-teal-400" />
+            <span>Pencarian Cepat Website...</span>
+          </button>
+        )}
+
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
           return (

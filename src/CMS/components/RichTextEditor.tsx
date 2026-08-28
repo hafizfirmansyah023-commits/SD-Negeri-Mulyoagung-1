@@ -55,11 +55,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   const executeCommand = (command: string, value: string = '') => {
-    document.execCommand(command, false, value);
-    handleInput();
     if (editorRef.current) {
       editorRef.current.focus();
     }
+    document.execCommand(command, false, value);
+    handleInput();
   };
 
   return (
@@ -68,6 +68,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       <div className="flex flex-wrap items-center gap-1 p-2 bg-slate-50 border-b border-slate-200">
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('bold')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Tebal (Bold)"
@@ -76,6 +77,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('italic')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Miring (Italic)"
@@ -84,6 +86,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('underline')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Garis Bawah (Underline)"
@@ -95,6 +98,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('justifyLeft')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Rata Kiri"
@@ -103,6 +107,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('justifyCenter')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Rata Tengah"
@@ -111,6 +116,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('justifyRight')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Rata Kanan"
@@ -119,6 +125,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('justifyFull')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Rata Kiri Kanan (Justify)"
@@ -130,6 +137,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('insertUnorderedList')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Daftar Simbol (Bullet List)"
@@ -138,6 +146,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </button>
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('insertOrderedList')}
           className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition-colors cursor-pointer"
           title="Daftar Angka (Numbered List)"
@@ -149,6 +158,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <button
           type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={() => executeCommand('removeFormat')}
           className="p-2 text-slate-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
           title="Hapus Format"
@@ -163,10 +173,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         contentEditable
         onInput={handleInput}
         onBlur={handleBlur}
-        className="p-4 min-h-[200px] max-h-[400px] overflow-y-auto outline-none prose prose-slate max-w-none text-sm text-slate-800 focus:outline-none"
-        placeholder={placeholder}
+        className="p-4 min-h-[200px] max-h-[400px] overflow-y-auto outline-none prose prose-slate rich-text-content max-w-none text-sm text-slate-800 focus:outline-none"
+        data-placeholder={placeholder}
         style={{
-          whiteSpace: 'pre-wrap',
           wordBreak: 'break-word',
         }}
       />

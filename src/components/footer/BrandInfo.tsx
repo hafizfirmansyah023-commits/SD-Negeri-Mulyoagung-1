@@ -2,6 +2,7 @@ import React from 'react';
 import { NavTab } from '../../types';
 import logoImg from '../../assets/logo.png';
 import { useSchoolSettings } from '../../hooks/useSchoolSettings';
+import { useHomepageConfig } from '../../hooks/useHomepageConfig';
 import { SocialMediaIcon } from '../common/SocialMediaIcon';
 
 interface BrandInfoProps {
@@ -10,6 +11,7 @@ interface BrandInfoProps {
 
 export const BrandInfo: React.FC<BrandInfoProps> = ({ onNavClick }) => {
   const { medsosLinks } = useSchoolSettings();
+  const { heroSubtitle } = useHomepageConfig();
 
   return (
     <div className="md:col-span-5 space-y-3 sm:space-y-4">
@@ -27,9 +29,7 @@ export const BrandInfo: React.FC<BrandInfoProps> = ({ onNavClick }) => {
       </div>
 
       <p className="text-xs sm:text-sm text-slate-200 dark:text-slate-400 max-w-md leading-relaxed">
-        Selamat datang di SD Negeri 1 Mulyoagung, sekolah yang berkomitmen menciptakan lingkungan belajar yang
-        aman, nyaman, dan inspiratif. Kami menghadirkan pendidikan berkualitas untuk membentuk peserta didik yang
-        siap menghadapi perkembangan ilmu pengetahuan dan teknologi di masa depan.
+        {heroSubtitle}
       </p>
 
       <div className="space-y-2 pt-1 sm:pt-2">

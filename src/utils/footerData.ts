@@ -25,6 +25,8 @@ export const QUICK_LINKS: QuickLink[] = [
   { label: 'Beranda', tab: 'home' },
   { label: 'Profil Sekolah', tab: 'profile' },
   { label: 'Direktori Guru & Tendik', tab: 'directory' },
+  { label: 'Modul & Akademik', tab: 'modul' },
+  { label: 'Galeri Kegiatan', tab: 'gallery' },
   { label: 'Berita & Artikel', tab: 'news' },
   { label: 'CMS Portal Admin', tab: 'cms', textClass: 'text-slate-300' },
 ];

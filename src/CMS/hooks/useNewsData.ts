@@ -25,7 +25,9 @@ export function useNewsData() {
   const fetchArticles = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/backend/API/newsAPI.php?status=all`);
+      const response = await fetch(`${API_BASE}/backend/API/newsAPI.php?status=all&_t=${Date.now()}`, {
+        cache: 'no-store',
+      });
       const result = await response.json();
       if (result.status === 'success') {
         setArticles(result.data || []);

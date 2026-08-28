@@ -7,6 +7,7 @@ import { CmsOverviewDashboard } from './CmsOverviewDashboard';
 import GuruCrud from './GuruCrud';
 import GaleriCrud from './GaleriCrud';
 import BeritaCrud from './BeritaCrud';
+import ModulPembelajaranCrud from './ModulPembelajaranCrud';
 import UserCrud from './UserCrud';
 import Verifikasi from './Verifikasi';
 import FasilitasCrud from './FasilitasCrud';
@@ -53,6 +54,15 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                         currentTab !== 'dashboard' &&
                         currentTab !== 'galeri' &&
                         currentTab !== 'berita' &&
+                        currentTab !== 'modul' &&
+                        currentTab !== 'user'
+                    ) {
+                        navigate('/cms/dashboard', { replace: true });
+                    }
+                } else if (parsed.role === 'GURU') {
+                    if (
+                        currentTab !== 'dashboard' &&
+                        currentTab !== 'modul' &&
                         currentTab !== 'user'
                     ) {
                         navigate('/cms/dashboard', { replace: true });
@@ -115,6 +125,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'fasilitas' && user.role === 'ADMIN' && <FasilitasCrud currentUser={user} />}
                 {activeTab === 'galeri' && <GaleriCrud currentUser={user} />}
                 {activeTab === 'berita' && <BeritaCrud currentUser={user} />}
+                {activeTab === 'modul' && <ModulPembelajaranCrud currentUser={user} />}
                 {activeTab === 'verifikasi' && user.role === 'ADMIN' && <Verifikasi />}
                 {activeTab === 'user' && (
                     <UserCrud currentUser={user} onUpdateCurrentUser={handleUpdateUser} />

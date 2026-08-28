@@ -9,23 +9,35 @@ interface PhotoLightboxModalProps {
 }
 
 export const PhotoLightboxModal: React.FC<PhotoLightboxModalProps> = ({ photo, onClose }) => {
-  // Lock body scroll when modal is open
+  // Lock body & html scroll when modal is open
   useEffect(() => {
     if (photo) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
       document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [photo]);
+  }, [photo, onClose]);
 
   if (!photo) return null;
 
   return createPortal(
     <div 
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fade-in"
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto overscroll-contain animate-fade-in"
       onClick={onClose}
     >
       <div 

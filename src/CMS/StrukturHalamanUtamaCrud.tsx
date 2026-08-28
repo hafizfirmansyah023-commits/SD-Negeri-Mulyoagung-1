@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { CmsToast } from './components/CmsToast';
 import { Layers, Save, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -16,8 +16,9 @@ export default function StrukturHalamanUtamaCrud() {
     loading,
     saving,
     message,
+    setMessage,
     fetchSettings,
-    handleSaveAll
+    handleSaveStrukturHalamanUtama
   } = usePengaturanData();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function StrukturHalamanUtamaCrud() {
         </div>
 
         <button
-          onClick={() => handleSaveAll()}
+          onClick={() => handleSaveStrukturHalamanUtama()}
           disabled={saving || loading}
           className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-teal-700/20 disabled:opacity-50 cursor-pointer shrink-0"
         >
@@ -47,18 +48,7 @@ export default function StrukturHalamanUtamaCrud() {
         </button>
       </div>
 
-      {message && (
-        <div
-          className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${
-            message.type === 'success'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
-        >
-          {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-          <span>{message.text}</span>
-        </div>
-      )}
+      <CmsToast message={message} onClose={() => setMessage(null)} />
 
       {loading ? (
         <div className="flex justify-center items-center py-12">

@@ -1,6 +1,7 @@
-﻿import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { CmsToast } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 import { Share2, Save, CheckCircle2, AlertCircle } from 'lucide-react';
 import { usePengaturanData } from './pengaturan/hooks/usePengaturanData';
 import { MedsosSection } from './pengaturan/Sections/MedsosSection';
@@ -12,8 +13,45 @@ export default function MedsosCrud() {
     medsosModalOpen, setMedsosModalOpen, medsosEditingItem, medsosFormData,
     handleMedsosFormChange, handleOpenAddMedsos, handleOpenEditMedsos,
     handleDeleteMedsos, handleSaveMedsosItem,
-    loading, saving, message, setMessage, fetchSettings, handleSaveAll
+    loading, saving, message, setMessage, fetchSettings, handleSaveMedsos
   } = usePengaturanData();
+
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
+
+  const onDeleteMedsosRequest = (id: string) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Media Sosial',
+      message: 'Apakah Anda yakin ingin menghapus media sosial ini?',
+      onConfirm: () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        handleDeleteMedsos(id);
+      },
+    });
+  };
+
+  const onSaveMedsosSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (medsosEditingItem) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Media Sosial',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan media sosial ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          handleSaveMedsosItem(e);
+        },
+      });
+    } else {
+      handleSaveMedsosItem(e);
+    }
+  };
 
   useEffect(() => {
     fetchSettings();
@@ -33,7 +71,7 @@ export default function MedsosCrud() {
         </div>
 
         <button
-          onClick={() => handleSaveAll()}
+          onClick={() => handleSaveMedsos()}
           disabled={saving || loading}
           className="flex items-center gap-2 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-teal-700/20 disabled:opacity-50 cursor-pointer shrink-0"
         >
@@ -42,18 +80,7 @@ export default function MedsosCrud() {
         </button>
       </div>
 
-      {message && (
-        <div
-          className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${
-            message.type === 'success'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
-        >
-          {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-          <span>{message.text}</span>
-        </div>
-      )}
+      <CmsToast message={message} onClose={() => setMessage(null)} />
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
@@ -64,7 +91,7 @@ export default function MedsosCrud() {
           medsosList={medsosList}
           onAdd={handleOpenAddMedsos}
           onEdit={handleOpenEditMedsos}
-          onDelete={handleDeleteMedsos}
+          onDelete={onDeleteMedsosRequest}
         />
       )}
 
@@ -73,8 +100,17 @@ export default function MedsosCrud() {
         editing={medsosEditingItem}
         formData={medsosFormData}
         onChange={handleMedsosFormChange}
-        onSave={handleSaveMedsosItem}
+        onSave={onSaveMedsosSubmit}
         onClose={() => setMedsosModalOpen(false)}
+      />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

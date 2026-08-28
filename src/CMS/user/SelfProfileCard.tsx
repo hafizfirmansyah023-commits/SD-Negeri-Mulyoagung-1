@@ -52,7 +52,9 @@ export const SelfProfileCard: React.FC<SelfProfileCardProps> = ({
           className={`text-[11px] uppercase font-bold tracking-wider px-3 py-1 rounded-full ${
             currentUser.role === 'ADMIN'
               ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-              : 'bg-teal-50 text-teal-700 border border-teal-200'
+              : currentUser.role === 'GURU'
+              ? 'bg-teal-50 text-teal-700 border border-teal-200'
+              : 'bg-amber-50 text-amber-700 border border-amber-200'
           }`}
         >
           {currentUser.role}

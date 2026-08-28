@@ -13,43 +13,43 @@ coverage/
 # ========================
 # Environment & Secrets
 # ========================
-.env*
-!.env.example
+# .env*
+# !.env.example
 
 # ========================
 # Database Dump (SENSITIF)
 # ========================
-#backend/db_sdn1mulyoagung.sql
-*.sql
+# #backend/db_sdn1mulyoagung.sql
+# *.sql
 
 # ========================
 # File Upload Pengguna
 # (konten dinamis — tidak perlu di-track Git)
 # ========================
-#backend/uploads/
+# #backend/uploads/
 
 # ========================
 # OS & Editor
 # ========================
-.DS_Store
-Thumbs.db
-desktop.ini
-.vscode/settings.json
-.idea/
+# .DS_Store
+# Thumbs.db
+# desktop.ini
+# .vscode/settings.json
+# .idea/
 
 # ========================
 # Log & Temp
 # ========================
-*.log
-*.tmp
-*.bak
-*.swp
+# *.log
+# *.tmp
+# *.bak
+# *.swp
 
 # ========================
 # Script Sementara
 # ========================
-scratch_check.ps1
-*.ps1
+# scratch_check.ps1
+# *.ps1
 
 # ========================
 # Catatan Internal
@@ -59,4 +59,5 @@ scratch_check.ps1
 # ========================
 # OpenCode
 # ========================
-#.opencode/
+# #.opencode/
+# .opencode.json

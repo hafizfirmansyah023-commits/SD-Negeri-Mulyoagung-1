@@ -26,7 +26,7 @@ export const Hero: React.FC<HeroProps> = ({
   const defaultSlides = [
     {
       image: heroImg,
-      caption: 'MA ONE BERGELORA!!!',
+      caption: 'MA ONE BERGELORAA!!!',
       tag: 'Kegiatan Utama',
     },
     {
@@ -71,7 +71,7 @@ export const Hero: React.FC<HeroProps> = ({
         if (json.status === 'success' && Array.isArray(json.data) && json.data.length > 0) {
           const customSlides = json.data.map((item: any) => ({
             image: getImageUrl(item.foto),
-            caption: item.caption || 'MA ONE BERGELORA!!!',
+            caption: item.caption || 'MA ONE BERGELORAA!!!',
             tag: item.tag || 'Kegiatan Utama',
           }));
           setSlides(customSlides);
@@ -99,8 +99,7 @@ export const Hero: React.FC<HeroProps> = ({
   const activePpdbUrl = linkPpdb || customLinkPpdb;
 
   return (
-    // min-h diperkecil untuk mobile agar tidak terlalu kosong ke bawah
-    <section className="relative w-full min-h-[480px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0D4A46]">
+    <section className="relative w-full min-h-[520px] sm:min-h-[580px] lg:min-h-[640px] flex items-center justify-center overflow-hidden bg-[#0D4A46]">
 
       {/* Background */}
       <div className="absolute inset-0 z-0">
@@ -118,20 +117,20 @@ export const Hero: React.FC<HeroProps> = ({
       <div className="absolute bottom-0 right-0 w-[300px] h-[300px] sm:w-[420px] sm:h-[420px] bg-[#79EEDE]/10 rounded-full blur-3xl"></div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-10 pt-20 sm:pt-24 lg:pt-16 pb-16 sm:pb-28 lg:pb-32 flex flex-col lg:flex-row items-center gap-8 sm:gap-12">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-16 sm:pt-20 lg:pt-16 pb-14 sm:pb-20 lg:pb-24 flex flex-col lg:flex-row items-center gap-8 sm:gap-10 lg:gap-12">
 
         {/* LEFT */}
-        <div className="lg:w-3/5 text-center lg:text-left space-y-4 sm:space-y-6">
+        <div className="w-full lg:w-3/5 text-center lg:text-left space-y-4 sm:space-y-6">
 
           {/* Badge */}
-          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#20C997]/15 border border-[#20C997]/40 text-[#E8F3F2] px-3 py-1.5 sm:px-5 sm:py-2 rounded-full backdrop-blur-md shadow-lg">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#20C997]/15 border border-[#20C997]/40 text-[#E8F3F2] px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-full backdrop-blur-md shadow-lg">
             <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#79EEDE]" />
-            <span className="text-[10px] sm:text-sm font-semibold">
+            <span className="text-[11px] sm:text-sm font-semibold">
               Tahun Ajaran {tahunAjaran}
             </span>
           </div>
           
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-extrabold leading-[1.15] tracking-tight">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-[1.18] tracking-tight">
             {homepageConfig.heroTitle.includes('SD Negeri 1 Mulyoagung') ? (
               <>
                 {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim() ? (
@@ -146,12 +145,12 @@ export const Hero: React.FC<HeroProps> = ({
             )}
           </h1>
 
-          <p className="text-[13px] sm:text-lg lg:text-xl text-slate-100 dark:text-slate-200 max-w-2xl leading-snug sm:leading-relaxed opacity-95 mx-auto lg:mx-0">
+          <p className="text-xs sm:text-base lg:text-lg text-slate-100 dark:text-slate-200 max-w-2xl leading-relaxed opacity-95 mx-auto lg:mx-0">
             {homepageConfig.heroSubtitle}
           </p>
 
           {/* Buttons */}
-          <div className="mt-6 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center lg:justify-start">
+          <div className="mt-5 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
 
             {/* PPDB */}
             {activePpdbUrl ? (
@@ -262,15 +261,12 @@ export const Hero: React.FC<HeroProps> = ({
                 </div>
               </div>
 
-              {/* Floating Dynamic Caption Badge */}
-              <div className="absolute -bottom-4 -left-4 z-30 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-3 px-4 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 flex items-center gap-3 transition-all duration-300 max-w-[320px]">
-                <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <div className="overflow-hidden">
-                  <span className="text-xs font-bold block leading-tight truncate">
+              {/* Sleek Glassmorphic Caption Badge */}
+              <div className="absolute bottom-3.5 left-3.5 sm:bottom-4 sm:left-4 z-20 bg-slate-950/75 dark:bg-slate-900/85 backdrop-blur-md text-white p-2.5 px-3.5 rounded-xl shadow-lg border border-white/20 flex items-center gap-2.5 transition-all duration-300 max-w-[calc(100%-7.5rem)] sm:max-w-xs md:max-w-sm">
+                <div className="w-2 h-2 rounded-full bg-[#79EEDE] animate-pulse shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <span className="text-xs font-semibold block leading-tight text-slate-100 break-words tracking-wide">
                     {slides[currentSlide]?.caption}
-                  </span>
-                  <span className="text-[10px] text-teal-600 dark:text-teal-400 font-semibold uppercase">
-                    {slides[currentSlide]?.tag}
                   </span>
                 </div>
               </div>

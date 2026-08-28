@@ -1,6 +1,8 @@
 import React from 'react';
-import { Image as ImageIcon, X, Tag } from 'lucide-react';
+import { Image as ImageIcon, X } from 'lucide-react';
 import { HeroCarouselItem } from '../types';
+import { ImageUploadField, ImageUploadPayload } from '../../components/ImageUploadField';
+import { getImageUrl } from '../../../config/api';
 
 interface HeroCarouselModalProps {
   open: boolean;
@@ -11,6 +13,7 @@ interface HeroCarouselModalProps {
   onChangeCaption: (val: string) => void;
   onChangeTag: (val: string) => void;
   onChangeUrutan: (val: number) => void;
+  onFotoSelectionChange: (payload: ImageUploadPayload) => void;
   onSave: (e: React.FormEvent) => void;
   onClose: () => void;
 }
@@ -24,6 +27,7 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
   onChangeCaption,
   onChangeTag,
   onChangeUrutan,
+  onFotoSelectionChange,
   onSave,
   onClose,
 }) => {
@@ -47,50 +51,50 @@ export const HeroCarouselModal: React.FC<HeroCarouselModalProps> = ({
 
         <form onSubmit={onSave} className="space-y-4">
           <div>
+            <ImageUploadField
+              label="Foto Carousel Hero (Landscape 16:9) *"
+              hint={`Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 5MB. ${editing ? 'Biarkan kosong jika tidak ingin mengubah foto.' : ''}`}
+              currentImage={editing?.foto ? getImageUrl(editing.foto) : undefined}
+              currentOriginalImage={
+                editing?.foto_original
+                  ? getImageUrl(editing.foto_original)
+                  : editing?.foto
+                    ? getImageUrl(editing.foto)
+                    : undefined
+              }
+              circular={false}
+              previewShape="rounded"
+              aspectRatio={16 / 9}
+              outputWidth={1280}
+              onFileChange={onFotoSelectionChange}
+            />
+          </div>
+
+          <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
               Caption / Keterangan Singkat *
             </label>
             <input
               type="text"
               required
-              placeholder="Contoh: Pembentukan Karakter & Prestasi Siswa"
+              placeholder="MA ONE BERGELORAA!!!"
               value={caption}
               onChange={(e) => onChangeCaption(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1">
-                <Tag size={13} className="text-teal-600" /> Kategori / Tag
-              </label>
-              <select
-                value={tag}
-                onChange={(e) => onChangeTag(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-xs font-semibold text-slate-800"
-              >
-                <option value="Kegiatan Utama">Kegiatan Utama</option>
-                <option value="Fasilitas Sekolah">Fasilitas Sekolah</option>
-                <option value="Suasana Belajar">Suasana Belajar</option>
-                <option value="Karakter Mulia">Karakter Mulia</option>
-                <option value="Prestasi Siswa">Prestasi Siswa</option>
-                <option value="Galeri Sekolah">Galeri Sekolah</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                Urutan Tampil
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={urutan}
-                onChange={(e) => onChangeUrutan(parseInt(e.target.value) || 1)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-xs font-bold text-slate-800"
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+              Urutan Tampil
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={urutan}
+              onChange={(e) => onChangeUrutan(parseInt(e.target.value) || 1)}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-xs font-bold text-slate-800"
+            />
           </div>
 
           <div className="pt-3 flex justify-end gap-3 border-t border-slate-100">

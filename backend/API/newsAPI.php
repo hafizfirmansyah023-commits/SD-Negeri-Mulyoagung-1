@@ -3,6 +3,8 @@ require_once '../config/koneksi.php';
 require_once 'foto_helper.php';
 
 header("Content-Type: application/json");
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Pragma: no-cache");
 
 foto_ensure_column($conn, 'berita');
 
@@ -40,7 +42,7 @@ elseif ($method === 'POST') {
         $isi = isset($_POST['isi']) ? trim($_POST['isi']) : '';
         $kategori = isset($_POST['kategori']) ? trim($_POST['kategori']) : '';
         $tanggal = isset($_POST['tanggal']) ? trim($_POST['tanggal']) : '';
-        $uploaded_by = isset($_POST['uploaded_by']) ? intval($_POST['uploaded_by']) : null;
+        $uploaded_by = (isset($_POST['uploaded_by']) && intval($_POST['uploaded_by']) > 0) ? intval($_POST['uploaded_by']) : null;
         $role = isset($_POST['role']) ? trim($_POST['role']) : 'TIM';
 
         if (empty($judul) || empty($isi) || empty($kategori) || empty($tanggal)) {

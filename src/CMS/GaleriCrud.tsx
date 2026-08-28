@@ -9,7 +9,8 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { GaleriCard } from './galeri/GaleriCard';
 import { GaleriFormModal } from './galeri/GaleriFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
-import { CmsToast } from './components/CmsToast';
+import { CmsToast, ToastType } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 
 interface GaleriCrudProps {
   currentUser: UserSession;
@@ -39,7 +40,14 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
   const [fotoSelection, setFotoSelection] = useState<ImageUploadPayload>({ original: null, cropped: null });
   const [currentFoto, setCurrentFoto] = useState('');
   const [currentOriginalFoto, setCurrentOriginalFoto] = useState('');
-  const [toast, setToast] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Confirm Modal state
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
 
   // Filter Hook
   const {
@@ -89,8 +97,7 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const processSubmit = async () => {
     setError('');
     setSuccess('');
 
@@ -133,9 +140,40 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus foto galeri ini?')) return;
-    await deleteGalleryItem(id);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Galeri',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan foto galeri ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          processSubmit();
+        },
+      });
+    } else {
+      processSubmit();
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Galeri',
+      message: 'Apakah Anda yakin ingin menghapus foto galeri ini?',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        const ok = await deleteGalleryItem(id);
+        if (ok) {
+          setToast({ type: 'delete', text: 'Foto galeri berhasil dihapus.' });
+        } else {
+          setToast({ type: 'error', text: 'Gagal menghapus foto galeri.' });
+        }
+      },
+    });
   };
 
   return (
@@ -156,6 +194,56 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
         </button>
       </div>
 
+      {/* Status Filter Tabs */}
+      <div className="bg-white p-2 sm:p-2.5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-1.5 overflow-x-auto">
+        {[
+          { key: 'ALL', label: 'Semua Status', count: items.length },
+          {
+            key: 'Verified',
+            label: 'Diterbitkan',
+            count: items.filter((a) => a.status_verifikasi === 'Verified').length,
+            color: 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100',
+            activeColor: 'bg-emerald-600 text-white shadow-sm',
+          },
+          {
+            key: 'Pending',
+            label: 'Menunggu Verifikasi',
+            count: items.filter((a) => a.status_verifikasi === 'Pending').length,
+            color: 'text-amber-700 bg-amber-50 hover:bg-amber-100',
+            activeColor: 'bg-amber-600 text-white shadow-sm',
+          },
+          {
+            key: 'Rejected',
+            label: 'Ditolak',
+            count: items.filter((a) => a.status_verifikasi === 'Rejected').length,
+            color: 'text-red-700 bg-red-50 hover:bg-red-100',
+            activeColor: 'bg-red-600 text-white shadow-sm',
+          },
+        ].map((tab) => {
+          const isActive = (filters.status_verifikasi || 'ALL') === tab.key;
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setFilter('status_verifikasi', tab.key)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                isActive
+                  ? tab.activeColor || 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm'
+                  : 'text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Filter Bar Component */}
       <CmsFilterBar
         searchTerm={searchTerm}
@@ -171,18 +259,6 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
             options: [
               { value: 'ALL', label: 'Semua Kategori' },
               ...availableCategories.map((c) => ({ value: c, label: c })),
-            ],
-          },
-          {
-            key: 'status_verifikasi',
-            value: filters.status_verifikasi || 'ALL',
-            onChange: (val) => setFilter('status_verifikasi', val),
-            options: [
-              { value: 'ALL', label: 'Semua Status' },
-              ...availableStatuses.map((st) => ({
-                value: st,
-                label: st === 'Verified' ? 'Terverifikasi' : st === 'Rejected' ? 'Ditolak' : 'Menunggu Verifikasi',
-              })),
             ],
           },
         ]}
@@ -246,6 +322,15 @@ export default function GaleriCrud({ currentUser }: GaleriCrudProps) {
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
+      />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

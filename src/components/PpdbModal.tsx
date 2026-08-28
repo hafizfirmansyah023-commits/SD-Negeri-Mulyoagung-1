@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Sparkles, CheckCircle2, Download, Printer, FileText, ArrowRight } from 'lucide-react';
 import { PpdbApplication } from '../types';
 import logoImg from '../assets/logo.png';
@@ -23,6 +24,30 @@ export const PpdbModal: React.FC<PpdbModalProps> = ({ isOpen, onClose }) => {
   });
 
   const [submittedData, setSubmittedData] = useState<PpdbApplication | null>(null);
+
+  // Lock body & html scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          onClose();
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -72,9 +97,15 @@ export const PpdbModal: React.FC<PpdbModalProps> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800">
+  return createPortal(
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md overflow-y-auto overscroll-contain animate-fade-in"
+      onClick={onClose}
+    >
+      <div 
+        className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-slate-800 my-auto text-left"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="bg-[#1E3A8A] dark:bg-slate-950 text-white p-6 sm:p-8 flex justify-between items-start relative border-b border-blue-900/50">
           <div className="flex items-center gap-4">
@@ -417,6 +448,7 @@ export const PpdbModal: React.FC<PpdbModalProps> = ({ isOpen, onClose }) => {
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

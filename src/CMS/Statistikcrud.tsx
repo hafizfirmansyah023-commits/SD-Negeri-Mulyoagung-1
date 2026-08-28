@@ -6,6 +6,8 @@ import { useCmsFilter } from './hooks/useCmsFilter';
 import CmsFilterBar from './components/CmsFilterBar';
 import { StatistikCard, StatistikItem } from './statistik/StatistikCard';
 import { StatistikFormModal } from './statistik/StatistikFormModal';
+import { CmsToast, ToastType } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 
 interface StatistikCrudProps {
   currentUser: UserSession;
@@ -18,6 +20,14 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Confirm Modal state
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -81,8 +91,7 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const processSubmit = async () => {
     setError('');
     setSuccess('');
 
@@ -102,42 +111,67 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
       });
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message);
+        setToast({ type: 'success', text: result.message || 'Data statistik berhasil disimpan.' });
         setShowModal(false);
         resetForm();
         fetchStatistik();
       } else {
         setError(result.message || 'Gagal menyimpan statistik.');
+        setToast({ type: 'error', text: result.message || 'Gagal menyimpan statistik.' });
       }
     } catch {
+      setToast({ type: 'error', text: 'Terjadi kesalahan saat menghubungi server.' });
       setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus data statistik ini?')) return;
-    setError('');
-    setSuccess('');
-
-    const formData = new FormData();
-    formData.append('action', 'delete');
-    formData.append('id', id.toString());
-
-    try {
-      const response = await fetch(`${API_BASE}/backend/API/statistik.php`, {
-        method: 'POST',
-        body: formData,
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Statistik',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan data statistik ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          processSubmit();
+        },
       });
-      const result = await response.json();
-      if (result.status === 'success') {
-        setSuccess(result.message);
-        fetchStatistik();
-      } else {
-        setError(result.message || 'Gagal menghapus data.');
-      }
-    } catch {
-      setError('Terjadi kesalahan saat menghapus data.');
+    } else {
+      processSubmit();
     }
+  };
+
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Statistik',
+      message: 'Apakah Anda yakin ingin menghapus data statistik ini?',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        const formData = new FormData();
+        formData.append('action', 'delete');
+        formData.append('id', id.toString());
+
+        try {
+          const response = await fetch(`${API_BASE}/backend/API/statistik.php`, {
+            method: 'POST',
+            body: formData,
+          });
+          const result = await response.json();
+          if (result.status === 'success') {
+            setToast({ type: 'delete', text: 'Data statistik berhasil dihapus.' });
+            fetchStatistik();
+          } else {
+            setToast({ type: 'error', text: result.message || 'Gagal menghapus data.' });
+          }
+        } catch {
+          setToast({ type: 'error', text: 'Terjadi kesalahan saat menghapus data.' });
+        }
+      },
+    });
   };
 
   return (
@@ -223,6 +257,17 @@ export default function StatistikCrud({ currentUser }: StatistikCrudProps) {
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
+      />
+
+      <CmsToast message={toast} onClose={() => setToast(null)} />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

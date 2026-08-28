@@ -73,15 +73,11 @@ export const HeroCarouselSection: React.FC<HeroCarouselSectionProps> = ({
                 <GripVertical size={12} className="text-teal-400" />
                 <span>Geser #{item.urutan}</span>
               </div>
-
-              <div className="absolute top-2.5 right-2.5 bg-teal-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-md">
-                {item.tag || 'Hero Slide'}
-              </div>
             </div>
 
             <div className="p-4 flex-grow flex flex-col justify-between space-y-3">
               <div>
-                <span className="text-xs font-bold text-slate-800 line-clamp-2 leading-snug">
+                <span className="text-xs font-bold text-slate-800 break-words leading-snug">
                   {item.caption}
                 </span>
               </div>

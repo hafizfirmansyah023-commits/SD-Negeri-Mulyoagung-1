@@ -26,8 +26,10 @@ import { DirectorySection } from './components/DirectorySection';
 
 import { GallerySection } from './components/GallerySection';
 import { SchoolProfileSection } from './components/SchoolProfileSection';
+import { ModulPembelajaranSection } from './components/ModulPembelajaranSection';
 import { ContactSection } from './components/ContactSection';
 import { PpdbModal } from './components/PpdbModal';
+import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { Footer } from './components/Footer';
 import { BackToTop } from './components/BackToTop';
 import { AnnouncementBar } from './components/AnnouncementBar';
@@ -43,6 +45,7 @@ function AppContent() {
   const navigate = useNavigate();
   const navigationType = useNavigationType();
   const [ppdbOpen, setPpdbOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [linkPpdb, setLinkPpdb] = useState('');
   const homepageConfig = useHomepageConfig();
 
@@ -131,6 +134,18 @@ function AppContent() {
     return () => clearTimeout(timer);
   }, [location.pathname, navigationType]);
 
+  // Global keyboard shortcut for search (Ctrl + K / Cmd + K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   if (location.pathname.startsWith('/cms')) {
     return (
       <Suspense fallback={<div className="min-h-screen bg-[#f8f9fa]" />}>
@@ -148,6 +163,7 @@ function AppContent() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenPpdb={handleOpenPpdb}
+        onOpenSearch={() => setSearchOpen(true)}
         linkPpdb={linkPpdb}
       />
 
@@ -255,6 +271,15 @@ function AppContent() {
           />
 
           <Route
+            path="/modul"
+            element={
+              <div className="pt-4" data-aos="fade-up">
+                <ModulPembelajaranSection />
+              </div>
+            }
+          />
+
+          <Route
             path="/contact"
             element={
               <div data-aos="fade-up">
@@ -275,9 +300,9 @@ function AppContent() {
         />
       </div>
 
-
-
       <PpdbModal isOpen={ppdbOpen} onClose={() => setPpdbOpen(false)} />
+
+      <GlobalSearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <BackToTop />
 

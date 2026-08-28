@@ -8,6 +8,8 @@ import { getUniqueValues } from './utils/cmsHelpers';
 import { GuruCard } from './guru/GuruCard';
 import { GuruFormModal } from './guru/GuruFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
+import { CmsToast, ToastType } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 
 const API_BASE = getApiBaseUrl();
 
@@ -22,6 +24,16 @@ export default function GuruCrud() {
     fetchTeachers,
     deleteTeacher,
   } = useTeacherData();
+
+  // Toast state
+  const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Confirm Modal state
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
 
   // Form states
   const [showModal, setShowModal] = useState(false);
@@ -95,8 +107,7 @@ export default function GuruCrud() {
     setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const processSubmit = async () => {
     setError('');
     setSuccess('');
 
@@ -127,21 +138,54 @@ export default function GuruCrud() {
       });
       const result = await response.json();
       if (result.status === 'success') {
-        setSuccess(result.message);
+        setToast({ type: 'success', text: result.message || 'Data guru berhasil disimpan.' });
         setShowModal(false);
         resetForm();
         fetchTeachers();
       } else {
         setError(result.message || 'Gagal menyimpan data guru.');
+        setToast({ type: 'error', text: result.message || 'Gagal menyimpan data guru.' });
       }
     } catch {
+      setToast({ type: 'error', text: 'Terjadi kesalahan saat menghubungi server.' });
       setError('Terjadi kesalahan saat menghubungi server.');
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus data guru ini?')) return;
-    await deleteTeacher(id);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editId) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Data Guru',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan data guru ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          processSubmit();
+        },
+      });
+    } else {
+      processSubmit();
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Guru',
+      message: 'Apakah Anda yakin ingin menghapus data guru ini?',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        const ok = await deleteTeacher(id);
+        if (ok) {
+          setToast({ type: 'delete', text: 'Data guru berhasil dihapus.' });
+        } else {
+          setToast({ type: 'error', text: 'Gagal menghapus data guru.' });
+        }
+      },
+    });
   };
 
   return (
@@ -238,6 +282,9 @@ export default function GuruCrud() {
         </div>
       )}
 
+      {/* CmsToast */}
+      <CmsToast message={toast} onClose={() => setToast(null)} />
+
       {/* Form Modal */}
       <GuruFormModal
         showModal={showModal}
@@ -264,6 +311,15 @@ export default function GuruCrud() {
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
+      />
+
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

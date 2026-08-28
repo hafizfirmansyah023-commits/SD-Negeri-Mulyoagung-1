@@ -1,6 +1,6 @@
-﻿import React, { useEffect } from 'react';
-
+import React, { useState, useEffect } from 'react';
 import { CmsToast } from './components/CmsToast';
+import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 import { Sliders, Save, CheckCircle2, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { usePengaturanData } from './pengaturan/hooks/usePengaturanData';
 import { HeroCarouselSection } from './pengaturan/Sections/HeroCarouselSection';
@@ -15,13 +15,49 @@ export default function HeroCrud() {
     heroSubtitle, setHeroSubtitle,
     loading, saving, message, setMessage,
     heroModalOpen, setHeroModalOpen, editingHero, heroCaption, heroTag, heroUrutan,
-    heroPreview, heroCropOpen, heroCropSrc,
     setHeroCaption, setHeroTag, setHeroUrutan,
-    handleHeroFileChange, handleHeroReCrop, handleHeroCropConfirm, handleHeroCropCancel,
+    setHeroFotoPayload,
     handleOpenAddHero, handleOpenEditHero, handleDeleteHero, handleSaveHero,
     handleHeroDragStart, handleHeroDragOver, handleHeroDrop, draggedHeroIndex,
     fetchSettings, fetchHeroSlides, handleSaveAll
   } = usePengaturanData();
+
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    isOpen: false,
+    variant: 'delete',
+    onConfirm: () => {},
+  });
+
+  const onDeleteHeroRequest = (id: number) => {
+    setConfirmState({
+      isOpen: true,
+      variant: 'delete',
+      title: 'Konfirmasi Hapus Foto Carousel',
+      message: 'Apakah Anda yakin ingin menghapus foto carousel hero ini?',
+      onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
+        await handleDeleteHero(id);
+      },
+    });
+  };
+
+  const onSaveHeroSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingHero) {
+      setConfirmState({
+        isOpen: true,
+        variant: 'edit',
+        title: 'Konfirmasi Edit Carousel',
+        message: 'Apakah Anda yakin ingin menyimpan perubahan foto carousel ini?',
+        onConfirm: () => {
+          setConfirmState((prev) => ({ ...prev, isOpen: false }));
+          handleSaveHero(e);
+        },
+      });
+    } else {
+      handleSaveHero(e);
+    }
+  };
 
   useEffect(() => {
     fetchSettings();
@@ -52,18 +88,7 @@ export default function HeroCrud() {
         </button>
       </div>
 
-      {message && (
-        <div
-          className={`p-4 rounded-xl flex items-center gap-3 text-sm font-semibold ${
-            message.type === 'success'
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-              : 'bg-red-50 text-red-700 border border-red-200'
-          }`}
-        >
-          {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-          <span>{message.text}</span>
-        </div>
-      )}
+      <CmsToast message={message} onClose={() => setMessage(null)} />
 
       {loading ? (
         <div className="flex justify-center items-center py-12">
@@ -107,7 +132,7 @@ export default function HeroCrud() {
             heroSlides={heroSlides}
             onAdd={handleOpenAddHero}
             onEdit={handleOpenEditHero}
-            onDelete={handleDeleteHero}
+            onDelete={onDeleteHeroRequest}
             onDragStart={handleHeroDragStart}
             onDragOver={handleHeroDragOver}
             onDrop={handleHeroDrop}
@@ -123,26 +148,21 @@ export default function HeroCrud() {
         caption={heroCaption}
         tag={heroTag}
         urutan={heroUrutan}
-        preview={heroPreview}
         onChangeCaption={setHeroCaption}
         onChangeTag={setHeroTag}
         onChangeUrutan={setHeroUrutan}
-        onFileChange={handleHeroFileChange}
-        onReCrop={handleHeroReCrop}
-        onSave={handleSaveHero}
+        onFotoSelectionChange={setHeroFotoPayload}
+        onSave={onSaveHeroSubmit}
         onClose={() => setHeroModalOpen(false)}
       />
 
-      <ImageCropModal
-        open={heroCropOpen}
-        imageSrc={heroCropSrc}
-        aspectRatio={16 / 9}
-        circular={false}
-        title="Potong Foto Carousel Hero"
-        outputWidth={1920}
-        outputHeight={1080}
-        onCancel={handleHeroCropCancel}
-        onConfirm={handleHeroCropConfirm}
+      <CmsConfirmModal
+        isOpen={confirmState.isOpen}
+        variant={confirmState.variant}
+        title={confirmState.title}
+        message={confirmState.message}
+        onConfirm={confirmState.onConfirm}
+        onClose={() => setConfirmState((prev) => ({ ...prev, isOpen: false }))}
       />
     </div>
   );

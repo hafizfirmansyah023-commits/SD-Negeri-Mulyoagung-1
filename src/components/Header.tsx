@@ -12,10 +12,11 @@ interface HeaderProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
   onOpenPpdb: () => void;
+  onOpenSearch?: () => void;
   linkPpdb?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenPpdb, linkPpdb }) => {
+export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenPpdb, onOpenSearch, linkPpdb }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const lastScrollY = useRef(0);
@@ -49,16 +50,38 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
     };
   }, []);
 
-  // Lock body scroll when mobile navigation menu is open
+  // Lock body scroll when mobile navigation menu is open, and clean up on resize/rotation
   useEffect(() => {
     if (mobileMenuOpen) {
+      const prevBody = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      const handleResize = () => {
+        if (window.innerWidth >= 1280) {
+          setMobileMenuOpen(false);
+        }
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setMobileMenuOpen(false);
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('orientationchange', handleResize);
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevBody;
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [mobileMenuOpen]);
 
   const handleNavClick = (tab: NavTab) => {
@@ -74,14 +97,24 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
       <header
         className="sticky top-0 z-50 shadow-lg bg-gradient-to-r from-[#073632] to-[#103632] transition-all duration-300"
       >
-        <div className="flex justify-between items-center px-4 sm:px-8 lg:px-12 w-full h-20 max-w-7xl mx-auto">
+        <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 xl:px-10 w-full h-20 max-w-[1440px] mx-auto gap-4 sm:gap-6 lg:gap-8">
           <HeaderLogo onClick={handleNavClick} />
 
           <DesktopNav navItems={NAV_ITEMS} activeTab={activeTab} onNavClick={handleNavClick} />
 
-          <HeaderActions activeTab={activeTab} onCmsClick={() => handleNavClick('cms')} onOpenPpdb={onOpenPpdb} linkPpdb={linkPpdb} />
+          <HeaderActions
+            activeTab={activeTab}
+            onCmsClick={() => handleNavClick('cms')}
+            onOpenPpdb={onOpenPpdb}
+            onOpenSearch={onOpenSearch}
+            linkPpdb={linkPpdb}
+          />
 
-          <MobileMenuButton isOpen={mobileMenuOpen} onToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+          <MobileMenuButton
+            isOpen={mobileMenuOpen}
+            onToggle={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onOpenSearch={onOpenSearch}
+          />
         </div>
 
         {mobileMenuOpen && (
@@ -94,6 +127,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
               setMobileMenuOpen(false);
               onOpenPpdb();
             }}
+            onOpenSearch={onOpenSearch}
             linkPpdb={linkPpdb}
           />
         )}

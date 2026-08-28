@@ -29,13 +29,35 @@ export default function CmsSidebar({
   // Lock body scroll when mobile menu drawer is open
   useEffect(() => {
     if (mobileOpen) {
+      const prevBody = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+
+      const handleResize = () => {
+        if (window.innerWidth >= 768) {
+          setMobileOpen(false);
+        }
+      };
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          setMobileOpen(false);
+        }
+      };
+
+      window.addEventListener('resize', handleResize);
+      window.addEventListener('orientationchange', handleResize);
+      window.addEventListener('keydown', handleKeyDown);
+
+      return () => {
+        document.body.style.overflow = prevBody;
+        window.removeEventListener('resize', handleResize);
+        window.removeEventListener('orientationchange', handleResize);
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     } else {
       document.body.style.overflow = 'unset';
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
   }, [mobileOpen]);
 
   const handleSelectTab = (tab: CmsTab) => {
@@ -74,23 +96,36 @@ export default function CmsSidebar({
             <Megaphone size={18} /> Pengumuman Penting
           </button>
         )}
+        {user.role !== 'GURU' && (
+          <>
+            <button
+              onClick={() => handleSelectTab('berita')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+            >
+              <FileText size={18} /> Berita &amp; Kegiatan
+            </button>
+            <button
+              onClick={() => handleSelectTab('galeri')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+            >
+              <Image size={18} /> Galeri Foto
+            </button>
+          </>
+        )}
         <button
-          onClick={() => handleSelectTab('berita')}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
+          onClick={() => handleSelectTab('modul')}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'modul'
             ? 'bg-teal-600 text-white shadow-sm'
             : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
             }`}
         >
-          <FileText size={18} /> Berita &amp; Kegiatan
-        </button>
-        <button
-          onClick={() => handleSelectTab('galeri')}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
-            ? 'bg-teal-600 text-white shadow-sm'
-            : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-            }`}
-        >
-          <Image size={18} /> Galeri Foto
+          <BookOpen size={18} /> Modul Pembelajaran
         </button>
       </div>
 

@@ -14,10 +14,10 @@ export const getApiBaseUrl = (): string => {
     const { hostname, port, origin } = window.location;
 
     // Local development environment (Vite dev server on port 3000 / 5173)
+    if (port === '3000' || port === '5173') {
+      return `http://${hostname}/sd-negeri-mulyoagung-1`;
+    }
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      if (port === '3000' || port === '5173') {
-        return 'http://localhost/sd-negeri-mulyoagung-1';
-      }
       return origin;
     }
 
