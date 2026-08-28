@@ -129,7 +129,7 @@ export const Hero: React.FC<HeroProps> = ({
               Tahun Ajaran {tahunAjaran}
             </span>
           </div>
-          
+
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-extrabold leading-[1.18] tracking-tight">
             {homepageConfig.heroTitle.includes('SD Negeri 1 Mulyoagung') ? (
               <>
@@ -137,7 +137,9 @@ export const Hero: React.FC<HeroProps> = ({
                   <>
                     {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim()} <br className="hidden sm:block" />
                   </>
-                ) : 'Selamat Datang di '}
+                ) : (<>
+                  Selamat Datang di <br />
+                </>)}
                 <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
               </>
             ) : (
@@ -206,22 +208,20 @@ export const Hero: React.FC<HeroProps> = ({
 
             {/* Card Outer */}
             <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-3 shadow-2xl rotate-1 group-hover:rotate-0 transition-all duration-500 overflow-hidden">
-              
+
               {/* Slide Image Container (Landscape Aspect Ratio) */}
               <div className="relative w-full aspect-video h-[300px] sm:h-[340px] rounded-2xl overflow-hidden bg-slate-950">
                 {slides.map((slide, index) => (
                   <div
                     key={index}
-                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
-                      index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                    }`}
+                    className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                      }`}
                   >
                     <img
                       src={slide.image}
                       alt={slide.caption}
-                      className={`w-full h-full object-cover rounded-2xl transform transition-transform duration-[6000ms] ease-out ${
-                        index === currentSlide ? 'scale-110' : 'scale-100'
-                      }`}
+                      className={`w-full h-full object-cover rounded-2xl transform transition-transform duration-[6000ms] ease-out ${index === currentSlide ? 'scale-110' : 'scale-100'
+                        }`}
                     />
                     {/* Gradient Overlay for Text Readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-black/20" />
@@ -250,11 +250,10 @@ export const Hero: React.FC<HeroProps> = ({
                     <button
                       key={idx}
                       onClick={() => setCurrentSlide(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                        idx === currentSlide
-                          ? 'w-6 bg-[#79EEDE]'
-                          : 'w-2 bg-white/40 hover:bg-white/70'
-                      }`}
+                      className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === currentSlide
+                        ? 'w-6 bg-[#79EEDE]'
+                        : 'w-2 bg-white/40 hover:bg-white/70'
+                        }`}
                       aria-label={`Go to slide ${idx + 1}`}
                     />
                   ))}

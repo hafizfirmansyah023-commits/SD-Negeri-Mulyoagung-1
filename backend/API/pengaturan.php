@@ -56,7 +56,7 @@ try {
             ["key" => "video", "judul" => "Profil Video Sekolah", "subjudul" => "Tonton video profil sekolah kami untuk mengenal lingkungan belajar, fasilitas, dan kegiatan siswa secara visual.", "is_active" => true],
             ["key" => "kontak", "judul" => "Kontak Kami", "subjudul" => "Hubungi kami atau kunjungi lokasi sekolah dasar kami melalui detail kontak di bawah ini.", "is_active" => true]
         ]),
-        'hero_title' => 'Unggul, Berkarakter, dan Berbudaya Lingkungan',
+        'hero_title' => 'SD Negeri 1 Mulyoagung',
         'hero_subtitle' => 'Selamat Datang di SD Negeri 1 Mulyoagung. Kami berkomitmen menyelenggarakan pendidikan berkualitas untuk membentuk generasi cerdas, kreatif, berakhlak mulia, dan peduli lingkungan.',
         'hero_bg' => '',
         'video_url' => 'https://www.youtube.com/embed/5T2k922_Z8Q',

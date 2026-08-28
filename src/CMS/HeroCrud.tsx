@@ -108,7 +108,7 @@ export default function HeroCrud() {
                   type="text"
                   value={heroTitle}
                   onChange={(e) => setHeroTitle(e.target.value)}
-                  placeholder="Selamat Datang di SD Negeri 1 Mulyoagung"
+                  placeholder="SD Negeri 1 Mulyoagung"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
                 />
               </div>
