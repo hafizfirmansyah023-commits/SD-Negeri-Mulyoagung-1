@@ -28,6 +28,7 @@ export const QUICK_LINKS: QuickLink[] = [
   { label: 'Modul & Akademik', tab: 'modul' },
   { label: 'Galeri Kegiatan', tab: 'gallery' },
   { label: 'Berita & Artikel', tab: 'news' },
+  { label: 'Contact', tab: 'contact' },
   { label: 'CMS Portal Admin', tab: 'cms', textClass: 'text-slate-300' },
 ];
 
