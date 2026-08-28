@@ -13,8 +13,8 @@ coverage/
 # ========================
 # Environment & Secrets
 # ========================
-env*
-env.example
+.env*
+.env.example
 
 # ========================
 # Database Dump (SENSITIF)
