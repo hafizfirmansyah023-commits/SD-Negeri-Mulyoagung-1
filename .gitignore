@@ -15,7 +15,7 @@ coverage/
 # ========================
 .env*
 .env.example
-
+.gitignore
 # ========================
 # Database Dump (SENSITIF)
 # ========================
