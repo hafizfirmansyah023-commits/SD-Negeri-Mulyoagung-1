@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { ShieldAlert, CheckCircle2 } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { useCmsFilter } from './hooks/useCmsFilter';
 import CmsFilterBar from './components/CmsFilterBar';
 import { getUniqueValues } from './utils/cmsHelpers';
 import { VerifikasiCard } from './verifikasi/VerifikasiCard';
+import { Pagination } from '../components/common/Pagination';
 
 interface GalleryItem {
   id: number;
@@ -43,6 +44,7 @@ interface ModulItem {
 }
 
 const API_BASE = getApiBaseUrl();
+const ITEMS_PER_PAGE = 6;
 
 export default function Verifikasi() {
   const [pendingGallery, setPendingGallery] = useState<GalleryItem[]>([]);
@@ -52,6 +54,8 @@ export default function Verifikasi() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchPendingData = useCallback(async () => {
     setLoading(true);
@@ -117,6 +121,24 @@ export default function Verifikasi() {
       : activeSubTab === 'galeri'
       ? galleryFilter
       : modulFilter;
+
+  // Reset page when tab or search/filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeSubTab, activeFilter.searchTerm, activeFilter.filters]);
+
+  // Adjust page if data is removed and current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(activeFilter.filteredItems.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [activeFilter.filteredItems.length, currentPage]);
+
+  const paginatedItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return activeFilter.filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [activeFilter.filteredItems, currentPage]);
 
   const availableCategories =
     activeSubTab === 'berita'
@@ -286,11 +308,11 @@ export default function Verifikasi() {
           <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-teal-600"></div>
         </div>
       ) : (
-        <div>
+        <div className="space-y-6">
           {/* News Verification Queue */}
           {activeSubTab === 'berita' && (
             <div className="space-y-4">
-              {newsFilter.filteredItems.map((art) => (
+              {(paginatedItems as NewsArticle[]).map((art) => (
                 <VerifikasiCard
                   key={art.id}
                   id={art.id}
@@ -318,7 +340,7 @@ export default function Verifikasi() {
           {/* Gallery Verification Queue */}
           {activeSubTab === 'galeri' && (
             <div className="space-y-4">
-              {galleryFilter.filteredItems.map((item) => (
+              {(paginatedItems as GalleryItem[]).map((item) => (
                 <VerifikasiCard
                   key={item.id}
                   id={item.id}
@@ -346,7 +368,7 @@ export default function Verifikasi() {
           {/* Modules Verification Queue */}
           {activeSubTab === 'modul' && (
             <div className="space-y-4">
-              {modulFilter.filteredItems.map((mod) => (
+              {(paginatedItems as ModulItem[]).map((mod) => (
                 <VerifikasiCard
                   key={mod.id}
                   id={mod.id}
@@ -370,6 +392,17 @@ export default function Verifikasi() {
               )}
             </div>
           )}
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalItems={activeFilter.filteredItems.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={(p) => {
+              setCurrentPage(p);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       )}
     </div>

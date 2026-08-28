@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, FileText, RotateCcw } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { UserSession } from './types';
@@ -11,12 +11,14 @@ import { BeritaFormModal } from './berita/BeritaFormModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
+import { Pagination } from '../components/common/Pagination';
 
 interface BeritaCrudProps {
   currentUser: UserSession;
 }
 
 const API_BASE = getApiBaseUrl();
+const ITEMS_PER_PAGE = 6;
 
 export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
   const {
@@ -64,6 +66,26 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
     searchFields: ['judul', 'isi', 'uploader'],
     initialFilters: { kategori: 'ALL', status_verifikasi: 'ALL' },
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters]);
+
+  // Adjust page if data is deleted and current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredArticles.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredArticles.length, currentPage]);
+
+  const paginatedArticles = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredArticles.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredArticles, currentPage]);
 
   const availableCategories = getUniqueValues(articles, 'kategori');
   const availableStatuses = getUniqueValues(articles, 'status_verifikasi');
@@ -277,33 +299,46 @@ export default function BeritaCrud({ currentUser }: BeritaCrudProps) {
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {filteredArticles.map((art) => (
-            <BeritaCard
-              key={art.id}
-              article={art}
-              currentUser={currentUser}
-              onEdit={handleOpenEdit}
-              onDelete={handleDelete}
-            />
-          ))}
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {paginatedArticles.map((art) => (
+              <BeritaCard
+                key={art.id}
+                article={art}
+                currentUser={currentUser}
+                onEdit={handleOpenEdit}
+                onDelete={handleDelete}
+              />
+            ))}
 
-          {filteredArticles.length === 0 && (
-            <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
-              <FileText size={48} className="mx-auto text-slate-300 mb-3" />
-              <p className="text-slate-500 font-medium text-sm">
-                {isFiltered ? 'Tidak ada berita yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada berita ditulis.'}
-              </p>
-              {isFiltered && (
-                <button
-                  onClick={resetFilter}
-                  className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
-                >
-                  <RotateCcw size={14} /> Reset Filter
-                </button>
-              )}
-            </div>
-          )}
+            {filteredArticles.length === 0 && (
+              <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
+                <FileText size={48} className="mx-auto text-slate-300 mb-3" />
+                <p className="text-slate-500 font-medium text-sm">
+                  {isFiltered ? 'Tidak ada berita yang sesuai dengan filter atau kata kunci pencarian.' : 'Belum ada berita ditulis.'}
+                </p>
+                {isFiltered && (
+                  <button
+                    onClick={resetFilter}
+                    className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <RotateCcw size={14} /> Reset Filter
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          <Pagination
+            currentPage={currentPage}
+            totalItems={filteredArticles.length}
+            itemsPerPage={ITEMS_PER_PAGE}
+            onPageChange={(p) => {
+              setCurrentPage(p);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
         </div>
       )}
 

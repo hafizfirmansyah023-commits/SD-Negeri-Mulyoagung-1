@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { User, Plus, Shield } from 'lucide-react';
 import { getApiBaseUrl } from '../config/api';
 import { UserSession } from './types';
@@ -12,6 +12,7 @@ import { ResetPasswordModal } from './user/ResetPasswordModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
+import { Pagination } from '../components/common/Pagination';
 
 interface UserCrudProps {
   currentUser: UserSession;
@@ -19,6 +20,7 @@ interface UserCrudProps {
 }
 
 const API_BASE = getApiBaseUrl();
+const ITEMS_PER_PAGE = 6;
 
 export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudProps) {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -67,6 +69,26 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
     searchFields: ['username', 'nama_penanggung_jawab'],
     initialFilters: { role: 'ALL' },
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters]);
+
+  // Adjust page if data is deleted and current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredUsers.length, currentPage]);
+
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredUsers.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredUsers, currentPage]);
 
   const availableRoles = getUniqueValues(users, 'role');
 
@@ -321,16 +343,28 @@ export default function UserCrud({ currentUser, onUpdateCurrentUser }: UserCrudP
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-teal-600"></div>
               </div>
             ) : (
-              <UserTable
-                users={filteredUsers}
-                currentUser={currentUser}
-                isFiltered={isFiltered}
-                onDeleteUser={handleDeleteUser}
-                onResetPassword={(u) => {
-                  setTargetUserForReset(u);
-                  setGeneratedPassword(null);
-                }}
-              />
+              <div className="space-y-4">
+                <UserTable
+                  users={paginatedUsers}
+                  currentUser={currentUser}
+                  isFiltered={isFiltered}
+                  onDeleteUser={handleDeleteUser}
+                  onResetPassword={(u) => {
+                    setTargetUserForReset(u);
+                    setGeneratedPassword(null);
+                  }}
+                />
+
+                {/* Pagination */}
+                <Pagination
+                  currentPage={currentPage}
+                  totalItems={filteredUsers.length}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  onPageChange={(p) => {
+                    setCurrentPage(p);
+                  }}
+                />
+              </div>
             )}
           </div>
         </div>

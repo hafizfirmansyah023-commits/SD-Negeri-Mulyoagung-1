@@ -7,7 +7,7 @@ import { GalleryGrid } from './gallery/GalleryGrid';
 import { PhotoLightboxModal } from './gallery/PhotoLightboxModal';
 import { Pagination } from './common/Pagination';
 
-const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 6;
 
 export const GallerySection: React.FC = () => {
   const galleryItems = useGalleryData();
@@ -55,6 +55,14 @@ export const GallerySection: React.FC = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedCategory, searchTerm, sortOrder]);
+
+  // Adjust page if current page exceeds max page
+  useEffect(() => {
+    const maxPage = Math.ceil(filteredAndSortedGallery.length / ITEMS_PER_PAGE) || 1;
+    if (currentPage > maxPage) {
+      setCurrentPage(maxPage);
+    }
+  }, [filteredAndSortedGallery.length, currentPage]);
 
   // Paginated slice
   const paginatedItems = useMemo(() => {
