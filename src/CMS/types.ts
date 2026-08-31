@@ -8,4 +8,4 @@ export interface UserSession {
 }
 
 
-export type CmsTab = 'dashboard' | 'guru' | 'fasilitas' | 'galeri' | 'berita' | 'modul' | 'user' | 'verifikasi' | 'sambutan' | 'pengumuman'| 'statistik' | 'pengaturan' | 'visimisi' | 'sejarah' | 'strukturorganisasi' | 'hero' | 'kontenutama' | 'ppdb' | 'kontak' | 'medsos';
+export type CmsTab = 'dashboard' | 'guru' | 'fasilitas' | 'galeri' | 'berita' | 'modul' | 'akademik' | 'user' | 'verifikasi' | 'sambutan' | 'pengumuman'| 'statistik' | 'pengaturan' | 'visimisi' | 'sejarah' | 'strukturorganisasi' | 'hero' | 'kontenutama' | 'ppdb' | 'kontak' | 'medsos';

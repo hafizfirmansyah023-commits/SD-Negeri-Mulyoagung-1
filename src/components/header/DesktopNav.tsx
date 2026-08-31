@@ -1,15 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavTab } from '../../types';
+import { ChevronDown } from 'lucide-react';
+import { NavTab, AkademikMenuItem } from '../../types';
 import { NavItem } from '../../utils/headerData';
 
 interface DesktopNavProps {
   navItems: NavItem[];
   activeTab: NavTab;
   onNavClick: (tab: NavTab) => void;
+  akademikMenu?: AkademikMenuItem[];
+  onAkademikItemClick?: (item: AkademikMenuItem) => void;
 }
 
-export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onNavClick }) => {
+export const DesktopNav: React.FC<DesktopNavProps> = ({
+  navItems,
+  activeTab,
+  onNavClick,
+  akademikMenu = [],
+  onAkademikItemClick,
+}) => {
   const [hoveredTab, setHoveredTab] = useState<NavTab | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const [pillStyle, setPillStyle] = useState<{ left: number; width: number; opacity: number }>({
     left: 0,
@@ -34,10 +45,27 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
     }
   }, [targetTab, navItems]);
 
+  const handleAkademikMouseEnter = () => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setHoveredTab('akademik');
+    setDropdownOpen(true);
+  };
+
+  const handleAkademikMouseLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setDropdownOpen(false);
+      setHoveredTab(null);
+    }, 150);
+  };
+
   return (
     <nav
       ref={navRef}
-      onMouseLeave={() => setHoveredTab(null)}
+      onMouseLeave={() => {
+        if (!dropdownOpen) setHoveredTab(null);
+      }}
       className="hidden xl:flex relative items-center bg-slate-950/35 backdrop-blur-md p-1.5 rounded-full border border-teal-500/25 shadow-inner gap-0.5"
     >
       {/* Sliding Pill Background Indicator */}
@@ -54,6 +82,62 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
         const isActive = activeTab === item.id;
         const isHovered = hoveredTab === item.id;
         const isHighlighted = isHovered || (!hoveredTab && isActive);
+        const isAkademik = item.id === 'akademik';
+
+        if (isAkademik) {
+          return (
+            <div
+              key={item.id}
+              className="relative"
+              onMouseEnter={handleAkademikMouseEnter}
+              onMouseLeave={handleAkademikMouseLeave}
+            >
+              <button
+                data-tab-id={item.id}
+                onClick={() => {
+                  if (akademikMenu.length > 0 && onAkademikItemClick) {
+                    onAkademikItemClick(akademikMenu[0]);
+                  } else {
+                    onNavClick(item.id);
+                  }
+                }}
+                className={`relative z-10 px-3.5 2xl:px-4 py-2 rounded-full font-medium text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                  isHighlighted ? 'text-white font-bold' : 'text-slate-200 hover:text-white'
+                }`}
+              >
+                <span>{item.label}</span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180 text-teal-300' : 'text-slate-300'}`}
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {dropdownOpen && akademikMenu.length > 0 && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#073632]/95 backdrop-blur-xl border border-teal-500/30 rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="flex flex-col gap-1">
+                    {akademikMenu.map((subItem) => (
+                      <button
+                        key={subItem.id}
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          setHoveredTab(null);
+                          if (onAkademikItemClick) {
+                            onAkademikItemClick(subItem);
+                          }
+                        }}
+                        className="text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:text-white hover:bg-teal-500/20 transition-all cursor-pointer truncate"
+                        title={subItem.label}
+                      >
+                        {subItem.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
 
         return (
           <button
@@ -62,9 +146,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
             onClick={() => onNavClick(item.id)}
             onMouseEnter={() => setHoveredTab(item.id)}
             className={`relative z-10 px-3.5 2xl:px-4 py-2 rounded-full font-medium text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap ${
-              isHighlighted
-                ? 'text-white font-bold'
-                : 'text-slate-200 hover:text-white'
+              isHighlighted ? 'text-white font-bold' : 'text-slate-200 hover:text-white'
             }`}
           >
             {item.label}
@@ -74,5 +156,3 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({ navItems, activeTab, onN
     </nav>
   );
 };
-
-
