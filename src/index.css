@@ -128,17 +128,48 @@
   animation: loadingBarSweep 1.6s ease-in-out infinite;
 }
 
-@keyframes shinyText {
+@keyframes textShine {
   0% {
-    background-position: 100% 0;
+    background-position: 200% 0;
+  }
+  65% {
+    background-position: -200% 0;
   }
   100% {
-    background-position: -100% 0;
+    background-position: -200% 0;
   }
 }
 
-.animate-shiny-text {
-  animation: shinyText 5s linear infinite;
+.shiny-text-green {
+  background: linear-gradient(
+    110deg,
+    #14532d 0%,
+    #166534 35%,
+    #ffffff 50%,
+    #86efac 55%,
+    #166534 65%,
+    #14532d 100%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textShine 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes introScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: introScaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes gridMotionShift {
@@ -165,4 +196,27 @@
   }
 }
 
+@keyframes softLogoPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.025);
+    opacity: 0.95;
+  }
+}
 
+.animate-soft-pulse {
+  animation: softLogoPulse 2.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-soft-pulse,
+  .animate-loading-bar,
+  .animate-spin-reverse,
+  .shiny-text-green,
+  .animate-scale-in {
+    animation: none !important;
+  }
+}

@@ -38,24 +38,14 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
 
   // 1. Initial Page Load
   useEffect(() => {
+    // Memberikan durasi minimum ±800-1000ms pada load pertama
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 700);
+    }, 900);
 
     return () => clearTimeout(timer);
   }, []);
 
-  // 2. Route Navigation Loading
-  useEffect(() => {
-    setIsLoading(true);
-    setIsSlowNetwork(false);
-
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 450);
-
-    return () => clearTimeout(timer);
-  }, [location.pathname]);
 
   // 3. Network Listener (Online/Offline & Slow Connection Detection)
   useEffect(() => {
@@ -118,14 +108,19 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
     };
   }, []);
 
+  const isCms = location.pathname.startsWith('/cms');
+
   return (
-    <LoadingContext.Provider value={{ showLoading, hideLoading, isLoading, isSlowNetwork }}>
+    <LoadingContext.Provider value={{ showLoading, hideLoading, isLoading: !isCms && isLoading, isSlowNetwork: !isCms && isSlowNetwork }}>
       {children}
-      <LoadingScreen
-        isLoading={isLoading}
-        isSlowNetwork={isSlowNetwork}
-        message={loadingMessage}
-      />
+      {!isCms && (
+        <LoadingScreen
+          isLoading={isLoading}
+          isSlowNetwork={isSlowNetwork}
+          message={loadingMessage}
+        />
+      )}
     </LoadingContext.Provider>
   );
 };
+
