@@ -169,11 +169,15 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
 
     // Validasi sumber
     if (sumberTipe === 'upload' && !editId && !pdfFile) {
-      setError('File PDF materi wajib diunggah.');
+      const msg = 'File PDF materi wajib diunggah.';
+      setError(msg);
+      setToast({ type: 'error', text: msg });
       return;
     }
     if (sumberTipe === 'gdrive' && !linkGdrive.trim()) {
-      setError('Link Google Drive wajib diisi.');
+      const msg = 'Link Google Drive wajib diisi.';
+      setError(msg);
+      setToast({ type: 'error', text: msg });
       return;
     }
 

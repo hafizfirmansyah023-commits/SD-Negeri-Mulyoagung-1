@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 interface FasilitasDeleteModalProps {
   deleteModalId: number | null;
@@ -11,6 +11,19 @@ export const FasilitasDeleteModal: React.FC<FasilitasDeleteModalProps> = ({
   onClose,
   onConfirm,
 }) => {
+  useEffect(() => {
+    if (deleteModalId !== null) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
+    }
+  }, [deleteModalId]);
+
   if (deleteModalId === null) return null;
 
   return (

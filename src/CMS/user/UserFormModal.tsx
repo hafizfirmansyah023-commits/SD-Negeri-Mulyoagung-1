@@ -33,6 +33,19 @@ export const UserFormModal: React.FC<UserFormModalProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
+  React.useEffect(() => {
+    if (showAddModal) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
+    }
+  }, [showAddModal]);
+
   if (!showAddModal) return null;
 
   const isPasswordInvalid = newPassword.length > 0 && newPassword.length < 6;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, ExternalLink } from 'lucide-react';
 
 interface AkademikFormModalProps {
@@ -40,6 +40,19 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
   onClose,
   onSubmit,
 }) => {
+  useEffect(() => {
+    if (showModal) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
+    }
+  }, [showModal]);
+
   if (!showModal) return null;
 
   return (

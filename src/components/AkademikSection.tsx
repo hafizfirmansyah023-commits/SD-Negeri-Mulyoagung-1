@@ -57,7 +57,7 @@ export const AkademikSection: React.FC = () => {
     );
   }
 
-  const isModulType = Boolean(selectedItem.is_modul == 1 || selectedItem.label.toLowerCase().includes('modul ajar'));
+  const isModulType = Number(selectedItem.is_modul) === 1;
 
   return (
     <div className="min-h-screen bg-slate-50/50">
