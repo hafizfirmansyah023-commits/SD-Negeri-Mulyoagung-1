@@ -69,4 +69,16 @@ export interface PpdbApplication {
   status: 'Menunggu Verifikasi' | 'Diterima' | 'Berkas Kurang';
 }
 
-export type NavTab = 'home' | 'profile' | 'directory' | 'gallery' | 'news' | 'modul' | 'contact' | 'ppdb' | 'cms';
+export interface AkademikMenuItem {
+  id: number;
+  label: string;
+  deskripsi?: string | null;
+  link_gdrive: string;
+  is_modul: number;
+  urutan: number;
+  aktif: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type NavTab = 'home' | 'profile' | 'directory' | 'akademik' | 'gallery' | 'news' | 'modul' | 'contact' | 'ppdb' | 'cms';

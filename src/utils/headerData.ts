@@ -9,7 +9,7 @@ export const NAV_ITEMS: NavItem[] = [
   { id: 'home', label: 'Home' },
   { id: 'profile', label: 'Profile' },
   { id: 'directory', label: 'Directory' },
-  { id: 'modul', label: 'Akademik' },
+  { id: 'akademik', label: 'Akademik' },
   { id: 'gallery', label: 'Gallery' },
   { id: 'news', label: 'Berita' },
   { id: 'contact', label: 'Contact' },

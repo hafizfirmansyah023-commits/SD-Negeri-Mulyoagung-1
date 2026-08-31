@@ -8,6 +8,7 @@ import GuruCrud from './GuruCrud';
 import GaleriCrud from './GaleriCrud';
 import BeritaCrud from './BeritaCrud';
 import ModulPembelajaranCrud from './ModulPembelajaranCrud';
+import AkademikCrud from './AkademikCrud';
 import UserCrud from './UserCrud';
 import Verifikasi from './Verifikasi';
 import FasilitasCrud from './FasilitasCrud';
@@ -125,6 +126,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'galeri' && user.role !== 'GURU' && <GaleriCrud currentUser={user} />}
                 {activeTab === 'berita' && user.role !== 'GURU' && <BeritaCrud currentUser={user} />}
                 {activeTab === 'modul' && user.role !== 'TIM' && <ModulPembelajaranCrud currentUser={user} />}
+                {activeTab === 'akademik' && user.role === 'ADMIN' && <AkademikCrud currentUser={user} />}
                 {activeTab === 'verifikasi' && user.role === 'ADMIN' && <Verifikasi />}
                 {activeTab === 'user' && (
                     <UserCrud currentUser={user} onUpdateCurrentUser={handleUpdateUser} />

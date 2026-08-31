@@ -27,6 +27,7 @@ import { DirectorySection } from './components/DirectorySection';
 import { GallerySection } from './components/GallerySection';
 import { SchoolProfileSection } from './components/SchoolProfileSection';
 import { ModulPembelajaranSection } from './components/ModulPembelajaranSection';
+import { AkademikSection } from './components/AkademikSection';
 import { ContactSection } from './components/ContactSection';
 import { PpdbModal } from './components/PpdbModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
@@ -78,7 +79,7 @@ function AppContent() {
 
   // Mengambil current path untuk menentukan tab mana yang aktif (untuk Header/Footer)
   const path = location.pathname.replace('/', '');
-  const activeTab = (path === '' ? 'home' : path) as NavTab;
+  const activeTab = (path === '' ? 'home' : path === 'modul' ? 'akademik' : path) as NavTab;
 
   const setActiveTab = (tab: NavTab) => {
     if (tab === 'home') {
@@ -282,12 +283,19 @@ function AppContent() {
           />
 
           <Route
+            path="/akademik"
+            element={<AkademikSection />}
+          />
+
+          <Route
+            path="/akademik/:id"
+            element={<AkademikSection />}
+          />
+
+          {/* Redirect /modul ke /akademik */}
+          <Route
             path="/modul"
-            element={
-              <div className="pt-4" data-aos="fade-up">
-                <ModulPembelajaranSection />
-              </div>
-            }
+            element={<Navigate to="/akademik" replace />}
           />
 
           <Route
