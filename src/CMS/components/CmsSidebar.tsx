@@ -129,6 +129,17 @@ export default function CmsSidebar({
             <BookOpen size={18} /> Modul Pembelajaran
           </button>
         )}
+        {user.role === 'ADMIN' && (
+          <button
+            onClick={() => handleSelectTab('akademik')}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'akademik'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+          >
+            <Layers size={18} /> Menu Akademik (GDrive)
+          </button>
+        )}
       </div>
 
       {/* Kategori: DATA SEKOLAH */}

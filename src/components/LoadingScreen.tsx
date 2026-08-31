@@ -1,5 +1,5 @@
-import React from 'react';
-import { WifiOff, RefreshCw } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { WifiOff } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 
 interface LoadingScreenProps {
@@ -13,56 +13,70 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
   isSlowNetwork = false,
   message = 'Memuat Halaman...',
 }) => {
-  if (!isLoading) return null;
+  const [shouldRender, setShouldRender] = useState(isLoading);
+  const [isFadingOut, setIsFadingOut] = useState(false);
+
+  useEffect(() => {
+    if (isLoading) {
+      setShouldRender(true);
+      setIsFadingOut(false);
+    } else {
+      setIsFadingOut(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsFadingOut(false);
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
+  if (!shouldRender) return null;
 
   return (
-    <div className="fixed inset-0 z-[999999] bg-[#092e2b]/90 backdrop-blur-xl flex flex-col items-center justify-center p-4 transition-all duration-500 animate-fadeIn">
-      {/* Background Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-teal-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
-
-      {/* Main Container */}
-      <div className="relative flex flex-col items-center text-center max-w-sm w-full">
-        {/* Animated Rings & Logo Container */}
-        <div className="relative w-36 h-36 flex items-center justify-center mb-6">
-          {/* Outer Spin Ring */}
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#79EEDE] border-r-teal-400 border-b-[#028C84] animate-spin shadow-lg" />
-
-          {/* Reverse Outer Dashed Ring */}
-          <div className="absolute -inset-2 rounded-full border-2 border-dashed border-teal-300/30 animate-spin-reverse" />
-
-          {/* Inner Glowing Badge */}
-          <div className="w-24 h-24 rounded-full bg-slate-900/80 border border-teal-500/40 p-3.5 flex items-center justify-center shadow-2xl backdrop-blur-md">
+    <div
+      role="status"
+      aria-label="Memuat SD Negeri 1 Mulyoagung"
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 select-none transition-opacity duration-600 ease-out ${
+        isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+      }`}
+      style={{
+        backgroundColor: 'rgba(46, 125, 50, 0.15)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+      }}
+    >
+      {/* Konten Diposisikan di Tengah Layar (Vertikal & Horizontal Center) */}
+      <div className="flex flex-col items-center text-center animate-scale-in max-w-sm sm:max-w-md w-full">
+        {/* Logo Sekolah: Lingkaran/perisai dengan outline hijau tua, ukuran sedang (~120px) */}
+        <div className="relative mb-5 flex items-center justify-center">
+          <div className="w-[110px] h-[110px] sm:w-[125px] sm:h-[125px] rounded-full p-2.5 bg-white/70 border-2 border-emerald-800 shadow-lg shadow-emerald-900/10 backdrop-blur-sm flex items-center justify-center transition-transform">
             <img
               src={logoImg}
               alt="Logo SD Negeri 1 Mulyoagung"
-              className="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(121,238,222,0.6)] animate-pulse"
+              className="w-full h-full object-contain animate-soft-pulse drop-shadow-sm"
+              loading="eager"
             />
           </div>
         </div>
 
-        {/* Title */}
-        <h2 className="text-lg sm:text-xl font-bold text-white tracking-wider uppercase drop-shadow-sm">
+        {/* Teks dengan Font Modern Sans-serif, Jarak Antar Huruf Sedikit Renggang, dan Efek Shiny Text Berwarna Hijau Tua */}
+        <h1 className="text-xl sm:text-2xl md:text-[26px] font-bold tracking-wider font-sans uppercase shiny-text-green select-none">
           SD Negeri 1 Mulyoagung
-        </h2>
+        </h1>
 
-        {/* Dynamic Status / Slow Internet Indicator */}
-        {isSlowNetwork ? (
-          <div className="mt-3 px-4 py-2 bg-amber-500/20 border border-amber-400/40 rounded-full text-amber-200 text-xs sm:text-sm font-semibold flex items-center gap-2 animate-bounce shadow-md backdrop-blur-md">
-            <WifiOff size={16} className="text-amber-300 shrink-0" />
-            <span>Sedang memuat...</span>
+        {/* Status Indikator Jika Jaringan Lambat */}
+        {isSlowNetwork && (
+          <div className="mt-4 px-3.5 py-1.5 bg-amber-500/20 border border-amber-600/30 rounded-full text-amber-900 dark:text-amber-200 text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm backdrop-blur-sm animate-pulse">
+            <WifiOff size={15} className="text-amber-700 dark:text-amber-300 shrink-0" />
+            <span>Koneksi lambat, sedang menghubungkan...</span>
           </div>
-        ) : (
-          <p className="text-teal-200/90 text-xs sm:text-sm mt-2 font-medium flex items-center gap-2">
-            <RefreshCw size={14} className="animate-spin text-teal-400" />
-            <span>{message}</span>
-          </p>
         )}
 
-        {/* Shimmering Progress Bar */}
-        <div className="w-48 h-1.5 bg-teal-950/80 rounded-full overflow-hidden mt-5 border border-teal-500/30 shadow-inner">
-          <div className="h-full w-full bg-gradient-to-r from-teal-500 via-[#79EEDE] to-emerald-400 animate-loading-bar rounded-full" />
-        </div>
+        {/* Accessibility Screen Reader Text */}
+        <span className="sr-only">{message || 'Memuat Halaman...'}</span>
       </div>
     </div>
   );
 };
+
+

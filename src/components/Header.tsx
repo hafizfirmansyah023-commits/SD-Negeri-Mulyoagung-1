@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavTab } from '../types';
+import { useNavigate } from 'react-router-dom';
+import { NavTab, AkademikMenuItem } from '../types';
 import { NAV_ITEMS } from '../utils/headerData';
 import { TopContactStrip } from './header/TopContactStrip';
 import { HeaderLogo } from './header/HeaderLogo';
@@ -7,6 +8,7 @@ import { DesktopNav } from './header/DesktopNav';
 import { HeaderActions } from './header/HeaderActions';
 import { MobileMenuButton } from './header/MobileMenuButton';
 import { MobileNavDrawer } from './header/MobileNavDrawer';
+import { getApiBaseUrl } from '../config/api';
 
 interface HeaderProps {
   activeTab: NavTab;
@@ -18,7 +20,24 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenPpdb, onOpenSearch, linkPpdb }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [akademikMenu, setAkademikMenu] = useState<AkademikMenuItem[]>([]);
+  const navigate = useNavigate();
   const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const fetchAkademikMenu = async () => {
+      try {
+        const res = await fetch(`${getApiBaseUrl()}/backend/API/akademik_menu.php`);
+        const json = await res.json();
+        if (json.status === 'success' && Array.isArray(json.data)) {
+          setAkademikMenu(json.data);
+        }
+      } catch {
+        // Fallback
+      }
+    };
+    fetchAkademikMenu();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,7 +86,16 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
   }, [mobileMenuOpen]);
 
   const handleNavClick = (tab: NavTab) => {
-    setActiveTab(tab);
+    if (tab === 'akademik' && akademikMenu.length > 0) {
+      navigate(`/akademik/${akademikMenu[0].id}`);
+    } else {
+      setActiveTab(tab);
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const handleAkademikItemClick = (item: AkademikMenuItem) => {
+    navigate(`/akademik/${item.id}`);
     setMobileMenuOpen(false);
   };
 
@@ -82,7 +110,13 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
         <div className="flex justify-between items-center px-3 sm:px-6 lg:px-8 xl:px-10 w-full h-16 sm:h-20 max-w-[1440px] mx-auto gap-2 sm:gap-6 lg:gap-8 relative">
           <HeaderLogo onClick={handleNavClick} />
 
-          <DesktopNav navItems={NAV_ITEMS} activeTab={activeTab} onNavClick={handleNavClick} />
+          <DesktopNav
+            navItems={NAV_ITEMS}
+            activeTab={activeTab}
+            onNavClick={handleNavClick}
+            akademikMenu={akademikMenu}
+            onAkademikItemClick={handleAkademikItemClick}
+          />
 
           <HeaderActions
             activeTab={activeTab}
@@ -111,6 +145,8 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
             }}
             onOpenSearch={onOpenSearch}
             linkPpdb={linkPpdb}
+            akademikMenu={akademikMenu}
+            onAkademikItemClick={handleAkademikItemClick}
           />
         )}
       </header>
