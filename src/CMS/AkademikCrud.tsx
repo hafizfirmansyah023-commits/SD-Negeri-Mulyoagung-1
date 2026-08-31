@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Layers, AlertCircle, RefreshCw } from 'lucide-react';
+import { Plus, Layers, AlertCircle, RefreshCw, GripVertical, ExternalLink, Eye, EyeOff, Edit2, Trash2, LayoutGrid, ListOrdered } from 'lucide-react';
 import { UserSession } from './types';
 import { useAkademikData } from './hooks/useAkademikData';
 import { AkademikMenuItem } from '../types';
@@ -14,8 +14,14 @@ interface AkademikCrudProps {
 }
 
 export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
-  const { items, loading, error, setError, fetchItems, deleteItem } = useAkademikData('all');
+  const { items, loading, error, setError, fetchItems, deleteItem, reorderItems } = useAkademikData('all');
   const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // View Mode: 'list' (Drag & Drop Vertikal seperti Struktur Halaman) atau 'grid' (Card Lama)
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+
+  // Drag and Drop States
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
   // Form modal states
   const [showModal, setShowModal] = useState(false);
@@ -106,6 +112,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
       title: 'Hapus Menu Akademik?',
       message: `Apakah Anda yakin ingin menghapus menu "${item.label}"? Menu ini tidak akan lagi tampil di navigasi dropdown publik.`,
       onConfirm: async () => {
+        setConfirmState((prev) => ({ ...prev, isOpen: false }));
         const ok = await deleteItem(item.id, currentUser.role);
         if (ok) {
           setToast({ type: 'success', text: `Menu "${item.label}" berhasil dihapus.` });
@@ -114,6 +121,40 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
         }
       },
     });
+  };
+
+  // Drag and drop handlers
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      return;
+    }
+
+    const newList = [...items];
+    const [draggedItem] = newList.splice(draggedIndex, 1);
+    newList.splice(dropIndex, 0, draggedItem);
+
+    const reordered = newList.map((item, idx) => ({
+      ...item,
+      urutan: idx + 1,
+    }));
+
+    setDraggedIndex(null);
+    const ok = await reorderItems(reordered, currentUser.role);
+    if (ok) {
+      setToast({ type: 'success', text: 'Urutan menu akademik berhasil diperbarui!' });
+    }
   };
 
   return (
@@ -141,11 +182,39 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
             Menu Akademik (Google Drive)
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
-            Kelola daftar submenu yang tampil pada dropdown navigasi Akademik di website utama. Setiap item langsung mengarah ke halaman instruksi &amp; tombol Google Drive resmi.
+            Kelola daftar submenu yang tampil pada dropdown navigasi Akademik di website utama. Geser (drag &amp; drop) secara vertikal untuk mengubah urutan tampilan dropdown.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Toggle View Mode */}
+          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                viewMode === 'list'
+                  ? 'bg-white text-teal-700 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Tampilan Vertikal Drag & Drop (Struktur Urutan)"
+            >
+              <ListOrdered size={15} />
+              <span className="hidden sm:inline">Urutan Drag & Drop</span>
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+                viewMode === 'grid'
+                  ? 'bg-white text-teal-700 shadow-sm'
+                  : 'text-slate-500 hover:text-slate-800'
+              }`}
+              title="Tampilan Kartu Grid"
+            >
+              <LayoutGrid size={15} />
+              <span className="hidden sm:inline">Grid Card</span>
+            </button>
+          </div>
+
           <button
             onClick={() => fetchItems()}
             className="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition cursor-pointer"
@@ -157,12 +226,12 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
             onClick={handleOpenCreate}
             className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-bold shadow-lg shadow-teal-600/20 transition cursor-pointer"
           >
-            <Plus size={18} /> Tambah Menu Akademik
+            <Plus size={18} /> Tambah Menu
           </button>
         </div>
       </div>
 
-      {/* Grid of Akademik Menu Items */}
+      {/* Content Section */}
       {loading && items.length === 0 ? (
         <div className="flex justify-center items-center py-20">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
@@ -173,7 +242,113 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
           <h3 className="font-bold text-slate-700 text-base">Belum Ada Menu Akademik</h3>
           <p className="text-xs text-slate-500 mt-1">Tambahkan menu pertama untuk mengisi dropdown navigasi Akademik.</p>
         </div>
+      ) : viewMode === 'list' ? (
+        /* Vertical Drag and Drop List View (Mirip Struktur Halaman Utama) */
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100">
+            <div>
+              <h3 className="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2">
+                <ListOrdered className="text-teal-600" size={20} />
+                <span>Urutan Menu Akademik Dropdown</span>
+              </h3>
+              <p className="text-xs text-slate-500 mt-1">
+                Tahan dan geser (drag &amp; drop) baris di bawah secara vertikal untuk mengubah urutan submenu di navbar.
+              </p>
+            </div>
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-100">
+              {items.length} Menu Terdaftar
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {items.map((item, index) => {
+              const isModul = Number(item.is_modul) === 1;
+              const isAktif = Number(item.aktif) === 1;
+
+              return (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, index)}
+                  className={`flex flex-col md:flex-row items-start md:items-center gap-4 bg-slate-50 p-4 rounded-2xl border transition-all cursor-grab active:cursor-grabbing ${
+                    draggedIndex === index
+                      ? 'opacity-40 border-teal-500 scale-[0.98] ring-2 ring-teal-500/20 bg-teal-50/30'
+                      : 'border-slate-200 hover:border-teal-400 hover:shadow-sm'
+                  }`}
+                >
+                  {/* Grip & Order & Label */}
+                  <div className="flex items-center gap-3 shrink-0">
+                    <GripVertical className="text-slate-400 shrink-0" size={20} />
+                    <span className="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 font-black text-xs flex items-center justify-center border border-teal-100 shrink-0">
+                      {index + 1}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-sm text-slate-800 tracking-tight">
+                        {item.label}
+                      </span>
+                      {isModul && (
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
+                          Modul Ajar
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Deskripsi & Link */}
+                  <div className="flex-grow min-w-0 w-full md:w-auto">
+                    <p className="text-xs text-slate-500 truncate">
+                      {item.deskripsi || item.link_gdrive}
+                    </p>
+                  </div>
+
+                  {/* Status & Actions */}
+                  <div className="flex items-center justify-between md:justify-end gap-2 w-full md:w-auto pt-2 md:pt-0 border-t md:border-t-0 border-slate-200/60 shrink-0">
+                    <a
+                      href={item.link_gdrive}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-teal-600 hover:text-teal-800 p-2 hover:bg-teal-50 rounded-xl transition"
+                      title="Buka Link Google Drive"
+                    >
+                      <ExternalLink size={15} />
+                    </a>
+
+                    <span
+                      className={`text-[11px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ${
+                        isAktif
+                          ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                          : 'bg-slate-100 text-slate-500 border border-slate-200'
+                      }`}
+                    >
+                      {isAktif ? <Eye size={12} /> : <EyeOff size={12} />}
+                      {isAktif ? 'Aktif' : 'Nonaktif'}
+                    </span>
+
+                    <button
+                      onClick={() => handleOpenEdit(item)}
+                      className="p-2 text-slate-600 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition cursor-pointer"
+                      title="Ubah Menu"
+                    >
+                      <Edit2 size={15} />
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(item)}
+                      className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition cursor-pointer"
+                      title="Hapus Menu"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       ) : (
+        /* Grid Cards View (Tetap Mempertahankan Card Lama Asli) */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {items.map((item) => (
             <AkademikCard
@@ -209,3 +384,4 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
     </div>
   );
 }
+

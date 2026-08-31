@@ -65,6 +65,31 @@ if ($method === 'GET') {
         exit();
     }
 
+    if ($action === 'reorder') {
+        $rawItems = isset($_POST['items']) ? $_POST['items'] : '';
+        $items = json_decode($rawItems, true);
+        if (is_array($items)) {
+            try {
+                $stmt = $conn->prepare("UPDATE akademik_menu SET urutan = ? WHERE id = ?");
+                foreach ($items as $index => $item) {
+                    if (isset($item['id'])) {
+                        $newOrder = isset($item['urutan']) ? intval($item['urutan']) : ($index + 1);
+                        $stmt->execute([$newOrder, intval($item['id'])]);
+                    }
+                }
+                echo json_encode(["status" => "success", "message" => "Urutan menu akademik berhasil diperbarui."]);
+            } catch (PDOException $e) {
+                http_response_code(500);
+                echo json_encode(["status" => "error", "message" => $e->getMessage()]);
+            }
+            exit();
+        } else {
+            http_response_code(400);
+            echo json_encode(["status" => "error", "message" => "Format data urutan tidak valid."]);
+            exit();
+        }
+    }
+
     if ($action === 'create') {
         $label = isset($_POST['label']) ? trim($_POST['label']) : '';
         $deskripsi = isset($_POST['deskripsi']) ? trim($_POST['deskripsi']) : '';

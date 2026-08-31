@@ -118,7 +118,14 @@ export default function CmsSidebar({
             </button>
           </>
         )}
-        {user.role !== 'TIM' && (
+      </div>
+
+      {/* Kategori: DATA SEKOLAH */}
+      {(user.role === 'ADMIN' || user.role === 'GURU') && (
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-4 block mb-1">
+            Data Sekolah
+          </span>
           <button
             onClick={() => handleSelectTab('modul')}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'modul'
@@ -128,71 +135,64 @@ export default function CmsSidebar({
           >
             <BookOpen size={18} /> Modul Pembelajaran
           </button>
-        )}
-        {user.role === 'ADMIN' && (
-          <button
-            onClick={() => handleSelectTab('akademik')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'akademik'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-              }`}
-          >
-            <Layers size={18} /> Menu Akademik (GDrive)
-          </button>
-        )}
-      </div>
-
-      {/* Kategori: DATA SEKOLAH */}
-      {user.role === 'ADMIN' && (
-        <div className="space-y-1">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-4 block mb-1">
-            Data Sekolah
-          </span>
-          <button
-            onClick={() => handleSelectTab('visimisi')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'visimisi'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-              }`}
-          >
-            <BookOpen size={18} /> Visi &amp; Misi
-          </button>
-          <button
-            onClick={() => handleSelectTab('sejarah')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'sejarah'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-              }`}
-          >
-            <History size={18} /> Sejarah Sekolah
-          </button>
-          <button
-            onClick={() => handleSelectTab('guru')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'guru'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-              }`}
-          >
-            <Users size={18} /> Direktori Guru
-          </button>
-          <button
-            onClick={() => handleSelectTab('fasilitas')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'fasilitas'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-              }`}
-          >
-            <Building size={18} /> Fasilitas Pembelajaran
-          </button>
-          <button
-            onClick={() => handleSelectTab('statistik')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'statistik'
-              ? 'bg-teal-600 text-white shadow-sm'
-              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-              }`}
-          >
-            <BarChart3 size={18} /> Statistik Sekolah
-          </button>
+          {user.role === 'ADMIN' && (
+            <>
+              <button
+                onClick={() => handleSelectTab('akademik')}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'akademik'
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  }`}
+              >
+                <Layers size={18} /> Menu Akademik
+              </button>
+              <button
+                onClick={() => handleSelectTab('visimisi')}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'visimisi'
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  }`}
+              >
+                <BookOpen size={18} /> Visi &amp; Misi
+              </button>
+              <button
+                onClick={() => handleSelectTab('sejarah')}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'sejarah'
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  }`}
+              >
+                <History size={18} /> Sejarah Sekolah
+              </button>
+              <button
+                onClick={() => handleSelectTab('guru')}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'guru'
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  }`}
+              >
+                <Users size={18} /> Direktori Guru
+              </button>
+              <button
+                onClick={() => handleSelectTab('fasilitas')}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'fasilitas'
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  }`}
+              >
+                <Building size={18} /> Fasilitas Pembelajaran
+              </button>
+              <button
+                onClick={() => handleSelectTab('statistik')}
+                className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'statistik'
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                  }`}
+              >
+                <BarChart3 size={18} /> Statistik Sekolah
+              </button>
+            </>
+          )}
         </div>
       )}
 
