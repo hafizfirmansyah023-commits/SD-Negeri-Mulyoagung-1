@@ -47,11 +47,50 @@ function foto_ensure_column($conn, $table) {
     }
 }
 
+// Cek dan dapatkan path file yang benar-benar ada di disk (dengan fallback ekstensi webp/jpg/png).
+function foto_resolve_existing_path($path) {
+    if (empty($path)) return '';
+    // Jika URL eksternal, langsung kembalikan
+    if (strpos($path, 'http://') === 0 || strpos($path, 'https://') === 0) {
+        return $path;
+    }
+    $relative = '../' . str_replace('backend/', '', $path);
+    if (file_exists($relative)) {
+        return $path;
+    }
+    // Cek jika versi webp ada
+    $webpPath = preg_replace('/\.(png|jpe?g)$/i', '.webp', $relative);
+    if (file_exists($webpPath)) {
+        return str_replace(basename($relative), basename($webpPath), $path);
+    }
+    // Cek kemungkinan ekstensi lain yang ada di disk
+    $baseWithoutExt = preg_replace('/\.[^.]+$/', '', $relative);
+    foreach (['.webp', '.jpg', '.jpeg', '.png', '.JPG', '.PNG', '.JPEG'] as $candidateExt) {
+        if (file_exists($baseWithoutExt . $candidateExt)) {
+            return str_replace(basename($relative), basename($baseWithoutExt . $candidateExt), $path);
+        }
+    }
+    return $path;
+}
+
 // Ubah satu baris hasil query: isi `foto` = tampilan, tambahkan `foto_original`.
 function foto_map_row(&$row) {
-    $row['foto_original'] = $row['foto'] ?? '';
-    if (!empty($row['foto_crop'])) {
-        $row['foto'] = $row['foto_crop'];
+    $original = $row['foto'] ?? '';
+    $crop = $row['foto_crop'] ?? '';
+
+    $resolved_original = foto_resolve_existing_path($original);
+    $resolved_crop = foto_resolve_existing_path($crop);
+
+    $row['foto_original'] = !empty($resolved_original) ? $resolved_original : $original;
+
+    if (!empty($resolved_crop)) {
+        $row['foto'] = $resolved_crop;
+    } elseif (!empty($resolved_original)) {
+        $row['foto'] = $resolved_original;
+    } elseif (!empty($crop)) {
+        $row['foto'] = $crop;
+    } else {
+        $row['foto'] = $original;
     }
 }
 

@@ -70,6 +70,20 @@ export const ImageCropModal: React.FC<ImageCropModalProps> = ({
 
   circularRef.current = circular;
 
+  // Lock scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      const prevBody = document.body.style.overflow;
+      const prevHtml = document.documentElement.style.overflow;
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      };
+    }
+  }, [open]);
+
   // Resolusi sumber gambar: jika remote URL, fetch sebagai Blob agar canvas tidak tainted
   useEffect(() => {
     let active = true;

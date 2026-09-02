@@ -57,7 +57,7 @@ export const AkademikSection: React.FC = () => {
     );
   }
 
-  const isModulType = Boolean(selectedItem.is_modul == 1 || selectedItem.label.toLowerCase().includes('modul ajar'));
+  const isModulType = Number(selectedItem.is_modul) === 1;
 
   return (
     <div className="min-h-screen bg-slate-50/50">
@@ -112,17 +112,14 @@ export const AkademikSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Jika tipe Modul Ajar & LKPD, render juga modul pembelajaran section di bawahnya */}
-        {isModulType && (
-          <div className="mt-12">
-            <div className="mb-4 text-center">
-              <h3 className="text-xl font-bold text-slate-800">Katalog Modul &amp; LKPD Pembelajaran</h3>
-              <p className="text-xs text-slate-500">Jelajahi dan unduh modul pembelajaran digital per mata pelajaran</p>
-            </div>
-            <ModulPembelajaranSection />
-          </div>
-        )}
       </main>
+
+      {/* Jika tipe Modul Ajar & LKPD, render modul pembelajaran section full-width seperti Berita & Galeri */}
+      {isModulType && (
+        <div className="w-full">
+          <ModulPembelajaranSection />
+        </div>
+      )}
     </div>
   );
 };

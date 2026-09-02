@@ -17,6 +17,7 @@ export const GaleriCard: React.FC<GaleriCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const [imgError, setImgError] = React.useState(false);
   const isRejected = item.status_verifikasi === 'Rejected';
   const isOwner = (item.uploaded_by && Number(item.uploaded_by) === Number(currentUser.id)) ||
     (item.uploader && item.uploader === currentUser.nama_penanggung_jawab);
@@ -52,13 +53,28 @@ export const GaleriCard: React.FC<GaleriCardProps> = ({
       }`}
     >
       <div>
-        <div className="relative h-44 sm:h-48 bg-slate-100">
-          <img
-            src={getImageUrl(item.foto)}
-            alt={item.judul}
-            loading="lazy"
-            className="w-full h-full object-cover"
-          />
+        <div className="relative h-44 sm:h-48 bg-slate-100 flex items-center justify-center overflow-hidden">
+          {item.foto && !imgError ? (
+            <img
+              src={getImageUrl(item.foto)}
+              alt={item.judul}
+              loading="lazy"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (item.foto_original && target.src !== getImageUrl(item.foto_original)) {
+                  target.src = getImageUrl(item.foto_original);
+                } else {
+                  setImgError(true);
+                }
+              }}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center bg-slate-800 text-slate-400 p-4 text-center">
+              <Calendar size={36} className="text-indigo-400/60 mb-1.5" />
+              <span className="text-xs font-semibold text-slate-300">Foto Galeri</span>
+            </div>
+          )}
           <div className="absolute top-3 left-3">
             {getStatusBadge(item.status_verifikasi)}
           </div>

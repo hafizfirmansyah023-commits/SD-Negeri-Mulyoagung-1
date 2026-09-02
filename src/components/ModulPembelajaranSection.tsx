@@ -247,16 +247,16 @@ export const ModulPembelajaranSection: React.FC = () => {
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {paginatedModules.map((mod) => (
               <article
                 key={mod.id}
                 onClick={() => setPreviewModule(mod)}
-                className="group bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-teal-200/80 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer hover:-translate-y-1"
+                className="group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-200/80 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer hover:-translate-y-1"
               >
                 <div>
                   {/* Thumbnail / Cover */}
-                  <div className="relative h-48 bg-gradient-to-br from-teal-800 to-slate-900 overflow-hidden">
+                  <div className="relative h-44 sm:h-48 bg-gradient-to-br from-teal-800 to-slate-900 overflow-hidden">
                     {mod.foto ? (
                       <img
                         src={getImageUrl(mod.foto)}
@@ -289,13 +289,13 @@ export const ModulPembelajaranSection: React.FC = () => {
                   </div>
 
                   {/* Body Content */}
-                  <div className="p-5 space-y-2.5">
+                  <div className="p-4 sm:p-5 space-y-2">
                     <div className="flex items-center justify-between text-xs text-slate-400">
                       <span className="font-semibold text-teal-700">{mod.mata_pelajaran}</span>
                       <span>TA {mod.tahun_ajaran}</span>
                     </div>
 
-                    <h3 className="font-bold text-slate-900 text-base sm:text-lg leading-snug line-clamp-2 group-hover:text-[#028C84] transition-colors">
+                    <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1 group-hover:text-[#028C84] transition-colors">
                       {mod.judul}
                     </h3>
 
@@ -306,19 +306,19 @@ export const ModulPembelajaranSection: React.FC = () => {
                 </div>
 
                 {/* Footer Action */}
-                <div className="p-4 sm:p-5 pt-3 border-t border-slate-50 flex items-center justify-between text-xs">
-                  <span className="text-slate-400 truncate">Oleh: {mod.uploader || 'Guru SDN 1 Mulyoagung'}</span>
+                <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-400">
+                  <span className="truncate text-xs">Oleh: {mod.uploader || 'Guru SDN 1 Mulyoagung'}</span>
                   
-                  <div className="flex items-center gap-1.5 text-teal-600 font-bold group-hover:translate-x-0.5 transition-transform">
-                    <Eye size={14} />
-                    <span>Buka Materi</span>
+                  <div className="flex items-center gap-1.5 text-teal-600 font-semibold group-hover:translate-x-0.5 transition-transform shrink-0">
+                    <Eye size={13} />
+                    <span className="text-[11px] group-hover:underline">Buka Materi</span>
                   </div>
                 </div>
               </article>
             ))}
 
             {filteredModules.length === 0 && (
-              <div className="col-span-full bg-white p-12 rounded-3xl text-center border border-slate-100 space-y-2 shadow-sm">
+              <div className="col-span-full bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100 space-y-2 shadow-sm">
                 <BookOpen size={48} className="mx-auto text-slate-300 mb-2" />
                 <p className="text-slate-700 font-bold text-base">Tidak ada modul pembelajaran yang ditemukan</p>
                 <p className="text-slate-400 text-xs sm:text-sm">Silakan sesuaikan kriteria filter atau ubah kata kunci pencarian Anda.</p>

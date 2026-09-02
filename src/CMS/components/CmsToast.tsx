@@ -86,7 +86,7 @@ export const CmsToast: React.FC<CmsToastProps> = ({
 
   return (
     <div
-      className={`fixed bottom-6 right-6 z-[9999] max-w-sm w-full pointer-events-auto transition-all duration-350 ease-in-out ${
+      className={`fixed z-[9999] pointer-events-none inset-x-0 bottom-4 px-4 sm:inset-x-auto sm:right-6 sm:bottom-6 sm:px-0 sm:w-full sm:max-w-sm flex justify-center sm:justify-end transition-all duration-350 ease-in-out ${
         exiting
           ? "opacity-0 translate-y-3 scale-95"
           : "opacity-100 translate-y-0 scale-100"
@@ -94,16 +94,16 @@ export const CmsToast: React.FC<CmsToastProps> = ({
       style={{ willChange: "transform, opacity" }}
     >
       <div
-        className={`${c.bg} rounded-xl shadow-xl overflow-hidden flex flex-col`}
+        className={`${c.bg} pointer-events-auto w-full rounded-xl shadow-xl overflow-hidden flex flex-col`}
         style={{ boxShadow: "0 8px 32px 0 rgba(0,0,0,0.12)" }}
       >
-        <div className="flex items-start gap-3 px-4 py-3.5">
+        <div className="flex items-start gap-3 px-3.5 sm:px-4 py-3 sm:py-3.5">
           {c.icon}
           <div className="flex-1 min-w-0">
             <p className={`text-xs font-bold uppercase tracking-wider ${c.titleColor}`}>
               {c.title}
             </p>
-            <p className={`text-sm mt-0.5 leading-snug ${c.textColor}`}>
+            <p className={`text-xs sm:text-sm mt-0.5 leading-snug break-words ${c.textColor}`}>
               {message.text}
             </p>
           </div>

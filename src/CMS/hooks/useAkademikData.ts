@@ -61,8 +61,41 @@ export function useAkademikData(status: 'all' | 'active_only' = 'active_only') {
     }
   };
 
+  const reorderItems = async (newItems: AkademikMenuItem[], role: string = 'ADMIN') => {
+    setItems(newItems);
+    try {
+      const payload = newItems.map((it, idx) => ({
+        id: it.id,
+        urutan: idx + 1,
+      }));
+      const formData = new FormData();
+      formData.append('action', 'reorder');
+      formData.append('items', JSON.stringify(payload));
+      formData.append('role', role);
+
+      const response = await fetch(`${API_BASE}/backend/API/akademik_menu.php`, {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        setSuccess(result.message);
+        return true;
+      } else {
+        setError(result.message || 'Gagal mengubah urutan menu.');
+        fetchItems();
+        return false;
+      }
+    } catch {
+      setError('Terjadi kesalahan saat mengubah urutan menu.');
+      fetchItems();
+      return false;
+    }
+  };
+
   return {
     items,
+    setItems,
     loading,
     error,
     setError,
@@ -70,5 +103,6 @@ export function useAkademikData(status: 'all' | 'active_only' = 'active_only') {
     setSuccess,
     fetchItems,
     deleteItem,
+    reorderItems,
   };
 }
