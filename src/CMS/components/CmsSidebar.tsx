@@ -25,6 +25,47 @@ export default function CmsSidebar({
   onLogout,
 }: CmsSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isNavVisible, setIsNavVisible] = useState(true);
+
+  // Auto hide sticky navbar on scroll down, show on scroll up
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+    const handleScroll = () => {
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollDiff = currentScrollY - lastScrollY;
+
+      // Always show if near the top
+      if (currentScrollY < 10) {
+        setIsNavVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      // Ignore small scroll jitters (< 6px)
+      if (Math.abs(scrollDiff) < 6) {
+        return;
+      }
+
+      // Scrolling down -> hide navbar
+      if (scrollDiff > 0 && currentScrollY > 40) {
+        setIsNavVisible(false);
+      } 
+      // Scrolling up -> show navbar
+      else if (scrollDiff < 0) {
+        setIsNavVisible(true);
+      }
+
+      lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   // Lock body scroll when mobile menu drawer is open
   useEffect(() => {
@@ -291,7 +332,11 @@ export default function CmsSidebar({
   return (
     <>
       {/* Mobile Top Navigation Header */}
-      <div className="md:hidden bg-slate-900 text-white px-4 py-3.5 flex justify-between items-center sticky top-0 z-40 shadow-md border-b border-slate-800">
+      <div
+        className={`md:hidden bg-slate-900 text-white px-4 py-3.5 flex justify-between items-center fixed top-0 left-0 right-0 z-40 shadow-md border-b border-slate-800 transition-transform duration-300 ease-in-out ${
+          isNavVisible || mobileOpen ? 'translate-y-0' : '-translate-y-full'
+        }`}
+      >
         <div className="flex items-center gap-2.5">
           <img src={logoImg} alt="Logo SD" className="w-7 h-7 object-contain shrink-0" />
           <div>
@@ -308,6 +353,9 @@ export default function CmsSidebar({
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
       </div>
+
+      {/* Spacer for Mobile Fixed Top Header */}
+      <div className="md:hidden h-14 w-full shrink-0" />
 
       {/* Mobile Backdrop Overlay */}
       {mobileOpen && (

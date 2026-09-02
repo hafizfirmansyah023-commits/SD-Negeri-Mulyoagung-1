@@ -6,6 +6,7 @@ import { NewsDetailModal } from './NewsDetailModal';
 import { Pagination } from './common/Pagination';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { useHomepageConfig } from '../hooks/useHomepageConfig';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface NewsSectionProps {
   onViewAllClick?: () => void;
@@ -18,6 +19,7 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
   const [articles, setArticles] = useState<Article[]>(cachedArticles || []);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const debouncedSearch = useDebounce(searchTerm, 1000);
   const [sortOrder, setSortOrder] = useState<'terbaru' | 'terlama'>('terbaru');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
@@ -92,8 +94,8 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
     }
 
     // Filter Pencarian
-    if (searchTerm.trim() !== '') {
-      const q = searchTerm.toLowerCase();
+    if (debouncedSearch.trim() !== '') {
+      const q = debouncedSearch.toLowerCase().trim();
       result = result.filter(
         (a) =>
           a.title.toLowerCase().includes(q) ||
@@ -111,12 +113,12 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
       }
       return dateB - dateA;
     });
-  }, [articles, selectedCategory, searchTerm, sortOrder]);
+  }, [articles, selectedCategory, debouncedSearch, sortOrder]);
 
   // Reset pagination on filter / search / sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, searchTerm, sortOrder]);
+  }, [selectedCategory, debouncedSearch, sortOrder]);
 
   // Adjust page if current page exceeds max page
   useEffect(() => {

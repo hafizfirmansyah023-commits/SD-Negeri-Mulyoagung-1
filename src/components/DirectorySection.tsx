@@ -9,12 +9,16 @@ import { DirectoryContent } from './directory/DirectoryContent';
 import { TeacherProfileModal } from './directory/TeacherProfileModal';
 import { PensiunContent } from './directory/PensiunContent';
 import { MutasiContent } from './directory/MutasiContent';
+import { useDebounce } from '../hooks/useDebounce';
 
 export const DirectorySection: React.FC = () => {
   const teachers = useTeachersData();
   const [searchTerm, setSearchTerm] = useState('');
   const [pensiunSearchTerm, setPensiunSearchTerm] = useState('');
   const [mutasiSearchTerm, setMutasiSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 1000);
+  const debouncedPensiunSearch = useDebounce(pensiunSearchTerm, 1000);
+  const debouncedMutasiSearch = useDebounce(mutasiSearchTerm, 1000);
   const [roleFilter, setRoleFilter] = useState<string>('Semua');
   const [selectedTeacherForModal, setSelectedTeacherForModal] = useState<Teacher | null>(null);
   const [activeTab, setActiveTab] = useState<'aktif' | 'pensiun' | 'mutasi'>('aktif');
@@ -54,7 +58,7 @@ export const DirectorySection: React.FC = () => {
     return false;
   });
 
-  const filteredTeachers = filterAndSortTeachers(activeTeachers, searchTerm, roleFilter);
+  const filteredTeachers = filterAndSortTeachers(activeTeachers, debouncedSearch, roleFilter);
 
   const tabScrollPositions = React.useRef<{ aktif: number; pensiun: number; mutasi: number }>({
     aktif: 0,
@@ -163,6 +167,7 @@ export const DirectorySection: React.FC = () => {
           <PensiunContent
             teachers={teachers}
             searchTerm={pensiunSearchTerm}
+            debouncedSearchTerm={debouncedPensiunSearch}
             onSearchChange={(e) => setPensiunSearchTerm(e.target.value)}
             onTeacherClick={setSelectedTeacherForModal}
           />
@@ -172,6 +177,7 @@ export const DirectorySection: React.FC = () => {
           <MutasiContent
             teachers={teachers}
             searchTerm={mutasiSearchTerm}
+            debouncedSearchTerm={debouncedMutasiSearch}
             onSearchChange={(e) => setMutasiSearchTerm(e.target.value)}
             onTeacherClick={setSelectedTeacherForModal}
           />

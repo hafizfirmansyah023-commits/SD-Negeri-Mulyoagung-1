@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
+import { useDebounce } from '../../hooks/useDebounce';
 
 export interface UseCmsFilterOptions<T> {
   items: T[];
   searchFields?: (keyof T)[];
   initialFilters?: Record<string, string>;
   customFilter?: (item: T, searchTerm: string, filters: Record<string, string>) => boolean;
+  debounceDelay?: number;
 }
 
 export function useCmsFilter<T>({
@@ -12,8 +14,10 @@ export function useCmsFilter<T>({
   searchFields = [],
   initialFilters = {},
   customFilter,
+  debounceDelay = 1000,
 }: UseCmsFilterOptions<T>) {
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, debounceDelay);
   const [filters, setFilters] = useState<Record<string, string>>(initialFilters);
 
   const setFilter = (key: string, value: string) => {
@@ -36,11 +40,11 @@ export function useCmsFilter<T>({
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
       if (customFilter) {
-        return customFilter(item, searchTerm, filters);
+        return customFilter(item, debouncedSearchTerm, filters);
       }
 
-      if (searchTerm.trim()) {
-        const query = searchTerm.toLowerCase();
+      if (debouncedSearchTerm.trim()) {
+        const query = debouncedSearchTerm.toLowerCase();
         const matchesSearch = searchFields.some((field) => {
           const val = item[field];
           return val ? String(val).toLowerCase().includes(query) : false;
@@ -58,10 +62,11 @@ export function useCmsFilter<T>({
 
       return true;
     });
-  }, [items, searchTerm, filters, searchFields, customFilter]);
+  }, [items, debouncedSearchTerm, filters, searchFields, customFilter]);
 
   return {
     searchTerm,
+    debouncedSearchTerm,
     setSearchTerm,
     filters,
     setFilter,

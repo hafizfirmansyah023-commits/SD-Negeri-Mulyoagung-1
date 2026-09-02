@@ -173,7 +173,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
       />
 
       {/* Header Section */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-white rounded-3xl p-5 sm:p-7 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 text-teal-700 text-xs font-semibold uppercase tracking-wider mb-2 border border-teal-100">
             <Layers size={14} /> Pengaturan Navigasi
@@ -186,12 +186,12 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full lg:w-auto">
           {/* Toggle View Mode */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80">
+          <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200/80 flex-1 sm:flex-initial justify-center sm:justify-start">
             <button
               onClick={() => setViewMode('list')}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                 viewMode === 'list'
                   ? 'bg-white text-teal-700 shadow-sm'
                   : 'text-slate-500 hover:text-slate-800'
@@ -199,11 +199,11 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
               title="Tampilan Vertikal Drag & Drop (Struktur Urutan)"
             >
               <ListOrdered size={15} />
-              <span className="hidden sm:inline">Urutan Drag & Drop</span>
+              <span>Urutan</span>
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
+              className={`flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-3 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                 viewMode === 'grid'
                   ? 'bg-white text-teal-700 shadow-sm'
                   : 'text-slate-500 hover:text-slate-800'
@@ -211,22 +211,16 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
               title="Tampilan Kartu Grid"
             >
               <LayoutGrid size={15} />
-              <span className="hidden sm:inline">Grid Card</span>
+              <span>Grid</span>
             </button>
           </div>
 
           <button
-            onClick={() => fetchItems()}
-            className="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition cursor-pointer"
-            title="Muat Ulang"
-          >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
-          </button>
-          <button
             onClick={handleOpenCreate}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-bold shadow-lg shadow-teal-600/20 transition cursor-pointer"
+            className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs sm:text-sm font-bold shadow-md shadow-teal-600/20 transition cursor-pointer shrink-0"
           >
-            <Plus size={18} /> Tambah Menu
+            <Plus size={17} />
+            <span>Tambah Menu</span>
           </button>
         </div>
       </div>

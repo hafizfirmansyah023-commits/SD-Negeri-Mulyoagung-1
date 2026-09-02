@@ -201,10 +201,12 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
 
     const filteredModules = modules.filter(
       (m) =>
-        m.judul.toLowerCase().includes(q) ||
+        (m.judul && m.judul.toLowerCase().includes(q)) ||
         (m.deskripsi && m.deskripsi.toLowerCase().includes(q)) ||
-        m.mata_pelajaran.toLowerCase().includes(q) ||
-        m.kelas.toLowerCase().includes(q)
+        (m.mata_pelajaran && m.mata_pelajaran.toLowerCase().includes(q)) ||
+        (m.kelas && m.kelas.toLowerCase().includes(q)) ||
+        (m.kategori && m.kategori.toLowerCase().includes(q)) ||
+        (m.uploader && m.uploader.toLowerCase().includes(q))
     );
 
     const filteredTeachers = teachers.filter(

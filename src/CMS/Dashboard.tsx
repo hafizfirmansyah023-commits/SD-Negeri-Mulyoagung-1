@@ -105,7 +105,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 relative w-full overflow-x-hidden">
+        <div className="min-h-screen bg-slate-50 relative w-full overflow-x-clip">
             <CmsSidebar
                 user={user}
                 activeTab={activeTab}
@@ -114,7 +114,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 onLogout={handleLogout}
             />
 
-            <main className="md:ml-64 p-3.5 sm:p-6 md:p-8 min-h-screen max-w-full overflow-x-hidden">
+            <main className="md:ml-64 p-3.5 sm:p-6 md:p-8 min-h-screen max-w-full overflow-x-clip">
                 {activeTab === 'dashboard' && (
                     <CmsOverviewDashboard currentUser={user} setActiveTab={setActiveTab} />
                 )}
