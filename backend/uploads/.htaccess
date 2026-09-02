@@ -1,6 +1,6 @@
 # Izinkan akses CORS dan embed PDF/gambar di iframe
 <IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Origign "*"
     Header set Access-Control-Allow-Methods "GET, OPTIONS"
     Header set Access-Control-Allow-Headers "*"
     Header unset X-Frame-Options

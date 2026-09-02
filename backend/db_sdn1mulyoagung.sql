@@ -432,7 +432,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `nama_penanggung_jawa
 (1, 'hafiz', 'hafiz123', 'ADMIN', 'M HAFIZ F', 'backend/uploads/profile/1787536893_d68b1e43_19ae3379-8cec-409d-806f-c148c1811c2b.jpg', 'backend/uploads/profile/1787536893_ae701038_19ae3379-8cec-409d-806f-c148c1811c2b.png', 'Verified', NULL),
 (2, 'pramukajaya', 'pramukajaya', 'TIM', 'Tim Pramuka', '', NULL, 'Verified', NULL),
 (3, 'Drumband', 'Drumband', 'TIM', 'Drumband', '', NULL, 'Verified', NULL),
-(5, 'yulida', 'yulida123', 'GURU', 'Yulida', '', NULL, 'Verified', NULL);
+(5, 'yulida', 'yulida123', 'GURU', 'Yulida', '', NULL, 'Verified', NULL),
+(6, 'ilhamzainuri', 'ilham123', 'ADMIN', 'Ilham Zainuri', '', NULL, 'Verified', NULL);
 
 --
 -- Indexes for dumped tables
