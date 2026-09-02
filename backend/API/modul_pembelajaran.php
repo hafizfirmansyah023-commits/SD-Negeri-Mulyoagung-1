@@ -32,6 +32,12 @@ try {
     // Ensure columns exist if table was previously created
     foto_ensure_column($conn, 'modul_pembelajaran', 'foto_cover', 'foto_cover_crop');
 
+    // Ensure deskripsi column exists
+    $checkDeskripsi = $conn->query("SHOW COLUMNS FROM `modul_pembelajaran` LIKE 'deskripsi'");
+    if ($checkDeskripsi && $checkDeskripsi->rowCount() === 0) {
+        $conn->exec("ALTER TABLE `modul_pembelajaran` ADD COLUMN `deskripsi` TEXT NULL AFTER `judul`");
+    }
+
     // Ensure status column exists
     $checkCol = $conn->query("SHOW COLUMNS FROM `modul_pembelajaran` LIKE 'status'");
     if ($checkCol && $checkCol->rowCount() === 0) {

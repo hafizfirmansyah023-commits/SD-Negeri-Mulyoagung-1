@@ -141,7 +141,7 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-6 sm:space-y-8">
         
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 sm:gap-4">
+        <div className="text-center max-w-2xl mx-auto space-y-3">
           <div>
             <div className="inline-flex items-center gap-1.5 sm:gap-2 text-[#028C84] font-bold text-[10px] sm:text-xs uppercase tracking-wider mb-1 sm:mb-2 bg-teal-50/80 border border-teal-200/80 px-2.5 py-1 sm:px-0 sm:py-0 sm:bg-transparent sm:border-0 rounded-full">
               <Tag className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
@@ -318,4 +318,4 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
       />
     </section>
   );
-};
+};

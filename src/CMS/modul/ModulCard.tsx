@@ -77,27 +77,31 @@ export const ModulCard: React.FC<ModulCardProps> = ({
     >
       <div>
         {/* Cover image or placeholder */}
-        <div className="relative h-44 sm:h-48 bg-gradient-to-br from-teal-700 to-slate-900 overflow-hidden">
+        <div
+          className="relative h-44 sm:h-48 bg-gradient-to-br from-teal-700 to-slate-900 overflow-hidden cursor-pointer group"
+          onClick={() => onPreview(module)}
+          title="Klik untuk melihat preview modul"
+        >
           {module.foto ? (
             <img
               src={getImageUrl(module.foto)}
               alt={module.judul}
               loading="lazy"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-teal-200/80 p-4 text-center">
-              <BookOpen size={48} className="mb-2 text-teal-300/60" />
+              <BookOpen size={48} className="mb-2 text-teal-300/60 group-hover:scale-110 transition-transform" />
               <span className="text-xs font-semibold uppercase tracking-wider">{module.mata_pelajaran}</span>
             </div>
           )}
 
           {/* Top Badges */}
-          <div className="absolute top-3 left-3 flex items-center gap-1.5">
+          <div className="absolute top-3 left-3 flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
             {getStatusVerifikasiBadge(module.status_verifikasi)}
           </div>
 
-          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+          <div className="absolute top-3 right-3 flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
             {getStatusPublikasiBadge(module.status)}
           </div>
 
@@ -153,7 +157,11 @@ export const ModulCard: React.FC<ModulCardProps> = ({
             <span className="text-slate-500 font-medium">TA {module.tahun_ajaran}</span>
           </div>
 
-          <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-2">
+          <h3
+            onClick={() => onPreview(module)}
+            className="font-bold text-slate-800 hover:text-teal-700 transition-colors text-base sm:text-lg leading-tight line-clamp-2 cursor-pointer"
+            title={module.judul}
+          >
             {module.judul}
           </h3>
 
