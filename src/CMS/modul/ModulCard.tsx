@@ -102,7 +102,12 @@ export const ModulCard: React.FC<ModulCardProps> = ({
           </div>
 
           {/* Bottom Badges */}
-          <div className="absolute bottom-3 right-3 flex items-center gap-1.5">
+          <div className="absolute bottom-3 right-3 flex items-center gap-1.5 max-w-[calc(100%-1.5rem)] flex-wrap justify-end">
+            {module.mata_pelajaran && (
+              <span className="bg-teal-950/85 backdrop-blur-md text-teal-200 border border-teal-500/30 text-[11px] px-2.5 py-1 rounded-full font-medium truncate max-w-[140px]" title={module.mata_pelajaran}>
+                {module.mata_pelajaran}
+              </span>
+            )}
             <span className="bg-slate-900/80 backdrop-blur-md text-white text-[11px] px-2.5 py-1 rounded-full font-medium">
               {module.kelas}
             </span>
