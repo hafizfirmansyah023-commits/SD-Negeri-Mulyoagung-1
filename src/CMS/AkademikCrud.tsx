@@ -179,7 +179,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
             <Layers size={14} /> Pengaturan Navigasi
           </div>
           <h2 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
-            Menu Akademik (Google Drive)
+            Menu Akademik
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xl">
             Kelola daftar submenu yang tampil pada dropdown navigasi Akademik di website utama. Geser (drag &amp; drop) secara vertikal untuk mengubah urutan tampilan dropdown.
@@ -214,14 +214,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
               <span className="hidden sm:inline">Grid Card</span>
             </button>
           </div>
-
-          <button
-            onClick={() => fetchItems()}
-            className="p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition cursor-pointer"
-            title="Muat Ulang"
-          >
-            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
-          </button>
+          
           <button
             onClick={handleOpenCreate}
             className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-sm font-bold shadow-lg shadow-teal-600/20 transition cursor-pointer"
