@@ -81,44 +81,42 @@ export default function CmsSidebar({
       </div>
 
       {/* Kategori: POST */}
-      <div className="space-y-1">
-        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-4 block mb-1">
-          Postingan
-        </span>
-        {user.role === 'ADMIN' && (
+      {user.role !== 'GURU' && (
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-4 block mb-1">
+            Postingan
+          </span>
+          {user.role === 'ADMIN' && (
+            <button
+              onClick={() => handleSelectTab('pengumuman')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'pengumuman'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+            >
+              <Megaphone size={18} /> Pengumuman Penting
+            </button>
+          )}
           <button
-            onClick={() => handleSelectTab('pengumuman')}
-            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'pengumuman'
+            onClick={() => handleSelectTab('berita')}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
               ? 'bg-teal-600 text-white shadow-sm'
               : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
               }`}
           >
-            <Megaphone size={18} /> Pengumuman Penting
+            <FileText size={18} /> Berita &amp; Kegiatan
           </button>
-        )}
-        {user.role !== 'GURU' && (
-          <>
-            <button
-              onClick={() => handleSelectTab('berita')}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'berita'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-                }`}
-            >
-              <FileText size={18} /> Berita &amp; Kegiatan
-            </button>
-            <button
-              onClick={() => handleSelectTab('galeri')}
-              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
-                }`}
-            >
-              <Image size={18} /> Galeri Foto
-            </button>
-          </>
-        )}
-      </div>
+          <button
+            onClick={() => handleSelectTab('galeri')}
+            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'galeri'
+              ? 'bg-teal-600 text-white shadow-sm'
+              : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+              }`}
+          >
+            <Image size={18} /> Galeri Foto
+          </button>
+        </div>
+      )}
 
       {/* Kategori: DATA SEKOLAH */}
       {(user.role === 'ADMIN' || user.role === 'GURU') && (

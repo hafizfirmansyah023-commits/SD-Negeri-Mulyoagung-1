@@ -78,8 +78,14 @@ function AppContent() {
   const scrollPositions = useRef<Record<string, number>>({});
 
   // Mengambil current path untuk menentukan tab mana yang aktif (untuk Header/Footer)
-  const path = location.pathname.replace('/', '');
-  const activeTab = (path === '' ? 'home' : path === 'modul' ? 'akademik' : path) as NavTab;
+  const path = location.pathname.replace(/^\/+/, '');
+  const activeTab = (
+    path === ''
+      ? 'home'
+      : path === 'modul' || path.startsWith('akademik')
+      ? 'akademik'
+      : path
+  ) as NavTab;
 
   const setActiveTab = (tab: NavTab) => {
     if (tab === 'home') {

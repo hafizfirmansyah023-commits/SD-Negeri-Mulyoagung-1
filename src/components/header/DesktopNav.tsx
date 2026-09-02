@@ -35,15 +35,18 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
     const targetElement = navRef.current.querySelector<HTMLElement>(`[data-tab-id="${targetTab}"]`);
 
     if (targetElement) {
+      const navRect = navRef.current.getBoundingClientRect();
+      const targetRect = targetElement.getBoundingClientRect();
       setPillStyle({
-        left: targetElement.offsetLeft,
-        width: targetElement.offsetWidth,
+        left: targetRect.left - navRect.left,
+        width: targetRect.width,
         opacity: 1,
       });
     } else {
       setPillStyle((prev) => ({ ...prev, opacity: 0 }));
     }
   }, [targetTab, navItems]);
+
 
   const handleAkademikMouseEnter = () => {
     if (dropdownTimeoutRef.current) {
@@ -57,8 +60,22 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
     dropdownTimeoutRef.current = setTimeout(() => {
       setDropdownOpen(false);
       setHoveredTab(null);
-    }, 150);
+    }, 180);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+        setHoveredTab(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
 
   return (
     <nav
@@ -94,12 +111,12 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
             >
               <button
                 data-tab-id={item.id}
-                onClick={() => {
-                  if (akademikMenu.length > 0 && onAkademikItemClick) {
-                    onAkademikItemClick(akademikMenu[0]);
-                  } else {
-                    onNavClick(item.id);
-                  }
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDropdownOpen((prev) => !prev);
+                  setHoveredTab('akademik');
                 }}
                 className={`relative z-10 px-3.5 2xl:px-4 py-2 rounded-full font-medium text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   isHighlighted ? 'text-white font-bold' : 'text-slate-200 hover:text-white'

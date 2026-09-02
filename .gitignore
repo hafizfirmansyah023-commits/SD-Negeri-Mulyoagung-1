@@ -26,7 +26,7 @@ coverage/
 # File Upload Pengguna
 # (konten dinamis — tidak perlu di-track Git)
 # ========================
-backend/uploads/
+# backend/uploads/
 
 # ========================
 # OS & Editor
