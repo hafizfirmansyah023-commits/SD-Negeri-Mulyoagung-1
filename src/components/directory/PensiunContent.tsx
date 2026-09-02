@@ -6,6 +6,7 @@ import { TeacherCard } from './TeacherCard';
 interface PensiunContentProps {
   teachers: Teacher[];
   searchTerm: string;
+  debouncedSearchTerm?: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTeacherClick: (teacher: Teacher) => void;
 }
@@ -13,9 +14,12 @@ interface PensiunContentProps {
 export const PensiunContent: React.FC<PensiunContentProps> = ({
   teachers,
   searchTerm,
+  debouncedSearchTerm,
   onSearchChange,
   onTeacherClick,
 }) => {
+  const query = debouncedSearchTerm !== undefined ? debouncedSearchTerm : searchTerm;
+
   // Filter only retired teachers
   const retiredTeachers = teachers.filter(
     (t) => t.status?.toLowerCase() === 'pensiun' || t.status?.toLowerCase() === 'purna tugas'
@@ -24,9 +28,9 @@ export const PensiunContent: React.FC<PensiunContentProps> = ({
   // Apply search term
   const filteredTeachers = retiredTeachers.filter((teacher) => {
     return (
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (teacher.nip && teacher.nip.includes(searchTerm))
+      teacher.name.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.subject.toLowerCase().includes(query.toLowerCase()) ||
+      (teacher.nip && teacher.nip.includes(query))
     );
   });
 

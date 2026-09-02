@@ -1,30 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserSession, CmsTab } from './types';
 import CmsLogin from './components/CmsLogin';
 import CmsSidebar from './components/CmsSidebar';
 import { CmsOverviewDashboard } from './CmsOverviewDashboard';
-import GuruCrud from './GuruCrud';
-import GaleriCrud from './GaleriCrud';
-import BeritaCrud from './BeritaCrud';
-import ModulPembelajaranCrud from './ModulPembelajaranCrud';
-import AkademikCrud from './AkademikCrud';
-import UserCrud from './UserCrud';
-import Verifikasi from './Verifikasi';
-import FasilitasCrud from './FasilitasCrud';
-import SambutanKepsekCrud from './SambutanKepsekCrud';
-import PengumumanCrud from './PengumumanCrud';
-import StatistikCrud from './Statistikcrud';
-import PengaturanSekolah from './pengaturan';
 
-import VisiMisiCrud from './VisiMisiCrud';
-import SejarahCrud from './SejarahCrud';
-import StrukturHalamanUtamaCrud from './StrukturHalamanUtamaCrud';
-import HeroCrud from './HeroCrud';
-import KontenUtamaCrud from './KontenUtamaCrud';
-import PPDBCrud from './PPDBCrud';
-import KontakCrud from './KontakCrud';
-import MedsosCrud from './MedsosCrud';
+// Lazy load heavy CRUD modules for CMS
+const GuruCrud = lazy(() => import('./GuruCrud'));
+const GaleriCrud = lazy(() => import('./GaleriCrud'));
+const BeritaCrud = lazy(() => import('./BeritaCrud'));
+const ModulPembelajaranCrud = lazy(() => import('./ModulPembelajaranCrud'));
+const AkademikCrud = lazy(() => import('./AkademikCrud'));
+const UserCrud = lazy(() => import('./UserCrud'));
+const Verifikasi = lazy(() => import('./Verifikasi'));
+const FasilitasCrud = lazy(() => import('./FasilitasCrud'));
+const SambutanKepsekCrud = lazy(() => import('./SambutanKepsekCrud'));
+const PengumumanCrud = lazy(() => import('./PengumumanCrud'));
+const StatistikCrud = lazy(() => import('./Statistikcrud'));
+const VisiMisiCrud = lazy(() => import('./VisiMisiCrud'));
+const SejarahCrud = lazy(() => import('./SejarahCrud'));
+const StrukturHalamanUtamaCrud = lazy(() => import('./StrukturHalamanUtamaCrud'));
+const HeroCrud = lazy(() => import('./HeroCrud'));
+const KontenUtamaCrud = lazy(() => import('./KontenUtamaCrud'));
+const PPDBCrud = lazy(() => import('./PPDBCrud'));
+const KontakCrud = lazy(() => import('./KontakCrud'));
+const MedsosCrud = lazy(() => import('./MedsosCrud'));
 
 import { FileValidationModal } from './components/FileValidationModal';
 
@@ -105,7 +105,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 relative w-full overflow-x-hidden">
+        <div className="min-h-screen bg-slate-50 relative w-full overflow-x-clip">
             <CmsSidebar
                 user={user}
                 activeTab={activeTab}
@@ -114,7 +114,8 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 onLogout={handleLogout}
             />
 
-            <main className="md:ml-64 p-3.5 sm:p-6 md:p-8 min-h-screen max-w-full overflow-x-hidden">
+            <main className="md:ml-64 p-3.5 sm:p-6 md:p-8 min-h-screen max-w-full overflow-x-clip">
+                <Suspense fallback={<div className="flex justify-center items-center py-24"><div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div></div>}>
                 {activeTab === 'dashboard' && (
                     <CmsOverviewDashboard currentUser={user} setActiveTab={setActiveTab} />
                 )}
@@ -140,6 +141,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'ppdb' && user.role === 'ADMIN' && <PPDBCrud />}
                 {activeTab === 'kontak' && user.role === 'ADMIN' && <KontakCrud />}
                 {activeTab === 'medsos' && user.role === 'ADMIN' && <MedsosCrud />}
+                </Suspense>
             </main>
             <FileValidationModal />
         </div>

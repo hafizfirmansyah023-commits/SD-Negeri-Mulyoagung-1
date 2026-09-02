@@ -4,6 +4,7 @@ import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { Pagination } from './common/Pagination';
 import { ModulPreviewModal } from '../CMS/modul/ModulPreviewModal';
 import { ModulItem } from '../CMS/hooks/useModulData';
+import { useDebounce } from '../hooks/useDebounce';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -16,6 +17,7 @@ export const ModulPembelajaranSection: React.FC = () => {
   const [selectedTahunAjaran, setSelectedTahunAjaran] = useState('Semua');
   const [selectedMapel, setSelectedMapel] = useState('Semua');
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearch = useDebounce(searchTerm, 1000);
   const [currentPage, setCurrentPage] = useState(1);
   const [previewModule, setPreviewModule] = useState<ModulItem | null>(null);
 
@@ -46,30 +48,44 @@ export const ModulPembelajaranSection: React.FC = () => {
 
   // Filtered & Searched Modules
   const filteredModules = useMemo(() => {
-    return modules.filter((m) => {
-      if (selectedKategori !== 'Semua' && m.kategori !== selectedKategori) return false;
-      if (selectedKelas !== 'Semua' && m.kelas !== selectedKelas) return false;
-      if (selectedSemester !== 'Semua' && m.semester !== selectedSemester) return false;
-      if (selectedTahunAjaran !== 'Semua' && m.tahun_ajaran !== selectedTahunAjaran) return false;
-      if (selectedMapel !== 'Semua' && m.mata_pelajaran !== selectedMapel) return false;
+    let result = modules;
 
-      if (searchTerm.trim() !== '') {
-        const q = searchTerm.toLowerCase();
-        const matches =
-          m.judul.toLowerCase().includes(q) ||
+    if (selectedKategori !== 'Semua') {
+      result = result.filter((m) => m.kategori === selectedKategori);
+    }
+    if (selectedKelas !== 'Semua') {
+      result = result.filter((m) => m.kelas === selectedKelas);
+    }
+    if (selectedSemester !== 'Semua') {
+      result = result.filter((m) => m.semester === selectedSemester);
+    }
+    if (selectedTahunAjaran !== 'Semua') {
+      result = result.filter((m) => m.tahun_ajaran === selectedTahunAjaran);
+    }
+    if (selectedMapel !== 'Semua') {
+      result = result.filter((m) => m.mata_pelajaran === selectedMapel);
+    }
+
+    if (debouncedSearch.trim() !== '') {
+      const q = debouncedSearch.toLowerCase().trim();
+      result = result.filter(
+        (m) =>
+          (m.judul && m.judul.toLowerCase().includes(q)) ||
           (m.deskripsi && m.deskripsi.toLowerCase().includes(q)) ||
-          m.mata_pelajaran.toLowerCase().includes(q) ||
-          (m.uploader && m.uploader.toLowerCase().includes(q));
-        if (!matches) return false;
-      }
-      return true;
-    });
-  }, [modules, selectedKategori, selectedKelas, selectedSemester, selectedTahunAjaran, selectedMapel, searchTerm]);
+          (m.mata_pelajaran && m.mata_pelajaran.toLowerCase().includes(q)) ||
+          (m.kelas && m.kelas.toLowerCase().includes(q)) ||
+          (m.kategori && m.kategori.toLowerCase().includes(q)) ||
+          (m.uploader && m.uploader.toLowerCase().includes(q))
+      );
+    }
+
+    return result;
+  }, [modules, selectedKategori, selectedKelas, selectedSemester, selectedTahunAjaran, selectedMapel, debouncedSearch]);
 
   // Reset pagination on filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedKategori, selectedKelas, selectedSemester, selectedTahunAjaran, selectedMapel, searchTerm]);
+  }, [selectedKategori, selectedKelas, selectedSemester, selectedTahunAjaran, selectedMapel, debouncedSearch]);
 
   // Adjust page if current page exceeds max page
   useEffect(() => {

@@ -6,6 +6,7 @@ import { GalleryCategoryFilter } from './gallery/GalleryCategoryFilter';
 import { GalleryGrid } from './gallery/GalleryGrid';
 import { PhotoLightboxModal } from './gallery/PhotoLightboxModal';
 import { Pagination } from './common/Pagination';
+import { useDebounce } from '../hooks/useDebounce';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -13,6 +14,7 @@ export const GallerySection: React.FC = () => {
   const galleryItems = useGalleryData();
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const debouncedSearch = useDebounce(searchTerm, 1000);
   const [sortOrder, setSortOrder] = useState<'terbaru' | 'terlama'>('terbaru');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activePhoto, setActivePhoto] = useState<GalleryItem | null>(null);
@@ -31,8 +33,8 @@ export const GallerySection: React.FC = () => {
     }
 
     // Filter Pencarian
-    if (searchTerm.trim() !== '') {
-      const q = searchTerm.toLowerCase();
+    if (debouncedSearch.trim() !== '') {
+      const q = debouncedSearch.toLowerCase().trim();
       result = result.filter(
         (item) =>
           item.title.toLowerCase().includes(q) ||
@@ -49,12 +51,12 @@ export const GallerySection: React.FC = () => {
       }
       return dateB - dateA;
     });
-  }, [galleryItems, selectedCategory, searchTerm, sortOrder]);
+  }, [galleryItems, selectedCategory, debouncedSearch, sortOrder]);
 
   // Reset pagination on filter / search / sort change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, searchTerm, sortOrder]);
+  }, [selectedCategory, debouncedSearch, sortOrder]);
 
   // Adjust page if current page exceeds max page
   useEffect(() => {

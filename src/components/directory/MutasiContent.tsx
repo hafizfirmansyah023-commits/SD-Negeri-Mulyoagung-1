@@ -6,6 +6,7 @@ import { TeacherCard } from './TeacherCard';
 interface MutasiContentProps {
   teachers: Teacher[];
   searchTerm: string;
+  debouncedSearchTerm?: string;
   onSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onTeacherClick: (teacher: Teacher) => void;
 }
@@ -13,9 +14,12 @@ interface MutasiContentProps {
 export const MutasiContent: React.FC<MutasiContentProps> = ({
   teachers,
   searchTerm,
+  debouncedSearchTerm,
   onSearchChange,
   onTeacherClick,
 }) => {
+  const query = debouncedSearchTerm !== undefined ? debouncedSearchTerm : searchTerm;
+
   // Filter only mutated teachers
   const mutasiTeachers = teachers.filter(
     (t) => t.status?.toLowerCase() === 'mutasi' || t.status?.toLowerCase().includes('mutasi')
@@ -24,9 +28,9 @@ export const MutasiContent: React.FC<MutasiContentProps> = ({
   // Apply search term
   const filteredTeachers = mutasiTeachers.filter((teacher) => {
     return (
-      teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      teacher.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (teacher.nip && teacher.nip.includes(searchTerm))
+      teacher.name.toLowerCase().includes(query.toLowerCase()) ||
+      teacher.subject.toLowerCase().includes(query.toLowerCase()) ||
+      (teacher.nip && teacher.nip.includes(query))
     );
   });
 

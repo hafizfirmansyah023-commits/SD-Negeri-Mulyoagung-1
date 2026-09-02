@@ -20,23 +20,24 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Stats } from './components/Stats';
 import { PrincipalGreeting } from './components/PrincipalGreeting';
-import { NewsSection } from './components/NewsSection';
-import { VideoProfileSection } from './components/VideoProfileSection';
-import { DirectorySection } from './components/DirectorySection';
-
-import { GallerySection } from './components/GallerySection';
-import { SchoolProfileSection } from './components/SchoolProfileSection';
-import { ModulPembelajaranSection } from './components/ModulPembelajaranSection';
-import { AkademikSection } from './components/AkademikSection';
-import { ContactSection } from './components/ContactSection';
-import { PpdbModal } from './components/PpdbModal';
-import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { Footer } from './components/Footer';
 import { BackToTop } from './components/BackToTop';
 import { AnnouncementBar } from './components/AnnouncementBar';
 import { AnnouncementPopup } from './components/AnnouncementPopup';
 
+// Lazy load non-critical sections and modals
+const NewsSection = lazy(() => import('./components/NewsSection').then(m => ({ default: m.NewsSection })));
+const VideoProfileSection = lazy(() => import('./components/VideoProfileSection').then(m => ({ default: m.VideoProfileSection })));
+const DirectorySection = lazy(() => import('./components/DirectorySection').then(m => ({ default: m.DirectorySection })));
+const GallerySection = lazy(() => import('./components/GallerySection').then(m => ({ default: m.GallerySection })));
+const SchoolProfileSection = lazy(() => import('./components/SchoolProfileSection').then(m => ({ default: m.SchoolProfileSection })));
+const ModulPembelajaranSection = lazy(() => import('./components/ModulPembelajaranSection').then(m => ({ default: m.ModulPembelajaranSection })));
+const AkademikSection = lazy(() => import('./components/AkademikSection').then(m => ({ default: m.AkademikSection })));
+const ContactSection = lazy(() => import('./components/ContactSection').then(m => ({ default: m.ContactSection })));
+const PpdbModal = lazy(() => import('./components/PpdbModal').then(m => ({ default: m.PpdbModal })));
+const GlobalSearchModal = lazy(() => import('./components/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal })));
 const Dashboard = lazy(() => import('./CMS/Dashboard'));
+
 import { LoadingProvider } from './context/LoadingContext';
 import { getApiBaseUrl } from './config/api';
 import { useHomepageConfig } from './hooks/useHomepageConfig';
@@ -187,6 +188,7 @@ function AppContent() {
 
       {/* Main Page Content */}
       <main className="flex-grow overflow-x-clip">
+        <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div></div>}>
         <Routes>
 
           <Route
@@ -315,6 +317,7 @@ function AppContent() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </Suspense>
       </main>
 
       <div data-aos="fade-up" data-aos-anchor-placement="top-bottom">
