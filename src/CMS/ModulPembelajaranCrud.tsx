@@ -319,108 +319,139 @@ export default function ModulPembelajaranCrud({ currentUser }: ModulPembelajaran
         </button>
       </div>
 
-      {/* Status Filter Tabs */}
-      <div className="bg-white p-2 sm:p-2.5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-1.5 overflow-x-auto">
-        {[
-          { key: 'ALL', label: 'Semua Modul', count: modules.length },
-          {
-            key: 'Published',
-            label: 'Published (Terbit)',
-            count: modules.filter((m) => m.status === 'Published').length,
-            activeColor: 'bg-teal-600 text-white shadow-sm',
-          },
-          {
-            key: 'Draft',
-            label: 'Draft (Draf)',
-            count: modules.filter((m) => m.status === 'Draft').length,
-            activeColor: 'bg-slate-800 text-amber-300 shadow-sm',
-          },
-          {
-            key: 'Pending',
-            label: 'Menunggu Verifikasi',
-            count: modules.filter((m) => m.status_verifikasi === 'Pending').length,
-            activeColor: 'bg-amber-600 text-white shadow-sm',
-          },
-          {
-            key: 'Rejected',
-            label: 'Ditolak',
-            count: modules.filter((m) => m.status_verifikasi === 'Rejected').length,
-            activeColor: 'bg-red-600 text-white shadow-sm',
-          },
-        ].map((tab) => {
-          const isActive = currentTab === tab.key;
-          return (
-            <button
-              key={tab.key}
-              onClick={() => handleTabClick(tab.key)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
-                isActive
-                  ? tab.activeColor || 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              <span>{tab.label}</span>
-              <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700'
+      {/* Integrated Clean Filter Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 sm:p-5 space-y-4">
+        {/* Status Filter Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-100">
+          {[
+            { key: 'ALL', label: 'Semua Modul', count: modules.length },
+            {
+              key: 'Published',
+              label: 'Published (Terbit)',
+              count: modules.filter((m) => m.status === 'Published').length,
+              activeColor: 'bg-teal-600 text-white shadow-xs',
+            },
+            {
+              key: 'Draft',
+              label: 'Draft (Draf)',
+              count: modules.filter((m) => m.status === 'Draft').length,
+              activeColor: 'bg-slate-800 text-amber-300 shadow-xs',
+            },
+            {
+              key: 'Pending',
+              label: 'Menunggu Verifikasi',
+              count: modules.filter((m) => m.status_verifikasi === 'Pending').length,
+              activeColor: 'bg-amber-600 text-white shadow-xs',
+            },
+            {
+              key: 'Rejected',
+              label: 'Ditolak',
+              count: modules.filter((m) => m.status_verifikasi === 'Rejected').length,
+              activeColor: 'bg-red-600 text-white shadow-xs',
+            },
+          ].map((tab) => {
+            const isActive = currentTab === tab.key;
+            return (
+              <button
+                key={tab.key}
+                onClick={() => handleTabClick(tab.key)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                  isActive
+                    ? tab.activeColor || 'bg-teal-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
                 }`}
               >
-                {tab.count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+                <span>{tab.label}</span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Filter Bar */}
-      <CmsFilterBar
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        searchPlaceholder="Cari judul, mapel, kelas, pengunggah..."
-        isFiltered={isFiltered}
-        onReset={resetFilter}
-        selectFilters={[
-          {
-            key: 'status',
-            value: filters.status || 'ALL',
-            onChange: (val) => setFilter('status', val),
-            options: [
-              { value: 'ALL', label: 'Semua Publikasi' },
-              { value: 'Published', label: 'Published (Terbit)' },
-              { value: 'Draft', label: 'Draft (Draf)' },
-            ],
-          },
-          {
-            key: 'status_verifikasi',
-            value: filters.status_verifikasi || 'ALL',
-            onChange: (val) => setFilter('status_verifikasi', val),
-            options: [
-              { value: 'ALL', label: 'Semua Verifikasi' },
-              { value: 'Verified', label: 'Terverifikasi' },
-              { value: 'Pending', label: 'Menunggu Verifikasi' },
-              { value: 'Rejected', label: 'Ditolak' },
-            ],
-          },
-          {
-            key: 'mata_pelajaran',
-            value: filters.mata_pelajaran || 'ALL',
-            onChange: (val) => setFilter('mata_pelajaran', val),
-            options: [
-              { value: 'ALL', label: 'Semua Mapel' },
-              ...availableMapel.map((m) => ({ value: m, label: m })),
-            ],
-          },
-          {
-            key: 'kelas',
-            value: filters.kelas || 'ALL',
-            onChange: (val) => setFilter('kelas', val),
-            options: [
-              { value: 'ALL', label: 'Semua Kelas' },
-              ...availableKelas.map((k) => ({ value: k, label: k })),
-            ],
-          },
-        ]}
-      />
+        {/* Search & Dropdown Filters Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+          {/* Search Box */}
+          <div className="lg:col-span-4 relative">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Cari judul, mapel, kelas, pengunggah..."
+                className="w-full pl-9 pr-8 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-slate-700 placeholder-slate-400 min-h-[38px] transition-all"
+              />
+              <BookOpen
+                size={15}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full cursor-pointer text-xs"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Filter Mata Pelajaran */}
+          <div className="lg:col-span-3">
+            <select
+              value={filters.mata_pelajaran || 'ALL'}
+              onChange={(e) => setFilter('mata_pelajaran', e.target.value)}
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer min-h-[38px] font-medium"
+            >
+              <option value="ALL">Semua Mata Pelajaran</option>
+              {availableMapel.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filter Kelas */}
+          <div className="lg:col-span-3">
+            <select
+              value={filters.kelas || 'ALL'}
+              onChange={(e) => setFilter('kelas', e.target.value)}
+              className="w-full px-3 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 cursor-pointer min-h-[38px] font-medium"
+            >
+              <option value="ALL">Semua Kelas</option>
+              {availableKelas.map((k) => (
+                <option key={k} value={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Reset Filter Action */}
+          <div className="lg:col-span-2 flex items-center justify-end">
+            {isFiltered ? (
+              <button
+                type="button"
+                onClick={resetFilter}
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/60 rounded-xl transition-all cursor-pointer min-h-[38px]"
+              >
+                <RotateCcw size={13} /> Reset Filter
+              </button>
+            ) : (
+              <div className="hidden lg:flex items-center justify-end w-full text-slate-400 text-xs font-medium px-2">
+                <span>{filteredModules.length} modul ditemukan</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
 
