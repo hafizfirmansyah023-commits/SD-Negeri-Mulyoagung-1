@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, FolderOpen, FileText } from 'lucide-react';
+import { AkademikMenuItem } from '../../types';
 
 interface AkademikFormModalProps {
   showModal: boolean;
@@ -16,6 +17,9 @@ interface AkademikFormModalProps {
   setUrutan: (v: number) => void;
   aktif: boolean;
   setAktif: (v: boolean) => void;
+  parentId: number | null;
+  setParentId: (v: number | null) => void;
+  categories: AkademikMenuItem[];
   error: string;
   onClose: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -36,6 +40,9 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
   setUrutan,
   aktif,
   setAktif,
+  parentId,
+  setParentId,
+  categories,
   error,
   onClose,
   onSubmit,
@@ -55,6 +62,9 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
 
   if (!showModal) return null;
 
+  // Mengedit kategori (parent null) -> sembunyikan link drive & is_modul
+  const editingCategory = parentId === null;
+
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
       <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-xl shadow-xl border border-slate-100 overflow-hidden my-auto">
@@ -65,7 +75,7 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
               {editId ? 'Ubah Menu Akademik' : 'Tambah Menu Akademik Baru'}
             </h3>
             <p className="text-xs text-teal-100 mt-0.5">
-              Atur menu dropdown akademik publik dan tautan Google Drive.
+              {editingCategory ? 'Atur kategori grup di menu akademik publik.' : 'Atur item tautan Google Drive di dalam kategori.'}
             </p>
           </div>
           <button
@@ -93,50 +103,88 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
               required
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="Contoh: KSP, BEDAH CP, MODUL AJAR & LKPD"
+              placeholder={editingCategory ? 'Contoh: Perangkat Pembelajaran' : 'Contoh: Prota & Promes'}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
             />
           </div>
 
-          {/* Link Google Drive */}
+          {/* Kategori Induk */}
           <div>
             <label className="block text-slate-700 text-sm font-medium mb-1.5">
-              Link Google Drive *
+              Kategori Induk
             </label>
-            <div className="relative">
-              <input
-                type="url"
-                required
-                value={linkGdrive}
-                onChange={(e) => setLinkGdrive(e.target.value)}
-                placeholder="https://drive.google.com/drive/folders/..."
-                className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                <ExternalLink size={16} />
+            <select
+              value={parentId === null ? '' : String(parentId)}
+              onChange={(e) => {
+                const v = e.target.value;
+                setParentId(v === '' ? null : Number(v));
+                if (editId && Number(v) === Number(editId)) {
+                  setParentId(null);
+                }
+              }}
+              disabled={!!editId && editingCategory}
+              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm bg-white disabled:bg-slate-50 disabled:text-slate-400"
+            >
+              <option value="">— Kategori Utama (Buat Grup) —</option>
+              {categories
+                .filter((c) => !editId || Number(c.id) !== Number(editId))
+                .map((c) => (
+                  <option key={c.id} value={String(c.id)}>
+                    {c.label}
+                  </option>
+                ))}
+            </select>
+            <p className="text-[11px] text-slate-500 mt-1">
+              {editingCategory
+                ? 'Kategori menampung beberapa item di bawahnya pada dropdown Akademik.'
+                : 'Pilih kategori di mana item ini akan ditampilkan.'}
+            </p>
+          </div>
+
+          {/* Bidang khusus item (bukan kategori) */}
+          {!editingCategory && (
+            <>
+              {/* Link Google Drive */}
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">
+                  Link Google Drive *
+                </label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    required
+                    value={linkGdrive}
+                    onChange={(e) => setLinkGdrive(e.target.value)}
+                    placeholder="https://drive.google.com/drive/folders/..."
+                    className="w-full pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    <ExternalLink size={16} />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Deskripsi */}
-          <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">
-              Deskripsi Singkat (Instruksi di Halaman)
-            </label>
-            <textarea
-              rows={3}
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              placeholder="Contoh: Kurikulum Satuan Pendidikan SD Negeri 1 Mulyoagung. Klik tombol di bawah untuk membuka Google Drive."
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
-            />
-          </div>
+              {/* Deskripsi (kompatibilitas) */}
+              <div>
+                <label className="block text-slate-700 text-sm font-medium mb-1.5">
+                  Deskripsi Singkat (Opsional)
+                </label>
+                <textarea
+                  rows={2}
+                  value={deskripsi}
+                  onChange={(e) => setDeskripsi(e.target.value)}
+                  placeholder="Penjelasan singkat item ini (opsional)."
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
+                />
+              </div>
+            </>
+          )}
 
           {/* Urutan & Status Tampil */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-slate-700 text-sm font-medium mb-1.5">
-                Urutan Tampil di Dropdown
+                Urutan Tampil
               </label>
               <input
                 type="number"
@@ -162,23 +210,25 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
             </div>
           </div>
 
-          {/* Toggle Khusus Modul Ajar & LKPD */}
-          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-1.5">
-            <label className="flex items-center gap-2.5 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={isModul}
-                onChange={(e) => setIsModul(e.target.checked)}
-                className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
-              />
-              <span className="text-sm font-bold text-slate-800">
-                Item Modul Ajar &amp; LKPD
-              </span>
-            </label>
-            <p className="text-xs text-slate-500 pl-6">
-              Jika dicentang, halaman publik item ini akan menampilkan tombol Google Drive serta daftar katalog modul ajar yang sudah diunggah.
-            </p>
-          </div>
+          {/* Toggle Khusus Item Modul Ajar (hanya item) */}
+          {!editingCategory && (
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-1.5">
+              <label className="flex items-center gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isModul}
+                  onChange={(e) => setIsModul(e.target.checked)}
+                  className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                />
+                <span className="text-sm font-bold text-slate-800">
+                  Item Modul Ajar &amp; LKPD
+                </span>
+              </label>
+              <p className="text-xs text-slate-500 pl-6">
+                Jika dicentang, halaman item ini menampilkan viewer Google Drive serta katalog modul ajar.
+              </p>
+            </div>
+          )}
 
           {/* Footer Buttons */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-2.5">
@@ -193,7 +243,7 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
               type="submit"
               className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
             >
-              {editId ? 'Simpan Perubahan' : 'Tambah Menu'}
+              {editId ? 'Simpan Perubahan' : editingCategory ? 'Tambah Kategori' : 'Tambah Item'}
             </button>
           </div>
         </form>

@@ -20,6 +20,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
 }) => {
   const [hoveredTab, setHoveredTab] = useState<NavTab | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [collapsedCats, setCollapsedCats] = useState<Record<number, boolean>>({});
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const [pillStyle, setPillStyle] = useState<{ left: number; width: number; opacity: number }>({
@@ -129,26 +130,60 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
                 />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown Menu - group items by category */}
               {dropdownOpen && akademikMenu.length > 0 && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#073632]/95 backdrop-blur-xl border border-teal-500/30 rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="flex flex-col gap-1 max-h-72 overflow-y-auto">
-                    {akademikMenu.map((subItem) => (
-                      <button
-                        key={subItem.id}
-                        onClick={() => {
-                          setDropdownOpen(false);
-                          setHoveredTab(null);
-                          if (onAkademikItemClick) {
-                            onAkademikItemClick(subItem);
-                          }
-                        }}
-                        className="text-left px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-200 hover:text-white hover:bg-teal-500/20 transition-all cursor-pointer truncate"
-                        title={subItem.label}
-                      >
-                        {subItem.label}
-                      </button>
-                    ))}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 bg-[#073632]/95 backdrop-blur-xl border border-teal-500/30 rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                  <div className="flex flex-col gap-2 max-h-80 overflow-y-auto px-0.5">
+                    {/* Item tanpa kategori / kategori root (parent null) sebagai item langsung */}
+                    {akademikMenu
+                      .filter((s) => !s.parent_id || Number(s.parent_id) === 0)
+                      .map((cat) => {
+                        const children = akademikMenu.filter((s) => Number(s.parent_id) === Number(cat.id));
+                        const isCollapsed = !!collapsedCats[cat.id];
+                        return (
+                          <div key={cat.id} className="flex flex-col">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setCollapsedCats((prev) => ({ ...prev, [cat.id]: !prev[cat.id] }));
+                              }}
+                              className="text-left px-3.5 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider text-teal-300 hover:bg-teal-500/10 transition-all flex items-center justify-between gap-2"
+                              title={children.length > 0 ? (isCollapsed ? 'Perluas kategori' : 'Ciutkan kategori') : 'Kategori'}
+                            >
+                              <span className="truncate">{cat.label}</span>
+                              {children.length > 0 && (
+                                <ChevronDown
+                                  size={13}
+                                  className={`shrink-0 transition-transform duration-200 ${isCollapsed ? 'rotate-180' : '-rotate-90'}`}
+                                />
+                              )}
+                            </button>
+                            {/* Item / sub-item di dalam kategori (bisa di-hide/expand) */}
+                            {children.length > 0 && !isCollapsed && (
+                              <div className="flex flex-col gap-0.5 mt-0.5">
+                                {children.map((subItem) => (
+                                  <button
+                                    key={subItem.id}
+                                    onClick={() => {
+                                      setDropdownOpen(false);
+                                      setHoveredTab(null);
+                                      if (onAkademikItemClick) {
+                                        onAkademikItemClick(subItem);
+                                      }
+                                    }}
+                                    className="text-left px-4 py-2 rounded-xl text-xs font-semibold text-slate-200 hover:text-white hover:bg-teal-500/20 transition-all cursor-pointer truncate"
+                                    title={subItem.label}
+                                  >
+                                    {subItem.label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
               )}

@@ -32,7 +32,9 @@ export const AkademikSection: React.FC = () => {
     fetchMenu();
   }, []);
 
-  const selectedItem = items.find((item) => String(item.id) === id) || (items.length > 0 && !id ? items[0] : null);
+  // Hanya item (yang punya parent / link gdrive) yang bisa dibuka viewer. Kategori tidak bisa diklik.
+  const linkItems = items.filter((i) => (i.parent_id && Number(i.parent_id) > 0) || (i.link_gdrive && String(i.link_gdrive).trim() !== ''));
+  const selectedItem = linkItems.find((item) => String(item.id) === id) || (linkItems.length > 0 && !id ? linkItems[0] : null);
 
   if (loading) {
     return (

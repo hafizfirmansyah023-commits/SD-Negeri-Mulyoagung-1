@@ -73,6 +73,8 @@ export interface AkademikMenuItem {
   id: number;
   label: string;
   deskripsi?: string | null;
+  parent_id?: number | null;
+  parent_label?: string | null;
   link_gdrive: string;
   is_modul: number;
   urutan: number;

@@ -27,6 +27,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
   onAkademikItemClick,
 }) => {
   const [akademikOpen, setAkademikOpen] = useState(false);
+  const [collapsedCats, setCollapsedCats] = useState<Record<number, boolean>>({});
 
   return (
     <>
@@ -73,24 +74,52 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
                     />
                   </button>
 
-                  {/* Submenu Accordion */}
+                  {/* Submenu Accordion - kategori (non-clickable) + item anak */}
                   {akademikOpen && (
-                    <div className="pl-3 pr-1 py-1.5 flex flex-col gap-1 mt-1 border-l-2 border-teal-500/30 ml-3">
-                      {akademikMenu.map((subItem) => (
-                        <button
-                          key={subItem.id}
-                          onClick={() => {
-                            if (onClose) onClose();
-                            if (onAkademikItemClick) {
-                              onAkademikItemClick(subItem);
-                            }
-                          }}
-                          className="text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer truncate"
-                          title={subItem.label}
-                        >
-                          {subItem.label}
-                        </button>
-                      ))}
+                    <div className="pl-3 pr-1 py-1.5 flex flex-col gap-2 mt-1 border-l-2 border-teal-500/30 ml-3">
+                      {akademikMenu
+                        .filter((s) => !s.parent_id || Number(s.parent_id) === 0)
+                        .map((cat) => {
+                          const children = akademikMenu.filter((s) => Number(s.parent_id) === Number(cat.id));
+                          const isCollapsed = !!collapsedCats[cat.id];
+                          return (
+                            <div key={cat.id} className="flex flex-col gap-1">
+                              {/* Kategori toggle - bisa di-hide/expand item di dalamnya */}
+                              <button
+                                type="button"
+                                onClick={() => setCollapsedCats((prev) => ({ ...prev, [cat.id]: !prev[cat.id] }))}
+                                className="text-left py-1 px-3 text-[11px] font-bold uppercase tracking-wider text-teal-300 hover:text-teal-200 flex items-center justify-between gap-2"
+                              >
+                                <span className="truncate">{cat.label}</span>
+                                {children.length > 0 && (
+                                  <ChevronDown
+                                    size={14}
+                                    className={`shrink-0 transition-transform duration-200 ${isCollapsed ? 'rotate-180' : '-rotate-90'}`}
+                                  />
+                                )}
+                              </button>
+                              {children.length > 0 && !isCollapsed && (
+                                <div className="flex flex-col gap-0.5">
+                                  {children.map((subItem) => (
+                                    <button
+                                      key={subItem.id}
+                                      onClick={() => {
+                                        if (onClose) onClose();
+                                        if (onAkademikItemClick) {
+                                          onAkademikItemClick(subItem);
+                                        }
+                                      }}
+                                      className="text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer truncate"
+                                      title={subItem.label}
+                                    >
+                                      {subItem.label}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                     </div>
                   )}
                 </div>

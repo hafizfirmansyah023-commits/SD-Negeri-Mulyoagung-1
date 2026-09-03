@@ -61,12 +61,12 @@ export function useAkademikData(status: 'all' | 'active_only' = 'active_only') {
     }
   };
 
-  const reorderItems = async (newItems: AkademikMenuItem[], role: string = 'ADMIN') => {
-    setItems(newItems);
+  const reorderItems = async (newItems: { id: number; parent_id?: number | null; urutan?: number }[], role: string = 'ADMIN') => {
     try {
       const payload = newItems.map((it, idx) => ({
         id: it.id,
-        urutan: idx + 1,
+        parent_id: it.parent_id && Number(it.parent_id) > 0 ? Number(it.parent_id) : null,
+        urutan: it.urutan ?? idx,
       }));
       const formData = new FormData();
       formData.append('action', 'reorder');
@@ -80,6 +80,7 @@ export function useAkademikData(status: 'all' | 'active_only' = 'active_only') {
       const result = await response.json();
       if (result.status === 'success') {
         setSuccess(result.message);
+        fetchItems();
         return true;
       } else {
         setError(result.message || 'Gagal mengubah urutan menu.');
