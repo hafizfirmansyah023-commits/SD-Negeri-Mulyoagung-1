@@ -33,12 +33,12 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
       {/* Backdrop Overlay */}
       <div
         onClick={onClose}
-        className="fixed inset-0 top-0 bg-slate-950/60 backdrop-blur-xs z-40 xl:hidden transition-opacity"
+        className="fixed inset-0 top-0 bg-slate-950/70 backdrop-blur-xs z-40 min-[1200px]:hidden transition-opacity"
       />
 
       {/* Drawer Container */}
-      <div className="absolute top-full left-0 right-0 z-50 xl:hidden bg-[#073632]/98 backdrop-blur-2xl border-t border-teal-500/20 border-b border-teal-500/30 px-4 sm:px-6 py-4 sm:py-5 shadow-2xl max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-3 duration-200">
-        <div className="flex flex-col gap-1.5 sm:gap-2 max-w-lg mx-auto">
+      <div className="absolute top-full left-0 right-0 z-50 min-[1200px]:hidden bg-[#073632]/98 backdrop-blur-2xl border-t border-teal-500/20 border-b border-teal-500/30 px-3.5 sm:px-6 py-4 sm:py-5 shadow-2xl max-h-[calc(100dvh-4rem)] sm:max-h-[calc(100dvh-5rem)] overflow-y-auto overscroll-contain animate-in fade-in slide-in-from-top-3 duration-200">
+        <div className="flex flex-col gap-1.5 sm:gap-2 max-w-xl mx-auto">
           {onOpenSearch && (
             <button
               onClick={() => {
@@ -61,11 +61,10 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
                 <div key={item.id} className="flex flex-col">
                   <button
                     onClick={() => setAkademikOpen(!akademikOpen)}
-                    className={`text-left py-2.5 sm:py-3 px-4 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center justify-between cursor-pointer ${
-                      isActive
+                    className={`text-left py-2.5 sm:py-3 px-4 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center justify-between cursor-pointer ${isActive
                         ? 'bg-teal-500/25 text-teal-200 border border-teal-400/30'
                         : 'text-slate-200 hover:bg-white/10 hover:text-white'
-                    }`}
+                      }`}
                   >
                     <span>{item.label}</span>
                     <ChevronDown
@@ -102,11 +101,10 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
               <button
                 key={item.id}
                 onClick={() => onNavClick(item.id)}
-                className={`text-left py-2.5 sm:py-3 px-4 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center justify-between cursor-pointer ${
-                  isActive
+                className={`text-left py-2.5 sm:py-3 px-4 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center justify-between cursor-pointer ${isActive
                     ? 'bg-teal-500/25 text-teal-200 border border-teal-400/30'
                     : 'text-slate-200 hover:bg-white/10 hover:text-white'
-                }`}
+                  }`}
               >
                 <span>{item.label}</span>
                 {isActive && <span className="w-2 h-2 rounded-full bg-teal-400 shadow-sm shadow-teal-400"></span>}
@@ -116,11 +114,10 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
 
           <button
             onClick={() => onNavClick('cms')}
-            className={`text-left py-2.5 sm:py-3 px-4 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center justify-between cursor-pointer ${
-              activeTab === 'cms'
+            className={`text-left py-2.5 sm:py-3 px-4 rounded-xl text-sm sm:text-base font-semibold transition-all flex items-center justify-between cursor-pointer ${activeTab === 'cms'
                 ? 'bg-teal-500/25 text-teal-200 border border-teal-400/30'
                 : 'text-slate-200 hover:bg-white/10 hover:text-white'
-            }`}
+              }`}
           >
             <span>CMS Portal</span>
             {activeTab === 'cms' && <span className="w-2 h-2 rounded-full bg-teal-400 shadow-sm shadow-teal-400"></span>}

@@ -45,7 +45,7 @@ const MAPEL_OPTIONS = [
   'IPAS (Ilmu Pengetahuan Alam & Sosial)',
   'Pendidikan Agama & Budi Pekerti',
   'PJOK (Pendidikan Jasmani & Olahraga)',
-  'Seni & Budaya',
+  'Seni Rupa',
   'Bahasa Inggris',
   'Bahasa Jawa / Muatan Lokal',
   'Projek Penguatan Profil Pelajar Pancasila (P5)',
