@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ExternalLink, BookOpen, ArrowLeft, Layers, ShieldCheck, Sparkles } from 'lucide-react';
+import { ExternalLink, BookOpen, ArrowLeft, Layers, ShieldCheck, Sparkles, LayoutGrid, List, Share2, Check } from 'lucide-react';
 import { AkademikMenuItem } from '../types';
 import { getApiBaseUrl } from '../config/api';
+import { getGoogleDriveEmbedUrl, DriveViewMode } from '../utils/helpers';
 import { ModulPembelajaranSection } from './ModulPembelajaranSection';
 
 export const AkademikSection: React.FC = () => {
@@ -10,6 +11,8 @@ export const AkademikSection: React.FC = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState<AkademikMenuItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<DriveViewMode>('grid');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -58,6 +61,22 @@ export const AkademikSection: React.FC = () => {
   }
 
   const isModulType = Number(selectedItem.is_modul) === 1;
+  const embedUrl = getGoogleDriveEmbedUrl(selectedItem.link_gdrive, viewMode);
+  const defaultDescription = `Dokumen akademik resmi sekolah berupa ${selectedItem.label.toLowerCase()}. Silakan eksplorasi konten di dalam folder Google Drive.`;
+  const descriptionContent = selectedItem.deskripsi || defaultDescription;
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: `${selectedItem.label} - Akademik SDN 1 Mulyoagung`,
+        url: window.location.href,
+      }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/50">
@@ -72,54 +91,111 @@ export const AkademikSection: React.FC = () => {
             {selectedItem.label}
           </h1>
           <p className="text-sm sm:text-base text-slate-200 max-w-2xl mx-auto leading-relaxed">
-            {selectedItem.deskripsi || 'Akses dokumen resmi pembelajaran dan kurikulum SD Negeri 1 Mulyoagung melalui Google Drive.'}
+            {descriptionContent}
           </p>
         </div>
       </section>
 
-      {/* Main Container Card */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 -mt-8 relative z-20 pb-16">
-        <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-slate-100/80 text-center space-y-6">
-          <div className="w-16 h-16 rounded-2xl bg-teal-50 text-teal-700 flex items-center justify-center mx-auto border border-teal-100 shadow-inner">
-            <BookOpen size={30} />
+      {/* Main Container Card - Title & Description on top, Drive viewer below */}
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 -mt-8 relative z-20 pb-16 space-y-6">
+        
+        {/* Info Card: Title, Desc, Share & Drive Link */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100/80 space-y-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
+                <BookOpen size={24} />
+              </div>
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-800">
+                  Akses Dokumen Resmi {selectedItem.label}
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
+                  Klik tombol di bawah untuk membuka dokumen di Google Drive.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition-colors cursor-pointer"
+                title="Bagikan halaman ini"
+              >
+                {copied ? <Check size={14} className="text-emerald-500" /> : <Share2 size={14} />}
+                <span className="hidden sm:inline">{copied ? 'Tersalin' : 'Bagikan'}</span>
+              </button>
+              <a
+                href={selectedItem.link_gdrive}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-xl transition-colors shadow-sm"
+              >
+                <ExternalLink size={14} />
+                <span>Buka Tab</span>
+              </a>
+            </div>
           </div>
 
-          <div className="max-w-xl mx-auto space-y-2">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-800">
-              Akses Dokumen Resmi {selectedItem.label}
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
-              Klik tombol di bawah ini untuk membuka dan mengunduh berkas lengkap pada penyimpanan Google Drive resmi sekolah.
-            </p>
-          </div>
+          {/* Google Drive Viewer */}
+          <div className="w-full bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden relative flex-1 flex flex-col min-h-[60vh] sm:min-h-[75vh]">
+            {/* Viewer Toolbar */}
+            <div className="bg-white px-4 py-2.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+              <div className="flex items-center gap-2 font-medium truncate">
+                <Layers size={14} className="text-teal-700 shrink-0" />
+                <span className="truncate">Google Drive Viewer</span>
+              </div>
 
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a
-              href={selectedItem.link_gdrive}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-sm sm:text-base shadow-lg shadow-teal-700/25 hover:shadow-teal-700/40 hover:scale-[1.02] active:scale-[0.99] transition-all cursor-pointer"
-            >
-              <Sparkles size={18} className="text-amber-300" />
-              <span>Buka di Google Drive</span>
-              <ExternalLink size={16} />
-            </a>
-          </div>
+              <a
+                href={selectedItem.link_gdrive}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal-700 hover:text-teal-900 font-semibold flex items-center gap-1 shrink-0"
+              >
+                <span>Buka di Google Drive</span>
+                <ExternalLink size={12} />
+              </a>
+            </div>
 
-          <div className="pt-4 border-t border-slate-100 flex items-center justify-center gap-2 text-slate-400 text-xs">
-            <ShieldCheck size={14} className="text-teal-600" />
-            <span>Dokumen resmi terverifikasi SD Negeri 1 Mulyoagung</span>
+            {embedUrl ? (
+              <iframe
+                src={embedUrl}
+                title={selectedItem.label}
+                className="w-full h-full flex-1 min-h-[55vh] sm:min-h-[70vh] md:min-h-[75vh] border-0 bg-white"
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center p-8 text-center min-h-[55vh]">
+                <BookOpen size={48} className="text-slate-400 mb-3" />
+                <p className="text-slate-600 text-sm">Tautan Google Drive tidak dapat disematkan langsung.</p>
+                <a
+                  href={selectedItem.link_gdrive}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5"
+                >
+                  <ExternalLink size={14} /> Buka Google Drive
+                </a>
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* Jika tipe Modul Ajar & LKPD, render modul pembelajaran section full-width */}
+        {isModulType && (
+          <div className="w-full">
+            <ModulPembelajaranSection />
+          </div>
+        )}
+
+        {/* Footer Verification Badge */}
+        <div className="flex items-center justify-center gap-2 text-slate-400 text-xs">
+          <ShieldCheck size={14} className="text-teal-600" />
+          <span>Dokumen resmi terverifikasi SD Negeri 1 Mulyoagung</span>
         </div>
 
       </main>
-
-      {/* Jika tipe Modul Ajar & LKPD, render modul pembelajaran section full-width seperti Berita & Galeri */}
-      {isModulType && (
-        <div className="w-full">
-          <ModulPembelajaranSection />
-        </div>
-      )}
     </div>
   );
 };
