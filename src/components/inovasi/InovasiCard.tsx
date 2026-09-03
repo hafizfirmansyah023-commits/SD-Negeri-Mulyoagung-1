@@ -9,7 +9,7 @@ interface InovasiCardProps {
 
 export const InovasiCard: React.FC<InovasiCardProps> = ({ item }) => {
   const handleClick = () => {
-    window.open(`/inovasi/${item.id}`, '_blank', 'noopener,noreferrer');
+    window.open(`/inovasi/${item.id}`, 'noopener,noreferrer');
   };
 
   return (
