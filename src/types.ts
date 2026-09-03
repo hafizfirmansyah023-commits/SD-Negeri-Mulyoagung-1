@@ -81,4 +81,24 @@ export interface AkademikMenuItem {
   updated_at?: string;
 }
 
-export type NavTab = 'home' | 'profile' | 'directory' | 'akademik' | 'gallery' | 'news' | 'modul' | 'contact' | 'ppdb' | 'cms';
+export interface InovasiItem {
+  id: string | number;
+  judul: string;
+  kategori: string;
+  inovator?: string | null;
+  deskripsi?: string | null;
+  link_drive: string;
+  foto_cover?: string | null;
+  foto_cover_crop?: string | null;
+  foto?: string | null;
+  foto_original?: string | null;
+  status: 'Draft' | 'Published';
+  status_verifikasi: 'Pending' | 'Verified' | 'Rejected';
+  uploaded_by?: number | null;
+  uploader?: string;
+  uploader_role?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type NavTab = 'home' | 'profile' | 'directory' | 'akademik' | 'gallery' | 'news' | 'modul' | 'inovasi' | 'contact' | 'ppdb' | 'cms';

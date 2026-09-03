@@ -329,6 +329,7 @@ export const ModulFormModal: React.FC<ModulFormModalProps> = ({
             <div>
               <ImageUploadField
                 label="Cover / Thumbnail Modul (Opsional)"
+                hint="Format: Gambar (JPG, PNG, WEBP, GIF). Maksimal 10MB."
                 currentImage={currentFoto ? getImageUrl(currentFoto) : ''}
                 currentOriginalImage={currentOriginalFoto ? getImageUrl(currentOriginalFoto) : ''}
                 ratioOptions={CROP_RATIO_OPTIONS}

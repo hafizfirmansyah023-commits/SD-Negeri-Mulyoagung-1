@@ -44,6 +44,19 @@ interface ModulItem {
   uploader: string;
 }
 
+interface InovasiVerifItem {
+  id: number;
+  judul: string;
+  deskripsi?: string | null;
+  foto?: string | null;
+  foto_cover?: string | null;
+  kategori: string;
+  inovator?: string | null;
+  status?: 'Draft' | 'Published';
+  status_verifikasi: 'Pending' | 'Verified' | 'Rejected';
+  uploader: string;
+}
+
 const API_BASE = getApiBaseUrl();
 const ITEMS_PER_PAGE = 6;
 
@@ -51,7 +64,8 @@ export default function Verifikasi() {
   const [pendingGallery, setPendingGallery] = useState<GalleryItem[]>([]);
   const [pendingNews, setPendingNews] = useState<NewsArticle[]>([]);
   const [pendingModules, setPendingModules] = useState<ModulItem[]>([]);
-  const [activeSubTab, setActiveSubTab] = useState<'berita' | 'galeri' | 'modul'>('berita');
+  const [pendingInovasi, setPendingInovasi] = useState<InovasiVerifItem[]>([]);
+  const [activeSubTab, setActiveSubTab] = useState<'berita' | 'galeri' | 'modul' | 'inovasi'>('berita');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -83,6 +97,14 @@ export default function Verifikasi() {
       if (modResult.status === 'success') {
         const pendingMods = modResult.data.filter((item: ModulItem) => item.status_verifikasi === 'Pending');
         setPendingModules(pendingMods);
+      }
+
+      // Fetch inovasi
+      const resInovasi = await fetch(`${API_BASE}/backend/API/inovasi.php?status=all`);
+      const inovasiResult = await resInovasi.json();
+      if (inovasiResult.status === 'success') {
+        const pendingInov = inovasiResult.data.filter((item: InovasiVerifItem) => item.status_verifikasi === 'Pending');
+        setPendingInovasi(pendingInov);
       }
     } catch {
       setError('Gagal memuat data verifikasi.');
@@ -116,12 +138,21 @@ export default function Verifikasi() {
     initialFilters: { kategori: 'ALL' },
   });
 
+  // Filters for Inovasi
+  const inovasiFilter = useCmsFilter<InovasiVerifItem>({
+    items: pendingInovasi,
+    searchFields: ['judul', 'deskripsi', 'kategori', 'inovator', 'uploader'],
+    initialFilters: { kategori: 'ALL' },
+  });
+
   const activeFilter =
     activeSubTab === 'berita'
       ? newsFilter
       : activeSubTab === 'galeri'
       ? galleryFilter
-      : modulFilter;
+      : activeSubTab === 'modul'
+      ? modulFilter
+      : inovasiFilter;
 
   // Reset page when tab or search/filter changes
   useEffect(() => {
@@ -146,7 +177,9 @@ export default function Verifikasi() {
       ? getUniqueValues(pendingNews, 'kategori')
       : activeSubTab === 'galeri'
       ? getUniqueValues(pendingGallery, 'kategori')
-      : getUniqueValues(pendingModules, 'kategori');
+      : activeSubTab === 'modul'
+      ? getUniqueValues(pendingModules, 'kategori')
+      : getUniqueValues(pendingInovasi, 'kategori');
 
   const handleVerifyNews = async (id: number, decision: 'Verified' | 'Rejected') => {
     setError('');
@@ -223,6 +256,31 @@ export default function Verifikasi() {
     }
   };
 
+  const handleVerifyInovasi = async (id: number, decision: 'Verified' | 'Rejected') => {
+    setError('');
+    setSuccess('');
+    const formData = new FormData();
+    formData.append('action', 'verify');
+    formData.append('id', id.toString());
+    formData.append('status_verifikasi', decision);
+
+    try {
+      const response = await fetch(`${API_BASE}/backend/API/inovasi.php`, {
+        method: 'POST',
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.status === 'success') {
+        setSuccess(result.message);
+        fetchPendingData();
+      } else {
+        setError(result.message);
+      }
+    } catch {
+      setError('Gagal memproses verifikasi inovasi.');
+    }
+  };
+
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Header */}
@@ -275,6 +333,20 @@ export default function Verifikasi() {
           >
             Antrean Modul ({pendingModules.length})
             {activeSubTab === 'modul' && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 rounded-full"></span>
+            )}
+          </button>
+          <button
+            onClick={() => {
+              setActiveSubTab('inovasi');
+              activeFilter.resetFilter();
+            }}
+            className={`pb-3 font-semibold text-xs sm:text-sm transition-all relative cursor-pointer whitespace-nowrap ${
+              activeSubTab === 'inovasi' ? 'text-teal-600 font-bold' : 'text-slate-400 hover:text-slate-600'
+            }`}
+          >
+            Antrean Inovasi ({pendingInovasi.length})
+            {activeSubTab === 'inovasi' && (
               <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-teal-600 rounded-full"></span>
             )}
           </button>
@@ -403,6 +475,47 @@ export default function Verifikasi() {
                   <CheckCircle2 size={48} className="mx-auto text-slate-300 mb-3" />
                   <p className="text-slate-500 font-medium text-sm">
                     {modulFilter.isFiltered ? 'Tidak ada antrean modul yang sesuai dengan filter.' : 'Tidak ada antrean verifikasi modul pembelajaran.'}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Inovasi Verification Queue */}
+          {activeSubTab === 'inovasi' && (
+            <div className="space-y-4">
+              {(paginatedItems as InovasiVerifItem[]).map((inov) => (
+                <VerifikasiCard
+                  key={inov.id}
+                  id={inov.id}
+                  judul={inov.judul}
+                  deskripsiAtauIsi={`${inov.inovator ? `Inovator: ${inov.inovator} • ` : ''}${inov.deskripsi || ''}`}
+                  foto={inov.foto || inov.foto_cover || ''}
+                  kategori={inov.kategori}
+                  fallbackLabel={inov.kategori}
+                  isModule={false}
+                  tanggal=""
+                  uploader={inov.uploader || 'Pengunggah'}
+                  statusBadge={
+                    inov.status === 'Draft' ? (
+                      <span className="bg-slate-800 text-amber-300 border border-amber-400/40 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        Draft
+                      </span>
+                    ) : (
+                      <span className="bg-teal-600 text-white text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                        Published
+                      </span>
+                    )
+                  }
+                  onVerify={handleVerifyInovasi}
+                />
+              ))}
+
+              {inovasiFilter.filteredItems.length === 0 && (
+                <div className="bg-white p-8 sm:p-12 rounded-2xl text-center border border-slate-100">
+                  <CheckCircle2 size={48} className="mx-auto text-slate-300 mb-3" />
+                  <p className="text-slate-500 font-medium text-sm">
+                    {inovasiFilter.isFiltered ? 'Tidak ada antrean inovasi yang sesuai dengan filter.' : 'Tidak ada antrean verifikasi inovasi sekolah.'}
                   </p>
                 </div>
               )}
