@@ -17,6 +17,7 @@ import {
   Calendar,
   Layers,
   Sparkles,
+  Lightbulb,
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { UserSession, CmsTab } from './types';
@@ -70,6 +71,19 @@ interface ModulItem {
   foto_cover?: string;
 }
 
+interface InovasiDashboardItem {
+  id: number;
+  judul: string;
+  kategori: string;
+  inovator?: string | null;
+  deskripsi?: string | null;
+  status_verifikasi: 'Pending' | 'Verified' | 'Rejected';
+  uploaded_by?: number;
+  uploader?: string;
+  foto?: string;
+  foto_cover?: string;
+}
+
 interface UserItem {
   id: number;
   username: string;
@@ -106,6 +120,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
   const [beritaList, setBeritaList] = useState<BeritaItem[]>([]);
   const [galeriList, setGaleriList] = useState<GaleriItem[]>([]);
   const [modulList, setModulList] = useState<ModulItem[]>([]);
+  const [inovasiList, setInovasiList] = useState<InovasiDashboardItem[]>([]);
   const [userList, setUserList] = useState<UserItem[]>([]);
   const [heroSlides, setHeroSlides] = useState<HeroSlide[]>([]);
   const [tahunAjaran, setTahunAjaran] = useState<string>('2025/2026');
@@ -123,6 +138,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         fetch(`${API_BASE}/backend/API/newsAPI.php?status=all`),
         fetch(`${API_BASE}/backend/API/galeri.php?status=all`),
         fetch(`${API_BASE}/backend/API/modul_pembelajaran.php?status=all`),
+        fetch(`${API_BASE}/backend/API/inovasi.php?status=all`),
       ];
 
       if (isAdmin) {
@@ -173,11 +189,23 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
       }
 
+      // Process inovasi
+      if (results[3].status === 'fulfilled' && results[3].value.ok) {
+        try {
+          const json = await results[3].value.json();
+          if (json.status === 'success' && Array.isArray(json.data)) {
+            setInovasiList(json.data);
+          }
+        } catch {
+          /* ignore parse error */
+        }
+      }
+
       if (isAdmin) {
         // Process guru
-        if (results[3] && results[3].status === 'fulfilled' && results[3].value.ok) {
+        if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
           try {
-            const json = await results[3].value.json();
+            const json = await results[4].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setGuruList(json.data);
             }
@@ -187,9 +215,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process users
-        if (results[4] && results[4].status === 'fulfilled' && results[4].value.ok) {
+        if (results[5] && results[5].status === 'fulfilled' && results[5].value.ok) {
           try {
-            const json = await results[4].value.json();
+            const json = await results[5].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setUserList(json.data);
             }
@@ -199,9 +227,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process hero carousel
-        if (results[5] && results[5].status === 'fulfilled' && results[5].value.ok) {
+        if (results[6] && results[6].status === 'fulfilled' && results[6].value.ok) {
           try {
-            const json = await results[5].value.json();
+            const json = await results[6].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setHeroSlides(json.data);
             } else if (Array.isArray(json)) {
@@ -213,9 +241,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process pengaturan
-        if (results[6] && results[6].status === 'fulfilled' && results[6].value.ok) {
+        if (results[7] && results[7].status === 'fulfilled' && results[7].value.ok) {
           try {
-            const json = await results[6].value.json();
+            const json = await results[7].value.json();
             if (json.status === 'success' && json.data) {
               setTahunAjaran(json.data.tahun_ajaran || '2025/2026');
               setLinkPpdb(json.data.link_ppdb || '');
@@ -226,9 +254,9 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
         }
 
         // Process statistik
-        if (results[7] && results[7].status === 'fulfilled' && results[7].value.ok) {
+        if (results[8] && results[8].status === 'fulfilled' && results[8].value.ok) {
           try {
-            const json = await results[7].value.json();
+            const json = await results[8].value.json();
             if (json.status === 'success' && Array.isArray(json.data)) {
               setStatistikSekolah(json.data);
             }
@@ -270,32 +298,39 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
   const modulPendingCount = modulList.filter((m) => m.status_verifikasi === 'Pending').length;
   const modulRejectedCount = modulList.filter((m) => m.status_verifikasi === 'Rejected').length;
 
+  const inovasiVerifiedCount = inovasiList.filter((i) => i.status_verifikasi === 'Verified').length;
+  const inovasiPendingCount = inovasiList.filter((i) => i.status_verifikasi === 'Pending').length;
+
   const totalUsersCount = userList.length;
   const adminUsersCount = userList.filter((u) => u.role === 'ADMIN').length;
   const timUsersCount = userList.filter((u) => u.role === 'TIM').length;
   const guruUsersCount = userList.filter((u) => u.role === 'GURU').length;
 
-  const totalPendingAction = beritaPendingCount + galeriPendingCount + modulPendingCount;
+  const totalPendingAction = beritaPendingCount + galeriPendingCount + modulPendingCount + inovasiPendingCount;
 
   // Calculations for Non-Admin (TIM / GURU)
   const myBeritaList = beritaList.filter(isUploadedBySelf);
   const myGaleriList = galeriList.filter(isUploadedBySelf);
   const myModulList = modulList.filter(isUploadedBySelf);
+  const myInovasiList = inovasiList.filter(isUploadedBySelf);
 
   const myBeritaPending = myBeritaList.filter((b) => b.status_verifikasi === 'Pending').length;
   const myGaleriPending = myGaleriList.filter((g) => g.status_verifikasi === 'Pending').length;
   const myModulPending = myModulList.filter((m) => m.status_verifikasi === 'Pending').length;
-  const myTotalPending = myBeritaPending + myGaleriPending + myModulPending;
+  const myInovasiPending = myInovasiList.filter((i) => i.status_verifikasi === 'Pending').length;
+  const myTotalPending = myBeritaPending + myGaleriPending + myModulPending + myInovasiPending;
 
   const myBeritaVerified = myBeritaList.filter((b) => b.status_verifikasi === 'Verified').length;
   const myGaleriVerified = myGaleriList.filter((g) => g.status_verifikasi === 'Verified').length;
   const myModulVerified = myModulList.filter((m) => m.status_verifikasi === 'Verified').length;
-  const myTotalVerified = myBeritaVerified + myGaleriVerified + myModulVerified;
+  const myInovasiVerified = myInovasiList.filter((i) => i.status_verifikasi === 'Verified').length;
+  const myTotalVerified = myBeritaVerified + myGaleriVerified + myModulVerified + myInovasiVerified;
 
   // Recent items
   const recentBerita = (isAdmin ? beritaList : myBeritaList).slice(0, 5);
   const recentGaleri = (isAdmin ? galeriList : myGaleriList).slice(0, 5);
   const recentModul = (isAdmin ? modulList : myModulList).slice(0, 5);
+  const recentInovasi = (isAdmin ? inovasiList : myInovasiList).slice(0, 5);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -344,14 +379,14 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
 
       {/* SECTION 1: KARTU STATISTIK UTAMA */}
       {loading ? (
-        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-          {[1, 2, 3, 4, 5].map((i) => (
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="h-32 bg-slate-200 animate-pulse rounded-2xl" />
           ))}
         </div>
       ) : isAdmin ? (
         /* ADMIN STAT CARDS */
-        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 min-[440px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
           {/* Card 1: Guru Aktif */}
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
@@ -428,7 +463,26 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             </div>
           </div>
 
-          {/* Card 5: User CMS */}
+          {/* Card 5: Inovasi Sekolah */}
+          <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-500 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+                  Inovasi
+                </p>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mt-1">{inovasiList.length}</h3>
+              </div>
+              <div className="p-2 sm:p-3 bg-teal-50 text-teal-600 rounded-xl">
+                <Lightbulb size={18} className="sm:w-[22px] sm:h-[22px]" />
+              </div>
+            </div>
+            <div className="mt-2.5 pt-2.5 sm:mt-3 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] flex-wrap gap-1">
+              <span className="text-emerald-600 font-semibold">{inovasiVerifiedCount} Ver.</span>
+              <span className="text-amber-600 font-semibold">{inovasiPendingCount} Pend.</span>
+            </div>
+          </div>
+
+          {/* Card 6: User CMS */}
           <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
@@ -564,8 +618,8 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
                 </div>
                 <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
                   {totalPendingAction > 0
-                    ? 'Terdapat konten berita, galeri, atau modul ajar dari Tim/Guru yang memerlukan verifikasi Admin sebelum dipublikasikan.'
-                    : 'Semua pengajuan berita, galeri, dan modul pembelajaran telah diverifikasi. Tidak ada antrean pending.'}
+                    ? 'Terdapat konten berita, galeri, modul ajar, atau inovasi yang memerlukan verifikasi Admin sebelum dipublikasikan.'
+                    : 'Semua pengajuan berita, galeri, modul pembelajaran, dan inovasi telah diverifikasi. Tidak ada antrean pending.'}
                 </p>
               </div>
             </div>
@@ -579,7 +633,7 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mt-5 pt-4 border-t border-slate-200/60">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-5 pt-4 border-t border-slate-200/60">
             <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100 gap-2">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <FileText size={18} className="text-blue-600 shrink-0" />
@@ -631,6 +685,24 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
                 }`}
               >
                 {modulPendingCount} Modul
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-100 gap-2">
+              <div className="flex items-center gap-3 min-w-0 flex-1">
+                <Lightbulb size={18} className="text-teal-600 shrink-0" />
+                <span className="text-xs sm:text-sm font-medium text-slate-700 truncate">
+                  Inovasi Pending
+                </span>
+              </div>
+              <span
+                className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                  inovasiPendingCount > 0
+                    ? 'bg-amber-100 text-amber-800'
+                    : 'bg-slate-100 text-slate-500'
+                }`}
+              >
+                {inovasiPendingCount} Inovasi
               </span>
             </div>
           </div>
@@ -738,8 +810,8 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
           )}
         </div>
       ) : (
-        /* ADMIN / TIM 3-COLUMN OR 2-COLUMN ACTIVITY GRID */
-        <div className={`grid grid-cols-1 ${isAdmin ? 'lg:grid-cols-3' : 'lg:grid-cols-2'} gap-6`}>
+        /* ADMIN / TIM 4-COLUMN OR 2-COLUMN ACTIVITY GRID */
+        <div className={`grid grid-cols-1 ${isAdmin ? 'lg:grid-cols-2 xl:grid-cols-4' : 'lg:grid-cols-2'} gap-6`}>
           {/* 5 Berita Terakhir */}
           <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -897,6 +969,66 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
                           <span className="truncate">{item.mata_pelajaran}</span>
                           <span>&bull;</span>
                           <span className="truncate">Oleh: {item.uploader || 'Guru'}</span>
+                        </div>
+                      </div>
+
+                      <span
+                        className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                          item.status_verifikasi === 'Verified'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : item.status_verifikasi === 'Pending'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-red-50 text-red-700 border border-red-200'
+                        }`}
+                      >
+                        {item.status_verifikasi}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 5 Inovasi Terakhir (Only shown here if Admin) */}
+          {isAdmin && (
+            <div className="bg-white p-5 sm:p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 className="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                  <Lightbulb size={18} className="text-teal-600" />
+                  5 Inovasi Terakhir
+                </h3>
+                <button
+                  onClick={() => setActiveTab('inovasi')}
+                  className="text-xs font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
+                >
+                  Lihat <ArrowRight size={12} />
+                </button>
+              </div>
+
+              {recentInovasi.length === 0 ? (
+                <p className="text-slate-400 text-xs py-4 text-center">
+                  Belum ada data inovasi.
+                </p>
+              ) : (
+                <div className="space-y-3">
+                  {recentInovasi.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100/80 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs sm:text-sm font-semibold text-slate-800 truncate">
+                          {item.judul}
+                        </p>
+                        <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1">
+                          <span className="font-semibold text-teal-600 bg-teal-50 px-1.5 py-0.2 rounded border border-teal-100">{item.kategori}</span>
+                          {item.inovator && (
+                            <>
+                              <span>&bull;</span>
+                              <span className="truncate">{item.inovator}</span>
+                            </>
+                          )}
                         </div>
                       </div>
 

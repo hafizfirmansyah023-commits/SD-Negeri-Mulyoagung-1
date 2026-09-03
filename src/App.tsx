@@ -32,6 +32,8 @@ const DirectorySection = lazy(() => import('./components/DirectorySection').then
 const GallerySection = lazy(() => import('./components/GallerySection').then(m => ({ default: m.GallerySection })));
 const SchoolProfileSection = lazy(() => import('./components/SchoolProfileSection').then(m => ({ default: m.SchoolProfileSection })));
 const ModulPembelajaranSection = lazy(() => import('./components/ModulPembelajaranSection').then(m => ({ default: m.ModulPembelajaranSection })));
+const InovasiSection = lazy(() => import('./components/InovasiSection').then(m => ({ default: m.InovasiSection })));
+const InovasiDetailPage = lazy(() => import('./components/inovasi/InovasiDetailPage').then(m => ({ default: m.InovasiDetailPage })));
 const AkademikSection = lazy(() => import('./components/AkademikSection').then(m => ({ default: m.AkademikSection })));
 const ContactSection = lazy(() => import('./components/ContactSection').then(m => ({ default: m.ContactSection })));
 const PpdbModal = lazy(() => import('./components/PpdbModal').then(m => ({ default: m.PpdbModal })));
@@ -298,6 +300,20 @@ function AppContent() {
           <Route
             path="/akademik/:id"
             element={<AkademikSection />}
+          />
+
+          <Route
+            path="/inovasi"
+            element={
+              <div className="pt-4" data-aos="fade-up">
+                <InovasiSection />
+              </div>
+            }
+          />
+
+          <Route
+            path="/inovasi/:id"
+            element={<InovasiDetailPage />}
           />
 
           {/* Redirect /modul ke /akademik */}

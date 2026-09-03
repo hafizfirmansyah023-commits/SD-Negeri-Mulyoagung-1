@@ -102,9 +102,16 @@ function foto_map_rows(&$rows) {
     unset($row);
 }
 
-// Cek apakah field file terunggah dengan benar.
+// Cek apakah field file terunggah dengan benar dan memenuhi validasi (maks 10MB, format gambar).
 function foto_has_upload($field) {
-    return isset($_FILES[$field]) && $_FILES[$field]['error'] === UPLOAD_ERR_OK;
+    if (!isset($_FILES[$field]) || $_FILES[$field]['error'] !== UPLOAD_ERR_OK) {
+        return false;
+    }
+    // Batas 10MB
+    if ($_FILES[$field]['size'] > 10 * 1024 * 1024) {
+        return false;
+    }
+    return true;
 }
 
 // Simpan satu file dari form ke direktori upload, kembalikan path DB (atau '').
