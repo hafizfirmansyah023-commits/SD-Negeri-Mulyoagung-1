@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
     if (!mobileMenuOpen) return;
 
     const handleResize = () => {
-      if (window.innerWidth >= 1280) {
+      if (window.innerWidth >= 1200) {
         setMobileMenuOpen(false);
       }
     };
@@ -107,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab, onOpenP
       <header
         className="sticky top-0 z-50 shadow-lg bg-gradient-to-r from-[#073632] to-[#103632] transition-all duration-300"
       >
-        <div className="flex justify-between items-center px-3 sm:px-6 lg:px-8 xl:px-10 w-full h-16 sm:h-20 max-w-[1440px] mx-auto gap-2 sm:gap-6 lg:gap-8 relative">
+        <div className="flex justify-between items-center px-3 sm:px-5 md:px-6 min-[1200px]:px-4 min-[1280px]:px-5 min-[1360px]:px-6 2xl:px-8 w-full h-16 sm:h-20 max-w-[1440px] mx-auto gap-2 sm:gap-4 min-[1200px]:gap-2 min-[1280px]:gap-3 min-[1360px]:gap-4 2xl:gap-6 relative">
           <HeaderLogo onClick={handleNavClick} />
 
           <DesktopNav

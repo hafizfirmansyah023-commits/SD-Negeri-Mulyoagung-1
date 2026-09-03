@@ -83,11 +83,11 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
       onMouseLeave={() => {
         if (!dropdownOpen) setHoveredTab(null);
       }}
-      className="hidden xl:flex relative items-center bg-slate-950/35 backdrop-blur-md p-1.5 rounded-full border border-teal-500/25 shadow-inner gap-0.5"
+      className="hidden min-[1200px]:flex relative items-center bg-slate-950/35 backdrop-blur-md p-1 2xl:p-1.5 rounded-full border border-teal-500/25 shadow-inner gap-0.5 shrink-0"
     >
       {/* Sliding Pill Background Indicator */}
       <div
-        className="absolute top-1.5 bottom-1.5 bg-gradient-to-r from-teal-500 to-[#028C84] rounded-full transition-all duration-300 ease-out shadow-md shadow-teal-500/25 pointer-events-none"
+        className="absolute top-1 bottom-1 2xl:top-1.5 2xl:bottom-1.5 bg-gradient-to-r from-teal-500 to-[#028C84] rounded-full transition-all duration-300 ease-out shadow-md shadow-teal-500/25 pointer-events-none"
         style={{
           left: `${pillStyle.left}px`,
           width: `${pillStyle.width}px`,
@@ -118,13 +118,13 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
                   setDropdownOpen((prev) => !prev);
                   setHoveredTab('akademik');
                 }}
-                className={`relative z-10 px-3.5 2xl:px-4 py-2 rounded-full font-medium text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`relative z-10 px-2.5 min-[1280px]:px-3 min-[1360px]:px-3.5 2xl:px-4 py-1.5 2xl:py-2 rounded-full font-medium text-[12px] min-[1280px]:text-[12.5px] min-[1360px]:text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap flex items-center gap-1 ${
                   isHighlighted ? 'text-white font-bold' : 'text-slate-200 hover:text-white'
                 }`}
               >
                 <span>{item.label}</span>
                 <ChevronDown
-                  size={14}
+                  size={13}
                   className={`transition-transform duration-200 ${dropdownOpen ? 'rotate-180 text-teal-300' : 'text-slate-300'}`}
                 />
               </button>
@@ -132,7 +132,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
               {/* Dropdown Menu */}
               {dropdownOpen && akademikMenu.length > 0 && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#073632]/95 backdrop-blur-xl border border-teal-500/30 rounded-2xl p-2 shadow-2xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 max-h-72 overflow-y-auto">
                     {akademikMenu.map((subItem) => (
                       <button
                         key={subItem.id}
@@ -162,7 +162,7 @@ export const DesktopNav: React.FC<DesktopNavProps> = ({
             data-tab-id={item.id}
             onClick={() => onNavClick(item.id)}
             onMouseEnter={() => setHoveredTab(item.id)}
-            className={`relative z-10 px-3.5 2xl:px-4 py-2 rounded-full font-medium text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap ${
+            className={`relative z-10 px-2.5 min-[1280px]:px-3 min-[1360px]:px-3.5 2xl:px-4 py-1.5 2xl:py-2 rounded-full font-medium text-[12px] min-[1280px]:text-[12.5px] min-[1360px]:text-[13px] 2xl:text-[14px] transition-colors duration-200 cursor-pointer whitespace-nowrap ${
               isHighlighted ? 'text-white font-bold' : 'text-slate-200 hover:text-white'
             }`}
           >
