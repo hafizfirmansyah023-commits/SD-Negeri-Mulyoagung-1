@@ -97,7 +97,7 @@ export const AkademikSection: React.FC = () => {
       </section>
 
       {/* Main Container Card - Title & Description on top, Drive viewer below */}
-      <main className="max-w-5xl mx-auto px-4 sm:px-6 -mt-8 relative z-20 pb-16 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 -mt-8 relative z-20 pb-16 space-y-12">
         
         {/* Info Card: Title, Desc, Share & Drive Link */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100/80 space-y-5">
