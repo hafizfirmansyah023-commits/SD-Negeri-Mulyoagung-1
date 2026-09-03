@@ -263,7 +263,7 @@ export const ModulPembelajaranSection: React.FC = () => {
             <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-600"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedModules.map((mod) => (
               <article
                 key={mod.id}
@@ -304,13 +304,8 @@ export const ModulPembelajaranSection: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Body Content */}
+                  {/* Body Content - match galeri/berita card */}
                   <div className="p-4 sm:p-5 space-y-2">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
-                      <span className="font-semibold text-teal-700">{mod.mata_pelajaran}</span>
-                      <span>TA {mod.tahun_ajaran}</span>
-                    </div>
-
                     <h3 className="font-bold text-slate-800 text-base sm:text-lg leading-tight line-clamp-1 group-hover:text-[#028C84] transition-colors">
                       {mod.judul}
                     </h3>
@@ -321,10 +316,9 @@ export const ModulPembelajaranSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Footer Action */}
+                {/* Footer Action - match galeri/berita */}
                 <div className="px-4 sm:px-5 pb-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs text-slate-400">
                   <span className="truncate text-xs">Oleh: {mod.uploader || 'Guru SDN 1 Mulyoagung'}</span>
-                  
                   <div className="flex items-center gap-1.5 text-teal-600 font-semibold group-hover:translate-x-0.5 transition-transform shrink-0">
                     <Eye size={13} />
                     <span className="text-[11px] group-hover:underline">Buka Materi</span>
