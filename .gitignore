@@ -13,8 +13,9 @@ coverage/
 # ========================
 # Environment & Secrets
 # ========================
-.env*
-.env.example
+.env
+.env.production
+#.env.local
 .gitignore
 # ========================
 # Database Dump (SENSITIF)
