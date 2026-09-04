@@ -27,7 +27,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
   onAkademikItemClick,
 }) => {
   const [akademikOpen, setAkademikOpen] = useState(false);
-  const [collapsedCats, setCollapsedCats] = useState<Record<number, boolean>>({});
+  const [openCats, setOpenCats] = useState<Record<number, boolean>>({});
 
   return (
     <>
@@ -74,32 +74,54 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
                     />
                   </button>
 
-                  {/* Submenu Accordion - kategori (non-clickable) + item anak */}
+                  {/* Submenu Accordion - item mandiri (link langsung) & kategori (accordion) */}
                   {akademikOpen && (
-                    <div className="pl-3 pr-1 py-1.5 flex flex-col gap-2 mt-1 border-l-2 border-teal-500/30 ml-3">
+                    <div className="pl-3 pr-1 py-1.5 flex flex-col gap-1.5 mt-1 border-l-2 border-teal-500/30 ml-3">
                       {akademikMenu
                         .filter((s) => !s.parent_id || Number(s.parent_id) === 0)
-                        .map((cat) => {
-                          const children = akademikMenu.filter((s) => Number(s.parent_id) === Number(cat.id));
-                          const isCollapsed = !!collapsedCats[cat.id];
+                        .map((rootItem) => {
+                          const children = akademikMenu.filter((s) => Number(s.parent_id) === Number(rootItem.id));
+                          const isPureCategory = children.length > 0 || (!rootItem.link_gdrive || rootItem.link_gdrive.trim() === '');
+                          const isOpen = !!openCats[rootItem.id];
+
+                          // Jika item mandiri (di luar kategori)
+                          if (!isPureCategory) {
+                            return (
+                              <button
+                                key={rootItem.id}
+                                onClick={() => {
+                                  if (onClose) onClose();
+                                  if (onAkademikItemClick) {
+                                    onAkademikItemClick(rootItem);
+                                  }
+                                }}
+                                className="text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-semibold text-teal-100 hover:text-white hover:bg-white/10 transition cursor-pointer truncate"
+                                title={rootItem.label}
+                              >
+                                {rootItem.label}
+                              </button>
+                            );
+                          }
+
+                          // Jika kategori grup (default tertutup / hide sampai diklik)
                           return (
-                            <div key={cat.id} className="flex flex-col gap-1">
-                              {/* Kategori toggle - bisa di-hide/expand item di dalamnya */}
+                            <div key={rootItem.id} className="flex flex-col gap-1">
                               <button
                                 type="button"
-                                onClick={() => setCollapsedCats((prev) => ({ ...prev, [cat.id]: !prev[cat.id] }))}
-                                className="text-left py-1 px-3 text-[11px] font-bold uppercase tracking-wider text-teal-300 hover:text-teal-200 flex items-center justify-between gap-2"
+                                onClick={() => setOpenCats((prev) => ({ ...prev, [rootItem.id]: !prev[rootItem.id] }))}
+                                className="text-left py-1.5 px-3 text-[11px] font-bold uppercase tracking-wider text-teal-300 hover:text-teal-200 flex items-center justify-between gap-2 cursor-pointer"
                               >
-                                <span className="truncate">{cat.label}</span>
+                                <span className="truncate">{rootItem.label}</span>
                                 {children.length > 0 && (
                                   <ChevronDown
                                     size={14}
-                                    className={`shrink-0 transition-transform duration-200 ${isCollapsed ? 'rotate-180' : '-rotate-90'}`}
+                                    className={`shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-teal-200' : '-rotate-90 text-teal-400/80'}`}
                                   />
                                 )}
                               </button>
-                              {children.length > 0 && !isCollapsed && (
-                                <div className="flex flex-col gap-0.5">
+                              {/* Item turunan hanya muncul jika kategori diklik / isOpen */}
+                              {children.length > 0 && isOpen && (
+                                <div className="flex flex-col gap-0.5 pl-2 border-l border-teal-500/30 ml-2 animate-in fade-in slide-in-from-top-1 duration-150">
                                   {children.map((subItem) => (
                                     <button
                                       key={subItem.id}
@@ -109,7 +131,7 @@ export const MobileNavDrawer: React.FC<MobileNavDrawerProps> = ({
                                           onAkademikItemClick(subItem);
                                         }
                                       }}
-                                      className="text-left py-2 px-3 rounded-lg text-xs sm:text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer truncate"
+                                      className="text-left py-1.5 px-3 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer truncate"
                                       title={subItem.label}
                                     >
                                       {subItem.label}

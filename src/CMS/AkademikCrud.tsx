@@ -8,7 +8,7 @@ import { AkademikFormModal } from './akademik/AkademikFormModal';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
 import { getApiBaseUrl } from '../config/api';
-import { buildAkademikTree, getCategories } from '../utils/akademikHelpers';
+import { buildAkademikTree, getCategories, getStandaloneItems, isCategory } from '../utils/akademikHelpers';
 
 interface AkademikCrudProps {
   currentUser: UserSession;
@@ -31,6 +31,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
 
   // Form modal states
   const [showModal, setShowModal] = useState(false);
+  const [formType, setFormType] = useState<'category' | 'item'>('category');
   const [editId, setEditId] = useState<number | null>(null);
   const [label, setLabel] = useState('');
   const [deskripsi, setDeskripsi] = useState('');
@@ -48,9 +49,11 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
   });
 
   const categories = getCategories(items);
+  const standaloneItems = getStandaloneItems(items);
   const tree = buildAkademikTree(items);
 
   const openCreateCategory = () => {
+    setFormType('category');
     setEditId(null);
     setLabel('');
     setDeskripsi('');
@@ -64,6 +67,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
   };
 
   const openCreateItem = (catId: number | null = null) => {
+    setFormType('item');
     setEditId(null);
     setLabel('');
     setDeskripsi('');
@@ -78,7 +82,8 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
 
   const handleOpenEdit = (item: AkademikMenuItem) => {
     setError('');
-    const isCat = !item.parent_id || Number(item.parent_id) === 0;
+    const isCat = isCategory(item);
+    setFormType(isCat ? 'category' : 'item');
     setEditId(item.id);
     setLabel(item.label);
     setDeskripsi(item.deskripsi || '');
@@ -86,7 +91,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
     setIsModul(Number(item.is_modul) === 1);
     setUrutan(item.urutan);
     setAktif(Number(item.aktif) === 1);
-    setParentId(isCat ? null : Number(item.parent_id));
+    setParentId(isCat ? null : (item.parent_id && Number(item.parent_id) > 0 ? Number(item.parent_id) : null));
     setShowModal(true);
   };
 
@@ -312,6 +317,69 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
           </div>
 
           <div className="space-y-4">
+            {/* 1. Item Mandiri (Di Luar Kategori) */}
+            {standaloneItems.length > 0 && (
+              <div className="rounded-2xl border border-teal-200/80 bg-teal-50/20 overflow-hidden shadow-xs">
+                <div className="flex items-center justify-between gap-2 px-4 py-3 bg-teal-50/70 border-b border-teal-100">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Layers size={16} className="text-teal-700 shrink-0" />
+                    <span className="font-bold text-sm text-teal-900 truncate">Item Mandiri (Tanpa Kategori)</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800">
+                      {standaloneItems.length} Item Langsung
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => openCreateItem(null)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer"
+                  >
+                    <Plus size={13} />
+                    <span>Tambah Item Mandiri</span>
+                  </button>
+                </div>
+                <div className="px-3 py-2 space-y-2">
+                  {standaloneItems.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-medium text-sm text-slate-800 truncate">{item.label}</span>
+                        {Number(item.is_modul) === 1 && (
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
+                            Modul
+                          </span>
+                        )}
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                            Number(item.aktif) === 1
+                              ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                              : 'bg-slate-100 text-slate-500 border border-slate-200'
+                          }`}
+                        >
+                          {Number(item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {item.link_gdrive && (
+                          <a href={item.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link">
+                            <ExternalLink size={13} />
+                          </a>
+                        )}
+                        <button onClick={() => handleOpenEdit(item)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition" title="Ubah Item">
+                          <Edit2 size={13} />
+                        </button>
+                        <button onClick={() => handleDelete(item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Item">
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 2. Daftar Kategori & Item di dalamnya */}
             {tree.map((cat, catIndex) => (
               <div
                 key={cat.item.id}
@@ -431,17 +499,34 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
       ) : (
         /* Grid Cards View (Semua item termasuk kategori) */
         <div>
-          {/* Kategori section */}
-          <div className="mb-8">
-            <h3 className="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
-              <FolderOpen size={16} className="text-amber-600" /> Kategori ({categories.length})
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {categories.map((item) => (
-                <AkademikCard key={item.id} item={item} onEdit={handleOpenEdit} onDelete={handleDelete} />
-              ))}
+          {/* Item Mandiri section */}
+          {standaloneItems.length > 0 && (
+            <div className="mb-8">
+              <h3 className="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
+                <Layers size={16} className="text-teal-600" /> Item Mandiri / Di Luar Kategori ({standaloneItems.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {standaloneItems.map((item) => (
+                  <AkademikCard key={item.id} item={item} onEdit={handleOpenEdit} onDelete={handleDelete} />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Kategori section */}
+          {categories.length > 0 && (
+            <div className="mb-8">
+              <h3 className="font-bold text-slate-700 text-sm mb-3 flex items-center gap-2">
+                <FolderOpen size={16} className="text-amber-600" /> Kategori ({categories.length})
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {categories.map((item) => (
+                  <AkademikCard key={item.id} item={item} onEdit={handleOpenEdit} onDelete={handleDelete} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Item section per kategori */}
           {tree.map((cat) => (
             <div key={cat.item.id} className="mb-8">
@@ -466,6 +551,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
       <AkademikFormModal
         showModal={showModal}
         editId={editId}
+        formType={formType}
         label={label}
         setLabel={setLabel}
         deskripsi={deskripsi}

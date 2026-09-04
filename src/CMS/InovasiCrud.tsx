@@ -8,6 +8,7 @@ import { useCmsFilter } from './hooks/useCmsFilter';
 import { getUniqueValues } from './utils/cmsHelpers';
 import { InovasiCard } from './inovasi/InovasiCard';
 import { InovasiFormModal, INOVASI_KATEGORI_OPTIONS } from './inovasi/InovasiFormModal';
+import { InovasiPreviewModal } from './inovasi/InovasiPreviewModal';
 import { ImageUploadPayload } from './components/ImageUploadField';
 import { CmsToast, ToastType } from './components/CmsToast';
 import { CmsConfirmModal, ConfirmState } from './components/CmsConfirmModal';
@@ -33,6 +34,9 @@ export default function InovasiCrud({ currentUser }: InovasiCrudProps) {
   } = useInovasiData();
 
   const [toast, setToast] = useState<{ type: ToastType; text: string } | null>(null);
+
+  // Preview Modal state
+  const [previewItem, setPreviewItem] = useState<InovasiItem | null>(null);
 
   // Confirm Modal state
   const [confirmState, setConfirmState] = useState<ConfirmState>({
@@ -233,7 +237,7 @@ export default function InovasiCrud({ currentUser }: InovasiCrudProps) {
   };
 
   const handlePreview = (item: InovasiItem) => {
-    window.open(`/inovasi/${item.id}`, '_blank');
+    setPreviewItem(item);
   };
 
   // Determine active tab key based on filters
@@ -479,6 +483,12 @@ export default function InovasiCrud({ currentUser }: InovasiCrudProps) {
         error={error}
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
+      />
+
+      {/* Preview Modal */}
+      <InovasiPreviewModal
+        item={previewItem}
+        onClose={() => setPreviewItem(null)}
       />
 
       {/* Confirmation Modal */}

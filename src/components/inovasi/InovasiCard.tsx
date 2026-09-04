@@ -1,5 +1,6 @@
 import React from 'react';
-import { Lightbulb, ExternalLink, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Lightbulb, ArrowRight, User } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { InovasiItem } from '../../types';
 
@@ -8,8 +9,10 @@ interface InovasiCardProps {
 }
 
 export const InovasiCard: React.FC<InovasiCardProps> = ({ item }) => {
+  const navigate = useNavigate();
+
   const handleClick = () => {
-    window.open(`/inovasi/${item.id}`, 'noopener,noreferrer');
+    navigate(`/inovasi/${item.id}`);
   };
 
   return (
@@ -43,7 +46,7 @@ export const InovasiCard: React.FC<InovasiCardProps> = ({ item }) => {
 
           <div className="absolute top-3 right-3">
             <span className="bg-slate-900/80 backdrop-blur-md text-teal-300 border border-teal-500/30 text-[10px] font-semibold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
-              <ExternalLink size={10} /> Tab Baru
+              <ArrowRight size={10} /> Detail
             </span>
           </div>
         </div>
@@ -73,7 +76,7 @@ export const InovasiCard: React.FC<InovasiCardProps> = ({ item }) => {
         
         <div className="flex items-center gap-1 text-teal-600 font-semibold group-hover:translate-x-0.5 transition-transform shrink-0">
           <span className="text-[11px] group-hover:underline">Eksplorasi Inovasi</span>
-          <ExternalLink size={12} />
+          <ArrowRight size={12} />
         </div>
       </div>
     </article>
