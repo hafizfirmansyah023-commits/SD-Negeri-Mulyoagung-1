@@ -11,7 +11,7 @@ interface AkademikCardProps {
 export const AkademikCard: React.FC<AkademikCardProps> = ({ item, onEdit, onDelete }) => {
   const isModul = Number(item.is_modul) === 1;
   const isAktif = Number(item.aktif) === 1;
-  const isCat = !item.parent_id || Number(item.parent_id) === 0;
+  const isCat = (!item.parent_id || Number(item.parent_id) === 0) && (!item.link_gdrive || item.link_gdrive.trim() === '');
 
   return (
     <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
@@ -46,8 +46,8 @@ export const AkademikCard: React.FC<AkademikCardProps> = ({ item, onEdit, onDele
                     Modul Ajar
                   </span>
                 )}
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1">
-                  <FileText size={10} /> Item
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200 flex items-center gap-1">
+                  <FileText size={10} /> {!item.parent_id || Number(item.parent_id) === 0 ? 'Item Mandiri' : 'Item'}
                 </span>
               </>
             )}
