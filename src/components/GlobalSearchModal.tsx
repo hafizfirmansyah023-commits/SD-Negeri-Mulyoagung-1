@@ -14,24 +14,39 @@ import {
   Sparkles,
   Loader2,
   ArrowRight,
+  Compass,
+  Home,
+  Globe,
+  Mail,
+  Layers,
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
+import { NEWS_ARTICLES, GALLERY_ITEMS, TEACHERS_DIRECTORY, SCHOOL_FACILITIES } from '../data/schoolData';
 
 interface GlobalSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type SearchCategory = 'all' | 'berita' | 'galeri' | 'modul' | 'guru' | 'inovasi' | 'akademik' | 'fasilitas';
+type SearchCategory =
+  | 'all'
+  | 'halaman'
+  | 'berita'
+  | 'galeri'
+  | 'modul'
+  | 'guru'
+  | 'inovasi'
+  | 'akademik'
+  | 'fasilitas';
 
 interface SearchResultsState {
-  berita: Array<{ id: number | string; judul: string; kategori: string; tanggal: string; isi: string; foto?: string }>;
-  galeri: Array<{ id: number | string; judul: string; kategori: string; tanggal: string; deskripsi: string; foto?: string }>;
-  modul: Array<{ id: number; judul: string; deskripsi: string; mata_pelajaran: string; kelas: string; semester: string; kategori: string; foto?: string; uploader?: string }>;
+  berita: Array<{ id: number | string; judul: string; kategori: string; tanggal: string; isi: string; foto?: string; uploader?: string }>;
+  galeri: Array<{ id: number | string; judul: string; kategori: string; tanggal: string; deskripsi: string; foto?: string; uploader?: string }>;
+  modul: Array<{ id: number | string; judul: string; deskripsi: string; mata_pelajaran: string; kelas: string; semester: string; kategori: string; foto?: string; uploader?: string }>;
   guru: Array<{ id: number | string; nama: string; jabatan: string; tugas: string; nip?: string; foto?: string }>;
   inovasi: Array<{ id: number | string; judul: string; kategori: string; inovator?: string; deskripsi?: string; link_drive?: string; foto?: string }>;
-  akademik: Array<{ id: number; label: string; deskripsi?: string; parent_id?: number | null; parent_label?: string; link_gdrive?: string; is_modul?: number }>;
-  fasilitas: Array<{ id: number; judul: string; deskripsi: string; foto?: string }>;
+  akademik: Array<{ id: number | string; label: string; deskripsi?: string; parent_id?: number | null; parent_label?: string; link_gdrive?: string; is_modul?: number }>;
+  fasilitas: Array<{ id: number | string; judul: string; deskripsi: string; foto?: string }>;
 }
 
 const initialResults: SearchResultsState = {
@@ -44,6 +59,109 @@ const initialResults: SearchResultsState = {
   fasilitas: [],
 };
 
+interface PublicPageItem {
+  id: string;
+  title: string;
+  path: string;
+  description: string;
+  category: string;
+  icon: any;
+  keywords: string[];
+}
+
+const PUBLIC_PAGES: PublicPageItem[] = [
+  {
+    id: 'page-home',
+    title: 'Beranda Utama',
+    path: '/',
+    description: 'Halaman muka utama website SD Negeri 1 Mulyoagung',
+    category: 'Navigasi',
+    icon: Home,
+    keywords: ['home', 'beranda', 'homepage', 'main', 'utama', 'muka', 'sdn 1 mulyoagung', 'sambutan', 'depan', 'visi'],
+  },
+  {
+    id: 'page-profile',
+    title: 'Profil Sekolah',
+    path: '/profile',
+    description: 'Visi, misi, sejarah pendirian, dan video profil sekolah',
+    category: 'Navigasi',
+    icon: Globe,
+    keywords: ['profile', 'profil', 'school profile', 'sejarah', 'history', 'visi', 'misi', 'vision', 'mission', 'tentang', 'about', 'about us', 'video profil', 'tujuan', 'kepala sekolah', 'principal'],
+  },
+  {
+    id: 'page-news',
+    title: 'Berita & Kegiatan',
+    path: '/news',
+    description: 'Kabar terkini, pengumuman, dan liputan aktivitas siswa',
+    category: 'Navigasi',
+    icon: FileText,
+    keywords: ['berita', 'news', 'article', 'articles', 'kabar', 'kegiatan', 'event', 'events', 'informasi', 'information', 'prestasi', 'achievement', 'pengumuman', 'announcement', 'acara', 'lomba', 'juara'],
+  },
+  {
+    id: 'page-gallery',
+    title: 'Galeri Foto Kegiatan',
+    path: '/gallery',
+    description: 'Dokumentasi foto kegiatan sekolah, ekstrakurikuler, dan acara',
+    category: 'Navigasi',
+    icon: ImageIcon,
+    keywords: ['galeri', 'gallery', 'photo', 'photos', 'foto', 'dokumentasi', 'documentation', 'gambar', 'image', 'images', 'album', 'kegiatan', 'karate', 'pramuka', 'karnamuda'],
+  },
+  {
+    id: 'page-directory',
+    title: 'Direktori Guru & Tendik',
+    path: '/directory',
+    description: 'Daftar dan profil dewan guru serta staf kependidikan',
+    category: 'Navigasi',
+    icon: User,
+    keywords: ['direktori', 'directory', 'guru', 'teacher', 'teachers', 'tendik', 'staff', 'staf', 'guru kelas', 'tenaga pendidik', 'educator', 'kepala sekolah', 'pengajar', 'struktur', 'bagan', 'org chart'],
+  },
+  {
+    id: 'page-modul',
+    title: 'Modul & Materi Pembelajaran',
+    path: '/modul',
+    description: 'Ruang belajar digital, materi Kurikulum Merdeka, dan LKPD',
+    category: 'Navigasi',
+    icon: BookOpen,
+    keywords: ['modul', 'modul ajar', 'materi', 'learning', 'materials', 'lesson', 'lessons', 'pembelajaran', 'belajar', 'study', 'buku', 'book', 'books', 'lkpd', 'worksheet', 'bahan ajar', 'pelajaran', 'subject', 'matematika', 'math', 'mathematics', 'ipas', 'science', 'bahasa indonesia', 'indonesian', 'english', 'bahasa inggris', 'kurikulum merdeka', 'curriculum', 'kelas 1', 'kelas 2', 'kelas 3', 'kelas 4', 'kelas 5', 'kelas 6'],
+  },
+  {
+    id: 'page-akademik',
+    title: 'Dokumen Akademik',
+    path: '/akademik',
+    description: 'Dokumen kurikulum, kalender pendidikan, dan arsip pembelajaran',
+    category: 'Navigasi',
+    icon: Layers,
+    keywords: ['akademik', 'academic', 'dokumen akademik', 'academic documents', 'kurikulum', 'curriculum', 'kalender pendidikan', 'academic calendar', 'perangkat pembelajaran', 'bedah cp', 'administrasi', 'administration', 'gdrive', 'google drive'],
+  },
+  {
+    id: 'page-inovasi',
+    title: 'Inovasi Sekolah',
+    path: '/inovasi',
+    description: 'Eksplorasi karya inovatif, media interaktif, dan program unggulan',
+    category: 'Navigasi',
+    icon: Lightbulb,
+    keywords: ['inovasi', 'innovation', 'karya', 'creation', 'creativity', 'kreativitas', 'program', 'inovatif', 'innovative', 'kabumiga', 'jumaga', 'media', 'project', 'projek'],
+  },
+  {
+    id: 'page-fasilitas',
+    title: 'Fasilitas Sekolah',
+    path: '/fasilitas',
+    description: 'Laboratorium komputer, perpustakaan, lapangan, UKS, kantin',
+    category: 'Navigasi',
+    icon: Building2,
+    keywords: ['fasilitas', 'facility', 'facilities', 'sarana', 'prasarana', 'infrastructure', 'lab', 'laboratory', 'laboratorium', 'komputer', 'computer', 'perpustakaan', 'library', 'lapangan', 'field', 'court', 'uks', 'clinic', 'kantin', 'canteen', 'cafeteria', 'taman', 'garden', 'green house'],
+  },
+  {
+    id: 'page-contact',
+    title: 'Kontak & Lokasi',
+    path: '/contact',
+    description: 'Alamat resmi, kontak WhatsApp, email, dan peta lokasi sekolah',
+    category: 'Navigasi',
+    icon: Mail,
+    keywords: ['kontak', 'contact', 'contact us', 'hubungi', 'alamat', 'address', 'whatsapp', 'wa', 'telepon', 'phone', 'call', 'email', 'mail', 'lokasi', 'location', 'peta', 'map', 'maps', 'pengaduan', 'complaint'],
+  },
+];
+
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
@@ -55,7 +173,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Debounce search: 1000ms
+  // Debounce search: 500ms
   useEffect(() => {
     if (!searchTerm.trim()) {
       setDebouncedQuery('');
@@ -67,7 +185,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     const handler = setTimeout(() => {
       setDebouncedQuery(searchTerm.trim());
       setIsDebouncing(false);
-    }, 1000);
+    }, 500);
 
     return () => {
       clearTimeout(handler);
@@ -89,9 +207,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     }
   }, [isOpen]);
 
-  // Server-side search API call
+  // Server-side + Local search API call
   useEffect(() => {
-    if (!debouncedQuery.trim()) {
+    const q = debouncedQuery.trim();
+    if (!q) {
       setResults(initialResults);
       setLoading(false);
       return;
@@ -101,21 +220,161 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     const fetchSearch = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${getApiBaseUrl()}/backend/API/search.php?q=${encodeURIComponent(debouncedQuery.trim())}`);
+        const res = await fetch(`${getApiBaseUrl()}/backend/API/search.php?q=${encodeURIComponent(q)}`);
         const json = await res.json();
         if (isMounted && json.status === 'success' && json.data) {
+          const apiData = json.data;
+          
+          // Filter local fallback data if API data for some entity is empty
+          const lowerQ = q.toLowerCase();
+          
+          let beritaList = apiData.berita || [];
+          if (beritaList.length === 0) {
+            beritaList = NEWS_ARTICLES.filter(
+              (a) =>
+                a.title.toLowerCase().includes(lowerQ) ||
+                a.summary.toLowerCase().includes(lowerQ) ||
+                a.category.toLowerCase().includes(lowerQ)
+            ).map((a) => ({
+              id: a.id,
+              judul: a.title,
+              kategori: a.category,
+              tanggal: a.date,
+              isi: a.summary,
+              foto: a.image,
+              uploader: a.author,
+            }));
+          }
+
+          let galeriList = apiData.galeri || [];
+          if (galeriList.length === 0) {
+            galeriList = GALLERY_ITEMS.filter(
+              (g) =>
+                g.title.toLowerCase().includes(lowerQ) ||
+                g.description.toLowerCase().includes(lowerQ) ||
+                g.category.toLowerCase().includes(lowerQ)
+            ).map((g) => ({
+              id: g.id,
+              judul: g.title,
+              kategori: g.category,
+              tanggal: g.date,
+              deskripsi: g.description,
+              foto: g.image,
+            }));
+          }
+
+          let guruList = apiData.guru || [];
+          if (guruList.length === 0) {
+            guruList = TEACHERS_DIRECTORY.filter(
+              (t) =>
+                t.name.toLowerCase().includes(lowerQ) ||
+                t.title.toLowerCase().includes(lowerQ) ||
+                t.role.toLowerCase().includes(lowerQ) ||
+                t.nip.toLowerCase().includes(lowerQ) ||
+                t.subject.toLowerCase().includes(lowerQ)
+            ).map((t) => ({
+              id: t.id,
+              nama: t.name,
+              jabatan: t.title,
+              tugas: t.role,
+              nip: t.nip,
+              foto: t.image,
+            }));
+          }
+
+          let fasilitasList = apiData.fasilitas || [];
+          if (fasilitasList.length === 0) {
+            fasilitasList = SCHOOL_FACILITIES.filter(
+              (f) =>
+                f.name.toLowerCase().includes(lowerQ) ||
+                f.description.toLowerCase().includes(lowerQ)
+            ).map((f) => ({
+              id: f.id,
+              judul: f.name,
+              deskripsi: f.description,
+              foto: f.image,
+            }));
+          }
+
           setResults({
-            berita: json.data.berita || [],
-            galeri: json.data.galeri || [],
-            modul: json.data.modul || [],
-            guru: json.data.guru || [],
-            inovasi: json.data.inovasi || [],
-            akademik: json.data.akademik || [],
-            fasilitas: json.data.fasilitas || [],
+            berita: beritaList,
+            galeri: galeriList,
+            modul: apiData.modul || [],
+            guru: guruList,
+            inovasi: apiData.inovasi || [],
+            akademik: apiData.akademik || [],
+            fasilitas: fasilitasList,
           });
         }
       } catch {
-        // Ignore network errors
+        // Fallback local search if network fails
+        if (isMounted) {
+          const lowerQ = q.toLowerCase();
+          const localNews = NEWS_ARTICLES.filter(
+            (a) =>
+              a.title.toLowerCase().includes(lowerQ) ||
+              a.summary.toLowerCase().includes(lowerQ) ||
+              a.category.toLowerCase().includes(lowerQ)
+          ).map((a) => ({
+            id: a.id,
+            judul: a.title,
+            kategori: a.category,
+            tanggal: a.date,
+            isi: a.summary,
+            foto: a.image,
+            uploader: a.author,
+          }));
+
+          const localGal = GALLERY_ITEMS.filter(
+            (g) =>
+              g.title.toLowerCase().includes(lowerQ) ||
+              g.description.toLowerCase().includes(lowerQ) ||
+              g.category.toLowerCase().includes(lowerQ)
+          ).map((g) => ({
+            id: g.id,
+            judul: g.title,
+            kategori: g.category,
+            tanggal: g.date,
+            deskripsi: g.description,
+            foto: g.image,
+          }));
+
+          const localTeachers = TEACHERS_DIRECTORY.filter(
+            (t) =>
+              t.name.toLowerCase().includes(lowerQ) ||
+              t.title.toLowerCase().includes(lowerQ) ||
+              t.role.toLowerCase().includes(lowerQ) ||
+              t.nip.toLowerCase().includes(lowerQ)
+          ).map((t) => ({
+            id: t.id,
+            nama: t.name,
+            jabatan: t.title,
+            tugas: t.role,
+            nip: t.nip,
+            foto: t.image,
+          }));
+
+          const localFac = SCHOOL_FACILITIES.filter(
+            (f) =>
+              f.name.toLowerCase().includes(lowerQ) ||
+              f.description.toLowerCase().includes(lowerQ)
+          ).map((f) => ({
+            id: f.id,
+            judul: f.name,
+            deskripsi: f.description,
+            foto: f.image,
+          }));
+
+          setResults({
+            berita: localNews,
+            galeri: localGal,
+            modul: [],
+            guru: localTeachers,
+            inovasi: [],
+            akademik: [],
+            fasilitas: localFac,
+          });
+        }
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -157,8 +416,22 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Matched Public Navigation Pages
+  const matchedPages = useMemo(() => {
+    const q = debouncedQuery.toLowerCase().trim();
+    if (!q) return [];
+    return PUBLIC_PAGES.filter(
+      (p) =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.path.toLowerCase().includes(q) ||
+        p.keywords.some((kw) => kw.includes(q) || q.includes(kw))
+    );
+  }, [debouncedQuery]);
+
   const totalResults = useMemo(() => {
     return (
+      matchedPages.length +
       results.berita.length +
       results.galeri.length +
       results.modul.length +
@@ -167,7 +440,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
       results.akademik.length +
       results.fasilitas.length
     );
-  }, [results]);
+  }, [matchedPages, results]);
 
   const handleClear = () => {
     setSearchTerm('');
@@ -175,6 +448,11 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     setIsDebouncing(false);
     setResults(initialResults);
     inputRef.current?.focus();
+  };
+
+  const handleNavigatePage = (path: string) => {
+    navigate(path);
+    onClose();
   };
 
   const handleNavigateNews = (id: string | number) => {
@@ -187,8 +465,8 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     onClose();
   };
 
-  const handleNavigateModul = (id: number) => {
-    navigate('/akademik', { state: { openModul: id } });
+  const handleNavigateModul = (id: number | string) => {
+    navigate('/modul', { state: { openModul: id } });
     onClose();
   };
 
@@ -202,7 +480,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
     onClose();
   };
 
-  const handleNavigateAkademik = (id: number) => {
+  const handleNavigateAkademik = (id: number | string) => {
     navigate(`/akademik/${id}`);
     onClose();
   };
@@ -240,7 +518,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cari berita, galeri, modul, guru, inovasi, akademik, fasilitas..."
+              placeholder="Cari halaman, berita, galeri, modul pelajaran, guru, inovasi, fasilitas..."
               className="w-full bg-transparent text-sm sm:text-base text-slate-800 placeholder-slate-400 focus:outline-none font-medium"
             />
             {searchTerm && (
@@ -266,9 +544,10 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
             <div className="px-4 sm:px-6 py-2.5 bg-slate-50 border-b border-slate-100 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {[
                 { key: 'all', label: 'Semua Hasil', count: totalResults },
+                { key: 'halaman', label: 'Halaman Web', count: matchedPages.length, icon: Compass },
                 { key: 'berita', label: 'Berita', count: results.berita.length, icon: FileText },
-                { key: 'galeri', label: 'Galeri', count: results.galeri.length, icon: ImageIcon },
-                { key: 'modul', label: 'Modul', count: results.modul.length, icon: BookOpen },
+                { key: 'galeri', label: 'Galeri Foto', count: results.galeri.length, icon: ImageIcon },
+                { key: 'modul', label: 'Modul Belajar', count: results.modul.length, icon: BookOpen },
                 { key: 'guru', label: 'Guru & Tendik', count: results.guru.length, icon: User },
                 { key: 'inovasi', label: 'Inovasi', count: results.inovasi.length, icon: Lightbulb },
                 { key: 'akademik', label: 'Akademik', count: results.akademik.length, icon: GraduationCap },
@@ -307,8 +586,8 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
               <div className="py-12 text-center text-slate-400 space-y-2">
                 <Sparkles size={36} className="mx-auto text-teal-500/50" />
                 <p className="text-sm font-medium text-slate-600">Pencarian Cepat SDN 1 Mulyoagung</p>
-                <p className="text-xs text-slate-400">
-                  Ketik kata kunci untuk mencari berita, galeri, modul belajar, guru, inovasi, akademik, atau fasilitas sekolah.
+                <p className="text-xs text-slate-400 max-w-md mx-auto">
+                  Ketik kata kunci seperti <strong>&quot;galeri&quot;</strong>, <strong>&quot;berita&quot;</strong>, <strong>&quot;profil&quot;</strong>, <strong>&quot;Matematika&quot;</strong>, <strong>&quot;IPAS&quot;</strong>, <strong>&quot;fasilitas&quot;</strong>, atau nama guru.
                 </p>
               </div>
             ) : isDebouncing || loading ? (
@@ -320,16 +599,98 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
               <div className="py-12 text-center text-slate-400 space-y-2">
                 <Search size={36} className="mx-auto text-slate-300" />
                 <p className="text-sm font-semibold text-slate-700">Tidak ada hasil untuk &quot;{debouncedQuery}&quot;</p>
-                <p className="text-xs text-slate-400">Coba gunakan kata kunci lain yang lebih umum.</p>
+                <p className="text-xs text-slate-400">Coba gunakan kata kunci umum seperti nama pelajaran, guru, atau fitur website.</p>
               </div>
             ) : (
               <div className="space-y-6">
-                {/* 1. Berita */}
+                {/* 1. Halaman Web / Menu Navigasi Utama */}
+                {(activeTab === 'all' || activeTab === 'halaman') && matchedPages.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      <Compass size={14} className="text-teal-600" />
+                      <span>Halaman &amp; Navigasi Web ({matchedPages.length})</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {matchedPages.map((page) => {
+                        const Icon = page.icon;
+                        return (
+                          <div
+                            key={page.id}
+                            onClick={() => handleNavigatePage(page.path)}
+                            className="p-3.5 bg-gradient-to-r from-teal-50/70 to-emerald-50/40 hover:from-teal-100/70 hover:to-emerald-100/60 border border-teal-200/80 rounded-2xl transition-all cursor-pointer flex items-center justify-between group shadow-sm"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                                <Icon size={20} />
+                              </div>
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-1.5 mb-0.5">
+                                  <span className="text-[10px] font-bold text-teal-700 bg-white/80 px-2 py-0.5 rounded border border-teal-200/60">
+                                    Menu Utama
+                                  </span>
+                                </div>
+                                <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate group-hover:text-teal-700">
+                                  {page.title}
+                                </h4>
+                                <p className="text-[11px] text-slate-500 truncate">{page.description}</p>
+                              </div>
+                            </div>
+                            <ArrowRight size={16} className="text-teal-600 group-hover:translate-x-1 shrink-0 transition-transform ml-2" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. Modul Pembelajaran */}
+                {(activeTab === 'all' || activeTab === 'modul') && results.modul.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      <BookOpen size={14} className="text-blue-600" />
+                      <span>Modul &amp; Bahan Pembelajaran ({results.modul.length})</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {results.modul.map((mod) => (
+                        <div
+                          key={`m-${mod.id}`}
+                          onClick={() => handleNavigateModul(mod.id)}
+                          className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-100 hover:border-blue-200 rounded-2xl transition-all cursor-pointer flex gap-3 items-center group"
+                        >
+                          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-700 to-blue-800 flex items-center justify-center text-white shrink-0 overflow-hidden shadow-xs">
+                            {mod.foto ? (
+                              <img src={getImageUrl(mod.foto)} alt={mod.judul} className="w-full h-full object-cover" />
+                            ) : (
+                              <BookOpen size={24} className="text-teal-200" />
+                            )}
+                          </div>
+                          <div className="overflow-hidden min-w-0 flex-1">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">
+                                {mod.kelas}
+                              </span>
+                              <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-100 truncate">
+                                {mod.mata_pelajaran}
+                              </span>
+                            </div>
+                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-1 group-hover:text-blue-700">
+                              {mod.judul}
+                            </h4>
+                            <p className="text-[11px] text-slate-400 truncate">Oleh: {mod.uploader || 'Dewan Guru'}</p>
+                          </div>
+                          <ArrowRight size={16} className="text-slate-300 group-hover:text-blue-600 shrink-0 transition-colors" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. Berita & Informasi */}
                 {(activeTab === 'all' || activeTab === 'berita') && results.berita.length > 0 && (
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
                       <FileText size={14} className="text-teal-600" />
-                      <span>Berita &amp; Informasi ({results.berita.length})</span>
+                      <span>Berita &amp; Kegiatan Sekolah ({results.berita.length})</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {results.berita.map((art) => (
@@ -346,7 +707,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                             />
                           )}
                           <div className="overflow-hidden min-w-0 flex-1">
-                            <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
                               {art.kategori}
                             </span>
                             <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-1 group-hover:text-teal-700">
@@ -361,47 +722,44 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                   </div>
                 )}
 
-                {/* 2. Modul Pembelajaran */}
-                {(activeTab === 'all' || activeTab === 'modul') && results.modul.length > 0 && (
+                {/* 4. Galeri Foto */}
+                {(activeTab === 'all' || activeTab === 'galeri') && results.galeri.length > 0 && (
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      <BookOpen size={14} className="text-blue-600" />
-                      <span>Modul Pembelajaran ({results.modul.length})</span>
+                      <ImageIcon size={14} className="text-amber-600" />
+                      <span>Galeri Foto ({results.galeri.length})</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {results.modul.map((mod) => (
+                      {results.galeri.map((item) => (
                         <div
-                          key={`m-${mod.id}`}
-                          onClick={() => handleNavigateModul(mod.id)}
-                          className="p-3 bg-slate-50 hover:bg-blue-50/50 border border-slate-100 hover:border-blue-200 rounded-2xl transition-all cursor-pointer flex gap-3 items-center group"
+                          key={`g-${item.id}`}
+                          onClick={() => handleNavigateGallery(item.id)}
+                          className="p-3 bg-slate-50 hover:bg-amber-50/50 border border-slate-100 hover:border-amber-200 rounded-2xl transition-all cursor-pointer flex gap-3 items-center group"
                         >
-                          <div className="w-14 h-14 rounded-xl bg-teal-800 flex items-center justify-center text-white shrink-0 overflow-hidden">
-                            {mod.foto ? (
-                              <img src={getImageUrl(mod.foto)} alt={mod.judul} className="w-full h-full object-cover" />
-                            ) : (
-                              <BookOpen size={24} className="text-teal-200" />
-                            )}
-                          </div>
+                          {item.foto && (
+                            <img
+                              src={getImageUrl(item.foto)}
+                              alt={item.judul}
+                              className="w-14 h-14 rounded-xl object-cover shrink-0"
+                            />
+                          )}
                           <div className="overflow-hidden min-w-0 flex-1">
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">
-                                {mod.kelas}
-                              </span>
-                              <span className="text-[10px] text-slate-400">{mod.mata_pelajaran}</span>
-                            </div>
-                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-1 group-hover:text-blue-700">
-                              {mod.judul}
+                            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
+                              {item.kategori}
+                            </span>
+                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-1 group-hover:text-amber-700">
+                              {item.judul}
                             </h4>
-                            <p className="text-[11px] text-slate-400 truncate">Oleh: {mod.uploader || 'Guru'}</p>
+                            <p className="text-[11px] text-slate-400">{item.tanggal}</p>
                           </div>
-                          <ArrowRight size={16} className="text-slate-300 group-hover:text-blue-600 shrink-0 transition-colors" />
+                          <ArrowRight size={16} className="text-slate-300 group-hover:text-amber-600 shrink-0 transition-colors" />
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* 3. Guru & Tendik */}
+                {/* 5. Guru & Tendik */}
                 {(activeTab === 'all' || activeTab === 'guru') && results.guru.length > 0 && (
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -436,44 +794,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                   </div>
                 )}
 
-                {/* 4. Galeri Foto */}
-                {(activeTab === 'all' || activeTab === 'galeri') && results.galeri.length > 0 && (
-                  <div className="space-y-2.5">
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      <ImageIcon size={14} className="text-amber-600" />
-                      <span>Galeri Kegiatan ({results.galeri.length})</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {results.galeri.map((item) => (
-                        <div
-                          key={`g-${item.id}`}
-                          onClick={() => handleNavigateGallery(item.id)}
-                          className="p-3 bg-slate-50 hover:bg-amber-50/50 border border-slate-100 hover:border-amber-200 rounded-2xl transition-all cursor-pointer flex gap-3 items-center group"
-                        >
-                          {item.foto && (
-                            <img
-                              src={getImageUrl(item.foto)}
-                              alt={item.judul}
-                              className="w-14 h-14 rounded-xl object-cover shrink-0"
-                            />
-                          )}
-                          <div className="overflow-hidden min-w-0 flex-1">
-                            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
-                              {item.kategori}
-                            </span>
-                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-1 group-hover:text-amber-700">
-                              {item.judul}
-                            </h4>
-                            <p className="text-[11px] text-slate-400">{item.tanggal}</p>
-                          </div>
-                          <ArrowRight size={16} className="text-slate-300 group-hover:text-amber-600 shrink-0 transition-colors" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 5. Inovasi */}
+                {/* 6. Inovasi */}
                 {(activeTab === 'all' || activeTab === 'inovasi') && results.inovasi.length > 0 && (
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -495,7 +816,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                             )}
                           </div>
                           <div className="overflow-hidden min-w-0 flex-1">
-                            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">
                               {inov.kategori}
                             </span>
                             <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-1 group-hover:text-amber-700">
@@ -504,41 +825,6 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                             <p className="text-[11px] text-slate-400 truncate">Oleh: {inov.inovator || 'SDN 1 Mulyoagung'}</p>
                           </div>
                           <ArrowRight size={16} className="text-slate-300 group-hover:text-amber-600 shrink-0 transition-colors" />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* 6. Akademik Menu */}
-                {(activeTab === 'all' || activeTab === 'akademik') && results.akademik.length > 0 && (
-                  <div className="space-y-2.5">
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      <GraduationCap size={14} className="text-indigo-600" />
-                      <span>Dokumen Akademik ({results.akademik.length})</span>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {results.akademik.map((akd) => (
-                        <div
-                          key={`a-${akd.id}`}
-                          onClick={() => handleNavigateAkademik(akd.id)}
-                          className="p-3 bg-slate-50 hover:bg-indigo-50/50 border border-slate-100 hover:border-indigo-200 rounded-2xl transition-all cursor-pointer flex gap-3 items-center group"
-                        >
-                          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                            <GraduationCap size={22} />
-                          </div>
-                          <div className="overflow-hidden min-w-0 flex-1">
-                            {akd.parent_label && (
-                              <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">
-                                {akd.parent_label}
-                              </span>
-                            )}
-                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5 group-hover:text-indigo-700">
-                              {akd.label}
-                            </h4>
-                            {akd.deskripsi && <p className="text-[11px] text-slate-400 truncate">{akd.deskripsi}</p>}
-                          </div>
-                          <ArrowRight size={16} className="text-slate-300 group-hover:text-indigo-600 shrink-0 transition-colors" />
                         </div>
                       ))}
                     </div>
@@ -566,7 +852,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                               className="w-14 h-14 rounded-xl object-cover shrink-0"
                             />
                           ) : (
-                            <div className="w-14 h-14 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                            <div className="w-14 h-14 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 border border-rose-100">
                               <Building2 size={24} />
                             </div>
                           )}
@@ -582,15 +868,49 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({ isOpen, on
                     </div>
                   </div>
                 )}
+
+                {/* 8. Akademik */}
+                {(activeTab === 'all' || activeTab === 'akademik') && results.akademik.length > 0 && (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      <GraduationCap size={14} className="text-indigo-600" />
+                      <span>Dokumen Akademik ({results.akademik.length})</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {results.akademik.map((akd) => (
+                        <div
+                          key={`a-${akd.id}`}
+                          onClick={() => handleNavigateAkademik(akd.id)}
+                          className="p-3 bg-slate-50 hover:bg-indigo-50/50 border border-slate-100 hover:border-indigo-200 rounded-2xl transition-all cursor-pointer flex gap-3 items-center group"
+                        >
+                          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-100">
+                            <GraduationCap size={22} />
+                          </div>
+                          <div className="overflow-hidden min-w-0 flex-1">
+                            {akd.parent_label && (
+                              <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">
+                                {akd.parent_label}
+                              </span>
+                            )}
+                            <h4 className="text-xs sm:text-sm font-bold text-slate-800 truncate mt-0.5 group-hover:text-indigo-700">
+                              {akd.label}
+                            </h4>
+                            {akd.deskripsi && <p className="text-[11px] text-slate-400 truncate">{akd.deskripsi}</p>}
+                          </div>
+                          <ArrowRight size={16} className="text-slate-300 group-hover:text-indigo-600 shrink-0 transition-colors" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
           {/* Footer Note */}
-          <div className="p-3 bg-slate-50 border-t border-slate-100 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+          <div className="p-3 bg-slate-50 border-t border-slate-100 text-center text-xs text-slate-400 flex items-center justify-between px-6">
             <span>SD Negeri 1 Mulyoagung</span>
-            <span>•</span>
-            <span>Pencarian Cepat Seluruh Informasi Sekolah</span>
+            <span>Tekan <strong>Esc</strong> untuk menutup</span>
           </div>
         </div>
       </div>

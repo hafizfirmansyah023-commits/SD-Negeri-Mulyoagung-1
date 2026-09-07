@@ -335,10 +335,13 @@ function AppContent() {
             element={<InovasiDetailPage />}
           />
 
-          {/* Redirect /modul ke /akademik */}
           <Route
             path="/modul"
-            element={<Navigate to="/akademik" replace />}
+            element={
+              <div className="pt-4" data-aos="fade-up">
+                <ModulPembelajaranSection />
+              </div>
+            }
           />
 
           <Route
