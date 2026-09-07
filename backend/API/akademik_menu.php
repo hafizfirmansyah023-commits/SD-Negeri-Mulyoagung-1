@@ -123,6 +123,16 @@ if ($method === 'GET') {
             exit();
         }
 
+        // Penanda Modul Ajar & LKPD hanya boleh dimiliki satu item
+        if ($is_modul === 1) {
+            $modulTaken = $conn->query("SELECT COUNT(*) FROM akademik_menu WHERE is_modul = 1")->fetchColumn();
+            if ($modulTaken > 0) {
+                http_response_code(400);
+                echo json_encode(["status" => "error", "message" => "Item Modul Ajar & LKPD sudah ditandai pada item lain. Hapus penanda tersebut terlebih dahulu."]);
+                exit();
+            }
+        }
+
         // Item (parent dipilih) wajib memiliki link Google Drive
         if ($parent_id !== null && empty($link_gdrive)) {
             http_response_code(400);
@@ -153,6 +163,17 @@ if ($method === 'GET') {
             http_response_code(400);
             echo json_encode(["status" => "error", "message" => "Data tidak lengkap untuk pembaruan menu akademik."]);
             exit();
+        }
+
+        // Penanda Modul Ajar & LKPD hanya boleh dimiliki satu item
+        if ($is_modul === 1) {
+            $stmtModul = $conn->prepare("SELECT COUNT(*) FROM akademik_menu WHERE is_modul = 1 AND id != ?");
+            $stmtModul->execute([$id]);
+            if ($stmtModul->fetchColumn() > 0) {
+                http_response_code(400);
+                echo json_encode(["status" => "error", "message" => "Item Modul Ajar & LKPD sudah ditandai pada item lain. Hapus penanda tersebut terlebih dahulu."]);
+                exit();
+            }
         }
 
         // Cegah kategori dijadikan child dirinya sendiri / keturunan

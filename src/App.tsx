@@ -34,6 +34,7 @@ const SchoolProfileSection = lazy(() => import('./components/SchoolProfileSectio
 const InovasiSection = lazy(() => import('./components/InovasiSection').then(m => ({ default: m.InovasiSection })));
 const InovasiDetailPage = lazy(() => import('./components/inovasi/InovasiDetailPage').then(m => ({ default: m.InovasiDetailPage })));
 const AkademikSection = lazy(() => import('./components/AkademikSection').then(m => ({ default: m.AkademikSection })));
+const ModulRedirect = lazy(() => import('./components/ModulRedirect').then(m => ({ default: m.ModulRedirect })));
 const ContactSection = lazy(() => import('./components/ContactSection').then(m => ({ default: m.ContactSection })));
 const FasilitasSection = lazy(() => import('./components/FasilitasSection').then(m => ({ default: m.FasilitasSection })));
 const PpdbModal = lazy(() => import('./components/PpdbModal').then(m => ({ default: m.PpdbModal })));
@@ -336,7 +337,7 @@ function AppContent() {
 
           <Route
             path="/modul"
-            element={<Navigate to="/akademik/12" replace />}
+            element={<ModulRedirect />}
           />
 
           <Route

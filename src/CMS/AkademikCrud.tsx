@@ -99,6 +99,12 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
     e.preventDefault();
     setError('');
 
+    const isModulTaken = isModul && items.some((it) => Number(it.is_modul) === 1 && (!editId || Number(it.id) !== Number(editId)));
+    if (isModulTaken) {
+      setError('Item Modul Ajar & LKPD hanya boleh ditandai pada satu item. Item lain sudah memakai penanda ini.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('action', editId ? 'update' : 'create');
     if (editId) formData.append('id', editId.toString());
