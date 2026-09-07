@@ -3,7 +3,7 @@ import {
   Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft,
   School, Building, Settings, Award, Megaphone, BarChart3, Menu, X,
   BookOpen, History, Layers, Globe, GraduationCap, Sliders, Mail, Share2,
-  LayoutDashboard, Lightbulb
+  LayoutDashboard, Lightbulb, Search
 } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
@@ -15,6 +15,7 @@ interface CmsSidebarProps {
   setActiveTab: (tab: CmsTab) => void;
   onBackToHome: () => void;
   onLogout: () => void;
+  onOpenSearch?: () => void;
 }
 
 export default function CmsSidebar({
@@ -23,6 +24,7 @@ export default function CmsSidebar({
   setActiveTab,
   onBackToHome,
   onLogout,
+  onOpenSearch,
 }: CmsSidebarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
@@ -354,13 +356,25 @@ export default function CmsSidebar({
           </div>
         </div>
 
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-2 rounded-xl text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
-          aria-label="Toggle Navigation Menu"
-        >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="flex items-center gap-2">
+          {onOpenSearch && (
+            <button
+              onClick={() => onOpenSearch()}
+              className="p-2 rounded-xl text-teal-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+              aria-label="Cari di CMS"
+              title="Cari di CMS"
+            >
+              <Search size={18} />
+            </button>
+          )}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-2 rounded-xl text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors cursor-pointer"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Spacer for Mobile Fixed Top Header */}
@@ -423,6 +437,29 @@ export default function CmsSidebar({
               </span>
             </div>
           </div>
+
+          {/* Quick CMS Search Button in Sidebar */}
+          {onOpenSearch && (
+            <div className="px-4 pt-3.5 pb-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileOpen(false);
+                  onOpenSearch();
+                }}
+                className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700/60 hover:border-teal-500/50 transition-all text-xs font-medium cursor-pointer group shadow-inner"
+                title="Cari data atau menu di CMS (Ctrl + K)"
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Search size={15} className="text-teal-400 group-hover:scale-110 transition-transform shrink-0" />
+                  <span className="truncate">Cari di CMS...</span>
+                </div>
+                <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-bold bg-slate-900 text-slate-400 rounded border border-slate-700 shrink-0">
+                  Ctrl K
+                </kbd>
+              </button>
+            </div>
+          )}
 
           {/* Navigation Items */}
           {navItems}

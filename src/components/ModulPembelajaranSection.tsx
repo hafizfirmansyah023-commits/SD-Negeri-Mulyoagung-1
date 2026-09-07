@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BookOpen, Search, Filter, Download, ExternalLink, Eye, RotateCcw, X, FileText, Calendar, Layers } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { Pagination } from './common/Pagination';
@@ -9,6 +10,8 @@ import { useDebounce } from '../hooks/useDebounce';
 const ITEMS_PER_PAGE = 6;
 
 export const ModulPembelajaranSection: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [modules, setModules] = useState<ModulItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedKategori, setSelectedKategori] = useState('Semua');
@@ -20,6 +23,17 @@ export const ModulPembelajaranSection: React.FC = () => {
   const debouncedSearch = useDebounce(searchTerm, 1000);
   const [currentPage, setCurrentPage] = useState(1);
   const [previewModule, setPreviewModule] = useState<ModulItem | null>(null);
+
+  useEffect(() => {
+    const state = location.state as { openModul?: number | string } | null;
+    if (state?.openModul && modules.length > 0) {
+      const found = modules.find((m) => String(m.id) === String(state.openModul));
+      if (found) {
+        setPreviewModule(found);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [modules, location]);
 
   useEffect(() => {
     const fetchPublicModules = async () => {
