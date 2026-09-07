@@ -67,15 +67,15 @@ if ($method === 'GET') {
         if (is_array($items)) {
             try {
                 // Validasi parent_id: kumpulkan kategori yang masih ada
-                $existing = $conn->query("SELECT id FROM akademik_menu WHERE parent_id IS NULL")->fetchAll(PDO::FETCH_COLUMN);
+                $existing = $conn->query("SELECT id FROM akademik_menu WHERE parent_id IS NULL OR parent_id = 0")->fetchAll(PDO::FETCH_COLUMN);
                 $existingMap = array_fill_keys(array_map('intval', $existing), true);
 
-                // Normalisasi urutan per parent: kelompokkan items by parent
+                // Normalisasi urutan per parent: kelompokkan items by parent (0 = root/mandiri)
                 $grouped = [];
-                foreach ($items as $index => $item) {
+                foreach ($items as $item) {
                     if (!isset($item['id'])) continue;
                     $parent = isset($item['parent_id']) && intval($item['parent_id']) > 0 ? intval($item['parent_id']) : 0;
-                    // Validasi: parent harus merujuk kategori yang masih ada
+                    // Validasi: parent harus merujuk kategori yang masih ada jika bukan 0
                     if ($parent !== 0 && !isset($existingMap[$parent])) {
                         http_response_code(400);
                         echo json_encode(["status" => "error", "message" => "Kategori induk tidak valid atau sudah dihapus."]);
@@ -86,12 +86,12 @@ if ($method === 'GET') {
 
                 // Assign urutan berurutan dalam masing-masing parent
                 $stmt = $conn->prepare("UPDATE akademik_menu SET parent_id = ?, urutan = ? WHERE id = ?");
-                foreach ($items as $index => $item) {
+                foreach ($items as $item) {
                     if (!isset($item['id'])) continue;
                     $id = intval($item['id']);
                     $parent = isset($item['parent_id']) && intval($item['parent_id']) > 0 ? intval($item['parent_id']) : null;
-                    // Temukan posisi dalam kelompok parent-nya
-                    $pos = array_search($id, $grouped[$parent === null ? 0 : $parent]) + 1;
+                    $groupKey = $parent === null ? 0 : $parent;
+                    $pos = isset($grouped[$groupKey]) ? (array_search($id, $grouped[$groupKey]) + 1) : 1;
                     $stmt->execute([$parent, $pos, $id]);
                 }
                 echo json_encode(["status" => "success", "message" => "Urutan & kategori menu akademik berhasil diperbarui."]);
