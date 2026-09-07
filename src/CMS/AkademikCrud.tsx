@@ -153,62 +153,163 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
     });
   };
 
-  // --- Drag & Drop lintas kategori ---
-  const handleDragStart = (e: React.DragEvent, item: AkademikMenuItem) => {
+  // --- Drag & Drop state ---
+  const [draggedItem, setDraggedItem] = useState<AkademikMenuItem | null>(null);
+  const [dragOverTarget, setDragOverTarget] = useState<{
+    catId: number | null; // null = standalone item zone or root category zone
+    index: number;
+    position: 'before' | 'after' | 'inside';
+  } | null>(null);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+
+  // --- Drag & Drop handlers ---
+  const handleDragStart = (e: React.DragEvent, item: AkademikMenuItem, type: 'category' | 'item') => {
     e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(item.id));
     setDragId(item.id);
-    setDragType(!item.parent_id || Number(item.parent_id) === 0 ? 'category' : 'item');
+    setDragType(type);
+    setDraggedItem(item);
   };
 
   const handleDragEnd = () => {
     setDragId(null);
     setDragType(null);
-    setDropTarget(null);
+    setDraggedItem(null);
+    setDragOverTarget(null);
   };
 
-  const handleDrop = async (e: React.DragEvent, catId: number | null, index: number) => {
+  const handleDragOverItem = (e: React.DragEvent, catId: number | null, index: number) => {
     e.preventDefault();
     e.stopPropagation();
-    if (dragId === null) return;
+    e.dataTransfer.dropEffect = 'move';
 
-    // Cari item yang di-drag
-    const dragged = items.find((i) => i.id === dragId);
-    if (!dragged) return;
+    // Calculate whether hovering on upper half (before) or lower half (after)
+    const targetRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const midY = targetRect.top + targetRect.height / 2;
+    const position = e.clientY < midY ? 'before' : 'after';
 
-    const draggedIsCat = !dragged.parent_id || Number(dragged.parent_id) === 0;
+    setDragOverTarget({
+      catId,
+      index,
+      position,
+    });
+  };
 
-    // Kategori hanya boleh diseret ke posisi kategori lain (catId null = root area)
-    if (draggedIsCat) {
-      if (catId !== null) {
-        setDragId(null);
-        return;
-      }
-      // Kategori masuk ke index dalam daftar kategori root
-      const rootCats = items.filter((i) => !i.parent_id || Number(i.parent_id) === 0);
-      const reorderedCats = rootCats.filter((i) => i.id !== dragId);
-      reorderedCats.splice(index, 0, dragged);
-      const allNew = [
-        ...reorderedCats.map((c, idx) => ({ id: c.id, parent_id: null, urutan: idx + 1 })),
-        ...items.filter((i) => i.parent_id && Number(i.parent_id) > 0).map((i) => ({ id: i.id, parent_id: i.parent_id, urutan: i.urutan })),
-      ];
-      const ok = await reorderItems(allNew, currentUser.role);
-      if (ok) setToast({ type: 'success', text: 'Urutan kategori berhasil diperbarui!' });
-      setDragId(null);
+  const handleDragOverCategory = (e: React.DragEvent, catId: number | null) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragType === 'item') {
+      setDragOverTarget({
+        catId,
+        index: 0,
+        position: 'inside',
+      });
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetCatId: number | null, targetIndex: number, dropPos: 'before' | 'after' | 'inside' = 'before') => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!draggedItem) {
+      handleDragEnd();
       return;
     }
 
-    // Item: pindahkan ke kategori target (catId) dengan urutan index dalam kategori tsb
-    const targetChildren = items.filter((i) => Number(i.parent_id) === Number(catId) && i.id !== dragId);
-    targetChildren.splice(index, 0, dragged);
+    const currentDragged = draggedItem;
+    const isCat = dragType === 'category';
+
+    // 1. Reordering Categories (Root Categories only)
+    if (isCat) {
+      if (targetCatId !== null && targetCatId !== undefined) {
+        // Can only drop categories at category root level
+        handleDragEnd();
+        return;
+      }
+
+      const rootCats = categories.filter((c) => c.id !== currentDragged.id);
+      let insertionIndex = targetIndex;
+      if (dropPos === 'after') insertionIndex += 1;
+      insertionIndex = Math.max(0, Math.min(insertionIndex, rootCats.length));
+
+      rootCats.splice(insertionIndex, 0, currentDragged);
+
+      // Build payload
+      const allNew = [
+        ...rootCats.map((c, idx) => ({ id: c.id, parent_id: null, urutan: idx + 1 })),
+        ...items.filter((i) => !isCategory(i)).map((i) => ({ id: i.id, parent_id: i.parent_id, urutan: i.urutan })),
+      ];
+
+      setIsSavingOrder(true);
+      const ok = await reorderItems(allNew, currentUser.role);
+      setIsSavingOrder(false);
+      if (ok) {
+        setToast({ type: 'success', text: 'Urutan kategori berhasil diperbarui.' });
+      } else {
+        setToast({ type: 'error', text: 'Gagal memperbarui urutan kategori.' });
+      }
+      handleDragEnd();
+      return;
+    }
+
+    // 2. Item Drag & Drop: Standalone <-> Standalone, Standalone <-> Category, Category A <-> Category B
+    const isTargetStandalone = targetCatId === null;
+    let targetList: AkademikMenuItem[] = [];
+
+    if (isTargetStandalone) {
+      targetList = standaloneItems.filter((i) => i.id !== currentDragged.id);
+    } else {
+      const parentCat = tree.find((t) => t.item.id === targetCatId);
+      targetList = parentCat ? parentCat.children.filter((i) => i.id !== currentDragged.id) : [];
+    }
+
+    let insertIndex = targetIndex;
+    if (dropPos === 'after') insertIndex += 1;
+    if (dropPos === 'inside') insertIndex = targetList.length; // appended to the end of category
+    insertIndex = Math.max(0, Math.min(insertIndex, targetList.length));
+
+    // Create updated item with new parent_id
+    const updatedDragged: AkademikMenuItem = {
+      ...currentDragged,
+      parent_id: targetCatId,
+    };
+
+    targetList.splice(insertIndex, 0, updatedDragged);
+
+    // Construct the overall new list
+    const updatedStandalone = isTargetStandalone
+      ? targetList
+      : standaloneItems.filter((i) => i.id !== currentDragged.id);
+
+    const updatedCategoriesItems: AkademikMenuItem[] = [];
+    tree.forEach((cat) => {
+      if (cat.item.id === targetCatId) {
+        updatedCategoriesItems.push(...targetList);
+      } else {
+        updatedCategoriesItems.push(...cat.children.filter((i) => i.id !== currentDragged.id));
+      }
+    });
 
     const allNew = [
-      ...items.filter((i) => !i.parent_id || Number(i.parent_id) === 0).map((c, ci) => ({ id: c.id, parent_id: null, urutan: ci + 1 })),
-      ...items.filter((i) => i.parent_id && Number(i.parent_id) > 0 && i.id !== dragId && Number(i.parent_id) !== Number(catId)).map((i) => ({ id: i.id, parent_id: i.parent_id, urutan: i.urutan })),
-      ...targetChildren.map((c, idx) => ({ id: c.id, parent_id: catId, urutan: idx + 1 })),
+      ...categories.map((c, ci) => ({ id: c.id, parent_id: null, urutan: ci + 1 })),
+      ...updatedStandalone.map((s, si) => ({ id: s.id, parent_id: null, urutan: si + 1 })),
+      ...updatedCategoriesItems.map((ci) => ({ id: ci.id, parent_id: ci.parent_id, urutan: ci.urutan })),
     ];
+
+    setIsSavingOrder(true);
     const ok = await reorderItems(allNew, currentUser.role);
-    if (ok) setToast({ type: 'success', text: 'Item berhasil dipindah ke kategori target!' });
-    setDragId(null);
+    setIsSavingOrder(false);
+
+    if (ok) {
+      if (currentDragged.parent_id !== targetCatId) {
+        setToast({ type: 'success', text: `Item "${currentDragged.label}" berhasil dipindahkan.` });
+      } else {
+        setToast({ type: 'success', text: 'Urutan item berhasil diperbarui.' });
+      }
+    } else {
+      setToast({ type: 'error', text: 'Gagal memperbarui urutan/kategori item.' });
+    }
+    handleDragEnd();
   };
 
   return (
@@ -236,7 +337,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
             Menu Akademik (Kategori &amp; Item)
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-            Kelola kategori &amp; item dropdown Akademik. Seret item ke kategori lain (drag lintas kategori) atau atur urutannya. Kategori menampung beberapa item.
+            Kelola kategori &amp; item dropdown Akademik. Seret item untuk mengatur urutan atau memindahkannya antar kategori dan item mandiri secara bebas.
           </p>
         </div>
 
@@ -300,200 +401,345 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
         </div>
       ) : viewMode === 'list' ? (
         /* Vertical Drag and Drop List View (multi-kategori, cross-category drop) */
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100">
-            <div>
-              <h3 className="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2">
-                <ListOrdered className="text-teal-600" size={20} />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-sm border border-slate-100 space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 sm:pb-4 border-b border-slate-100">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-slate-800 text-sm sm:text-base lg:text-lg flex flex-wrap items-center gap-2">
+                <ListOrdered className="text-teal-600 shrink-0" size={20} />
                 <span>Urutan &amp; Kategori Menu Akademik</span>
+                {isSavingOrder && (
+                  <span className="inline-flex items-center gap-1.5 text-xs text-teal-600 font-normal">
+                    <RefreshCw size={12} className="animate-spin shrink-0" /> Menyimpan urutan...
+                  </span>
+                )}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Seret kategori untuk mengurutkannya. Seret item ke dalam kategori lain untuk memindahkannya.
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Gunakan grip icon untuk drag &amp; drop item ke atas/bawah atau seret lintas kategori &amp; item mandiri.
               </p>
             </div>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-100">
-              {categories.length} Kategori • {items.length - categories.length} Item
-            </span>
+            <div className="flex flex-wrap gap-1.5 shrink-0 mt-1 sm:mt-0">
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                {categories.length} Kategori
+              </span>
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
+                {standaloneItems.length} Item Mandiri
+              </span>
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                {items.length - categories.length - standaloneItems.length} Item Kategori
+              </span>
+            </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 sm:space-y-5">
             {/* 1. Item Mandiri (Di Luar Kategori) */}
-            {standaloneItems.length > 0 && (
-              <div className="rounded-2xl border border-teal-200/80 bg-teal-50/20 overflow-hidden shadow-xs">
-                <div className="flex items-center justify-between gap-2 px-4 py-3 bg-teal-50/70 border-b border-teal-100">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <Layers size={16} className="text-teal-700 shrink-0" />
-                    <span className="font-bold text-sm text-teal-900 truncate">Item Mandiri (Tanpa Kategori)</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800">
-                      {standaloneItems.length} Item Langsung
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => openCreateItem(null)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer"
-                  >
-                    <Plus size={13} />
-                    <span>Tambah Item Mandiri</span>
-                  </button>
+            <div
+              onDragOver={(e) => handleDragOverCategory(e, null)}
+              onDrop={(e) => {
+                if (dragType === 'item') {
+                  const dropPos = dragOverTarget?.catId === null ? dragOverTarget.position : 'inside';
+                  const dropIdx = dragOverTarget?.catId === null ? dragOverTarget.index : standaloneItems.length;
+                  handleDrop(e, null, dropIdx, dropPos);
+                }
+              }}
+              className={`rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs w-full ${
+                dragType === 'item' && dragOverTarget?.catId === null
+                  ? 'border-teal-400 ring-2 ring-teal-400/30 bg-teal-50/40'
+                  : 'border-teal-200/80 bg-teal-50/20'
+              }`}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2.5 px-3.5 sm:px-4 py-3 bg-teal-50/80 border-b border-teal-100">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <Layers size={16} className="text-teal-700 shrink-0" />
+                  <span className="font-bold text-xs sm:text-sm text-teal-900 break-words">Item Mandiri (Tanpa Kategori)</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 shrink-0">
+                    {standaloneItems.length}
+                  </span>
                 </div>
-                <div className="px-3 py-2 space-y-2">
-                  {standaloneItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-slate-200 bg-white shadow-2xs"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="font-medium text-sm text-slate-800 truncate">{item.label}</span>
-                        {Number(item.is_modul) === 1 && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
-                            Modul
-                          </span>
+                <button
+                  onClick={() => openCreateItem(null)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer shrink-0 shadow-xs"
+                >
+                  <Plus size={13} />
+                  <span>Tambah Item Mandiri</span>
+                </button>
+              </div>
+
+              <div className="p-2.5 sm:p-3 space-y-2">
+                {standaloneItems.length === 0 ? (
+                  <div
+                    className={`py-6 px-4 text-center text-xs rounded-xl border border-dashed transition-colors ${
+                      dragType === 'item' && dragOverTarget?.catId === null
+                        ? 'border-teal-500 bg-teal-100/60 text-teal-800 font-semibold'
+                        : 'border-teal-200 text-teal-700/70'
+                    }`}
+                  >
+                    Belum ada item mandiri. Seret item ke area ini untuk menjadikannya item mandiri.
+                  </div>
+                ) : (
+                  standaloneItems.map((item, idx) => {
+                    const isBeingDragged = dragId === item.id;
+                    const isDropTargetBefore = dragOverTarget?.catId === null && dragOverTarget.index === idx && dragOverTarget.position === 'before';
+                    const isDropTargetAfter = dragOverTarget?.catId === null && dragOverTarget.index === idx && dragOverTarget.position === 'after';
+
+                    return (
+                      <React.Fragment key={item.id}>
+                        {/* Placeholder Line Above */}
+                        {isDropTargetBefore && (
+                          <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
                         )}
+
+                        <div
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, item, 'item')}
+                          onDragEnd={handleDragEnd}
+                          onDragOver={(e) => handleDragOverItem(e, null, idx)}
+                          onDrop={(e) => handleDrop(e, null, idx, dragOverTarget?.position || 'before')}
+                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all duration-150 bg-white ${
+                            isBeingDragged
+                              ? 'opacity-30 border-dashed border-teal-500 scale-[0.98]'
+                              : 'border-slate-200/90 shadow-2xs hover:border-teal-400 hover:shadow-xs'
+                          }`}
+                        >
+                          <div className="flex items-start sm:items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+                            <div
+                              className="cursor-grab active:cursor-grabbing p-1.5 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-slate-100 transition shrink-0 mt-0.5 sm:mt-0 touch-none"
+                              title="Geser untuk mengatur urutan atau memindahkan kategori"
+                            >
+                              <GripVertical size={16} />
+                            </div>
+                            <span className="w-5 h-5 rounded-md bg-teal-50 text-teal-700 text-[11px] font-bold flex items-center justify-center shrink-0 border border-teal-100 mt-0.5 sm:mt-0">
+                              {idx + 1}
+                            </span>
+                            <div className="min-w-0 flex-1 flex flex-wrap items-center gap-1.5">
+                              <span className="font-semibold text-xs sm:text-sm text-slate-800 break-words leading-tight">
+                                {item.label}
+                              </span>
+                              {Number(item.is_modul) === 1 && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
+                                  Modul
+                                </span>
+                              )}
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${
+                                  Number(item.aktif) === 1
+                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                    : 'bg-slate-100 text-slate-500 border border-slate-200'
+                                }`}
+                              >
+                                {Number(item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-end gap-1.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 pl-8 sm:pl-0">
+                            {item.link_gdrive && (
+                              <a href={item.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link Google Drive">
+                                <ExternalLink size={14} />
+                              </a>
+                            )}
+                            <button onClick={() => handleOpenEdit(item)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition cursor-pointer" title="Ubah Item">
+                              <Edit2 size={14} />
+                            </button>
+                            <button onClick={() => handleDelete(item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition cursor-pointer" title="Hapus Item">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Placeholder Line Below */}
+                        {isDropTargetAfter && (
+                          <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
+                        )}
+                      </React.Fragment>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* 2. Daftar Kategori & Item di dalamnya */}
+            {tree.map((cat, catIndex) => {
+              const isCatBeingDragged = dragId === cat.item.id;
+              const isTargetCat = dragOverTarget?.catId === cat.item.id;
+              const isCatDropBefore = dragType === 'category' && dragOverTarget?.catId === null && dragOverTarget.index === catIndex && dragOverTarget.position === 'before';
+              const isCatDropAfter = dragType === 'category' && dragOverTarget?.catId === null && dragOverTarget.index === catIndex && dragOverTarget.position === 'after';
+
+              return (
+                <React.Fragment key={cat.item.id}>
+                  {/* Category Placeholder Line Above */}
+                  {isCatDropBefore && (
+                    <div className="h-2 bg-amber-500 rounded-full my-1 animate-pulse shadow-xs" />
+                  )}
+
+                  <div
+                    onDragOver={(e) => {
+                      if (dragType === 'category') {
+                        handleDragOverItem(e, null, catIndex);
+                      } else if (dragType === 'item') {
+                        handleDragOverCategory(e, cat.item.id);
+                      }
+                    }}
+                    onDrop={(e) => {
+                      if (dragType === 'category') {
+                        handleDrop(e, null, catIndex, dragOverTarget?.position || 'before');
+                      } else if (dragType === 'item') {
+                        const dropPos = dragOverTarget?.catId === cat.item.id ? dragOverTarget.position : 'inside';
+                        const dropIdx = dragOverTarget?.catId === cat.item.id ? dragOverTarget.index : cat.children.length;
+                        handleDrop(e, cat.item.id, dropIdx, dropPos);
+                      }
+                    }}
+                    className={`rounded-2xl border transition-all duration-200 overflow-hidden w-full ${
+                      isCatBeingDragged
+                        ? 'opacity-30 border-dashed border-amber-500'
+                        : isTargetCat && dragType === 'item'
+                        ? 'border-amber-400 ring-2 ring-amber-300/60 bg-amber-50/40'
+                        : 'border-slate-200 bg-white'
+                    }`}
+                  >
+                    {/* Kategori Header (bisa di-drag utk urut antar kategori) */}
+                    <div
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, cat.item, 'category')}
+                      onDragEnd={handleDragEnd}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-3.5 sm:px-4 py-3 bg-amber-50/80 border-b border-amber-100 select-none"
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div
+                          className="cursor-grab active:cursor-grabbing p-1.5 text-amber-500 hover:text-amber-700 rounded-lg hover:bg-amber-100/80 transition shrink-0 touch-none"
+                          title="Geser untuk mengatur urutan kategori"
+                        >
+                          <GripVertical size={18} />
+                        </div>
+                        <span className="w-5 h-5 rounded-md bg-amber-100 text-amber-800 text-[11px] font-bold flex items-center justify-center shrink-0 border border-amber-200">
+                          {catIndex + 1}
+                        </span>
+                        <FolderOpen size={16} className="text-amber-600 shrink-0" />
+                        <span className="font-bold text-xs sm:text-sm text-slate-800 break-words leading-tight flex-1">
+                          {cat.item.label}
+                        </span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/60 text-amber-800 shrink-0">
+                          Kategori
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-amber-100 pl-8 sm:pl-0">
+                        <span className="text-[11px] text-slate-500">{cat.children.length} item</span>
                         <span
-                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                            Number(item.aktif) === 1
+                          className={`text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
+                            Number(cat.item.aktif) === 1
                               ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
                               : 'bg-slate-100 text-slate-500 border border-slate-200'
                           }`}
                         >
-                          {Number(item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
+                          {Number(cat.item.aktif) === 1 ? <Eye size={11} /> : <EyeOff size={11} />}
+                          {Number(cat.item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
                         </span>
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {item.link_gdrive && (
-                          <a href={item.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link">
-                            <ExternalLink size={13} />
-                          </a>
-                        )}
-                        <button onClick={() => handleOpenEdit(item)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition" title="Ubah Item">
-                          <Edit2 size={13} />
-                        </button>
-                        <button onClick={() => handleDelete(item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Item">
-                          <Trash2 size={13} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => openCreateItem(cat.item.id)} className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition cursor-pointer" title="Tambah item di kategori ini">
+                            <Plus size={15} />
+                          </button>
+                          <button onClick={() => handleOpenEdit(cat.item)} className="p-1.5 text-slate-600 hover:bg-amber-100 hover:text-amber-700 rounded-lg transition cursor-pointer" title="Ubah Kategori">
+                            <Edit2 size={15} />
+                          </button>
+                          <button onClick={() => handleDelete(cat.item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition cursor-pointer" title="Hapus Kategori">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {/* 2. Daftar Kategori & Item di dalamnya */}
-            {tree.map((cat, catIndex) => (
-              <div
-                key={cat.item.id}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => handleDrop(e, null, catIndex)}
-                className={`rounded-2xl border transition-all ${dragId && dragType === 'item' ? 'border-teal-300 ring-2 ring-teal-200/50' : 'border-slate-200'} overflow-hidden`}
-              >
-                {/* Kategori Header (bisa di-drag utk urut antar kategori) */}
-                <div
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, cat.item)}
-                  onDragEnd={handleDragEnd}
-                  className={`flex items-center justify-between gap-2 px-4 py-3 bg-amber-50/70 border-b border-amber-100 cursor-grab active:cursor-grabbing ${
-                    dragId === cat.item.id ? 'opacity-40' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <GripVertical className="text-amber-400 shrink-0" size={18} />
-                    <FolderOpen size={16} className="text-amber-600 shrink-0" />
-                    <span className="font-bold text-sm text-slate-800 truncate">{cat.item.label}</span>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/60 text-amber-800">
-                      Kategori
-                    </span>
+                    {/* Item dalam kategori */}
+                    <div className="p-2.5 sm:p-3 space-y-2">
+                      {cat.children.length === 0 ? (
+                        <div
+                          className={`py-5 px-4 rounded-xl border border-dashed text-xs text-center transition-colors ${
+                            isTargetCat && dragType === 'item'
+                              ? 'border-amber-500 bg-amber-100/60 text-amber-900 font-semibold'
+                              : 'border-slate-200 text-slate-400'
+                          }`}
+                        >
+                          Kosong — Seret item ke area ini untuk memasukkannya ke kategori {cat.item.label}
+                        </div>
+                      ) : (
+                        cat.children.map((child, idx) => {
+                          const isChildBeingDragged = dragId === child.id;
+                          const isChildDropBefore = isTargetCat && dragOverTarget.index === idx && dragOverTarget.position === 'before';
+                          const isChildDropAfter = isTargetCat && dragOverTarget.index === idx && dragOverTarget.position === 'after';
+
+                          return (
+                            <React.Fragment key={child.id}>
+                              {/* Child Item Placeholder Above */}
+                              {isChildDropBefore && (
+                                <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
+                              )}
+
+                              <div
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, child, 'item')}
+                                onDragEnd={handleDragEnd}
+                                onDragOver={(e) => handleDragOverItem(e, cat.item.id, idx)}
+                                onDrop={(e) => handleDrop(e, cat.item.id, idx, dragOverTarget?.position || 'before')}
+                                className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all duration-150 ${
+                                  isChildBeingDragged
+                                    ? 'opacity-30 border-dashed border-teal-500 scale-[0.98]'
+                                    : 'border-slate-200 bg-slate-50/60 hover:bg-white hover:border-teal-300 hover:shadow-2xs'
+                                }`}
+                              >
+                                <div className="flex items-start sm:items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
+                                  <div
+                                    className="cursor-grab active:cursor-grabbing p-1.5 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-slate-200/60 transition shrink-0 mt-0.5 sm:mt-0 touch-none"
+                                    title="Geser untuk mengatur urutan atau memindahkan kategori"
+                                  >
+                                    <GripVertical size={16} />
+                                  </div>
+                                  <span className="w-5 h-5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold flex items-center justify-center shrink-0 border border-slate-200 mt-0.5 sm:mt-0">
+                                    {idx + 1}
+                                  </span>
+                                  <div className="min-w-0 flex-1 flex flex-wrap items-center gap-1.5">
+                                    <span className="font-semibold text-xs sm:text-sm text-slate-700 break-words leading-tight">
+                                      {child.label}
+                                    </span>
+                                    {Number(child.is_modul) === 1 && (
+                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
+                                        Modul
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center justify-end gap-1.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-200/50 pl-8 sm:pl-0">
+                                  {child.link_gdrive && (
+                                    <a href={child.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link Google Drive">
+                                      <ExternalLink size={14} />
+                                    </a>
+                                  )}
+                                  <button onClick={() => handleOpenEdit(child)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition cursor-pointer" title="Ubah Item">
+                                    <Edit2 size={14} />
+                                  </button>
+                                  <button onClick={() => handleDelete(child)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition cursor-pointer" title="Hapus Item">
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Child Item Placeholder Below */}
+                              {isChildDropAfter && (
+                                <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
+                              )}
+                            </React.Fragment>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-[11px] text-slate-500">{cat.children.length} item</span>
-                    <span
-                      className={`text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                        Number(cat.item.aktif) === 1
-                          ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                          : 'bg-slate-100 text-slate-500 border border-slate-200'
-                      }`}
-                    >
-                      {Number(cat.item.aktif) === 1 ? <Eye size={11} /> : <EyeOff size={11} />}
-                      {Number(cat.item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
-                    </span>
-                    <button onClick={() => openCreateItem(cat.item.id)} className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Tambah item di kategori ini">
-                      <Plus size={14} />
-                    </button>
-                    <button onClick={() => handleOpenEdit(cat.item)} className="p-1.5 text-slate-600 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition" title="Ubah Kategori">
-                      <Edit2 size={14} />
-                    </button>
-                    <button onClick={() => handleDelete(cat.item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Kategori">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Item dalam kategori */}
-                <div className="px-3 py-2 space-y-2">
-                  {cat.children.length === 0 && (
-                    <button
-                      onClick={() => openCreateItem(cat.item.id)}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => handleDrop(e, cat.item.id, 0)}
-                      className="w-full text-left px-3 py-2 rounded-xl border border-dashed border-slate-200 text-xs text-slate-400 hover:text-teal-600 hover:border-teal-300 transition"
-                    >
-                      Kosong — Seret item ke sini atau tambahkan item baru
-                    </button>
+                  {/* Category Placeholder Line Below */}
+                  {isCatDropAfter && (
+                    <div className="h-2 bg-amber-500 rounded-full my-1 animate-pulse shadow-xs" />
                   )}
-                  {cat.children.map((child, idx) => (
-                    <div
-                      key={child.id}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, child)}
-                      onDragEnd={handleDragEnd}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={(e) => handleDrop(e, cat.item.id, idx)}
-                      className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 cursor-grab active:cursor-grabbing ${
-                        dragId === child.id ? 'opacity-40 border-teal-500' : 'hover:border-teal-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <GripVertical className="text-slate-400 shrink-0" size={16} />
-                        <span className="font-medium text-sm text-slate-700 truncate">{child.label}</span>
-                        {Number(child.is_modul) === 1 && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
-                            Modul
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        {child.link_gdrive && (
-                          <a href={child.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link">
-                            <ExternalLink size={13} />
-                          </a>
-                        )}
-                        <button onClick={() => handleOpenEdit(child)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition" title="Ubah Item">
-                          <Edit2 size={13} />
-                        </button>
-                        <button onClick={() => handleDelete(child)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Item">
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {/* Drop zone akhir untuk kategori (mengurutkan kategori setelah item terakhir) */}
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => handleDrop(e, null, tree.length)}
-              className={`rounded-2xl border-2 border-dashed py-4 text-center text-xs transition-colors ${
-                dragId && dragType === 'item'
-                  ? 'border-teal-300 text-teal-600 bg-teal-50/40'
-                  : 'border-slate-200 text-slate-400'
-              }`}
-            >
-              {dragId && dragType === 'item' ? 'Seret keluar untuk jadikan item utama / kategori' : 'Seret kategori di sini untuk menata urutan'}
-            </div>
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
       ) : (
