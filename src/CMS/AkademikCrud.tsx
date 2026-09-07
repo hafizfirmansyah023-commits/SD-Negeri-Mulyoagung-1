@@ -401,28 +401,36 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
         </div>
       ) : viewMode === 'list' ? (
         /* Vertical Drag and Drop List View (multi-kategori, cross-category drop) */
-        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-100 space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100">
-            <div>
-              <h3 className="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2">
-                <ListOrdered className="text-teal-600" size={20} />
+        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-sm border border-slate-100 space-y-4 sm:space-y-6 w-full max-w-full overflow-hidden">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 sm:pb-4 border-b border-slate-100">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-slate-800 text-sm sm:text-base lg:text-lg flex flex-wrap items-center gap-2">
+                <ListOrdered className="text-teal-600 shrink-0" size={20} />
                 <span>Urutan &amp; Kategori Menu Akademik</span>
                 {isSavingOrder && (
                   <span className="inline-flex items-center gap-1.5 text-xs text-teal-600 font-normal">
-                    <RefreshCw size={12} className="animate-spin" /> Menyimpan urutan...
+                    <RefreshCw size={12} className="animate-spin shrink-0" /> Menyimpan urutan...
                   </span>
                 )}
               </h3>
-              <p className="text-xs text-slate-500 mt-1">
-                Gunakan ikon genggam untuk drag &amp; drop item ke atas/bawah atau seret lintas kategori &amp; item mandiri.
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Gunakan grip icon untuk drag &amp; drop item ke atas/bawah atau seret lintas kategori &amp; item mandiri.
               </p>
             </div>
-            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-100">
-              {categories.length} Kategori • {standaloneItems.length} Item Mandiri • {items.length - categories.length - standaloneItems.length} Item Kategori
-            </span>
+            <div className="flex flex-wrap gap-1.5 shrink-0 mt-1 sm:mt-0">
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                {categories.length} Kategori
+              </span>
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
+                {standaloneItems.length} Item Mandiri
+              </span>
+              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                {items.length - categories.length - standaloneItems.length} Item Kategori
+              </span>
+            </div>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-4 sm:space-y-5">
             {/* 1. Item Mandiri (Di Luar Kategori) */}
             <div
               onDragOver={(e) => handleDragOverCategory(e, null)}
@@ -433,39 +441,39 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                   handleDrop(e, null, dropIdx, dropPos);
                 }
               }}
-              className={`rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs ${
+              className={`rounded-2xl border transition-all duration-200 overflow-hidden shadow-xs w-full ${
                 dragType === 'item' && dragOverTarget?.catId === null
                   ? 'border-teal-400 ring-2 ring-teal-400/30 bg-teal-50/40'
                   : 'border-teal-200/80 bg-teal-50/20'
               }`}
             >
-              <div className="flex items-center justify-between gap-2 px-4 py-3 bg-teal-50/80 border-b border-teal-100">
-                <div className="flex items-center gap-2 min-w-0">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 px-3.5 sm:px-4 py-3 bg-teal-50/80 border-b border-teal-100">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
                   <Layers size={16} className="text-teal-700 shrink-0" />
-                  <span className="font-bold text-sm text-teal-900 truncate">Item Mandiri (Tanpa Kategori)</span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800">
-                    {standaloneItems.length} Item
+                  <span className="font-bold text-xs sm:text-sm text-teal-900 break-words">Item Mandiri (Tanpa Kategori)</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 shrink-0">
+                    {standaloneItems.length}
                   </span>
                 </div>
                 <button
                   onClick={() => openCreateItem(null)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer shrink-0 shadow-xs"
                 >
                   <Plus size={13} />
                   <span>Tambah Item Mandiri</span>
                 </button>
               </div>
 
-              <div className="p-3 space-y-2">
+              <div className="p-2.5 sm:p-3 space-y-2">
                 {standaloneItems.length === 0 ? (
                   <div
-                    className={`py-5 text-center text-xs rounded-xl border border-dashed transition-colors ${
+                    className={`py-6 px-4 text-center text-xs rounded-xl border border-dashed transition-colors ${
                       dragType === 'item' && dragOverTarget?.catId === null
                         ? 'border-teal-500 bg-teal-100/60 text-teal-800 font-semibold'
                         : 'border-teal-200 text-teal-700/70'
                     }`}
                   >
-                    Belum ada item mandiri. Seret item ke sini untuk menjadikannya item mandiri.
+                    Belum ada item mandiri. Seret item ke area ini untuk menjadikannya item mandiri.
                   </div>
                 ) : (
                   standaloneItems.map((item, idx) => {
@@ -477,7 +485,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                       <React.Fragment key={item.id}>
                         {/* Placeholder Line Above */}
                         {isDropTargetBefore && (
-                          <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-sm" />
+                          <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
                         )}
 
                         <div
@@ -486,57 +494,61 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                           onDragEnd={handleDragEnd}
                           onDragOver={(e) => handleDragOverItem(e, null, idx)}
                           onDrop={(e) => handleDrop(e, null, idx, dragOverTarget?.position || 'before')}
-                          className={`flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border transition-all duration-150 bg-white ${
+                          className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all duration-150 bg-white ${
                             isBeingDragged
                               ? 'opacity-30 border-dashed border-teal-500 scale-[0.98]'
                               : 'border-slate-200/90 shadow-2xs hover:border-teal-400 hover:shadow-xs'
                           }`}
                         >
-                          <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="flex items-start sm:items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                             <div
-                              className="cursor-grab active:cursor-grabbing p-1 text-slate-400 hover:text-teal-600 rounded transition"
+                              className="cursor-grab active:cursor-grabbing p-1.5 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-slate-100 transition shrink-0 mt-0.5 sm:mt-0 touch-none"
                               title="Geser untuk mengatur urutan atau memindahkan kategori"
                             >
                               <GripVertical size={16} />
                             </div>
-                            <span className="w-5 h-5 rounded-md bg-teal-50 text-teal-700 text-[11px] font-bold flex items-center justify-center shrink-0 border border-teal-100">
+                            <span className="w-5 h-5 rounded-md bg-teal-50 text-teal-700 text-[11px] font-bold flex items-center justify-center shrink-0 border border-teal-100 mt-0.5 sm:mt-0">
                               {idx + 1}
                             </span>
-                            <span className="font-medium text-sm text-slate-800 truncate">{item.label}</span>
-                            {Number(item.is_modul) === 1 && (
-                              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
-                                Modul
+                            <div className="min-w-0 flex-1 flex flex-wrap items-center gap-1.5">
+                              <span className="font-semibold text-xs sm:text-sm text-slate-800 break-words leading-tight">
+                                {item.label}
                               </span>
-                            )}
-                            <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${
-                                Number(item.aktif) === 1
-                                  ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                                  : 'bg-slate-100 text-slate-500 border border-slate-200'
-                              }`}
-                            >
-                              {Number(item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
-                            </span>
+                              {Number(item.is_modul) === 1 && (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
+                                  Modul
+                                </span>
+                              )}
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0 ${
+                                  Number(item.aktif) === 1
+                                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                    : 'bg-slate-100 text-slate-500 border border-slate-200'
+                                }`}
+                              >
+                                {Number(item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
+                              </span>
+                            </div>
                           </div>
 
-                          <div className="flex items-center gap-1.5 shrink-0">
+                          <div className="flex items-center justify-end gap-1.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-100 pl-8 sm:pl-0">
                             {item.link_gdrive && (
-                              <a href={item.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link">
-                                <ExternalLink size={13} />
+                              <a href={item.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link Google Drive">
+                                <ExternalLink size={14} />
                               </a>
                             )}
-                            <button onClick={() => handleOpenEdit(item)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition" title="Ubah Item">
-                              <Edit2 size={13} />
+                            <button onClick={() => handleOpenEdit(item)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition cursor-pointer" title="Ubah Item">
+                              <Edit2 size={14} />
                             </button>
-                            <button onClick={() => handleDelete(item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Item">
-                              <Trash2 size={13} />
+                            <button onClick={() => handleDelete(item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition cursor-pointer" title="Hapus Item">
+                              <Trash2 size={14} />
                             </button>
                           </div>
                         </div>
 
                         {/* Placeholder Line Below */}
                         {isDropTargetAfter && (
-                          <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-sm" />
+                          <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
                         )}
                       </React.Fragment>
                     );
@@ -556,7 +568,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                 <React.Fragment key={cat.item.id}>
                   {/* Category Placeholder Line Above */}
                   {isCatDropBefore && (
-                    <div className="h-2 bg-amber-500 rounded-full my-1 animate-pulse shadow-sm" />
+                    <div className="h-2 bg-amber-500 rounded-full my-1 animate-pulse shadow-xs" />
                   )}
 
                   <div
@@ -576,7 +588,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                         handleDrop(e, cat.item.id, dropIdx, dropPos);
                       }
                     }}
-                    className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                    className={`rounded-2xl border transition-all duration-200 overflow-hidden w-full ${
                       isCatBeingDragged
                         ? 'opacity-30 border-dashed border-amber-500'
                         : isTargetCat && dragType === 'item'
@@ -589,11 +601,11 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                       draggable
                       onDragStart={(e) => handleDragStart(e, cat.item, 'category')}
                       onDragEnd={handleDragEnd}
-                      className="flex items-center justify-between gap-2 px-4 py-3 bg-amber-50/80 border-b border-amber-100 select-none"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-3.5 sm:px-4 py-3 bg-amber-50/80 border-b border-amber-100 select-none"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
                         <div
-                          className="cursor-grab active:cursor-grabbing p-1 text-amber-500 hover:text-amber-700 rounded transition"
+                          className="cursor-grab active:cursor-grabbing p-1.5 text-amber-500 hover:text-amber-700 rounded-lg hover:bg-amber-100/80 transition shrink-0 touch-none"
                           title="Geser untuk mengatur urutan kategori"
                         >
                           <GripVertical size={18} />
@@ -602,13 +614,15 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                           {catIndex + 1}
                         </span>
                         <FolderOpen size={16} className="text-amber-600 shrink-0" />
-                        <span className="font-bold text-sm text-slate-800 truncate">{cat.item.label}</span>
+                        <span className="font-bold text-xs sm:text-sm text-slate-800 break-words leading-tight flex-1">
+                          {cat.item.label}
+                        </span>
                         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200/60 text-amber-800 shrink-0">
                           Kategori
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-amber-100 pl-8 sm:pl-0">
                         <span className="text-[11px] text-slate-500">{cat.children.length} item</span>
                         <span
                           className={`text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
@@ -620,29 +634,31 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                           {Number(cat.item.aktif) === 1 ? <Eye size={11} /> : <EyeOff size={11} />}
                           {Number(cat.item.aktif) === 1 ? 'Aktif' : 'Nonaktif'}
                         </span>
-                        <button onClick={() => openCreateItem(cat.item.id)} className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Tambah item di kategori ini">
-                          <Plus size={14} />
-                        </button>
-                        <button onClick={() => handleOpenEdit(cat.item)} className="p-1.5 text-slate-600 hover:bg-amber-50 hover:text-amber-700 rounded-lg transition" title="Ubah Kategori">
-                          <Edit2 size={14} />
-                        </button>
-                        <button onClick={() => handleDelete(cat.item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Kategori">
-                          <Trash2 size={14} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => openCreateItem(cat.item.id)} className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition cursor-pointer" title="Tambah item di kategori ini">
+                            <Plus size={15} />
+                          </button>
+                          <button onClick={() => handleOpenEdit(cat.item)} className="p-1.5 text-slate-600 hover:bg-amber-100 hover:text-amber-700 rounded-lg transition cursor-pointer" title="Ubah Kategori">
+                            <Edit2 size={15} />
+                          </button>
+                          <button onClick={() => handleDelete(cat.item)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition cursor-pointer" title="Hapus Kategori">
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
                       </div>
                     </div>
 
                     {/* Item dalam kategori */}
-                    <div className="p-3 space-y-2">
+                    <div className="p-2.5 sm:p-3 space-y-2">
                       {cat.children.length === 0 ? (
                         <div
-                          className={`py-4 px-3 rounded-xl border border-dashed text-xs text-center transition-colors ${
+                          className={`py-5 px-4 rounded-xl border border-dashed text-xs text-center transition-colors ${
                             isTargetCat && dragType === 'item'
                               ? 'border-amber-500 bg-amber-100/60 text-amber-900 font-semibold'
                               : 'border-slate-200 text-slate-400'
                           }`}
                         >
-                          Kosong — Seret item ke sini untuk memasukkannya ke kategori ini
+                          Kosong — Seret item ke area ini untuk memasukkannya ke kategori {cat.item.label}
                         </div>
                       ) : (
                         cat.children.map((child, idx) => {
@@ -654,7 +670,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                             <React.Fragment key={child.id}>
                               {/* Child Item Placeholder Above */}
                               {isChildDropBefore && (
-                                <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-sm" />
+                                <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
                               )}
 
                               <div
@@ -663,48 +679,52 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
                                 onDragEnd={handleDragEnd}
                                 onDragOver={(e) => handleDragOverItem(e, cat.item.id, idx)}
                                 onDrop={(e) => handleDrop(e, cat.item.id, idx, dragOverTarget?.position || 'before')}
-                                className={`flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl border transition-all duration-150 ${
+                                className={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 p-2.5 sm:px-3.5 sm:py-2.5 rounded-xl border transition-all duration-150 ${
                                   isChildBeingDragged
                                     ? 'opacity-30 border-dashed border-teal-500 scale-[0.98]'
                                     : 'border-slate-200 bg-slate-50/60 hover:bg-white hover:border-teal-300 hover:shadow-2xs'
                                 }`}
                               >
-                                <div className="flex items-center gap-2.5 min-w-0">
+                                <div className="flex items-start sm:items-center gap-2 sm:gap-2.5 min-w-0 flex-1">
                                   <div
-                                    className="cursor-grab active:cursor-grabbing p-1 text-slate-400 hover:text-teal-600 rounded transition"
+                                    className="cursor-grab active:cursor-grabbing p-1.5 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-slate-200/60 transition shrink-0 mt-0.5 sm:mt-0 touch-none"
                                     title="Geser untuk mengatur urutan atau memindahkan kategori"
                                   >
                                     <GripVertical size={16} />
                                   </div>
-                                  <span className="w-5 h-5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold flex items-center justify-center shrink-0 border border-slate-200">
+                                  <span className="w-5 h-5 rounded-md bg-slate-100 text-slate-600 text-[11px] font-bold flex items-center justify-center shrink-0 border border-slate-200 mt-0.5 sm:mt-0">
                                     {idx + 1}
                                   </span>
-                                  <span className="font-medium text-sm text-slate-700 truncate">{child.label}</span>
-                                  {Number(child.is_modul) === 1 && (
-                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
-                                      Modul
+                                  <div className="min-w-0 flex-1 flex flex-wrap items-center gap-1.5">
+                                    <span className="font-semibold text-xs sm:text-sm text-slate-700 break-words leading-tight">
+                                      {child.label}
                                     </span>
-                                  )}
+                                    {Number(child.is_modul) === 1 && (
+                                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-200 shrink-0">
+                                        Modul
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
 
-                                <div className="flex items-center gap-1.5 shrink-0">
+                                <div className="flex items-center justify-end gap-1.5 shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-200/50 pl-8 sm:pl-0">
                                   {child.link_gdrive && (
-                                    <a href={child.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link">
-                                      <ExternalLink size={13} />
+                                    <a href={child.link_gdrive} target="_blank" rel="noopener noreferrer" className="p-1.5 text-teal-600 hover:bg-teal-50 rounded-lg transition" title="Buka Link Google Drive">
+                                      <ExternalLink size={14} />
                                     </a>
                                   )}
-                                  <button onClick={() => handleOpenEdit(child)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition" title="Ubah Item">
-                                    <Edit2 size={13} />
+                                  <button onClick={() => handleOpenEdit(child)} className="p-1.5 text-slate-600 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition cursor-pointer" title="Ubah Item">
+                                    <Edit2 size={14} />
                                   </button>
-                                  <button onClick={() => handleDelete(child)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition" title="Hapus Item">
-                                    <Trash2 size={13} />
+                                  <button onClick={() => handleDelete(child)} className="p-1.5 text-slate-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition cursor-pointer" title="Hapus Item">
+                                    <Trash2 size={14} />
                                   </button>
                                 </div>
                               </div>
 
                               {/* Child Item Placeholder Below */}
                               {isChildDropAfter && (
-                                <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-sm" />
+                                <div className="h-1.5 bg-teal-500 rounded-full my-1 animate-pulse shadow-xs" />
                               )}
                             </React.Fragment>
                           );
@@ -715,7 +735,7 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
 
                   {/* Category Placeholder Line Below */}
                   {isCatDropAfter && (
-                    <div className="h-2 bg-amber-500 rounded-full my-1 animate-pulse shadow-sm" />
+                    <div className="h-2 bg-amber-500 rounded-full my-1 animate-pulse shadow-xs" />
                   )}
                 </React.Fragment>
               );

@@ -1,89 +1,91 @@
-Perbarui Fitur Menu Akademik – Drag & Drop
+Perbaikan Tampilan Bagian Urutan – Menu Akademik
 
-Perbarui bagian Menu Akademik pada CMS agar pengelolaan item menjadi lebih fleksibel menggunakan fitur Drag & Drop.
+Perbaiki tampilan dan layout pada Menu Akademik → bagian Urutan agar benar-benar responsive dan nyaman digunakan pada semua ukuran layar, baik desktop, tablet, maupun HP.
 
-1. Drag & Drop Item Mandiri
+1. Responsif Desktop
 
-Tambahkan kemampuan untuk mengatur urutan Item Mandiri dengan cara drag & drop.
+Pada ukuran desktop:
 
-Setiap item mandiri dapat digeser ke atas atau ke bawah.
-Perubahan posisi harus langsung memperbarui urutan item.
-Urutan yang sudah diatur harus tersimpan ke database.
-Setelah halaman di-refresh, urutan tetap sesuai dengan hasil drag & drop.
-Tampilkan indikator visual saat item sedang dipindahkan agar pengguna mengetahui posisi tujuan.
-2. Drag & Drop Antar Kategori
+Tampilkan seluruh kategori dan item dengan layout yang rapi.
+Area drag & drop memiliki ukuran yang proporsional.
+Jangan sampai teks, tombol, ikon, atau item terpotong.
+Hindari horizontal overflow atau munculnya scrollbar horizontal yang tidak diperlukan.
+Gunakan spacing dan ukuran elemen yang konsisten.
+Jika terdapat beberapa kolom, pastikan setiap kolom memiliki lebar yang fleksibel dan tidak menyebabkan layout keluar dari container.
+Pastikan tampilan tetap baik pada browser dengan zoom 80%, 90%, 100%, hingga 125%.
+2. Responsif Tablet
 
-Buat sistem drag & drop yang memungkinkan item dipindahkan lintas kategori.
+Pada ukuran tablet:
 
-Contoh:
+Sesuaikan lebar kategori dan item secara otomatis.
+Gunakan layout yang dapat menyesuaikan ukuran layar.
+Jika dua kolom tidak lagi cukup, ubah menjadi satu kolom secara otomatis.
+Pastikan area drag & drop tetap mudah digunakan.
+Jangan sampai tombol aksi, nama kategori, maupun item keluar dari card/container.
+3. Responsif HP
 
-Item dari kategori Modul Pembelajaran dapat dipindahkan ke Item Mandiri.
-Item dari Item Mandiri dapat dipindahkan kembali ke kategori tertentu.
-Item dari Kategori A dapat dipindahkan ke Kategori B.
-Item tetap mempertahankan seluruh data dan hanya mengubah kategori/posisinya.
+Pada ukuran mobile/HP:
 
-Saat item dilepas pada kategori tujuan:
+Gunakan single-column layout.
+Setiap kategori ditampilkan dalam card/container yang memenuhi lebar layar secara proporsional.
+Item tidak boleh terpotong atau keluar dari container.
+Nama item yang panjang harus menggunakan wrapping, bukan memaksa layout melebar.
+Tombol dan ikon tetap terlihat dan mudah ditekan.
+Jangan menggunakan fixed width yang menyebabkan horizontal scrolling.
+Pastikan padding dan margin disesuaikan untuk layar kecil.
+Area drag & drop dibuat cukup besar agar nyaman digunakan pada layar sentuh.
 
-Update kategori item.
-Update posisi/urutan item.
-Simpan perubahan ke database.
-Perbarui tampilan tanpa perlu reload halaman jika memungkinkan.
-3. Struktur Menu
+Drag & Drop Tetap Berfungsi
 
-Pastikan struktur Menu Akademik tetap mudah dipahami, misalnya:
+Responsivitas tidak boleh menghilangkan fungsi drag & drop.
 
-Menu Akademik
+Pastikan:
 
-Kategori A
-Item 1
-Item 2
-Item 3
-Kategori B
-Item 4
-Item 5
-Item Mandiri
-Item 6
-Item 7
+Item dapat dipindahkan ke atas/bawah.
+Item dapat dipindahkan antar kategori.
+Item dapat dipindahkan ke Item Mandiri.
+Item Mandiri dapat dipindahkan kembali ke kategori.
+Tampilkan placeholder/indikator posisi ketika item sedang dipindahkan.
+Pada perangkat touchscreen, drag & drop tetap nyaman digunakan.
+Jangan sampai elemen drag handle terlalu kecil untuk disentuh.
 
-Item dapat dipindahkan secara bebas:
-Kategori A → Kategori B → Item Mandiri → Kategori A
+Handling Teks Panjang
 
-4. Visual Drag & Drop
+Jika nama kategori atau item panjang:
 
-Gunakan UX yang jelas dan modern:
+Teks harus otomatis turun ke baris berikutnya.
+Jangan membuat container melebar.
+Jangan memotong teks secara tidak sengaja.
+Tombol aksi tetap berada pada area yang terlihat.
+Gunakan truncate hanya jika memang diperlukan dan berikan tooltip untuk melihat teks lengkap.
 
-Cursor berubah ketika item dapat digeser.
-Item yang sedang di-drag memiliki efek visual.
-Tampilkan garis/placeholder pada posisi yang akan ditempati.
-Kategori tujuan mendapatkan highlight ketika item diarahkan ke area tersebut.
-Hindari layout bergeser atau rusak ketika proses drag & drop.
-Pastikan tetap responsif pada desktop dan mobile.
+Zoom Browser
 
-Validasi
+Pastikan tampilan Menu Akademik tetap stabil pada:
 
-Sebelum menyimpan perubahan, pastikan item memiliki kategori/tujuan yang valid.
+Zoom 80%
+Zoom 90%
+Zoom 100%
+Zoom 110%
+Zoom 125%
+Zoom 150%
 
-Jika proses penyimpanan gagal:
+Pada zoom 100%, seluruh bagian Urutan harus terlihat normal dan tidak terpotong.
 
-tampilkan notifikasi error,
-kembalikan item ke posisi sebelumnya,
-jangan menghapus data item.
+Jangan Mengubah Fungsionalitas yang Sudah Ada
 
-Jika berhasil:
+Jangan menghapus fitur yang sudah berjalan.
 
-tampilkan notifikasi seperti "Urutan menu berhasil diperbarui" atau "Item berhasil dipindahkan".
-7. Pertahankan Fitur yang Sudah Ada
+Pertahankan:
 
-Jangan menghilangkan atau merusak fitur Menu Akademik yang sudah berjalan seperti:
-
-tambah kategori,
-edit kategori,
-hapus kategori,
-tambah item,
-edit item,
-hapus item,
-pencarian,
+CRUD kategori,
+CRUD item,
+Item Mandiri,
+Drag & Drop,
+pemindahan antar kategori,
+perubahan urutan,
+penyimpanan urutan ke database,
 status aktif/nonaktif,
-dan fitur lainnya yang sudah tersedia.
+serta fitur Menu Akademik lainnya.
 
-Fokus perubahan hanya pada penambahan sistem Drag & Drop dan pengelolaan urutan/kategori item.
+Fokus utama perubahan adalah memperbaiki layout, responsivitas, spacing, wrapping, dan usability bagian Urutan.
