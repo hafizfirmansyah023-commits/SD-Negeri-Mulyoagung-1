@@ -5,6 +5,7 @@ import { AkademikMenuItem } from '../../types';
 interface AkademikFormModalProps {
   showModal: boolean;
   editId: number | null;
+  formType: 'category' | 'item';
   label: string;
   setLabel: (v: string) => void;
   deskripsi: string;
@@ -28,6 +29,7 @@ interface AkademikFormModalProps {
 export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
   showModal,
   editId,
+  formType,
   label,
   setLabel,
   deskripsi,
@@ -62,20 +64,20 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
 
   if (!showModal) return null;
 
-  // Mengedit kategori (parent null) -> sembunyikan link drive & is_modul
-  const editingCategory = parentId === null;
+  const isCategoryMode = formType === 'category';
 
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
       <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-xl shadow-xl border border-slate-100 overflow-hidden my-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-teal-600 to-emerald-600 p-4 sm:p-6 text-white flex justify-between items-center">
+        <div className={`p-4 sm:p-6 text-white flex justify-between items-center ${isCategoryMode ? 'bg-gradient-to-r from-amber-500 to-orange-600' : 'bg-gradient-to-r from-teal-600 to-emerald-600'}`}>
           <div>
-            <h3 className="text-lg sm:text-xl font-bold">
-              {editId ? 'Ubah Menu Akademik' : 'Tambah Menu Akademik Baru'}
+            <h3 className="text-lg sm:text-xl font-bold flex items-center gap-2">
+              {isCategoryMode ? <FolderOpen size={20} /> : <FileText size={20} />}
+              <span>{editId ? (isCategoryMode ? 'Ubah Kategori Akademik' : 'Ubah Item Akademik') : (isCategoryMode ? 'Tambah Kategori Akademik Baru' : 'Tambah Item Akademik Baru')}</span>
             </h3>
-            <p className="text-xs text-teal-100 mt-0.5">
-              {editingCategory ? 'Atur kategori grup di menu akademik publik.' : 'Atur item tautan Google Drive di dalam kategori.'}
+            <p className="text-xs text-white/80 mt-0.5">
+              {isCategoryMode ? 'Kategori berfungsi sebagai grup menu pada navigasi dropdown.' : 'Item tautan Google Drive / modul ajar di dalam kategori.'}
             </p>
           </div>
           <button
@@ -96,53 +98,49 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
           {/* Label Menu */}
           <div>
             <label className="block text-slate-700 text-sm font-medium mb-1.5">
-              Nama / Label Menu *
+              {isCategoryMode ? 'Nama Kategori *' : 'Nama / Label Item *'}
             </label>
             <input
               type="text"
               required
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder={editingCategory ? 'Contoh: Perangkat Pembelajaran' : 'Contoh: Prota & Promes'}
+              placeholder={isCategoryMode ? 'Contoh: Perangkat Pembelajaran' : 'Contoh: Prota & Promes Kelas 1'}
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm"
             />
           </div>
 
-          {/* Kategori Induk */}
-          <div>
-            <label className="block text-slate-700 text-sm font-medium mb-1.5">
-              Kategori Induk
-            </label>
-            <select
-              value={parentId === null ? '' : String(parentId)}
-              onChange={(e) => {
-                const v = e.target.value;
-                setParentId(v === '' ? null : Number(v));
-                if (editId && Number(v) === Number(editId)) {
-                  setParentId(null);
-                }
-              }}
-              disabled={!!editId && editingCategory}
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm bg-white disabled:bg-slate-50 disabled:text-slate-400"
-            >
-              <option value="">— Kategori Utama (Buat Grup) —</option>
-              {categories
-                .filter((c) => !editId || Number(c.id) !== Number(editId))
-                .map((c) => (
-                  <option key={c.id} value={String(c.id)}>
-                    {c.label}
-                  </option>
-                ))}
-            </select>
-            <p className="text-[11px] text-slate-500 mt-1">
-              {editingCategory
-                ? 'Kategori menampung beberapa item di bawahnya pada dropdown Akademik.'
-                : 'Pilih kategori di mana item ini akan ditampilkan.'}
-            </p>
-          </div>
+          {/* Kategori Induk (Hanya muncul jika mode item) */}
+          {!isCategoryMode && (
+            <div>
+              <label className="block text-slate-700 text-sm font-medium mb-1.5">
+                Kategori Induk (Opsional)
+              </label>
+              <select
+                value={parentId === null ? '' : String(parentId)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setParentId(v === '' ? null : Number(v));
+                }}
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-sm bg-white"
+              >
+                <option value="">— Item Mandiri (Tanpa Kategori / Di Luar Kategori) —</option>
+                {categories
+                  .filter((c) => !editId || Number(c.id) !== Number(editId))
+                  .map((c) => (
+                    <option key={c.id} value={String(c.id)}>
+                      {c.label}
+                    </option>
+                  ))}
+              </select>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Pilih kategori induk untuk memasukkan item ke dalam grup, atau biarkan kosong jika ingin item tampil mandiri di luar kategori.
+              </p>
+            </div>
+          )}
 
           {/* Bidang khusus item (bukan kategori) */}
-          {!editingCategory && (
+          {!isCategoryMode ? (
             <>
               {/* Link Google Drive */}
               <div>
@@ -164,7 +162,7 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
                 </div>
               </div>
 
-              {/* Deskripsi (kompatibilitas) */}
+              {/* Deskripsi Singkat */}
               <div>
                 <label className="block text-slate-700 text-sm font-medium mb-1.5">
                   Deskripsi Singkat (Opsional)
@@ -178,6 +176,20 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
                 />
               </div>
             </>
+          ) : (
+            /* Deskripsi untuk Kategori */
+            <div>
+              <label className="block text-slate-700 text-sm font-medium mb-1.5">
+                Deskripsi Kategori (Opsional)
+              </label>
+              <textarea
+                rows={2}
+                value={deskripsi}
+                onChange={(e) => setDeskripsi(e.target.value)}
+                placeholder="Penjelasan singkat mengenai grup/kategori ini (opsional)."
+                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 text-sm"
+              />
+            </div>
           )}
 
           {/* Urutan & Status Tampil */}
@@ -211,7 +223,7 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
           </div>
 
           {/* Toggle Khusus Item Modul Ajar (hanya item) */}
-          {!editingCategory && (
+          {!isCategoryMode && (
             <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 space-y-1.5">
               <label className="flex items-center gap-2.5 cursor-pointer">
                 <input
@@ -241,9 +253,13 @@ export const AkademikFormModal: React.FC<AkademikFormModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
+              className={`px-5 py-2.5 rounded-xl text-white text-sm font-bold shadow-md transition cursor-pointer ${
+                isCategoryMode
+                  ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20'
+                  : 'bg-teal-600 hover:bg-teal-700 shadow-teal-600/20'
+              }`}
             >
-              {editId ? 'Simpan Perubahan' : editingCategory ? 'Tambah Kategori' : 'Tambah Item'}
+              {editId ? 'Simpan Perubahan' : isCategoryMode ? 'Tambah Kategori' : 'Tambah Item'}
             </button>
           </div>
         </form>
