@@ -31,7 +31,6 @@ const VideoProfileSection = lazy(() => import('./components/VideoProfileSection'
 const DirectorySection = lazy(() => import('./components/DirectorySection').then(m => ({ default: m.DirectorySection })));
 const GallerySection = lazy(() => import('./components/GallerySection').then(m => ({ default: m.GallerySection })));
 const SchoolProfileSection = lazy(() => import('./components/SchoolProfileSection').then(m => ({ default: m.SchoolProfileSection })));
-const ModulPembelajaranSection = lazy(() => import('./components/ModulPembelajaranSection').then(m => ({ default: m.ModulPembelajaranSection })));
 const InovasiSection = lazy(() => import('./components/InovasiSection').then(m => ({ default: m.InovasiSection })));
 const InovasiDetailPage = lazy(() => import('./components/inovasi/InovasiDetailPage').then(m => ({ default: m.InovasiDetailPage })));
 const AkademikSection = lazy(() => import('./components/AkademikSection').then(m => ({ default: m.AkademikSection })));
@@ -337,11 +336,7 @@ function AppContent() {
 
           <Route
             path="/modul"
-            element={
-              <div className="pt-4" data-aos="fade-up">
-                <ModulPembelajaranSection />
-              </div>
-            }
+            element={<Navigate to="/akademik/12" replace />}
           />
 
           <Route
