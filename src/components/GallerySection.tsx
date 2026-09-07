@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Image, Search, ArrowUpDown, X } from 'lucide-react';
+import { Image, Search, ArrowUpDown, X, RotateCcw } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { useGalleryData } from '../hooks/useGalleryData';
 import { GalleryCategoryFilter } from './gallery/GalleryCategoryFilter';
@@ -87,6 +87,13 @@ export const GallerySection: React.FC = () => {
     return filteredAndSortedGallery.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredAndSortedGallery, currentPage]);
 
+  const isFiltered = selectedCategory !== 'Semua' || searchTerm.trim() !== '';
+
+  const handleReset = () => {
+    setSelectedCategory('Semua');
+    setSearchTerm('');
+  };
+
   return (
     <section id="gallery-section" className="relative w-full py-16 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
       {/* Decorative subtle ambient glows */}
@@ -111,23 +118,36 @@ export const GallerySection: React.FC = () => {
 
         {/* Toolbar: Search, Filter, and Sort */}
         <div className="bg-white/80 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-slate-100 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cari foto atau kegiatan..."
-              className="w-full pl-10 pr-9 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-xs sm:text-sm text-slate-700 placeholder-slate-400 shadow-inner"
-            />
-            {searchTerm && (
+          {/* Search Input & Reset Button */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-lg w-full">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Cari foto atau kegiatan..."
+                className="w-full pl-10 pr-9 py-2 rounded-xl bg-slate-50 border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-xs sm:text-sm text-slate-700 placeholder-slate-400 shadow-inner"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full cursor-pointer"
+                  title="Hapus pencarian"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {isFiltered && (
               <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full"
-                title="Hapus pencarian"
+                onClick={handleReset}
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer shrink-0 border border-red-100"
+                title="Reset pencarian dan filter kategori"
               >
-                <X size={14} />
+                <RotateCcw size={13} />
+                <span>Reset Filter</span>
               </button>
             )}
           </div>

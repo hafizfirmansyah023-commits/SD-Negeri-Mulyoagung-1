@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Tag, Calendar, Share2, Search, ArrowUpDown, X } from 'lucide-react';
+import { Tag, Calendar, Share2, Search, ArrowUpDown, X, RotateCcw } from 'lucide-react';
 import { NEWS_ARTICLES } from '../data/schoolData';
 import { Article } from '../types';
 import { NewsDetailModal } from './NewsDetailModal';
@@ -149,6 +149,13 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
     return filteredAndSortedArticles.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredAndSortedArticles, currentPage]);
 
+  const isFiltered = selectedCategory !== 'Semua' || searchTerm.trim() !== '';
+
+  const handleReset = () => {
+    setSelectedCategory('Semua');
+    setSearchTerm('');
+  };
+
   const newsSection = homepageConfig.sections.find(s => s.key === 'berita');
   const sectionTitle = newsSection ? newsSection.judul : 'Berita & Informasi Terkini';
   const sectionSubtitle = newsSection ? newsSection.subjudul : 'Ikuti update terbaru seputar kegiatan, kejuaraan, dan pengumuman sekolah';
@@ -176,23 +183,36 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
         {/* Filter, Search, and Sort Toolbar */}
         <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4 shadow-sm">
           
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md w-full">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Cari berita atau pengumuman..."
-              className="w-full pl-10 pr-9 py-2 rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-xs sm:text-sm text-slate-700 placeholder-slate-400 shadow-inner"
-            />
-            {searchTerm && (
+          {/* Search Input & Reset Button */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-lg w-full">
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Cari berita atau pengumuman..."
+                className="w-full pl-10 pr-9 py-2 rounded-xl bg-white border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-xs sm:text-sm text-slate-700 placeholder-slate-400 shadow-inner"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full cursor-pointer"
+                  title="Hapus pencarian"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {isFiltered && (
               <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full"
-                title="Hapus pencarian"
+                onClick={handleReset}
+                className="flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors cursor-pointer shrink-0 border border-red-100"
+                title="Reset pencarian dan filter kategori"
               >
-                <X size={14} />
+                <RotateCcw size={13} />
+                <span>Reset Filter</span>
               </button>
             )}
           </div>

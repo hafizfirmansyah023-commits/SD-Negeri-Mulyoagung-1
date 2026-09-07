@@ -89,6 +89,13 @@ export const DirectorySection: React.FC = () => {
 
   const filteredTeachers = filterAndSortTeachers(activeTeachers, debouncedSearch, roleFilter);
 
+  const isFiltered = searchTerm.trim() !== '' || roleFilter !== 'Semua';
+
+  const handleReset = () => {
+    setSearchTerm('');
+    setRoleFilter('Semua');
+  };
+
   const tabScrollPositions = React.useRef<{ aktif: number; pensiun: number; mutasi: number }>({
     aktif: 0,
     pensiun: 0,
@@ -171,6 +178,8 @@ export const DirectorySection: React.FC = () => {
               roleFilter={roleFilter}
               onRoleSelect={handleRoleSelect}
               roles={ROLE_FILTERS}
+              isFiltered={isFiltered}
+              onReset={handleReset}
             />
 
             {roleFilter === 'Bagan Struktur' && (

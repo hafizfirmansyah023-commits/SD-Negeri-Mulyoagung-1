@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Teacher } from '../../types';
 import { TeacherCard } from './TeacherCard';
 
@@ -45,8 +45,17 @@ export const MutasiContent: React.FC<MutasiContentProps> = ({
               placeholder="Cari nama guru mutasi / NIP / tugas..."
               value={searchTerm}
               onChange={onSearchChange}
-              className="w-full pl-10 pr-4 py-2.5 bg-white/90 border border-teal-100/90 rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#028C84] shadow-inner"
+              className="w-full pl-10 pr-9 py-2.5 bg-white/90 border border-teal-100/90 rounded-2xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#028C84] shadow-inner"
             />
+            {searchTerm && (
+              <button
+                onClick={() => onSearchChange({ target: { value: '' } } as any)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5 rounded-full cursor-pointer"
+                title="Hapus pencarian"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
         </div>
       </div>

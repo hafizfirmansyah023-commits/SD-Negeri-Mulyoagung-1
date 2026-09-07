@@ -95,9 +95,10 @@ try {
 
 // 3. Modul Pembelajaran
 try {
+    $modul_gate = $is_cms ? "" : "EXISTS (SELECT 1 FROM akademik_menu am WHERE am.is_modul = 1 AND am.aktif = 1) AND ";
     $where = $is_cms
         ? "(m.judul LIKE ? OR m.deskripsi LIKE ? OR m.mata_pelajaran LIKE ? OR m.kelas LIKE ? OR m.kategori LIKE ? OR m.semester LIKE ? OR m.tahun_ajaran LIKE ? OR u.nama_penanggung_jawab LIKE ?)"
-        : "m.status_verifikasi = 'Verified' AND m.status = 'Published' AND (m.judul LIKE ? OR m.deskripsi LIKE ? OR m.mata_pelajaran LIKE ? OR m.kelas LIKE ? OR m.kategori LIKE ? OR m.semester LIKE ? OR m.tahun_ajaran LIKE ? OR u.nama_penanggung_jawab LIKE ?)";
+        : "m.status_verifikasi = 'Verified' AND m.status = 'Published' AND {$modul_gate}(m.judul LIKE ? OR m.deskripsi LIKE ? OR m.mata_pelajaran LIKE ? OR m.kelas LIKE ? OR m.kategori LIKE ? OR m.semester LIKE ? OR m.tahun_ajaran LIKE ? OR u.nama_penanggung_jawab LIKE ?)";
 
     $stmt = $conn->prepare("SELECT m.id, m.judul, m.deskripsi, m.mata_pelajaran, m.kelas, m.semester, m.tahun_ajaran, m.kategori, m.sumber_tipe, m.file_pdf, m.link_gdrive, m.foto_cover, m.foto_cover_crop, m.status, m.status_verifikasi, u.nama_penanggung_jawab as uploader FROM modul_pembelajaran m LEFT JOIN users u ON m.uploaded_by = u.id WHERE $where ORDER BY m.id DESC LIMIT $limit");
     $stmt->execute([$param, $param, $param, $param, $param, $param, $param, $param]);
