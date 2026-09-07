@@ -32,7 +32,8 @@ export const InovasiSection: React.FC<InovasiSectionProps> = ({
     if (state?.openInovasi && inovasiList.length > 0) {
       const found = inovasiList.find((i) => String(i.id) === String(state.openInovasi));
       if (found) {
-        navigate(`/inovasi/${found.id}`, { replace: true });
+        setSearchTerm(found.judul);
+        navigate(location.pathname, { replace: true, state: {} });
       }
     }
   }, [inovasiList, location, navigate]);

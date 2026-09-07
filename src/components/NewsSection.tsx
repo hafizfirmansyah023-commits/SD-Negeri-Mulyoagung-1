@@ -30,14 +30,15 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
 
   useEffect(() => {
     const state = location.state as { openArticle?: string } | null;
-    if (state?.openArticle) {
-      const found = articles.find((a) => a.id === state.openArticle);
+    if (state?.openArticle && articles.length > 0) {
+      const found = articles.find((a) => String(a.id) === String(state.openArticle));
       if (found) {
+        setSearchTerm(found.title);
         setActiveArticle(found);
         navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [articles, location]);
+  }, [articles, location, navigate]);
 
   const handleShare = (e: React.MouseEvent, article: Article) => {
     e.stopPropagation();

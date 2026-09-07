@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useDebounce } from '../../hooks/useDebounce';
 
 export interface UseCmsFilterOptions<T> {
@@ -16,9 +17,31 @@ export function useCmsFilter<T>({
   customFilter,
   debounceDelay = 1000,
 }: UseCmsFilterOptions<T>) {
+  const location = useLocation();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, debounceDelay);
   const [filters, setFilters] = useState<Record<string, string>>(initialFilters);
+
+  // Auto-apply search from router state or custom search event (from CMS Global Search)
+  useEffect(() => {
+    const state = location.state as { cmsSearch?: string; search?: string } | null;
+    const query = state?.cmsSearch || state?.search;
+    if (query && typeof query === 'string') {
+      setSearchTerm(query);
+    }
+
+    const handleCmsSearchEvent = (e: Event) => {
+      const customEv = e as CustomEvent<{ search?: string }>;
+      if (customEv.detail?.search) {
+        setSearchTerm(customEv.detail.search);
+      }
+    };
+
+    window.addEventListener('cms-search-filter', handleCmsSearchEvent);
+    return () => {
+      window.removeEventListener('cms-search-filter', handleCmsSearchEvent);
+    };
+  }, [location.state]);
 
   const setFilter = (key: string, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Search,
   X,
@@ -81,29 +82,170 @@ interface CmsMenuItem {
   description: string;
   icon: any;
   allowedRoles: string[];
+  keywords: string[];
 }
 
 const ALL_CMS_MENUS: CmsMenuItem[] = [
-  { tab: 'dashboard', title: 'Dashboard Utama', description: 'Statistik & ringkasan aktivitas konten', icon: LayoutDashboard, allowedRoles: ['ADMIN', 'GURU', 'TIM'] },
-  { tab: 'berita', title: 'Berita & Kegiatan', description: 'Kelola artikel berita dan kabar sekolah', icon: FileText, allowedRoles: ['ADMIN', 'TIM'] },
-  { tab: 'galeri', title: 'Galeri Foto', description: 'Dokumentasi foto kegiatan sekolah', icon: ImageIcon, allowedRoles: ['ADMIN', 'TIM'] },
-  { tab: 'modul', title: 'Modul Pembelajaran', description: 'Materi ajar digital, LKPD & panduan', icon: BookOpen, allowedRoles: ['ADMIN', 'GURU'] },
-  { tab: 'inovasi', title: 'Inovasi Sekolah', description: 'Dokumentasi inovasi dan karya kreatif', icon: Lightbulb, allowedRoles: ['ADMIN', 'GURU'] },
-  { tab: 'guru', title: 'Direktori Guru & Tendik', description: 'Data profil tenaga pendidik & staf', icon: User, allowedRoles: ['ADMIN'] },
-  { tab: 'akademik', title: 'Menu Dokumen Akademik', description: 'Kelola dokumen akademik Google Drive', icon: Layers, allowedRoles: ['ADMIN'] },
-  { tab: 'pengumuman', title: 'Pengumuman Penting', description: 'Kelola teks pengumuman darurat / banner', icon: Megaphone, allowedRoles: ['ADMIN'] },
-  { tab: 'verifikasi', title: 'Pusat Verifikasi Konten', description: 'Review & persetujuan konten dari Tim/Guru', icon: ShieldAlert, allowedRoles: ['ADMIN'] },
-  { tab: 'fasilitas', title: 'Fasilitas Sekolah', description: 'Daftar sarana dan prasarana', icon: Building2, allowedRoles: ['ADMIN'] },
-  { tab: 'statistik', title: 'Statistik Sekolah', description: 'Angka murid, guru, ruang kelas, prestasi', icon: BarChart3, allowedRoles: ['ADMIN'] },
-  { tab: 'user', title: 'Manajemen Pengguna & Akun', description: 'Kelola akun Admin, Guru, dan Tim', icon: Users, allowedRoles: ['ADMIN', 'GURU', 'TIM'] },
-  { tab: 'pengaturan', title: 'Struktur Halaman Utama', description: 'Urutan dan visibilitas section beranda', icon: Sliders, allowedRoles: ['ADMIN'] },
-  { tab: 'visimisi', title: 'Visi & Misi', description: 'Visi, misi, dan tujuan sekolah', icon: CheckCircle2, allowedRoles: ['ADMIN'] },
-  { tab: 'sejarah', title: 'Sejarah Sekolah', description: 'Sejarah berdirinya SDN 1 Mulyoagung', icon: History, allowedRoles: ['ADMIN'] },
-  { tab: 'hero', title: 'Carousel Hero Banner', description: 'Banner slider gambar di beranda utama', icon: Sliders, allowedRoles: ['ADMIN'] },
-  { tab: 'kontenutama', title: 'Video Profil Sekolah', description: 'Embed video profil YouTube resmi', icon: Layers, allowedRoles: ['ADMIN'] },
-  { tab: 'ppdb', title: 'Halaman PPDB', description: 'Pengaturan link pendaftaran siswa baru', icon: GraduationCap, allowedRoles: ['ADMIN'] },
-  { tab: 'kontak', title: 'Kontak Resmi', description: 'Alamat, nomor WhatsApp, email, peta', icon: Mail, allowedRoles: ['ADMIN'] },
-  { tab: 'medsos', title: 'Media Sosial', description: 'Link akun YouTube, Instagram, Facebook, TikTok', icon: Share2, allowedRoles: ['ADMIN'] },
+  {
+    tab: 'dashboard',
+    title: 'Dashboard Utama',
+    description: 'Statistik & ringkasan aktivitas konten',
+    icon: LayoutDashboard,
+    allowedRoles: ['ADMIN', 'GURU', 'TIM'],
+    keywords: ['dashboard', 'overview', 'ringkasan', 'stat', 'home', 'beranda', 'admin'],
+  },
+  {
+    tab: 'berita',
+    title: 'Berita & Kegiatan',
+    description: 'Kelola artikel berita dan kabar sekolah',
+    icon: FileText,
+    allowedRoles: ['ADMIN', 'TIM'],
+    keywords: ['berita', 'news', 'article', 'articles', 'artikel', 'post', 'posting', 'kabar', 'kegiatan', 'event', 'publikasi'],
+  },
+  {
+    tab: 'galeri',
+    title: 'Galeri Foto',
+    description: 'Dokumentasi foto kegiatan sekolah',
+    icon: ImageIcon,
+    allowedRoles: ['ADMIN', 'TIM'],
+    keywords: ['galeri', 'gallery', 'photo', 'photos', 'foto', 'gambar', 'image', 'images', 'album', 'dokumentasi', 'documentation'],
+  },
+  {
+    tab: 'modul',
+    title: 'Modul Pembelajaran',
+    description: 'Materi ajar digital, LKPD & panduan',
+    icon: BookOpen,
+    allowedRoles: ['ADMIN', 'GURU'],
+    keywords: ['modul', 'module', 'modules', 'materi', 'learning', 'materials', 'lesson', 'lessons', 'pembelajaran', 'buku', 'book', 'lkpd', 'worksheet', 'bahan ajar', 'subject', 'kurikulum merdeka'],
+  },
+  {
+    tab: 'inovasi',
+    title: 'Inovasi Sekolah',
+    description: 'Dokumentasi inovasi dan karya kreatif',
+    icon: Lightbulb,
+    allowedRoles: ['ADMIN', 'GURU'],
+    keywords: ['inovasi', 'innovation', 'karya', 'creation', 'creativity', 'kreativitas', 'program', 'project', 'projek', 'inovatif', 'innovative', 'kabumiga', 'jumaga'],
+  },
+  {
+    tab: 'guru',
+    title: 'Direktori Guru & Tendik',
+    description: 'Data profil tenaga pendidik & staf',
+    icon: User,
+    allowedRoles: ['ADMIN'],
+    keywords: ['guru', 'teacher', 'teachers', 'tendik', 'staff', 'staf', 'pegawai', 'tenaga pendidik', 'educator', 'kepala sekolah', 'direktori', 'directory', 'profil guru'],
+  },
+  {
+    tab: 'akademik',
+    title: 'Menu Dokumen Akademik',
+    description: 'Kelola dokumen akademik Google Drive',
+    icon: Layers,
+    allowedRoles: ['ADMIN'],
+    keywords: ['akademik', 'academic', 'dokumen', 'documents', 'kurikulum', 'curriculum', 'kalender pendidikan', 'academic calendar', 'gdrive', 'google drive'],
+  },
+  {
+    tab: 'pengumuman',
+    title: 'Pengumuman Penting',
+    description: 'Kelola teks pengumuman darurat / banner',
+    icon: Megaphone,
+    allowedRoles: ['ADMIN'],
+    keywords: ['pengumuman', 'announcement', 'announcements', 'notice', 'banner', 'penting', 'urgent', 'alert', 'info', 'informasi'],
+  },
+  {
+    tab: 'verifikasi',
+    title: 'Pusat Verifikasi Konten',
+    description: 'Review & persetujuan konten dari Tim/Guru',
+    icon: ShieldAlert,
+    allowedRoles: ['ADMIN'],
+    keywords: ['verifikasi', 'verification', 'approval', 'approve', 'review', 'moderasi', 'pusat verifikasi', 'pending', 'rejected', 'status'],
+  },
+  {
+    tab: 'fasilitas',
+    title: 'Fasilitas Sekolah',
+    description: 'Daftar sarana dan prasarana',
+    icon: Building2,
+    allowedRoles: ['ADMIN'],
+    keywords: ['fasilitas', 'facility', 'facilities', 'sarana', 'prasarana', 'infrastructure', 'lab', 'perpus', 'ruang', 'gedung', 'laboratorium'],
+  },
+  {
+    tab: 'statistik',
+    title: 'Statistik Sekolah',
+    description: 'Angka murid, guru, ruang kelas, prestasi',
+    icon: BarChart3,
+    allowedRoles: ['ADMIN'],
+    keywords: ['statistik', 'statistic', 'statistics', 'data', 'angka', 'jumlah siswa', 'prestasi', 'metrics', 'stats'],
+  },
+  {
+    tab: 'user',
+    title: 'Manajemen Pengguna & Akun',
+    description: 'Kelola akun Admin, Guru, dan Tim',
+    icon: Users,
+    allowedRoles: ['ADMIN', 'GURU', 'TIM'],
+    keywords: ['user', 'users', 'pengguna', 'akun', 'account', 'accounts', 'admin', 'guru', 'tim', 'role', 'password', 'profil saya', 'profile'],
+  },
+  {
+    tab: 'pengaturan',
+    title: 'Struktur Halaman Utama',
+    description: 'Urutan dan visibilitas section beranda',
+    icon: Sliders,
+    allowedRoles: ['ADMIN'],
+    keywords: ['pengaturan', 'settings', 'struktur', 'halaman utama', 'layout', 'sections', 'urutan', 'beranda', 'homepage'],
+  },
+  {
+    tab: 'visimisi',
+    title: 'Visi & Misi',
+    description: 'Visi, misi, dan tujuan sekolah',
+    icon: CheckCircle2,
+    allowedRoles: ['ADMIN'],
+    keywords: ['visi misi', 'vision mission', 'vision', 'mission', 'visi', 'misi', 'tujuan', 'goals', 'objective'],
+  },
+  {
+    tab: 'sejarah',
+    title: 'Sejarah Sekolah',
+    description: 'Sejarah berdirinya SDN 1 Mulyoagung',
+    icon: History,
+    allowedRoles: ['ADMIN'],
+    keywords: ['sejarah', 'history', 'about', 'tentang', 'asal usul', 'pendirian'],
+  },
+  {
+    tab: 'hero',
+    title: 'Carousel Hero Banner',
+    description: 'Banner slider gambar di beranda utama',
+    icon: Sliders,
+    allowedRoles: ['ADMIN'],
+    keywords: ['hero', 'banner', 'slider', 'carousel', 'header', 'gambar depan', 'slide'],
+  },
+  {
+    tab: 'kontenutama',
+    title: 'Video Profil Sekolah',
+    description: 'Embed video profil YouTube resmi',
+    icon: Layers,
+    allowedRoles: ['ADMIN'],
+    keywords: ['video', 'video profil', 'youtube', 'embed', 'media', 'konten video', 'profile video'],
+  },
+  {
+    tab: 'ppdb',
+    title: 'Halaman PPDB',
+    description: 'Pengaturan link pendaftaran siswa baru',
+    icon: GraduationCap,
+    allowedRoles: ['ADMIN'],
+    keywords: ['ppdb', 'pendaftaran', 'admission', 'admissions', 'siswa baru', 'register', 'registration', 'link ppdb'],
+  },
+  {
+    tab: 'kontak',
+    title: 'Kontak Resmi',
+    description: 'Alamat, nomor WhatsApp, email, peta',
+    icon: Mail,
+    allowedRoles: ['ADMIN'],
+    keywords: ['kontak', 'contact', 'contact us', 'alamat', 'address', 'whatsapp', 'email', 'telepon', 'phone', 'maps', 'lokasi', 'location'],
+  },
+  {
+    tab: 'medsos',
+    title: 'Media Sosial',
+    description: 'Link akun YouTube, Instagram, Facebook, TikTok',
+    icon: Share2,
+    allowedRoles: ['ADMIN'],
+    keywords: ['medsos', 'media sosial', 'social media', 'instagram', 'youtube', 'tiktok', 'facebook', 'links'],
+  },
 ];
 
 export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
@@ -220,14 +362,17 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Filter accessible CMS menus matching query
+  // Filter accessible CMS menus matching query (bilingual support)
   const matchedMenus = useMemo(() => {
     const q = debouncedQuery.toLowerCase().trim();
     if (!q) return [];
     return ALL_CMS_MENUS.filter(
       (m) =>
         m.allowedRoles.includes(currentUser.role) &&
-        (m.title.toLowerCase().includes(q) || m.description.toLowerCase().includes(q) || m.tab.toLowerCase().includes(q))
+        (m.title.toLowerCase().includes(q) ||
+          m.description.toLowerCase().includes(q) ||
+          m.tab.toLowerCase().includes(q) ||
+          m.keywords.some((kw) => kw.includes(q) || q.includes(kw)))
     );
   }, [debouncedQuery, currentUser.role]);
 
@@ -246,8 +391,17 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
     );
   }, [matchedMenus, results]);
 
-  const handleSelectTab = (tab: CmsTab) => {
-    setActiveTab(tab);
+  const navigate = useNavigate();
+
+  const handleSelectTab = (tab: CmsTab, searchKeyword?: string) => {
+    if (searchKeyword) {
+      navigate(`/cms/${tab}`, { state: { cmsSearch: searchKeyword } });
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('cms-search-filter', { detail: { search: searchKeyword } }));
+      }, 50);
+    } else {
+      setActiveTab(tab);
+    }
     onClose();
   };
 
@@ -446,7 +600,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.berita.map((art) => (
                       <div
                         key={`b-${art.id}`}
-                        onClick={() => handleSelectTab('berita')}
+                        onClick={() => handleSelectTab('berita', art.judul)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-teal-500/50 rounded-2xl transition-all cursor-pointer flex items-center gap-3 group"
                       >
                         {art.foto && (
@@ -485,7 +639,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.inovasi.map((inov) => (
                       <div
                         key={`i-${inov.id}`}
-                        onClick={() => handleSelectTab('inovasi')}
+                        onClick={() => handleSelectTab('inovasi', inov.judul)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-amber-500/50 rounded-2xl transition-all cursor-pointer flex items-center gap-3 group"
                       >
                         <div className="w-12 h-12 rounded-xl bg-amber-900/50 text-amber-300 flex items-center justify-center shrink-0 border border-amber-700/40">
@@ -520,7 +674,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.modul.map((mod) => (
                       <div
                         key={`m-${mod.id}`}
-                        onClick={() => handleSelectTab('modul')}
+                        onClick={() => handleSelectTab('modul', mod.judul)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-blue-500/50 rounded-2xl transition-all cursor-pointer flex items-center gap-3 group"
                       >
                         <div className="w-12 h-12 rounded-xl bg-blue-900/50 text-blue-300 flex items-center justify-center shrink-0 border border-blue-700/40">
@@ -555,7 +709,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.galeri.map((gal) => (
                       <div
                         key={`g-${gal.id}`}
-                        onClick={() => handleSelectTab('galeri')}
+                        onClick={() => handleSelectTab('galeri', gal.judul)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-amber-500/50 rounded-2xl transition-all cursor-pointer flex items-center gap-3 group"
                       >
                         {gal.foto && (
@@ -594,7 +748,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.guru.map((teach) => (
                       <div
                         key={`t-${teach.id}`}
-                        onClick={() => handleSelectTab('guru')}
+                        onClick={() => handleSelectTab('guru', teach.nama)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-emerald-500/50 rounded-2xl transition-all cursor-pointer flex items-center gap-3 group"
                       >
                         <div className="w-10 h-10 rounded-full bg-slate-700 overflow-hidden shrink-0 border border-slate-600">
@@ -630,7 +784,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                       {results.users.map((usr) => (
                         <div
                           key={`u-${usr.id}`}
-                          onClick={() => handleSelectTab('user')}
+                          onClick={() => handleSelectTab('user', usr.nama_penanggung_jawab || usr.username)}
                           className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-purple-500/50 rounded-2xl transition-all cursor-pointer flex items-center justify-between group"
                         >
                           <div className="flex items-center gap-3 min-w-0">
@@ -667,7 +821,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.akademik.map((akd) => (
                       <div
                         key={`ak-${akd.id}`}
-                        onClick={() => handleSelectTab('akademik')}
+                        onClick={() => handleSelectTab('akademik', akd.label)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-indigo-500/50 rounded-2xl transition-all cursor-pointer flex items-center justify-between group"
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -701,7 +855,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.fasilitas.map((fas) => (
                       <div
                         key={`f-${fas.id}`}
-                        onClick={() => handleSelectTab('fasilitas')}
+                        onClick={() => handleSelectTab('fasilitas', fas.judul)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-rose-500/50 rounded-2xl transition-all cursor-pointer flex items-center gap-3 group"
                       >
                         {fas.foto ? (
@@ -738,7 +892,7 @@ export const CmsGlobalSearchModal: React.FC<CmsGlobalSearchModalProps> = ({
                     {results.pengumuman.map((peng) => (
                       <div
                         key={`p-${peng.id}`}
-                        onClick={() => handleSelectTab('pengumuman')}
+                        onClick={() => handleSelectTab('pengumuman', peng.judul)}
                         className="p-3 bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 hover:border-amber-500/50 rounded-2xl transition-all cursor-pointer flex items-center justify-between group"
                       >
                         <div className="min-w-0 flex-1">

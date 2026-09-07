@@ -29,13 +29,28 @@ export const DirectorySection: React.FC = () => {
   useEffect(() => {
     const state = location.state as { openTeacher?: string } | null;
     if (state?.openTeacher && teachers.length > 0) {
-      const found = teachers.find((t) => t.id === state.openTeacher);
+      const found = teachers.find((t) => String(t.id) === String(state.openTeacher));
       if (found) {
+        // Filter directory list to show only the selected teacher
+        setSearchTerm(found.name);
+        
+        // Switch tab if teacher is pensiun or mutasi
+        const st = (found.status || '').toLowerCase();
+        if (st === 'pensiun') {
+          setActiveTab('pensiun');
+          setPensiunSearchTerm(found.name);
+        } else if (st === 'mutasi') {
+          setActiveTab('mutasi');
+          setMutasiSearchTerm(found.name);
+        } else {
+          setActiveTab('aktif');
+        }
+
         setSelectedTeacherForModal(found);
         navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [teachers, location]);
+  }, [teachers, location, navigate]);
 
   const scrollToBagan = () => {
     const el = document.getElementById('bagan-struktur-section');

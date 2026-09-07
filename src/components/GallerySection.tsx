@@ -25,13 +25,14 @@ export const GallerySection: React.FC = () => {
   useEffect(() => {
     const state = location.state as { openPhoto?: string } | null;
     if (state?.openPhoto && galleryItems.length > 0) {
-      const found = galleryItems.find((item) => item.id === state.openPhoto);
+      const found = galleryItems.find((item) => String(item.id) === String(state.openPhoto));
       if (found) {
+        setSearchTerm(found.title);
         setActivePhoto(found);
         navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [galleryItems, location]);
+  }, [galleryItems, location, navigate]);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(galleryItems.map((item) => item.category).filter(Boolean)));

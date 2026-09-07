@@ -96,6 +96,7 @@ export const FasilitasSection: React.FC<FasilitasSectionProps> = ({
     if (state?.openFasilitas && facilities.length > 0) {
       const found = facilities.find((f) => String(f.id) === String(state.openFasilitas));
       if (found) {
+        setSearchTerm(found.judul);
         setSelectedFacility(found);
         navigate(location.pathname, { replace: true, state: {} });
       }

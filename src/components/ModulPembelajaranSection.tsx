@@ -29,11 +29,12 @@ export const ModulPembelajaranSection: React.FC = () => {
     if (state?.openModul && modules.length > 0) {
       const found = modules.find((m) => String(m.id) === String(state.openModul));
       if (found) {
+        setSearchTerm(found.judul);
         setPreviewModule(found);
         navigate(location.pathname, { replace: true, state: {} });
       }
     }
-  }, [modules, location]);
+  }, [modules, location, navigate]);
 
   useEffect(() => {
     const fetchPublicModules = async () => {
