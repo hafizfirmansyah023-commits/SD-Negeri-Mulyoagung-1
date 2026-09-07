@@ -1,9 +1,10 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { UserSession, CmsTab } from './types';
 import CmsLogin from './components/CmsLogin';
 import CmsSidebar from './components/CmsSidebar';
 import { CmsOverviewDashboard } from './CmsOverviewDashboard';
+import { CmsGlobalSearchModal } from './components/CmsGlobalSearchModal';
 
 // Lazy load heavy CRUD modules for CMS
 const GuruCrud = lazy(() => import('./GuruCrud'));
@@ -35,14 +36,27 @@ interface DashboardProps {
 
 export default function Dashboard({ onBackToHome }: DashboardProps) {
     const [user, setUser] = useState<UserSession | null>(null);
+    const [searchOpen, setSearchOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
 
     const activeTab = (location.pathname.split('/')[2] || 'dashboard') as CmsTab;
 
-    const setActiveTab = (tab: CmsTab) => {
+    const setActiveTab = useCallback((tab: CmsTab) => {
         navigate(`/cms/${tab}`);
-    };
+    }, [navigate]);
+
+    // Global search shortcut (Ctrl+K / Cmd+K)
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                setSearchOpen((prev) => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
 
     useEffect(() => {
         const savedUser = localStorage.getItem('cms_user');
@@ -114,6 +128,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 setActiveTab={setActiveTab}
                 onBackToHome={onBackToHome}
                 onLogout={handleLogout}
+                onOpenSearch={() => setSearchOpen(true)}
             />
 
             <main className="md:ml-64 p-3.5 sm:p-6 md:p-8 min-h-screen max-w-full overflow-x-clip">
@@ -146,6 +161,12 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'medsos' && user.role === 'ADMIN' && <MedsosCrud />}
                 </Suspense>
             </main>
+            <CmsGlobalSearchModal
+                isOpen={searchOpen}
+                onClose={() => setSearchOpen(false)}
+                currentUser={user}
+                setActiveTab={setActiveTab}
+            />
             <FileValidationModal />
         </div>
     );

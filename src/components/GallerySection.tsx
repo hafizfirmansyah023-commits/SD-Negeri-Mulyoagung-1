@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Image, Search, ArrowUpDown, X } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { useGalleryData } from '../hooks/useGalleryData';
@@ -11,6 +12,8 @@ import { useDebounce } from '../hooks/useDebounce';
 const ITEMS_PER_PAGE = 6;
 
 export const GallerySection: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const galleryItems = useGalleryData();
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -18,6 +21,17 @@ export const GallerySection: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'terbaru' | 'terlama'>('terbaru');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activePhoto, setActivePhoto] = useState<GalleryItem | null>(null);
+
+  useEffect(() => {
+    const state = location.state as { openPhoto?: string } | null;
+    if (state?.openPhoto && galleryItems.length > 0) {
+      const found = galleryItems.find((item) => item.id === state.openPhoto);
+      if (found) {
+        setActivePhoto(found);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [galleryItems, location]);
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(galleryItems.map((item) => item.category).filter(Boolean)));

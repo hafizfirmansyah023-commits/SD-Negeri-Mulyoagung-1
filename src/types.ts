@@ -103,4 +103,4 @@ export interface InovasiItem {
   updated_at?: string;
 }
 
-export type NavTab = 'home' | 'profile' | 'directory' | 'akademik' | 'gallery' | 'news' | 'modul' | 'inovasi' | 'contact' | 'ppdb' | 'cms';
+export type NavTab = 'home' | 'profile' | 'directory' | 'akademik' | 'gallery' | 'news' | 'modul' | 'inovasi' | 'fasilitas' | 'contact' | 'ppdb' | 'cms';

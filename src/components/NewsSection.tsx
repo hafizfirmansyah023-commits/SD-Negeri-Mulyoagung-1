@@ -7,6 +7,7 @@ import { Pagination } from './common/Pagination';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { useHomepageConfig } from '../hooks/useHomepageConfig';
 import { useDebounce } from '../hooks/useDebounce';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface NewsSectionProps {
   onViewAllClick?: () => void;
@@ -16,6 +17,8 @@ let cachedArticles: Article[] | null = null;
 const ITEMS_PER_PAGE = 6;
 
 export const NewsSection: React.FC<NewsSectionProps> = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [articles, setArticles] = useState<Article[]>(cachedArticles || []);
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -24,6 +27,17 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [activeArticle, setActiveArticle] = useState<Article | null>(null);
   const homepageConfig = useHomepageConfig();
+
+  useEffect(() => {
+    const state = location.state as { openArticle?: string } | null;
+    if (state?.openArticle) {
+      const found = articles.find((a) => a.id === state.openArticle);
+      if (found) {
+        setActiveArticle(found);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [articles, location]);
 
   const handleShare = (e: React.MouseEvent, article: Article) => {
     e.stopPropagation();

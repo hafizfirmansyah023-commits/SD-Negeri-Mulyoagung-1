@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { GraduationCap } from 'lucide-react';
 import { Teacher } from '../types';
 import { useTeachersData } from '../hooks/useTeachersData';
@@ -12,6 +13,8 @@ import { MutasiContent } from './directory/MutasiContent';
 import { useDebounce } from '../hooks/useDebounce';
 
 export const DirectorySection: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const teachers = useTeachersData();
   const [searchTerm, setSearchTerm] = useState('');
   const [pensiunSearchTerm, setPensiunSearchTerm] = useState('');
@@ -22,6 +25,17 @@ export const DirectorySection: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string>('Semua');
   const [selectedTeacherForModal, setSelectedTeacherForModal] = useState<Teacher | null>(null);
   const [activeTab, setActiveTab] = useState<'aktif' | 'pensiun' | 'mutasi'>('aktif');
+
+  useEffect(() => {
+    const state = location.state as { openTeacher?: string } | null;
+    if (state?.openTeacher && teachers.length > 0) {
+      const found = teachers.find((t) => t.id === state.openTeacher);
+      if (found) {
+        setSelectedTeacherForModal(found);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [teachers, location]);
 
   const scrollToBagan = () => {
     const el = document.getElementById('bagan-struktur-section');

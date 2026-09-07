@@ -36,6 +36,7 @@ const InovasiSection = lazy(() => import('./components/InovasiSection').then(m =
 const InovasiDetailPage = lazy(() => import('./components/inovasi/InovasiDetailPage').then(m => ({ default: m.InovasiDetailPage })));
 const AkademikSection = lazy(() => import('./components/AkademikSection').then(m => ({ default: m.AkademikSection })));
 const ContactSection = lazy(() => import('./components/ContactSection').then(m => ({ default: m.ContactSection })));
+const FasilitasSection = lazy(() => import('./components/FasilitasSection').then(m => ({ default: m.FasilitasSection })));
 const PpdbModal = lazy(() => import('./components/PpdbModal').then(m => ({ default: m.PpdbModal })));
 const GlobalSearchModal = lazy(() => import('./components/GlobalSearchModal').then(m => ({ default: m.GlobalSearchModal })));
 const Dashboard = lazy(() => import('./CMS/Dashboard'));
@@ -225,6 +226,24 @@ function AppContent() {
                             <NewsSection onViewAllClick={() => setActiveTab('news')} />
                           </div>
                         );
+                      case 'inovasi':
+                        return (
+                          <div data-aos="fade-up" data-aos-delay="100" key="inovasi">
+                            <InovasiSection onViewAllClick={() => setActiveTab('inovasi')} isHomepagePreview={true} />
+                          </div>
+                        );
+                      case 'galeri':
+                        return (
+                          <div data-aos="fade-up" data-aos-delay="100" key="galeri">
+                            <GallerySection />
+                          </div>
+                        );
+                      case 'fasilitas':
+                        return (
+                          <div data-aos="fade-up" data-aos-delay="100" key="fasilitas">
+                            <FasilitasSection onViewAllClick={() => setActiveTab('fasilitas')} isHomepagePreview={true} />
+                          </div>
+                        );
                       case 'profil':
                         return (
                           <div data-aos="fade-up" data-aos-delay="100" key="profil">
@@ -320,6 +339,15 @@ function AppContent() {
           <Route
             path="/modul"
             element={<Navigate to="/akademik" replace />}
+          />
+
+          <Route
+            path="/fasilitas"
+            element={
+              <div className="pt-4" data-aos="fade-up">
+                <FasilitasSection />
+              </div>
+            }
           />
 
           <Route
