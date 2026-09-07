@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getApiBaseUrl } from '../config/api';
 
 export const ModulRedirect: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let cancelled = false;
@@ -16,14 +17,14 @@ export const ModulRedirect: React.FC = () => {
           ? (json.data.find((item: { is_modul?: number | string }) => Number(item.is_modul) === 1)
             || json.data.find((item: { label?: string }) => /modul ajar/i.test(item.label || '')))
           : null;
-        navigate(modulItem ? `/akademik/${modulItem.id}` : '/akademik', { replace: true });
+        navigate(modulItem ? `/akademik/${modulItem.id}` : '/akademik', { replace: true, state: location.state });
       } catch {
-        if (!cancelled) navigate('/akademik', { replace: true });
+        if (!cancelled) navigate('/akademik', { replace: true, state: location.state });
       }
     };
     resolve();
     return () => { cancelled = true; };
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   return null;
 };
