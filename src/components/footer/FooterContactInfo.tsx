@@ -1,9 +1,9 @@
 import React from 'react';
-import { Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone,  MessageCircle } from 'lucide-react';
 import { useSchoolSettings } from '../../hooks/useSchoolSettings';
 
 export const FooterContactInfo: React.FC = () => {
-  const { emailSekolah, teleponSekolah, alamatSekolah } = useSchoolSettings();
+  const { emailSekolah, teleponSekolah, alamatSekolah, whatsappSekolah } = useSchoolSettings();
 
   return (
     <div className="md:col-span-4 space-y-3 sm:space-y-4">
@@ -25,6 +25,12 @@ export const FooterContactInfo: React.FC = () => {
           <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-400 shrink-0" />
           <a href={`tel:${teleponSekolah.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors">
             {teleponSekolah}
+          </a>
+        </li>
+        <li className="flex items-center gap-2.5 sm:gap-3">
+          <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-400 shrink-0" />
+          <a href={`https://wa.me/${whatsappSekolah}`} className="hover:text-white transition-colors">
+            {whatsappSekolah}
           </a>
         </li>
       </ul>

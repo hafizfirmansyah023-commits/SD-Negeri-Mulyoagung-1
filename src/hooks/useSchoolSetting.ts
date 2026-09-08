@@ -23,7 +23,7 @@ const DEFAULT_SETTINGS: SchoolSettings = {
   linkPpdb: '',
   emailSekolah: 'sdnmulyoagung01@gmail.com',
   teleponSekolah: '(0341) 466-730',
-  whatsappSekolah: '08123456789',
+  whatsappSekolah: 'Belum ada',
   alamatSekolah: 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur',
   medsosLinks: [
     { id: '1', name: 'YouTube', url: 'https://www.youtube.com/@mulyoagungsatu3851', icon: 'auto' },

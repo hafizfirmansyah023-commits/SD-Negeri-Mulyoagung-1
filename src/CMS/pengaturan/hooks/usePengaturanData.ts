@@ -17,7 +17,7 @@ export const usePengaturanData = () => {
   const [linkPpdb, setLinkPpdb] = useState('');
   const [emailSekolah, setEmailSekolah] = useState('sdnmulyoagung01@gmail.com');
   const [teleponSekolah, setTeleponSekolah] = useState('(0341) 466-730');
-  const [whatsappSekolah, setWhatsappSekolah] = useState('08123456789');
+  const [whatsappSekolah, setWhatsappSekolah] = useState('Belum ada');
   const [alamatSekolah, setAlamatSekolah] = useState('JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur');
   const [medsosList, setMedsosList] = useState<MedsosItem[]>([]);
 

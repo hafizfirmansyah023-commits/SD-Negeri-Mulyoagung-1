@@ -1,10 +1,10 @@
-export const WHATSAPP_NUMBER = '6289513301256';
+export const WHATSAPP_NUMBER = '08123456789';
 
 export const SCHOOL_CONTACT_INFO = {
   alamat: 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur',
   email: 'sdnmulyoagung01@gmail.com',
   telepon: '(0341) 466-730',
-  whatsappDisplay: '089513301256',
+  whatsappDisplay: 'Belum ada',
   jamPelayanan: 'Senin - Jumat: 07.00 - 14.15 WIB',
 };
 

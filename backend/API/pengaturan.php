@@ -39,7 +39,7 @@ try {
         'link_ppdb' => '',
         'email_sekolah' => 'sdnmulyoagung01@gmail.com',
         'telepon_sekolah' => '(0341) 466-730',
-        'whatsapp_sekolah' => '08123456789',
+        'whatsapp_sekolah' => 'Belum ada',
         'alamat_sekolah' => 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur',
         'medsos_links' => json_encode([
             ["id" => "1", "name" => "YouTube", "url" => "https://www.youtube.com/@mulyoagungsatu3851", "icon" => "auto"],
@@ -97,7 +97,7 @@ if ($method === 'GET') {
         $link_ppdb = isset($settings['link_ppdb']) ? $settings['link_ppdb'] : '';
         $email_sekolah = isset($settings['email_sekolah']) ? $settings['email_sekolah'] : 'sdnmulyoagung01@gmail.com';
         $telepon_sekolah = isset($settings['telepon_sekolah']) ? $settings['telepon_sekolah'] : '(0341) 466-730';
-        $whatsapp_sekolah = isset($settings['whatsapp_sekolah']) ? $settings['whatsapp_sekolah'] : '08123456789';
+        $whatsapp_sekolah = isset($settings['whatsapp_sekolah']) ? $settings['whatsapp_sekolah'] : 'Belum ada';
         $alamat_sekolah = isset($settings['alamat_sekolah']) ? $settings['alamat_sekolah'] : '';
         
         $medsos_links = [];
