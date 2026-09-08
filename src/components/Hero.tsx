@@ -167,15 +167,25 @@ export const Hero: React.FC<HeroProps> = ({
               <>
                 {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim() ? (
                   <>
-                    {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim()} <br className="hidden sm:block" />
+                    {homepageConfig.heroTitle.replace('SD Negeri 1 Mulyoagung', '').trim()}{' '}
+                    <br className="hidden sm:block" />
                   </>
-                ) : (<>
-                  Selamat Datang di <br />
-                </>)}
-                <ShinyText text="SD Negeri 1 Mulyoagung" speed={4} className="drop-shadow-sm" />
+                ) : (
+                  <>
+                    Selamat Datang di <br />
+                  </>
+                )}
+                <ShinyText
+                  text="SD Negeri 1 Mulyoagung"
+                  speed={3}
+                  color="#8cf4ea"
+                  shineColor="#ffffff"
+                  spread={120}
+                  className="drop-shadow-sm font-extrabold"
+                />
               </>
             ) : (
-              <ShinyText text={homepageConfig.heroTitle} speed={4} className="drop-shadow-sm" />
+              homepageConfig.heroTitle
             )}
           </h1>
               
