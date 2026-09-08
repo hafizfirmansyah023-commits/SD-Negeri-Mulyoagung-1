@@ -68,7 +68,7 @@ export const KontakSection: React.FC<KontakSectionProps> = ({
               type="number"
               value={whatsappSekolah}
               onChange={(e) => setWhatsappSekolah(e.target.value)}
-              placeholder="08123456789"
+              placeholder="0812345678"
               className="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 text-sm font-semibold text-slate-800"
             />
           </div>

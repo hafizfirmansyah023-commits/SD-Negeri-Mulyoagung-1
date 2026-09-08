@@ -11,7 +11,7 @@ export const FOOTER_CONTACT_INFO = {
   alamat: 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur',
   email: 'sdnmulyoagung01@gmail.com',
   teleponDisplay: '(0341) 466-730',
-  teleponHref: 'tel:08123456789',
+  teleponHref: 'tel:Belum ada',
 };
 
 export interface QuickLink {

@@ -207,6 +207,7 @@ export const DirectorySection: React.FC = () => {
             searchTerm={pensiunSearchTerm}
             debouncedSearchTerm={debouncedPensiunSearch}
             onSearchChange={(e) => setPensiunSearchTerm(e.target.value)}
+            onReset={() => setPensiunSearchTerm('')}
             onTeacherClick={setSelectedTeacherForModal}
           />
         )}
@@ -217,6 +218,7 @@ export const DirectorySection: React.FC = () => {
             searchTerm={mutasiSearchTerm}
             debouncedSearchTerm={debouncedMutasiSearch}
             onSearchChange={(e) => setMutasiSearchTerm(e.target.value)}
+            onReset={() => setMutasiSearchTerm('')}
             onTeacherClick={setSelectedTeacherForModal}
           />
         )}

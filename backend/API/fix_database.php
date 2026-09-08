@@ -181,7 +181,7 @@ try {
             '',
             'sdnmulyoagung01@gmail.com',
             '(0341) 466-730',
-            '08123456789',
+            'Belum ada',
             'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur'
         )");
     }

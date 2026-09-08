@@ -83,7 +83,11 @@ export const DirectoryContent: React.FC<DirectoryContentProps> = ({
 const EmptyState: React.FC<{ searchTerm: string }> = ({ searchTerm }) => (
   <div className="text-center py-12 bg-white/80 backdrop-blur-xl rounded-3xl border border-white/80 p-8 shadow-sm">
     <p className="text-slate-500 text-sm font-semibold">
-      Tidak ada data guru yang cocok dengan pencarian "{searchTerm}".
+      {searchTerm
+        ? `Tidak ada data guru yang cocok dengan pencarian "${searchTerm}".`
+        : 'Tidak ada data guru atau tendik pada kategori ini.'}
     </p>
+    <p className="text-slate-400 text-xs sm:text-sm mt-1.5">Coba ubah kata kunci pencarian atau kategori filter.</p>
   </div>
 );
+
