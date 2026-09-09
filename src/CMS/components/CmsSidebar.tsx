@@ -3,7 +3,7 @@ import {
   Users, Image, FileText, User, ShieldAlert, LogOut, ArrowLeft,
   School, Building, Settings, Award, Megaphone, BarChart3, Menu, X,
   BookOpen, History, Layers, Globe, GraduationCap, Sliders, Mail, Share2,
-  LayoutDashboard, Lightbulb, Search
+  LayoutDashboard, Lightbulb, Search, HelpCircle
 } from 'lucide-react';
 import { getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
@@ -185,6 +185,17 @@ export default function CmsSidebar({
           >
             <Lightbulb size={18} /> Inovasi Sekolah
           </button>
+          {user.role === 'GURU' && (
+            <button
+              onClick={() => handleSelectTab('panduan')}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all cursor-pointer ${activeTab === 'panduan'
+                ? 'bg-teal-600 text-white shadow-sm'
+                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                }`}
+            >
+              <HelpCircle size={18} /> Panduan
+            </button>
+          )}
           {user.role === 'ADMIN' && (
             <>
               <button

@@ -28,6 +28,7 @@ import {
   CheckCircle2,
   Clock,
   XCircle,
+  HelpCircle,
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../../config/api';
 import { UserSession, CmsTab } from '../types';
@@ -125,6 +126,14 @@ const ALL_CMS_MENUS: CmsMenuItem[] = [
     icon: Lightbulb,
     allowedRoles: ['ADMIN', 'GURU'],
     keywords: ['inovasi', 'innovation', 'karya', 'creation', 'creativity', 'kreativitas', 'program', 'project', 'projek', 'inovatif', 'innovative', 'kabumiga', 'jumaga'],
+  },
+  {
+    tab: 'panduan',
+    title: 'Panduan Pengumpulan Dokumen Guru',
+    description: 'Panduan format dan pengumpulan berkas via WhatsApp Admin',
+    icon: HelpCircle,
+    allowedRoles: ['GURU'],
+    keywords: ['panduan', 'tata cara', 'pengumpulan', 'administrasi', 'guru', 'whatsapp', 'prota', 'promes', 'bedah cp', 'analisis hari efektif', 'mpls', 'asesmen', 'lkpd', 'modul ajar'],
   },
   {
     tab: 'guru',

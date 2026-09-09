@@ -40,6 +40,7 @@ try {
         'email_sekolah' => 'sdnmulyoagung01@gmail.com',
         'telepon_sekolah' => '(0341) 466-730',
         'whatsapp_sekolah' => 'Belum ada',
+        'whatsapp_admin' => 'Belum ada',
         'alamat_sekolah' => 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur',
         'medsos_links' => json_encode([
             ["id" => "1", "name" => "YouTube", "url" => "https://www.youtube.com/@mulyoagungsatu3851", "icon" => "auto"],
@@ -98,6 +99,7 @@ if ($method === 'GET') {
         $email_sekolah = isset($settings['email_sekolah']) ? $settings['email_sekolah'] : 'sdnmulyoagung01@gmail.com';
         $telepon_sekolah = isset($settings['telepon_sekolah']) ? $settings['telepon_sekolah'] : '(0341) 466-730';
         $whatsapp_sekolah = isset($settings['whatsapp_sekolah']) ? $settings['whatsapp_sekolah'] : 'Belum ada';
+        $whatsapp_admin = isset($settings['whatsapp_admin']) ? $settings['whatsapp_admin'] : 'Belum ada';
         $alamat_sekolah = isset($settings['alamat_sekolah']) ? $settings['alamat_sekolah'] : '';
         
         $medsos_links = [];
@@ -138,6 +140,7 @@ if ($method === 'GET') {
             "email_sekolah" => $email_sekolah,
             "telepon_sekolah" => $telepon_sekolah,
             "whatsapp_sekolah" => $whatsapp_sekolah,
+            "whatsapp_admin" => $whatsapp_admin,
             "alamat_sekolah" => $alamat_sekolah,
             "medsos_links" => $medsos_links,
             "homepage_sections" => $homepage_sections,
@@ -157,7 +160,7 @@ if ($method === 'GET') {
 } elseif ($method === 'POST') {
     $keys_to_save = [
         'tahun_ajaran', 'link_ppdb', 'email_sekolah', 'telepon_sekolah', 
-        'whatsapp_sekolah', 'alamat_sekolah', 'medsos_links',
+        'whatsapp_sekolah', 'whatsapp_admin', 'alamat_sekolah', 'medsos_links',
         'homepage_sections', 'hero_title', 'hero_subtitle', 'video_url', 
         'profil_visi', 'profil_misi', 'profil_sejarah'
     ];

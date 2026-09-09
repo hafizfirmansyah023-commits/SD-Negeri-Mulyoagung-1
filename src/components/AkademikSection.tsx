@@ -101,6 +101,13 @@ export const AkademikSection: React.FC = () => {
       {/* Main Container Card - Title & Description on top, Drive viewer below */}
       <main className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 -mt-8 relative z-20 pb-16 space-y-12">
         
+        {/* Jika tipe Modul Ajar & LKPD, render modul pembelajaran section full-width di atas */}
+        {isModulType && (
+          <div className="w-full">
+            <ModulPembelajaranSection />
+          </div>
+        )}
+
         {/* Info Card: Title, Desc, Share & Drive Link */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-100/80 space-y-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
@@ -183,13 +190,6 @@ export const AkademikSection: React.FC = () => {
             )}
           </div>
         </div>
-
-        {/* Jika tipe Modul Ajar & LKPD, render modul pembelajaran section full-width */}
-        {isModulType && (
-          <div className="w-full">
-            <ModulPembelajaranSection />
-          </div>
-        )}
 
         {/* Footer Verification Badge */}
         <div className="flex items-center justify-center gap-2 text-slate-400 text-xs">

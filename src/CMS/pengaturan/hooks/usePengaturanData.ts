@@ -18,6 +18,7 @@ export const usePengaturanData = () => {
   const [emailSekolah, setEmailSekolah] = useState('sdnmulyoagung01@gmail.com');
   const [teleponSekolah, setTeleponSekolah] = useState('(0341) 466-730');
   const [whatsappSekolah, setWhatsappSekolah] = useState('Belum ada');
+  const [whatsappAdmin, setWhatsappAdmin] = useState('Belum ada');
   const [alamatSekolah, setAlamatSekolah] = useState('JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur');
   const [medsosList, setMedsosList] = useState<MedsosItem[]>([]);
 
@@ -134,6 +135,7 @@ export const usePengaturanData = () => {
         if (result.email_sekolah) setEmailSekolah(result.email_sekolah);
         if (result.telepon_sekolah) setTeleponSekolah(result.telepon_sekolah);
         if (result.whatsapp_sekolah) setWhatsappSekolah(result.whatsapp_sekolah);
+        if (result.whatsapp_admin) setWhatsappAdmin(result.whatsapp_admin);
         if (result.alamat_sekolah) setAlamatSekolah(result.alamat_sekolah);
         if (Array.isArray(result.medsos_links)) setMedsosList(result.medsos_links);
 
@@ -180,6 +182,7 @@ export const usePengaturanData = () => {
       form.append('email_sekolah', emailSekolah);
       form.append('telepon_sekolah', teleponSekolah);
       form.append('whatsapp_sekolah', whatsappSekolah);
+      form.append('whatsapp_admin', whatsappAdmin);
       form.append('alamat_sekolah', alamatSekolah);
       form.append('medsos_links', JSON.stringify(targetMedsos));
 
@@ -274,6 +277,7 @@ export const usePengaturanData = () => {
       form.append('email_sekolah', emailSekolah);
       form.append('telepon_sekolah', teleponSekolah);
       form.append('whatsapp_sekolah', whatsappSekolah);
+      form.append('whatsapp_admin', whatsappAdmin);
       form.append('alamat_sekolah', alamatSekolah);
       const res = await fetch(`${API_BASE}/backend/API/pengaturan.php`, { method: 'POST', body: form });
       const result = await res.json();
@@ -604,7 +608,7 @@ export const usePengaturanData = () => {
   return {
     tahunAjaran, setTahunAjaran, linkPpdb, setLinkPpdb,
     emailSekolah, setEmailSekolah, teleponSekolah, setTeleponSekolah,
-    whatsappSekolah, setWhatsappSekolah, alamatSekolah, setAlamatSekolah,
+    whatsappSekolah, setWhatsappSekolah, whatsappAdmin, setWhatsappAdmin, alamatSekolah, setAlamatSekolah,
     medsosList, heroSlides, homepageSections, setHomepageSections,
     heroTitle, setHeroTitle, heroSubtitle, setHeroSubtitle,
     heroBg, heroBgPreview, videoUrl, setVideoUrl,

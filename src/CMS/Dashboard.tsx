@@ -12,6 +12,7 @@ const GaleriCrud = lazy(() => import('./GaleriCrud'));
 const BeritaCrud = lazy(() => import('./BeritaCrud'));
 const ModulPembelajaranCrud = lazy(() => import('./ModulPembelajaranCrud'));
 const InovasiCrud = lazy(() => import('./InovasiCrud'));
+const PanduanGuru = lazy(() => import('./PanduanGuru'));
 const AkademikCrud = lazy(() => import('./AkademikCrud'));
 const UserCrud = lazy(() => import('./UserCrud'));
 const Verifikasi = lazy(() => import('./Verifikasi'));
@@ -79,6 +80,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                         currentTab !== 'dashboard' &&
                         currentTab !== 'modul' &&
                         currentTab !== 'inovasi' &&
+                        currentTab !== 'panduan' &&
                         currentTab !== 'user'
                     ) {
                         navigate('/cms/dashboard', { replace: true });
@@ -145,6 +147,7 @@ export default function Dashboard({ onBackToHome }: DashboardProps) {
                 {activeTab === 'berita' && user.role !== 'GURU' && <BeritaCrud currentUser={user} />}
                 {activeTab === 'modul' && user.role !== 'TIM' && <ModulPembelajaranCrud currentUser={user} />}
                 {activeTab === 'inovasi' && user.role !== 'TIM' && <InovasiCrud currentUser={user} />}
+                {activeTab === 'panduan' && user.role === 'GURU' && <PanduanGuru currentUser={user} />}
                 {activeTab === 'akademik' && user.role === 'ADMIN' && <AkademikCrud currentUser={user} />}
                 {activeTab === 'verifikasi' && user.role === 'ADMIN' && <Verifikasi />}
                 {activeTab === 'user' && (

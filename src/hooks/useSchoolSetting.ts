@@ -14,6 +14,7 @@ export interface SchoolSettings {
   emailSekolah: string;
   teleponSekolah: string;
   whatsappSekolah: string;
+  whatsappAdmin: string;
   alamatSekolah: string;
   medsosLinks: SocialMediaItem[];
 }
@@ -24,6 +25,7 @@ const DEFAULT_SETTINGS: SchoolSettings = {
   emailSekolah: 'sdnmulyoagung01@gmail.com',
   teleponSekolah: '(0341) 466-730',
   whatsappSekolah: 'Belum ada',
+  whatsappAdmin: 'Belum ada',
   alamatSekolah: 'JL. RAYA MULYOAGUNG NO.121 RT. 1 RW. 10 DUSUN MULYOAGUNG , Kec. Dau, Kab. Malang, Prov. Jawa Timur',
   medsosLinks: [
     { id: '1', name: 'YouTube', url: 'https://www.youtube.com/@mulyoagungsatu3851', icon: 'auto' },
@@ -51,6 +53,7 @@ export const useSchoolSettings = (): SchoolSettings => {
             emailSekolah: result.email_sekolah || DEFAULT_SETTINGS.emailSekolah,
             teleponSekolah: result.telepon_sekolah || DEFAULT_SETTINGS.teleponSekolah,
             whatsappSekolah: result.whatsapp_sekolah || DEFAULT_SETTINGS.whatsappSekolah,
+            whatsappAdmin: result.whatsapp_admin || result.whatsapp_sekolah || DEFAULT_SETTINGS.whatsappAdmin,
             alamatSekolah: result.alamat_sekolah || DEFAULT_SETTINGS.alamatSekolah,
             medsosLinks: Array.isArray(result.medsos_links) && result.medsos_links.length > 0
               ? result.medsos_links

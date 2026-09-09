@@ -1,4 +1,4 @@
-﻿import React, { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Mail, Save } from 'lucide-react';
 import { usePengaturanData } from './pengaturan/hooks/usePengaturanData';
 import { KontakSection } from './pengaturan/Sections/KontakSection';
@@ -9,6 +9,7 @@ export default function KontakCrud() {
     emailSekolah, setEmailSekolah,
     teleponSekolah, setTeleponSekolah,
     whatsappSekolah, setWhatsappSekolah,
+    whatsappAdmin, setWhatsappAdmin,
     alamatSekolah, setAlamatSekolah,
     loading, saving, message, setMessage, fetchSettings, handleSaveKontak
   } = usePengaturanData();
@@ -22,7 +23,7 @@ export default function KontakCrud() {
           <div className="p-3 bg-teal-100 text-teal-700 rounded-xl"><Mail size={24} /></div>
           <div>
             <h2 className="text-xl font-bold text-slate-800">Kontak Resmi Sekolah</h2>
-            <p className="text-sm text-slate-500">Kelola email, nomor telepon, nomor WhatsApp, dan alamat fisik sekolah</p>
+            <p className="text-sm text-slate-500">Kelola email, nomor telepon, nomor WhatsApp sekolah, nomor WhatsApp admin, dan alamat fisik sekolah</p>
           </div>
         </div>
         <button onClick={() => handleSaveKontak()} disabled={saving || loading}
@@ -40,6 +41,7 @@ export default function KontakCrud() {
           emailSekolah={emailSekolah} setEmailSekolah={setEmailSekolah}
           teleponSekolah={teleponSekolah} setTeleponSekolah={setTeleponSekolah}
           whatsappSekolah={whatsappSekolah} setWhatsappSekolah={setWhatsappSekolah}
+          whatsappAdmin={whatsappAdmin} setWhatsappAdmin={setWhatsappAdmin}
           alamatSekolah={alamatSekolah} setAlamatSekolah={setAlamatSekolah}
         />
       )}

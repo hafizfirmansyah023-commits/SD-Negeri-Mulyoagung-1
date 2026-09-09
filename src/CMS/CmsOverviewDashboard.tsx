@@ -18,6 +18,7 @@ import {
   Layers,
   Sparkles,
   Lightbulb,
+  HelpCircle,
 } from 'lucide-react';
 import { getApiBaseUrl, getImageUrl } from '../config/api';
 import { UserSession, CmsTab } from './types';
@@ -745,69 +746,95 @@ export const CmsOverviewDashboard: React.FC<CmsOverviewDashboardProps> = ({
 
       {/* SECTION 3: AKTIVITAS TERBARU */}
       {currentUser.role === 'GURU' ? (
-        /* GURU SINGLE WIDE CARD: Modul Ajar Terakhir Saya */
-        <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-100 shadow-sm space-y-4">
-          <div className="flex justify-between items-center border-b border-slate-100 pb-3.5">
-            <h3 className="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2.5">
-              <GraduationCap size={20} className="text-emerald-600" />
-              Modul Ajar Terakhir Saya
-            </h3>
-            <button
-              onClick={() => setActiveTab('modul')}
-              className="text-xs sm:text-sm font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
-            >
-              Kelola Semua Modul <ArrowRight size={14} />
-            </button>
-          </div>
-
-          {recentModul.length === 0 ? (
-            <div className="py-8 text-center text-slate-400 space-y-2">
-              <GraduationCap size={36} className="mx-auto text-slate-300" />
-              <p className="text-xs sm:text-sm">Anda belum mengunggah modul ajar.</p>
+        <div className="space-y-6">
+          {/* GURU SINGLE WIDE CARD: Modul Ajar Terakhir Saya */}
+          <div className="bg-white p-5 sm:p-7 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3.5">
+              <h3 className="font-bold text-slate-800 text-base sm:text-lg flex items-center gap-2.5">
+                <GraduationCap size={20} className="text-emerald-600" />
+                Modul Ajar Terakhir Saya
+              </h3>
               <button
                 onClick={() => setActiveTab('modul')}
-                className="mt-2 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
+                className="text-xs sm:text-sm font-semibold text-teal-600 hover:text-teal-700 flex items-center gap-1 cursor-pointer"
               >
-                Unggah Modul Baru
+                Kelola Semua Modul <ArrowRight size={14} />
               </button>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {recentModul.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-50 border border-slate-100/90 transition-colors"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-slate-800 truncate">
-                      {item.judul}
-                    </p>
-                    <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
-                      <span className="font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
-                        {item.kelas}
-                      </span>
-                      <span>&bull;</span>
-                      <span className="truncate">{item.mata_pelajaran}</span>
-                      <span>&bull;</span>
-                      <span>TA {item.tahun_ajaran}</span>
-                    </div>
-                  </div>
 
-                  <span
-                    className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
-                      item.status_verifikasi === 'Verified'
-                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                        : item.status_verifikasi === 'Pending'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                          : 'bg-red-50 text-red-700 border border-red-200'
-                    }`}
+            {recentModul.length === 0 ? (
+              <div className="py-8 text-center text-slate-400 space-y-2">
+                <GraduationCap size={36} className="mx-auto text-slate-300" />
+                <p className="text-xs sm:text-sm">Anda belum mengunggah modul ajar.</p>
+                <button
+                  onClick={() => setActiveTab('modul')}
+                  className="mt-2 text-xs font-semibold text-white bg-teal-600 hover:bg-teal-700 px-4 py-2 rounded-xl transition-all cursor-pointer inline-flex items-center gap-1.5"
+                >
+                  Unggah Modul Baru
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                {recentModul.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 p-3.5 rounded-2xl hover:bg-slate-50 border border-slate-100/90 transition-colors"
                   >
-                    {item.status_verifikasi}
-                  </span>
-                </div>
-              ))}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-bold text-slate-800 truncate">
+                        {item.judul}
+                      </p>
+                      <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
+                        <span className="font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
+                          {item.kelas}
+                        </span>
+                        <span>&bull;</span>
+                        <span className="truncate">{item.mata_pelajaran}</span>
+                        <span>&bull;</span>
+                        <span>TA {item.tahun_ajaran}</span>
+                      </div>
+                    </div>
+
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${
+                        item.status_verifikasi === 'Verified'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                          : item.status_verifikasi === 'Pending'
+                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                            : 'bg-red-50 text-red-700 border border-red-200'
+                      }`}
+                    >
+                      {item.status_verifikasi}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* GURU QUICK BANNER: Panduan Pengumpulan Administrasi */}
+          <div className="bg-gradient-to-r from-teal-50 via-emerald-50 to-teal-50 border border-teal-200/80 rounded-3xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-md">
+                <HelpCircle size={24} />
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-800 text-sm sm:text-base">
+                  Pusat Panduan &amp; Pengumpulan Dokumen Pembelajaran
+                </h4>
+                <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                  Panduan format penamaan file &amp; kirim berkas administrasi (Prota, Promes, Bedah CP, Modul, Asesmen) via WhatsApp Admin.
+                </p>
+              </div>
             </div>
-          )}
+            <button
+              onClick={() => setActiveTab('panduan')}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-teal-600 hover:bg-teal-700 text-white px-5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm shadow-sm transition-all cursor-pointer shrink-0"
+            >
+              <span>Buka Menu Panduan</span>
+              <ArrowRight size={15} />
+            </button>
+          </div>
         </div>
       ) : (
         /* ADMIN / TIM 4-COLUMN OR 2-COLUMN ACTIVITY GRID */

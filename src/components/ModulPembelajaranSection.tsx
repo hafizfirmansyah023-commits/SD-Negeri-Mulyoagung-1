@@ -133,7 +133,7 @@ export const ModulPembelajaranSection: React.FC = () => {
   };
 
   return (
-    <section id="modul-section" className="relative w-full py-16 sm:py-24 bg-gradient-to-b from-white via-teal-50/30 to-white overflow-hidden transition-colors">
+    <section id="modul-section" className="relative w-full py-10 sm:py-14 bg-gradient-to-b from-white via-teal-50/30 to-white rounded-3xl shadow-xl border border-slate-100/80 overflow-hidden transition-colors">
       {/* Decorative subtle ambient glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-teal-200/20 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-10 right-10 w-96 h-96 bg-blue-100/30 rounded-full blur-3xl pointer-events-none" />
