@@ -73,7 +73,15 @@ export default function AkademikCrud({ currentUser }: AkademikCrudProps) {
     setDeskripsi('');
     setLinkGdrive('');
     setIsModul(false);
-    setUrutan(items.length + 1);
+    
+    // Hitung urutan default berdasarkan jumlah item di kelompok yang dituju
+    if (catId === null) {
+      setUrutan(standaloneItems.length + 1);
+    } else {
+      const catGroup = tree.find((t) => t.item.id === catId);
+      setUrutan(catGroup ? catGroup.children.length + 1 : 1);
+    }
+
     setAktif(true);
     setParentId(catId);
     setError('');

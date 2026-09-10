@@ -141,10 +141,52 @@ if ($method === 'GET') {
         }
 
         try {
+            $conn->beginTransaction();
+
+            // Hitung urutan baru jika <= 0
+            if ($urutan <= 0) {
+                if ($parent_id === null) {
+                    $maxOrder = $conn->query("SELECT COALESCE(MAX(urutan), 0) FROM akademik_menu WHERE parent_id IS NULL OR parent_id = 0")->fetchColumn();
+                } else {
+                    $stmtMax = $conn->prepare("SELECT COALESCE(MAX(urutan), 0) FROM akademik_menu WHERE parent_id = ?");
+                    $stmtMax->execute([$parent_id]);
+                    $maxOrder = $stmtMax->fetchColumn();
+                }
+                $urutan = intval($maxOrder) + 1;
+            } else {
+                // Geser item yang urutannya >= $urutan ke atas (+1) pada kelompok parent yang sama
+                if ($parent_id === null) {
+                    $stmtShift = $conn->prepare("UPDATE akademik_menu SET urutan = urutan + 1 WHERE (parent_id IS NULL OR parent_id = 0) AND urutan >= ?");
+                    $stmtShift->execute([$urutan]);
+                } else {
+                    $stmtShift = $conn->prepare("UPDATE akademik_menu SET urutan = urutan + 1 WHERE parent_id = ? AND urutan >= ?");
+                    $stmtShift->execute([$parent_id, $urutan]);
+                }
+            }
+
             $stmt = $conn->prepare("INSERT INTO akademik_menu (label, deskripsi, parent_id, link_gdrive, is_modul, urutan, aktif) VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$label, $deskripsi, $parent_id, $link_gdrive, $is_modul, $urutan, $aktif]);
+
+            // Normalisasi ulang urutan (1, 2, 3, ...) pada kelompok parent
+            if ($parent_id === null) {
+                $siblingRows = $conn->query("SELECT id FROM akademik_menu WHERE parent_id IS NULL OR parent_id = 0 ORDER BY urutan ASC, id ASC")->fetchAll(PDO::FETCH_COLUMN);
+            } else {
+                $stmtSib = $conn->prepare("SELECT id FROM akademik_menu WHERE parent_id = ? ORDER BY urutan ASC, id ASC");
+                $stmtSib->execute([$parent_id]);
+                $siblingRows = $stmtSib->fetchAll(PDO::FETCH_COLUMN);
+            }
+
+            $stmtReorder = $conn->prepare("UPDATE akademik_menu SET urutan = ? WHERE id = ?");
+            foreach ($siblingRows as $idx => $sId) {
+                $stmtReorder->execute([$idx + 1, $sId]);
+            }
+
+            $conn->commit();
             echo json_encode(["status" => "success", "message" => $parent_id === null ? "Kategori akademik berhasil ditambahkan." : "Item akademik berhasil ditambahkan."]);
         } catch (PDOException $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
         }
@@ -184,10 +226,84 @@ if ($method === 'GET') {
         }
 
         try {
-            $stmt = $conn->prepare("UPDATE akademik_menu SET label = ?, deskripsi = ?, parent_id = ?, link_gdrive = ?, is_modul = ?, urutan = ?, aktif = ? WHERE id = ?");
-            $stmt->execute([$label, $deskripsi, $parent_id, $link_gdrive, $is_modul, $urutan, $aktif, $id]);
+            $conn->beginTransaction();
+
+            // Ambil data item saat ini
+            $stmtCurrent = $conn->prepare("SELECT parent_id, urutan FROM akademik_menu WHERE id = ?");
+            $stmtCurrent->execute([$id]);
+            $currentData = $stmtCurrent->fetch(PDO::FETCH_ASSOC);
+
+            if (!$currentData) {
+                http_response_code(404);
+                echo json_encode(["status" => "error", "message" => "Menu akademik tidak ditemukan."]);
+                exit();
+            }
+
+            $oldParentId = ($currentData['parent_id'] !== null && intval($currentData['parent_id']) > 0) ? intval($currentData['parent_id']) : null;
+            $oldUrutan = intval($currentData['urutan']);
+
+            // Update field selain reorder
+            $stmt = $conn->prepare("UPDATE akademik_menu SET label = ?, deskripsi = ?, parent_id = ?, link_gdrive = ?, is_modul = ?, aktif = ? WHERE id = ?");
+            $stmt->execute([$label, $deskripsi, $parent_id, $link_gdrive, $is_modul, $aktif, $id]);
+
+            $stmtReorder = $conn->prepare("UPDATE akademik_menu SET urutan = ? WHERE id = ?");
+
+            // Cek apakah ada perubahan parent_id atau urutan
+            $parentChanged = ($oldParentId !== $parent_id);
+            $targetUrutan = ($urutan > 0) ? $urutan : $oldUrutan;
+
+            if ($parentChanged) {
+                // 1. Re-index parent lama agar tidak berlubang
+                if ($oldParentId === null) {
+                    $oldSiblings = $conn->query("SELECT id FROM akademik_menu WHERE (parent_id IS NULL OR parent_id = 0) AND id != $id ORDER BY urutan ASC, id ASC")->fetchAll(PDO::FETCH_COLUMN);
+                } else {
+                    $stmtOldSib = $conn->prepare("SELECT id FROM akademik_menu WHERE parent_id = ? AND id != ? ORDER BY urutan ASC, id ASC");
+                    $stmtOldSib->execute([$oldParentId, $id]);
+                    $oldSiblings = $stmtOldSib->fetchAll(PDO::FETCH_COLUMN);
+                }
+                foreach ($oldSiblings as $idx => $sId) {
+                    $stmtReorder->execute([$idx + 1, $sId]);
+                }
+
+                // 2. Masukkan ke parent baru pada posisi targetUrutan
+                if ($parent_id === null) {
+                    $newSiblings = $conn->query("SELECT id FROM akademik_menu WHERE (parent_id IS NULL OR parent_id = 0) AND id != $id ORDER BY urutan ASC, id ASC")->fetchAll(PDO::FETCH_COLUMN);
+                } else {
+                    $stmtNewSib = $conn->prepare("SELECT id FROM akademik_menu WHERE parent_id = ? AND id != ? ORDER BY urutan ASC, id ASC");
+                    $stmtNewSib->execute([$parent_id, $id]);
+                    $newSiblings = $stmtNewSib->fetchAll(PDO::FETCH_COLUMN);
+                }
+
+                $insertPos = max(0, min($targetUrutan - 1, count($newSiblings)));
+                array_splice($newSiblings, $insertPos, 0, [$id]);
+
+                foreach ($newSiblings as $idx => $sId) {
+                    $stmtReorder->execute([$idx + 1, $sId]);
+                }
+            } else {
+                // Parent tetap, hanya urutan yang mungkin berubah
+                if ($parent_id === null) {
+                    $siblings = $conn->query("SELECT id FROM akademik_menu WHERE (parent_id IS NULL OR parent_id = 0) AND id != $id ORDER BY urutan ASC, id ASC")->fetchAll(PDO::FETCH_COLUMN);
+                } else {
+                    $stmtSib = $conn->prepare("SELECT id FROM akademik_menu WHERE parent_id = ? AND id != ? ORDER BY urutan ASC, id ASC");
+                    $stmtSib->execute([$parent_id, $id]);
+                    $siblings = $stmtSib->fetchAll(PDO::FETCH_COLUMN);
+                }
+
+                $insertPos = max(0, min($targetUrutan - 1, count($siblings)));
+                array_splice($siblings, $insertPos, 0, [$id]);
+
+                foreach ($siblings as $idx => $sId) {
+                    $stmtReorder->execute([$idx + 1, $sId]);
+                }
+            }
+
+            $conn->commit();
             echo json_encode(["status" => "success", "message" => "Menu akademik berhasil diperbarui."]);
         } catch (PDOException $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
         }
@@ -209,10 +325,36 @@ if ($method === 'GET') {
                 exit();
             }
 
+            $conn->beginTransaction();
+
+            $stmtCurrent = $conn->prepare("SELECT parent_id FROM akademik_menu WHERE id = ?");
+            $stmtCurrent->execute([$id]);
+            $currentData = $stmtCurrent->fetch(PDO::FETCH_ASSOC);
+            $parentId = ($currentData && $currentData['parent_id'] !== null && intval($currentData['parent_id']) > 0) ? intval($currentData['parent_id']) : null;
+
             $stmt = $conn->prepare("DELETE FROM akademik_menu WHERE id = ?");
             $stmt->execute([$id]);
+
+            // Normalisasi ulang urutan siblings agar nomor 1..N tetap rapi tanpa jeda
+            if ($parentId === null) {
+                $siblings = $conn->query("SELECT id FROM akademik_menu WHERE parent_id IS NULL OR parent_id = 0 ORDER BY urutan ASC, id ASC")->fetchAll(PDO::FETCH_COLUMN);
+            } else {
+                $stmtSib = $conn->prepare("SELECT id FROM akademik_menu WHERE parent_id = ? ORDER BY urutan ASC, id ASC");
+                $stmtSib->execute([$parentId]);
+                $siblings = $stmtSib->fetchAll(PDO::FETCH_COLUMN);
+            }
+
+            $stmtReorder = $conn->prepare("UPDATE akademik_menu SET urutan = ? WHERE id = ?");
+            foreach ($siblings as $idx => $sId) {
+                $stmtReorder->execute([$idx + 1, $sId]);
+            }
+
+            $conn->commit();
             echo json_encode(["status" => "success", "message" => "Menu akademik berhasil dihapus."]);
         } catch (PDOException $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
             http_response_code(500);
             echo json_encode(["status" => "error", "message" => $e->getMessage()]);
         }
