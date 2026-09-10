@@ -193,7 +193,7 @@ export default function CmsSidebar({
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
                 }`}
             >
-              <HelpCircle size={18} /> Panduan
+              <HelpCircle size={18} /> Panduan Akademik
             </button>
           )}
           {user.role === 'ADMIN' && (
