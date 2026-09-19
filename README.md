@@ -68,6 +68,7 @@ Model foto dua kolom: `foto` (asli) + `foto_crop` (hasil crop). API GET mengemba
 
 - **ADMIN** — CRUD penuh semua entitas.
 - **TIM** — Hanya boleh upload/edit berita & galeri, membutuhkan verifikasi admin.
+- **GURU** — Hanya boleh upload/edit MODUL AJAR & Inovasi, membutuhkan verifikasi admin.
 - **Verifikasi** — `Pending` / `Verified` / `Rejected`; endpoint public hanya mengembalikan `Verified`; edit oleh TIM mereset status ke `Pending`.
 
 ## Keamanan API
