@@ -11,6 +11,7 @@ $allowedOrigins = [
     'http://localhost',
     'http://127.0.0.1',
     'http://127.0.0.1:3000',
+    'https://sdn1mulyoagun.test.uydapz.site',
     // 'https://sdn1mulyoagung.sch.id',  // aktifkan untuk produksi
 ];
 

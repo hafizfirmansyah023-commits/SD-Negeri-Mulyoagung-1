@@ -163,7 +163,7 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
   return (
     <section id="news-section" className="w-full bg-white py-10 sm:py-20 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 space-y-6 sm:space-y-8">
-        
+
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div>
@@ -182,7 +182,7 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
 
         {/* Filter, Search, and Sort Toolbar */}
         <div className="bg-slate-50/80 p-3 sm:p-4 rounded-2xl border border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 sm:gap-4 shadow-sm">
-          
+
           {/* Search Input & Reset Button */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 max-w-lg w-full">
             <div className="relative flex-1">
@@ -240,11 +240,10 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${
-                selectedCategory === cat
+              className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-[10px] sm:text-xs font-semibold transition-all cursor-pointer ${selectedCategory === cat
                   ? 'bg-[#1E3A8A] text-white shadow-sm'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
+                }`}
             >
               {cat}
             </button>
@@ -257,13 +256,12 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
             <article
               key={article.id}
               onClick={() => setActiveArticle(article)}
-              className={`group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-200/80 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer hover:-translate-y-1 ${
-                article.category === 'Prestasi'
+              className={`group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-200/80 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer hover:-translate-y-1 ${article.category === 'Prestasi'
                   ? 'border-t-[3px] sm:border-t-4 border-t-[#F9A825]'
                   : article.category === 'Pengumuman'
-                  ? 'border-t-[3px] sm:border-t-4 border-t-blue-600'
-                  : 'border-t-[3px] sm:border-t-4 border-t-[#028C84]'
-              }`}
+                    ? 'border-t-[3px] sm:border-t-4 border-t-blue-600'
+                    : 'border-t-[3px] sm:border-t-4 border-t-[#028C84]'
+                }`}
             >
               <div>
                 {/* Image & Badge */}
@@ -275,13 +273,12 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <span
-                    className={`absolute bottom-3 right-3 text-white px-2.5 py-1 rounded-full text-xs font-medium shadow-sm backdrop-blur-md ${
-                      article.category === 'Prestasi'
+                    className={`absolute bottom-3 right-3 text-white px-2.5 py-1 rounded-full text-xs font-medium shadow-sm backdrop-blur-md ${article.category === 'Prestasi'
                         ? 'bg-amber-500/90'
                         : article.category === 'Pengumuman'
-                        ? 'bg-blue-600/90'
-                        : 'bg-[#028C84]/90'
-                    }`}
+                          ? 'bg-blue-600/90'
+                          : 'bg-[#028C84]/90'
+                      }`}
                   >
                     {article.category}
                   </span>
@@ -293,7 +290,7 @@ export const NewsSection: React.FC<NewsSectionProps> = () => {
                     {article.title}
                   </h3>
                   {article.summary && (
-                    <p 
+                    <p
                       className="text-slate-500 text-xs sm:text-sm line-clamp-2 leading-relaxed break-words"
                       dangerouslySetInnerHTML={{ __html: article.summary }}
                     />

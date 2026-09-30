@@ -6,9 +6,9 @@ node_modules/
 # ========================
 # Build Output
 # ========================
-build/
-dist/
-coverage/
+#build/
+#dist/
+#coverage/
 
 # ========================
 # Environment & Secrets
